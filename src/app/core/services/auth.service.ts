@@ -70,7 +70,14 @@ export class AuthService {
     if (!this.clerk?.session) {
       return null;
     }
-    return this.clerk.session.getToken();
+    try {
+      // Get the session token - this is what the backend expects
+      const token = await this.clerk.session.getToken();
+      return token;
+    } catch (error) {
+      console.error('Failed to get token:', error);
+      return null;
+    }
   }
 
   async signIn() {

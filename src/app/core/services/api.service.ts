@@ -19,6 +19,9 @@ export class ApiService {
     const token = await this.getToken();
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
+      console.log('🔑 API Service - Token added to headers');
+    } else {
+      console.warn('⚠️ API Service - No token available');
     }
 
     return headers;
