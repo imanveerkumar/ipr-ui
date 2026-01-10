@@ -3,6 +3,93 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Quill Editor Styles */
+@import 'quill/dist/quill.snow.css';
+
+.ql-container {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.875rem;
+}
+
+.ql-editor {
+  min-height: 150px;
+}
+
+.ql-toolbar.ql-snow {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  border-color: #d1d5db;
+}
+
+.ql-container.ql-snow {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border-color: #d1d5db;
+}
+
+.ql-editor.ql-blank::before {
+  font-style: normal;
+  color: #9ca3af;
+}
+
+/* Custom Quill toolbar buttons */
+.ql-file {
+  width: 28px;
+}
+
+.ql-file svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Quill video styling */
+.ql-editor video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+/* File link styling in editor */
+.ql-editor a[href] {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+/* Rich text content display (for rendered descriptions) */
+.prose video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.prose iframe {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.prose a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: #1d4ed8;
+}
+
 /* Custom base styles */
 @layer base {
   html {

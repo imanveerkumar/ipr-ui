@@ -41,7 +41,7 @@ import { ProductService } from '../../core/services/product.service';
               <div class="pb-2">
                 <h1 class="text-3xl font-display font-bold text-gray-900">{{ store()?.name }}</h1>
                 @if (store()?.description) {
-                  <p class="text-gray-600 mt-1">{{ store()?.description }}</p>
+                  <div class="text-gray-600 mt-2 prose prose-sm max-w-none" [innerHTML]="store()?.description"></div>
                 }
               </div>
             </div>
