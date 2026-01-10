@@ -48,16 +48,25 @@ export class AuthService {
         await this.fetchCurrentUser();
       }
 
-      // Listen for auth changes
+      // Listen for auth changes - only fetch user on actual auth state changes
+      let previousUserId = this.clerk.user?.id;
+      
       this.clerk.addListener((event) => {
-        if (event.user) {
-          this._clerkUser.set(event.user);
-          this._isSignedIn.set(true);
-          this.fetchCurrentUser();
-        } else {
-          this._clerkUser.set(null);
-          this._isSignedIn.set(false);
-          this._user.set(null);
+        const currentUserId = event.user?.id;
+        
+        // Only update if user actually changed (sign in/out)
+        if (currentUserId !== previousUserId) {
+          previousUserId = currentUserId;
+          
+          if (event.user) {
+            this._clerkUser.set(event.user);
+            this._isSignedIn.set(true);
+            this.fetchCurrentUser();
+          } else {
+            this._clerkUser.set(null);
+            this._isSignedIn.set(false);
+            this._user.set(null);
+          }
         }
       });
     } catch (error) {
