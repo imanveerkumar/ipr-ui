@@ -1,11 +1,44 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
+  styles: [`
+    .framer-1kxutwh {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .framer-JKy6q {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+    .framer-JKy6q:hover {
+      background-color: rgb(216, 221, 227) !important;
+    }
+    .framer-JKy6q.active {
+      background-color: rgb(216, 221, 227) !important;
+    }
+    .framer-kmfw6a {
+      display: flex;
+      align-items: center;
+    }
+    .framer-text {
+      font-family: 'Hind Madurai', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      line-height: 21px;
+      color: rgb(8, 11, 23);
+      margin: 0;
+      font-size: 14px;
+    }
+  `],
   template: `
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,13 +53,27 @@ import { AuthService } from '../../../core/services/auth.service';
 
           <!-- Navigation -->
           <div class="hidden md:flex items-center gap-6">
-            <a routerLink="/" class="text-gray-600 hover:text-gray-900 transition-colors">Explore</a>
-            @if (auth.isSignedIn()) {
-              <a routerLink="/library" class="text-gray-600 hover:text-gray-900 transition-colors">Library</a>
-              @if (auth.isCreator()) {
-                <a routerLink="/dashboard" class="text-gray-600 hover:text-gray-900 transition-colors">Dashboard</a>
+            <div class="framer-1kxutwh" style="background-color: rgb(240, 241, 242); border-radius: 999px; opacity: 0.8;">
+              <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="framer-JKy6q framer-h3eox5 framer-v-1ayw6ao framer-bffk6r" style="border-radius: 999px; opacity: 1;">
+                <div class="framer-kmfw6a">
+                  <p class="framer-text">Explore</p>
+                </div>
+              </a>
+              @if (auth.isSignedIn()) {
+                <a routerLink="/library" routerLinkActive="active" class="framer-JKy6q framer-h3eox5 framer-v-1arjux4 framer-bffk6r" style="border-radius: 999px; opacity: 1; will-change: auto;">
+                  <div class="framer-kmfw6a">
+                    <p class="framer-text">Library</p>
+                  </div>
+                </a>
+                @if (auth.isCreator()) {
+                  <a routerLink="/dashboard" routerLinkActive="active" class="framer-JKy6q framer-h3eox5 framer-v-h3eox5 framer-bffk6r" style="border-radius: 999px; opacity: 1; will-change: auto;">
+                    <div class="framer-kmfw6a">
+                      <p class="framer-text">Dashboard</p>
+                    </div>
+                  </a>
+                }
               }
-            }
+            </div>
           </div>
 
           <!-- Auth -->
