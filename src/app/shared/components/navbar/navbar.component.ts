@@ -54,7 +54,7 @@ import { AuthService } from '../../../core/services/auth.service';
           <!-- Navigation -->
           <div class="hidden md:flex items-center gap-6">
             <div class="framer-1kxutwh" style="background-color: rgb(240, 241, 242); border-radius: 999px; opacity: 0.8;">
-              <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="framer-JKy6q framer-h3eox5 framer-v-1ayw6ao framer-bffk6r" style="border-radius: 999px; opacity: 1;">
+              <a routerLink="/explore" routerLinkActive="active" class="framer-JKy6q framer-h3eox5 framer-v-1ayw6ao framer-bffk6r" style="border-radius: 999px; opacity: 1;">
                 <div class="framer-kmfw6a">
                   <p class="framer-text">Explore</p>
                 </div>

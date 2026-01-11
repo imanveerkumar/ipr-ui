@@ -34,9 +34,11 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['Cal Sans', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'Open Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['DM Sans', 'Cal Sans', 'Inter', 'system-ui', 'sans-serif'],
         'hind-madurai': ['Hind Madurai', 'sans-serif'],
+        'dm-sans': ['DM Sans', 'sans-serif'],
+        'open-sans': ['Open Sans', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
