@@ -5,11 +5,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { StoreService } from '../../../core/services/store.service';
 import { Store } from '../../../core/models/index';
+import { RichTextEditorComponent } from '../../../shared/components';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent],
   template: `
     <div class="min-h-screen bg-gray-50">
       <div class="bg-white border-b">
@@ -69,14 +70,11 @@ import { Store } from '../../../core/models/index';
 
           <div>
             <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea
-              id="description"
+            <app-rich-text-editor
               [(ngModel)]="form.description"
               name="description"
-              rows="4"
-              class="input"
               placeholder="Describe your product..."
-            ></textarea>
+            ></app-rich-text-editor>
           </div>
 
           <div>

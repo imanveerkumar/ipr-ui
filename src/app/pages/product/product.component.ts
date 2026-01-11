@@ -47,9 +47,7 @@ import { AuthService } from '../../core/services/auth.service';
               </div>
 
               @if (product()?.description) {
-                <div class="mt-6 prose prose-gray max-w-none">
-                  <p>{{ product()?.description }}</p>
-                </div>
+                <div class="mt-6 prose prose-gray max-w-none" [innerHTML]="product()?.description"></div>
               }
 
               <!-- Files included -->
