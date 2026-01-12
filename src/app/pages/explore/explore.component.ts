@@ -17,13 +17,13 @@ import { RouterLink } from '@angular/router';
               <div class="heading-container">
                 <div class="max-width-xlarge">
                   <div class="text-align-center">
-                    <h2 class="hero-heading">All the features you need</h2>
+                    <h2 class="hero-heading">Every tool you require</h2>
                   </div>
                 </div>
                 <div class="margin-top margin-xsmall">
                   <div class="max-width-medium align-center">
                     <div class="text-color-primary opac-80 text-align-center text-size-medium">
-                      Build a store and start selling your products in minutes.
+                      Set up a shop and begin selling your items instantly.
                     </div>
                   </div>
                 </div>
@@ -106,17 +106,17 @@ import { RouterLink } from '@angular/router';
                     </div>
                   </div>
                   <div class="margin-bottom margin-xxsmall">
-                    <h3>Sell products and subscriptions</h3>
+                    <h3>Offer goods and memberships</h3>
                   </div>
-                  <p class="text-color-primary opac-80">Sell digital goods, print on demand products or earn recurring revenue with subscriptions.</p>
+                  <p class="text-color-primary opac-80">Sell digital items, print-on-demand merchandise, or generate steady income with subscriptions.</p>
                 </div>
                 <div class="grid-2x3">
                   <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Digital products of all types</div>
+                    <div class="text-size-medium text-weight-medium">Digital items of all kinds</div>
                     <p class="text-color-primary opac-80">Sell ebooks, videos, audio &amp; music, or any other files like PSD, AI and many more.</p>
                   </div>
                   <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Physical products</div>
+                    <div class="text-size-medium text-weight-medium">Tangible items</div>
                     <p class="text-color-primary opac-80">Sell physical products &amp; tangible items from your storefront.</p>
                   </div>
                   <div class="feature-item">
@@ -161,18 +161,18 @@ import { RouterLink } from '@angular/router';
                           <circle cx="11" cy="11" r="2"></circle>
                         </svg>
                       </div>
-                      <div>Customisation</div>
+                      <div>Personalization</div>
                     </div>
                   </div>
                   <div class="margin-bottom margin-xxsmall">
-                    <h3>Beautiful store in five minutes</h3>
+                    <h3>Stunning shop in under five minutes</h3>
                   </div>
-                  <p class="text-color-primary opac-80">Effortlessly create a beautiful store that stands out and represents your brand in a unique way.</p>
+                  <p class="text-color-primary opac-80">Effortlessly design a stunning shop that stands out and embodies your brand uniquely.</p>
                 </div>
                 <div class="grid-2x3">
                   <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Customization</div>
-                    <p class="text-color-primary opac-80">Add your logo, change colors and create the layout you want to match your brand.</p>
+                    <div class="text-size-medium text-weight-medium">Personalization</div>
+                    <p class="text-color-primary opac-80">Add your logo, adjust colors and create the layout you want to match your brand.</p>
                   </div>
                   <div class="feature-item">
                     <div class="text-size-medium text-weight-medium">Connect your own domain</div>
@@ -209,13 +209,13 @@ import { RouterLink } from '@angular/router';
             <div class="heading-container">
               <div class="max-width-xlarge">
                 <div class="text-align-center">
-                  <h2 class="cta-heading">Create a store that <em>represents</em> you</h2>
+                  <h2 class="cta-heading">Launch a shop that <em>reflects</em> you</h2>
                 </div>
               </div>
               <div class="margin-top margin-xsmall">
                 <div class="max-width-medium align-center">
                   <div class="text-color-primary opac-80 text-align-center text-size-medium">
-                    Beautiful store, tons of features and no ugly transaction fees. Sign up to start your 14-day free trial.
+                    Stunning shop, abundant features and no hidden transaction fees. Sign up to begin your 14-day free trial.
                   </div>
                 </div>
               </div>
@@ -247,9 +247,9 @@ import { RouterLink } from '@angular/router';
                     </div>
                   </div>
                   <div class="margin-bottom margin-xxsmall">
-                    <h3>Built-in marketing features</h3>
+                    <h3>Integrated promotion tools</h3>
                   </div>
-                  <p class="text-color-primary opac-80">Market better, outrun the competition and grow your business with ease.</p>
+                  <p class="text-color-primary opac-80">Promote smarter, surpass competitors and expand your business effortlessly.</p>
                 </div>
                 <div class="grid-2x3">
                   <div class="feature-item">
@@ -307,9 +307,9 @@ import { RouterLink } from '@angular/router';
                     </div>
                   </div>
                   <div class="margin-bottom margin-xxsmall">
-                    <h3>Embed</h3>
+                    <h3>Integrate</h3>
                   </div>
-                  <p class="text-color-primary opac-80">Sell from your website, social media or anywhere else.</p>
+                  <p class="text-color-primary opac-80">Sell from your site, social platforms or anywhere.</p>
                 </div>
                 <div class="grid-2x3">
                   <div class="feature-item">
@@ -351,13 +351,13 @@ import { RouterLink } from '@angular/router';
             <div class="heading-container">
               <div class="max-width-xlarge">
                 <div class="text-align-center">
-                  <h2 class="cta-heading">Get all of the growth tools you need in one place</h2>
+                  <h2 class="cta-heading">Access all the expansion tools you need in one spot</h2>
                 </div>
               </div>
               <div class="margin-top margin-xsmall">
                 <div class="max-width-medium align-center">
                   <div class="text-color-primary opac-80 text-align-center text-size-medium">
-                    Market your products, sell them anywhere with one platform. Sign up to start your 14 day free trial.
+                    Promote your items, sell them everywhere with one platform. Sign up to begin your 14 day free trial.
                   </div>
                 </div>
               </div>
@@ -388,9 +388,9 @@ import { RouterLink } from '@angular/router';
                     </div>
                   </div>
                   <div class="margin-bottom margin-xxsmall">
-                    <h3>Reliable payments and world-class security</h3>
+                    <h3>Trusted payments and top-tier security</h3>
                   </div>
-                  <p class="text-color-primary opac-80">Accept payments worldwide, keep your store and your customers safe.</p>
+                  <p class="text-color-primary opac-80">Accept payments globally, secure your shop and your buyers.</p>
                 </div>
                 <div class="grid-2x3">
                   <div class="feature-item">
@@ -440,7 +440,7 @@ import { RouterLink } from '@angular/router';
             <div class="margin-bottom margin-xsmall">
               <div class="max-width-xlarge">
                 <div class="text-align-center">
-                  <h2 class="cta-heading dark">Open <em>your</em> store today</h2>
+                  <h2 class="cta-heading dark">Launch <em>your</em> shop today</h2>
                 </div>
               </div>
             </div>
@@ -705,11 +705,11 @@ import { RouterLink } from '@angular/router';
     }
 
     .feature-card.products-variant {
-      background: linear-gradient(135deg, #fef3c7 0%, #fff7ed 50%, #ffffff 100%);
+      background: linear-gradient(135deg, #fef2c7 0%, #fff6ed 50%, #ffffff 100%);
     }
 
     .feature-card.customization-variant {
-      background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 50%, #ffffff 100%);
+      background: linear-gradient(135deg, #dbeafe 0%, #ece9fe 50%, #ffffff 100%);
     }
 
     .feature-card.marketing-variant {
@@ -854,7 +854,7 @@ import { RouterLink } from '@angular/router';
       align-items: center;
       justify-content: center;
       padding: 0.875rem 2rem;
-      background-color: #111111;
+      background-color: #1f2937;
       color: #ffffff;
       font-size: 1rem;
       font-weight: 600;

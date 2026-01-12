@@ -10,33 +10,33 @@ import { CommonModule } from '@angular/common';
     <div class="min-h-screen font-sans antialiased">
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
-        <div class="hero-card bg-gradient-to-br from-[#c6f4d1] via-[#d0f7dc] to-[#e8fbee] rounded-[2rem] mx-4 md:mx-8 lg:mx-12 mt-4">
+        <div class="hero-card bg-gradient-to-br from-[#b8e6c9] via-[#c8f0d0] to-[#d8f8e0] rounded-[2rem] mx-4 md:mx-8 lg:mx-12 mt-4">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 lg:py-24">
             <div class="text-center">
               <!-- Badge -->
               <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm mb-6">
-                <span class="text-sm font-medium text-gray-800">Your intuitive online store builder</span>
+                <span class="text-sm font-medium text-gray-800">Your smart online shop creator</span>
               </div>
               
               <!-- Main Heading -->
               <h1 class="font-dm-sans text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-6 leading-tight uppercase tracking-tight">
-                Create an online store.<br class="hidden sm:block">Start selling in minutes.
+                Build your online shop.<br class="hidden sm:block">Sell instantly.
               </h1>
               
               <!-- Subtext -->
               <p class="text-lg md:text-xl text-gray-700/80 max-w-2xl mx-auto mb-8">
-                A code-free online store builder to turn views into revenue. Sell digital products, subscriptions, and merch, without fees or hassle.
+                A no-code online shop builder to convert visitors into buyers. Sell digital goods, memberships, and merchandise, all without any charges or complications.
               </p>
               
               <!-- CTA Button -->
               <div class="mb-4">
-                <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors duration-200 shadow-lg hover:shadow-xl">
-                  Start free trial
+                <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-slate-800 text-white rounded-lg font-semibold text-lg hover:bg-slate-700 transition-colors duration-200 shadow-lg hover:shadow-xl">
+                  Begin free trial
                 </a>
               </div>
               
               <!-- Trial note -->
-              <p class="text-sm text-gray-600/60">14-day free trial, no card required.</p>
+              <p class="text-sm text-gray-600/60">14-day free trial, no payment info needed.</p>
             </div>
             
             <!-- Hero Images -->
@@ -89,7 +89,7 @@ import { CommonModule } from '@angular/common';
       <section class="py-16 md:py-24 px-4 md:px-8 lg:px-12">
         <div class="max-w-6xl mx-auto text-center">
           <h2 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-semibold text-gray-900 mb-12">
-            Join 75K+ creators who've earned $165M+ selling online <em class="font-normal">with zero fees.</em>
+            Join over 80K+ makers who've generated $180M+ in sales online <em class="font-normal">with no transaction fees.</em>
           </h2>
           
           <!-- Creators showcase -->
@@ -117,9 +117,9 @@ import { CommonModule } from '@angular/common';
           <div class="border-t border-gray-200 pt-16"></div>
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <h2 class="font-dm-sans text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 uppercase tracking-tight">
-              How to create an<br>online store
+              How to set up an<br>online shop
             </h2>
-            <div class="text-6xl">👆</div>
+            <div class="text-6xl">✨</div>
           </div>
         </div>
       </section>
@@ -127,16 +127,16 @@ import { CommonModule } from '@angular/common';
       <!-- Templates Section -->
       <section class="py-12 px-4 md:px-8 lg:px-12">
         <div class="max-w-7xl mx-auto">
-          <div class="hero-card bg-gradient-to-br from-[#fff5d6] via-[#fff8e1] to-[#fffbeb] rounded-[2rem] overflow-hidden">
+          <div class="hero-card bg-gradient-to-br from-[#fff3d0] via-[#fff7e0] to-[#fffbeb] rounded-[2rem] overflow-hidden">
             <div class="p-8 md:p-12 lg:p-16 text-center">
               <h3 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                Start with free templates<br>for instant online stores.
+                Launch with ready-made designs<br>for quick online shops.
               </h3>
               <p class="text-lg text-gray-700/80 max-w-xl mx-auto mb-8">
-                Choose from free online store templates. Tweak them your way or start selling right away.
+                Pick from complimentary online shop designs. Customize as you like or launch immediately.
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors duration-200">
-                Create your store
+              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-slate-800 text-white rounded-lg font-semibold text-lg hover:bg-slate-700 transition-colors duration-200">
+                Build your shop
               </a>
             </div>
             
@@ -155,16 +155,16 @@ import { CommonModule } from '@angular/common';
       <!-- Customization Section -->
       <section class="py-12 px-4 md:px-8 lg:px-12">
         <div class="max-w-7xl mx-auto">
-          <div class="hero-card bg-gradient-to-br from-[#e8e0ff] via-[#f0ebff] to-[#f5f2ff] rounded-[2rem] overflow-hidden">
+          <div class="hero-card bg-gradient-to-br from-[#e0e0ff] via-[#ebebff] to-[#f5f2ff] rounded-[2rem] overflow-hidden">
             <div class="p-8 md:p-12 lg:p-16 text-center">
               <h3 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                Customize with our drag-and-drop<br>store builder.
+                Personalize with our drag-and-drop<br>shop editor.
               </h3>
               <p class="text-lg text-gray-700/80 max-w-xl mx-auto mb-8">
-                Create a custom store that shines on web and mobile, block by block like LEGO. Click, click, click, no code required.
+                Design a unique shop that looks great on desktop and mobile, piece by piece like building blocks. Drag, drop, done, zero coding.
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors duration-200">
-                Create your store
+              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-slate-800 text-white rounded-lg font-semibold text-lg hover:bg-slate-700 transition-colors duration-200">
+                Build your shop
               </a>
             </div>
             
@@ -193,13 +193,13 @@ import { CommonModule } from '@angular/common';
       <section class="py-16 md:py-24 px-4 md:px-8 lg:px-12">
         <div class="max-w-6xl mx-auto text-center">
           <h3 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Add your digital products...
+            Upload your digital items...
           </h3>
           <p class="text-lg text-gray-700/80 max-w-lg mx-auto mb-8">
-            Sell eBooks, music, videos, designs, and more.<br>Up to 20GB per file. Per your beautiful, chunky file.
+            Offer eBooks, music, videos, graphics, and more.<br>Up to 20GB per file. Your massive, beautiful files.
           </p>
-          <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors duration-200 mb-12">
-            Create your store
+          <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-slate-800 text-white rounded-lg font-semibold text-lg hover:bg-slate-700 transition-colors duration-200 mb-12">
+            Build your shop
           </a>
           
           <!-- Products gallery -->
@@ -222,13 +222,13 @@ import { CommonModule } from '@angular/common';
             <!-- Content -->
             <div class="order-2 lg:order-1 text-center lg:text-left">
               <h3 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                ... subscription<br>products
+                ... membership<br>products
               </h3>
               <p class="text-lg text-gray-700/80 mb-8">
-                Turn your fans into subscribers with weekly, monthly, or yearly plans, all with automatic payments. Perfect for magazines, workout routines, exclusive content, and other digital products you sell regularly. Steady income for you, smooth experience for them.
+                Convert fans into members with monthly, yearly, or one-time plans, featuring automated billing. Ideal for newsletters, fitness programs, exclusive content, and recurring digital goods. Steady revenue for you, seamless for them.
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors duration-200">
-                Create your store
+              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-slate-800 text-white rounded-lg font-semibold text-lg hover:bg-slate-700 transition-colors duration-200">
+                Build your shop
               </a>
               
               <!-- Loved by creators -->
@@ -275,13 +275,13 @@ import { CommonModule } from '@angular/common';
             <!-- Content -->
             <div class="text-center lg:text-left">
               <h3 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                ... or even physical products.
+                ... or even tangible products.
               </h3>
               <p class="text-lg text-gray-700/80 mb-8">
-                Books, posters, stickers, home decor, you name it. Macaroni art? Why not!
+                Books, posters, stickers, decor, whatever!<br>Macaroni art? Absolutely!
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors duration-200">
-                Create your store
+              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-slate-800 text-white rounded-lg font-semibold text-lg hover:bg-slate-700 transition-colors duration-200">
+                Build your shop
               </a>
             </div>
           </div>
@@ -292,10 +292,10 @@ import { CommonModule } from '@angular/common';
       <section class="py-16 md:py-24 px-4 md:px-8 lg:px-12">
         <div class="max-w-6xl mx-auto text-center">
           <h3 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Create print-on-demand merch.
+            Produce print-on-demand apparel.
           </h3>
           <p class="text-lg text-gray-700/80 max-w-xl mx-auto mb-12">
-            Custom print-on-demand without upfront investment, delivered swiftly from the nearest one of our <strong>11 fulfillment centers</strong>.<br>They'll sPOD the speed and quality.
+            Custom print-on-demand without initial costs, shipped quickly from one of our <strong>11 distribution hubs</strong>.<br>They'll POD the speed and excellence.
           </p>
           
           <!-- Merch carousel -->
@@ -317,15 +317,15 @@ import { CommonModule } from '@angular/common';
       <!-- Marketing Section -->
       <section class="py-12 px-4 md:px-8 lg:px-12">
         <div class="max-w-7xl mx-auto">
-          <div class="bg-gradient-to-br from-[#fef3c7] via-[#fef9c3] to-[#fefce8] rounded-[2rem] overflow-hidden">
+          <div class="bg-gradient-to-br from-[#fef2c7] via-[#fef9c3] to-[#fefce8] rounded-[2rem] overflow-hidden">
             <div class="grid lg:grid-cols-2 gap-8 p-8 md:p-12 lg:p-16">
               <!-- Content -->
               <div class="text-center lg:text-left">
                 <h3 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                  Automate your<br>marketing.
+                  Automate your<br>promotion.
                 </h3>
                 <p class="text-lg text-gray-700/80 mb-8">
-                  Set marketing on autopilot, focus more on your craft.
+                  Put promotion on auto-pilot, concentrate more on your passion.
                 </p>
                 
                 <!-- Features grid -->
@@ -398,13 +398,13 @@ import { CommonModule } from '@angular/common';
             <!-- Content -->
             <div class="text-center lg:text-left">
               <h3 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                Set up a high-converting checkout.
+                Implement a conversion-optimized checkout.
               </h3>
               <p class="text-lg text-gray-700/80 mb-8">
-                Speed up purchases with express checkout. PayPal, Stripe, Apple Pay, Google Pay, and cards accepted.
+                Accelerate purchases with streamlined checkout. PayPal, Stripe, Apple Pay, Google Pay, and cards supported.
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors duration-200">
-                Create your store
+              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-slate-800 text-white rounded-lg font-semibold text-lg hover:bg-slate-700 transition-colors duration-200">
+                Build your shop
               </a>
             </div>
           </div>
@@ -419,10 +419,10 @@ import { CommonModule } from '@angular/common';
               <!-- Content -->
               <div class="text-center lg:text-left">
                 <h3 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                  Need a hand? We're here 24/7 for you!
+                  Need assistance? We're available around the clock!
                 </h3>
                 <p class="text-lg text-gray-700/80 mb-8">
-                  Have questions, need guidance, or just a gentle nudge to build an online store of your dreams? Our site pros and support heroes are here for you day and night!
+                  Got queries, require help, or just a gentle push to launch your dream online shop? Our experts and support team are here day and night!
                 </p>
                 
                 <!-- Support links -->
@@ -469,7 +469,7 @@ import { CommonModule } from '@angular/common';
         <div class="max-w-5xl mx-auto">
           <div class="text-center mb-12">
             <h2 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
-              Start free now. Upgrade later.<br>No transaction fees ever.
+              Launch for free today. Upgrade when ready.<br>No transaction fees ever.
             </h2>
           </div>
           
@@ -532,7 +532,7 @@ import { CommonModule } from '@angular/common';
         <div class="max-w-6xl mx-auto">
           <div class="text-center mb-12">
             <h2 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
-              Loved by creators
+              Cherished by makers
             </h2>
           </div>
           
@@ -613,10 +613,10 @@ import { CommonModule } from '@angular/common';
         <div class="max-w-4xl mx-auto">
           <div class="bg-gradient-to-br from-[#c6f4d1] via-[#d0f7dc] to-[#e8fbee] rounded-[2rem] p-8 md:p-12 lg:p-16 text-center relative overflow-hidden">
             <h2 class="font-dm-sans text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Create a store someday?<br>Nope. Today!
+              Ready to launch a shop?<br>Why wait!
             </h2>
-            <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold text-lg hover:bg-gray-800 transition-colors duration-200 mt-6">
-              Start for free
+            <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-slate-800 text-white rounded-lg font-semibold text-lg hover:bg-slate-700 transition-colors duration-200 mt-6">
+              Start free
             </a>
             
             <!-- Decorative elements -->
