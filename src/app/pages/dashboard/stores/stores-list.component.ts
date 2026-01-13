@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../../core/services/store.service';
@@ -42,10 +42,40 @@ import { Store } from '../../../core/models/index';
                   <div class="w-full h-32 bg-gradient-to-r from-primary-500 to-accent-500"></div>
                 }
                 <div class="p-6">
-                  <h3 class="font-semibold text-gray-900 text-lg">{{ store.name }}</h3>
-                  <p class="text-sm text-gray-500 mb-4">/{{ store.slug }}</p>
+                  <div class="flex items-start justify-between mb-2">
+                    <h3 class="font-semibold text-gray-900 text-lg">{{ store.name }}</h3>
+                    <span 
+                      class="px-2 py-1 text-xs font-medium rounded-full"
+                      [class]="store.status === 'PUBLISHED' 
+                        ? 'bg-green-100 text-green-700' 
+                        : store.status === 'DRAFT' 
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-red-100 text-red-700'"
+                    >
+                      {{ store.status }}
+                    </span>
+                  </div>
+                  
+                  <!-- Store URL -->
+                  <div class="mb-4">
+                    @if (store.status === 'PUBLISHED') {
+                      <a 
+                        [href]="storeService.getStoreUrl(store)" 
+                        target="_blank"
+                        class="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
+                      >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                        </svg>
+                        {{ store.slug }}.yoursite.com
+                      </a>
+                    } @else {
+                      <span class="text-sm text-gray-400">{{ store.slug }}.yoursite.com (not published)</span>
+                    }
+                  </div>
+                  
                   <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-400">{{ store.products?.length || 0 }} products</span>
+                    <span class="text-sm text-gray-400">{{ store._count?.products || 0 }} products</span>
                     <a [routerLink]="['/dashboard/stores', store.id]" class="btn-outline text-sm">Manage</a>
                   </div>
                 </div>
@@ -60,8 +90,7 @@ import { Store } from '../../../core/models/index';
 export class StoresListComponent implements OnInit {
   stores = signal<Store[]>([]);
   loading = signal(true);
-
-  constructor(private storeService: StoreService) {}
+  storeService = inject(StoreService);
 
   async ngOnInit() {
     const stores = await this.storeService.getMyStores();

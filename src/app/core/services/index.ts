@@ -4,3 +4,5 @@ export * from './store.service';
 export * from './product.service';
 export * from './checkout.service';
 export * from './download.service';
+export * from './subdomain.service';
+export * from './store-context.service';
