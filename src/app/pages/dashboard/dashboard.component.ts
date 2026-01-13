@@ -2,7 +2,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../core/services/store.service';
-import { Store } from '../../core/models/index';
+import { ProductService } from '../../core/services/product.service';
+import { Store, Product } from '../../core/models/index';
 
 @Component({
   selector: 'app-dashboard',
@@ -108,7 +109,55 @@ import { Store } from '../../core/models/index';
                       <h3 class="font-medium text-gray-900">{{ store.name }}</h3>
                       <p class="text-sm text-gray-500">{{ store.slug }}</p>
                     </div>
-                    <span class="text-sm text-gray-400">{{ store.products?.length || 0 }} products</span>
+                    <span class="text-sm text-gray-400">{{ store._count?.products || 0 }} products</span>
+                  </div>
+                </a>
+              }
+            }
+          </div>
+        </div>
+
+        <!-- Recent Products -->
+        <div class="card">
+          <div class="p-6 border-b flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-gray-900">Your Products</h2>
+            <a routerLink="/dashboard/products" class="text-primary-600 hover:text-primary-700 text-sm">View All</a>
+          </div>
+          <div class="divide-y">
+            @if (loading()) {
+              @for (i of [1, 2, 3]; track i) {
+                <div class="p-6 animate-pulse">
+                  <div class="h-5 bg-gray-200 rounded w-1/3 mb-2"></div>
+                  <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              }
+            } @else if (products().length === 0) {
+              <div class="p-12 text-center text-gray-500">
+                <p>No products yet. Create your first product to get started!</p>
+              </div>
+            } @else {
+              @for (product of products().slice(0, 5); track product.id) {
+                <a [routerLink]="['/dashboard/products', product.id]" class="block p-6 hover:bg-gray-50">
+                  <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                      @if (product.coverImageUrl) {
+                        <img [src]="product.coverImageUrl" alt="" class="w-12 h-12 object-cover rounded">
+                      } @else {
+                        <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center">
+                          <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                          </svg>
+                        </div>
+                      }
+                      <div>
+                        <h3 class="font-medium text-gray-900">{{ product.title }}</h3>
+                        <p class="text-sm text-gray-500">{{ product.store?.name }}</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <p class="font-medium text-gray-900">₹{{ product.price }}</p>
+                      <p class="text-sm text-gray-500">{{ product.status }}</p>
+                    </div>
                   </div>
                 </a>
               }
@@ -121,23 +170,29 @@ import { Store } from '../../core/models/index';
 })
 export class DashboardComponent implements OnInit {
   stores = signal<Store[]>([]);
+  products = signal<Product[]>([]);
   loading = signal(true);
   totalProducts = signal(0);
   totalSales = signal(0);
   totalRevenue = signal(0);
 
-  constructor(private storeService: StoreService) {}
+  constructor(private storeService: StoreService, private productService: ProductService) {}
 
   async ngOnInit() {
-    const stores = await this.storeService.getMyStores();
+    const [stores, products] = await Promise.all([
+      this.storeService.getMyStores(),
+      this.productService.getMyProducts()
+    ]);
+    
     this.stores.set(stores);
+    this.products.set(products);
     
     // Calculate totals
-    let products = 0;
+    let totalProducts = 0;
     stores.forEach(s => {
-      products += s.products?.length || 0;
+      totalProducts += s._count?.products || 0;
     });
-    this.totalProducts.set(products);
+    this.totalProducts.set(totalProducts);
     
     // TODO: Fetch actual sales data from API
     this.loading.set(false);
