@@ -1,115 +1,244 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { StoreContextService } from '../../core/services/store-context.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
+import { CartService } from '../../core/services/cart.service';
+import { CartSidebarComponent } from './cart-sidebar.component';
+import { StorefrontHomeComponent } from './storefront-home.component';
+import { StorefrontProductsComponent } from './storefront-products.component';
+import { StorefrontProductComponent } from './storefront-product.component';
+
+type StorefrontPage = 'home' | 'products' | 'product';
 
 @Component({
   selector: 'app-storefront-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink],
+  imports: [
+    CommonModule, 
+    CartSidebarComponent,
+    StorefrontHomeComponent,
+    StorefrontProductsComponent,
+    StorefrontProductComponent
+  ],
   template: `
     @if (storeContext.loading()) {
-      <div class="min-h-screen flex items-center justify-center bg-gray-50">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <!-- Loading State - Mobile optimized -->
+      <div class="min-h-screen flex items-center justify-center bg-white px-4">
+        <div class="flex flex-col items-center gap-4">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
+          <p class="text-gray-500 animate-pulse text-sm sm:text-base">Loading store...</p>
+        </div>
       </div>
     } @else if (storeContext.error()) {
-      <div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-        <div class="text-center">
-          <div class="w-24 h-24 mx-auto mb-6 bg-gray-200 rounded-full flex items-center justify-center">
-            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Error State - Mobile friendly -->
+      <div class="min-h-screen flex flex-col items-center justify-center bg-white px-4 py-10">
+        <div class="text-center max-w-sm w-full">
+          <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-5 sm:mb-6 bg-gradient-to-br from-[#fff3d0] to-[#fffbeb] rounded-full flex items-center justify-center">
+            <svg class="w-10 h-10 sm:w-12 sm:h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
           </div>
-          <h1 class="text-2xl font-bold text-gray-900 mb-2">Store Not Found</h1>
-          <p class="text-gray-600 mb-6">{{ storeContext.error() }}</p>
-          <a [href]="subdomainService.getMainSiteUrl()" class="btn-primary">
+          <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Store Not Found</h1>
+          <p class="text-gray-600 mb-6 text-sm sm:text-base">{{ storeContext.error() }}</p>
+          <a [href]="subdomainService.getMainSiteUrl()" class="inline-flex items-center justify-center w-full sm:w-auto px-8 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-colors min-h-[48px]">
             Visit Main Site
           </a>
         </div>
       </div>
     } @else if (storeContext.hasStore()) {
-      <div class="min-h-screen flex flex-col bg-gray-50">
-        <!-- Storefront Navbar -->
-        <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-              <!-- Store Logo & Name -->
-              <a routerLink="/" class="flex items-center gap-3">
+      <div class="min-h-screen flex flex-col bg-white font-sans antialiased">
+        <!-- Mobile-Optimized Header -->
+        <header class="bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40 safe-area-top">
+          <div class="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-14 sm:h-16">
+              <!-- Store Logo & Name - Touch friendly -->
+              <button 
+                (click)="navigateTo('home')" 
+                class="flex items-center gap-2.5 sm:gap-3 group min-h-[44px] -ml-1 pl-1"
+              >
                 @if (storeContext.store()?.logoUrl) {
                   <img 
                     [src]="storeContext.store()?.logoUrl" 
                     [alt]="storeContext.storeName()"
-                    class="w-10 h-10 rounded-lg object-cover"
+                    class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover shadow-sm"
                   >
                 } @else {
-                  <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center">
-                    <span class="text-lg font-bold text-primary-600">
-                      {{ storeContext.storeName().charAt(0) }}
+                  <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#b8e6c9] to-[#d8f8e0] flex items-center justify-center shadow-sm">
+                    <span class="text-base sm:text-lg font-bold text-gray-800">
+                      {{ storeContext.storeName().charAt(0).toUpperCase() }}
                     </span>
                   </div>
                 }
-                <span class="font-display font-semibold text-gray-900">
+                <span class="font-bold text-gray-900 text-sm sm:text-base truncate max-w-[120px] sm:max-w-[200px]">
                   {{ storeContext.storeName() }}
                 </span>
-              </a>
+              </button>
 
-              <!-- Navigation -->
-              <nav class="hidden md:flex items-center gap-6">
-                <a routerLink="/" class="text-gray-600 hover:text-gray-900 transition-colors">
-                  Home
-                </a>
-                <a routerLink="/products" class="text-gray-600 hover:text-gray-900 transition-colors">
-                  Products
-                </a>
-              </nav>
-
-              <!-- Actions -->
-              <div class="flex items-center gap-4">
-                <a [href]="subdomainService.getMainSiteUrl()" 
-                   class="text-sm text-gray-500 hover:text-gray-700 transition-colors">
-                  Main Site →
-                </a>
-              </div>
+              <!-- Cart Button - Large touch target -->
+              <button 
+                (click)="cartService.open()"
+                class="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors -mr-1"
+                aria-label="Open cart"
+              >
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                @if (cartService.itemCount() > 0) {
+                  <span class="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 min-w-[20px] h-5 px-1.5 bg-gray-900 text-white text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
+                    {{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}
+                  </span>
+                }
+              </button>
             </div>
           </div>
         </header>
 
         <!-- Main Content -->
         <main class="flex-1">
-          <router-outlet />
+          @switch (currentPage()) {
+            @case ('home') {
+              <app-storefront-home />
+            }
+            @case ('products') {
+              <app-storefront-products />
+            }
+            @case ('product') {
+              <app-storefront-product />
+            }
+          }
         </main>
 
-        <!-- Storefront Footer -->
-        <footer class="bg-white border-t border-gray-100 py-8">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div class="flex items-center gap-2">
+        <!-- Mobile-Friendly Footer -->
+        <footer class="bg-gradient-to-br from-gray-50 to-white border-t border-gray-100 safe-area-bottom">
+          <div class="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8">
+            <div class="flex flex-col items-center gap-5 sm:gap-6 md:flex-row md:justify-between">
+              <!-- Store Branding -->
+              <div class="flex items-center gap-2.5 sm:gap-3">
                 @if (storeContext.store()?.logoUrl) {
                   <img 
                     [src]="storeContext.store()?.logoUrl" 
                     [alt]="storeContext.storeName()"
-                    class="w-8 h-8 rounded-lg object-cover"
+                    class="w-8 h-8 rounded-xl object-cover"
                   >
+                } @else {
+                  <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-[#b8e6c9] to-[#d8f8e0] flex items-center justify-center">
+                    <span class="text-sm font-bold text-gray-800">
+                      {{ storeContext.storeName().charAt(0).toUpperCase() }}
+                    </span>
+                  </div>
                 }
-                <span class="font-semibold text-gray-900">{{ storeContext.storeName() }}</span>
+                <span class="font-bold text-gray-900 text-sm sm:text-base">{{ storeContext.storeName() }}</span>
               </div>
               
-              <div class="text-sm text-gray-500">
-                Powered by <a [href]="subdomainService.getMainSiteUrl()" class="text-primary-600 hover:underline">YourPlatform</a>
+              <!-- Footer Links - Touch friendly -->
+              <div class="flex items-center gap-4 sm:gap-6">
+                <button 
+                  (click)="navigateTo('products')"
+                  class="text-sm text-gray-500 hover:text-gray-900 active:text-gray-700 transition-colors font-medium py-2"
+                >
+                  All Products
+                </button>
+                <a 
+                  [href]="subdomainService.getMainSiteUrl()" 
+                  class="text-sm text-gray-500 hover:text-gray-900 active:text-gray-700 transition-colors font-medium py-2"
+                >
+                  Powered by IPR
+                </a>
               </div>
+            </div>
+            
+            <!-- Copyright - Mobile -->
+            <div class="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-gray-100 text-center">
+              <p class="text-xs sm:text-sm text-gray-400">
+                © {{ currentYear }} {{ storeContext.storeName() }}. All rights reserved.
+              </p>
             </div>
           </div>
         </footer>
+
+        <!-- Cart Sidebar / Bottom Sheet -->
+        <app-cart-sidebar />
       </div>
     }
   `,
+  styles: [`
+    @keyframes scale-in {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .animate-scale-in {
+      animation: scale-in 0.2s ease-out;
+    }
+    
+    /* Safe area support for iOS notch devices */
+    .safe-area-top {
+      padding-top: env(safe-area-inset-top);
+    }
+    .safe-area-bottom {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  `]
 })
 export class StorefrontLayoutComponent implements OnInit {
   storeContext = inject(StoreContextService);
   subdomainService = inject(SubdomainService);
+  cartService = inject(CartService);
+  private router = inject(Router);
+
+  currentPage = signal<StorefrontPage>('home');
+  productId = signal<string | null>(null);
+  currentYear = new Date().getFullYear();
 
   async ngOnInit() {
+    // Initialize store context
     await this.storeContext.initialize();
+    
+    // Parse initial route
+    this.parseRoute(this.router.url);
+    
+    // Listen for route changes
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.parseRoute(event.urlAfterRedirects || event.url);
+    });
+  }
+
+  private parseRoute(url: string) {
+    // Remove query params for parsing
+    const path = url.split('?')[0];
+    
+    if (path.startsWith('/products')) {
+      this.currentPage.set('products');
+    } else if (path.startsWith('/product/')) {
+      this.currentPage.set('product');
+      const match = path.match(/\/product\/([^\/]+)/);
+      if (match) {
+        this.productId.set(match[1]);
+      }
+    } else {
+      this.currentPage.set('home');
+    }
+  }
+
+  navigateTo(page: StorefrontPage | string) {
+    switch (page) {
+      case 'home':
+        this.router.navigate(['/'], { queryParamsHandling: 'merge' });
+        break;
+      case 'products':
+        this.router.navigate(['/products'], { queryParamsHandling: 'merge' });
+        break;
+      default:
+        this.router.navigate(['/'], { queryParamsHandling: 'merge' });
+    }
   }
 }
