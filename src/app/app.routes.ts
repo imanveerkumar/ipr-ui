@@ -23,6 +23,11 @@ export const routes: Routes = [
     path: 'profile/:username',
     loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
   },
+  // Guest download access (no auth required)
+  {
+    path: 'guest/downloads/:token',
+    loadComponent: () => import('./pages/guest/guest-downloads.component').then(m => m.GuestDownloadsComponent),
+  },
 
   // Auth required routes
   {

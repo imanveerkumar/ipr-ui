@@ -274,28 +274,10 @@ export class StorefrontProductsComponent implements OnInit {
     this.cartService.addItem(product);
   }
 
-  async handleBuyNow(product: Product) {
-    if (!this.authService.isSignedIn()) {
-      const returnUrl = window.location.href;
-      window.location.href = this.subdomainService.getMainSiteUrl(`/login?returnUrl=${encodeURIComponent(returnUrl)}`);
-      return;
-    }
-
-    try {
-      const order = await this.checkoutService.createOrder([product.id]);
-      if (!order) throw new Error('Failed to create order');
-      
-      const paymentData = await this.checkoutService.initiatePayment(order.id);
-      if (!paymentData) throw new Error('Failed to initiate payment');
-      
-      const userEmail = this.authService.user()?.email || '';
-      const success = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
-      
-      if (success) {
-        window.location.href = this.subdomainService.getMainSiteUrl('/library');
-      }
-    } catch (error) {
-      console.error('Checkout failed:', error);
-    }
+  handleBuyNow(product: Product) {
+    // Add product to cart and open cart sidebar for checkout
+    // This allows both guest and authenticated checkout flows
+    this.cartService.addItem(product);
+    this.cartService.open();
   }
 }

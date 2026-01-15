@@ -13,6 +13,11 @@ export interface PaymentInitResponse {
   orderId: string;
 }
 
+export interface GuestOrderDetails {
+  email: string;
+  phone?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,12 +29,29 @@ export class CheckoutService {
     return response.data || null;
   }
 
+  async createGuestOrder(productIds: string[], guestEmail: string, guestPhone?: string): Promise<Order | null> {
+    const response = await this.api.post<Order>('/orders/guest', { 
+      productIds, 
+      guestEmail, 
+      guestPhone 
+    });
+    return response.data || null;
+  }
+
   async initiatePayment(orderId: string): Promise<PaymentInitResponse | null> {
     const response = await this.api.post<PaymentInitResponse>('/payments/initiate', { orderId });
     return response.data || null;
   }
 
-  async openRazorpayCheckout(paymentData: PaymentInitResponse, userEmail: string): Promise<boolean> {
+  async initiateGuestPayment(orderId: string, guestEmail: string): Promise<PaymentInitResponse | null> {
+    const response = await this.api.post<PaymentInitResponse>('/payments/initiate/guest', { 
+      orderId, 
+      guestEmail 
+    });
+    return response.data || null;
+  }
+
+  async openRazorpayCheckout(paymentData: PaymentInitResponse, userEmail: string, userPhone?: string): Promise<boolean> {
     return new Promise((resolve) => {
       const options = {
         key: paymentData.razorpayKeyId,
@@ -40,6 +62,7 @@ export class CheckoutService {
         description: 'Digital Product Purchase',
         prefill: {
           email: userEmail,
+          contact: userPhone || '',
         },
         handler: async (response: any) => {
           const verified = await this.verifyPayment(
@@ -80,5 +103,15 @@ export class CheckoutService {
   async getMyLicenses(): Promise<License[]> {
     const response = await this.api.get<License[]>('/licenses');
     return response.data || [];
+  }
+
+  async getGuestOrder(downloadToken: string): Promise<Order | null> {
+    const response = await this.api.get<Order>(`/orders/download/${downloadToken}`);
+    return response.data || null;
+  }
+
+  async getGuestDownloadUrl(downloadToken: string, productId: string, fileId: string): Promise<any> {
+    const response = await this.api.post(`/downloads/guest/${downloadToken}/product/${productId}/file/${fileId}`, {});
+    return response.data || null;
   }
 }
