@@ -38,7 +38,18 @@ export class AuthService {
   private async initClerk() {
     try {
       this.clerk = new Clerk(environment.clerkPublishableKey);
-      await this.clerk.load();
+      await this.clerk.load({
+        // Use custom router functions to prevent page reloads
+        routerPush: (to: string) => {
+          // Don't navigate - just stay on current page
+          // The auth listener will handle the state update
+          return Promise.resolve();
+        },
+        routerReplace: (to: string) => {
+          // Don't navigate - just stay on current page
+          return Promise.resolve();
+        },
+      });
       
       this._isLoaded.set(true);
       
@@ -91,11 +102,13 @@ export class AuthService {
 
   async signIn() {
     if (!this.clerk) return;
+    // Open sign-in modal - custom router prevents redirects
     await this.clerk.openSignIn();
   }
 
   async signUp() {
     if (!this.clerk) return;
+    // Open sign-up modal - custom router prevents redirects
     await this.clerk.openSignUp();
   }
 
