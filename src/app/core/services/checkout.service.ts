@@ -58,7 +58,7 @@ export class CheckoutService {
         amount: paymentData.amount * 100, // Razorpay expects paise
         currency: paymentData.currency,
         order_id: paymentData.razorpayOrderId,
-        name: 'Creator Marketplace',
+        name: 'StoresCraft',
         description: 'Digital Product Purchase',
         prefill: {
           email: userEmail,

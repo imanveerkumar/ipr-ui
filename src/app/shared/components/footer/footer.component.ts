@@ -12,8 +12,8 @@ import { RouterLink } from '@angular/router';
           <!-- Brand -->
           <div class="col-span-1 md:col-span-2">
             <a routerLink="/" class="flex items-center gap-2 mb-4">
-              <span class="text-2xl font-display font-bold text-primary-400">Creator</span>
-              <span class="text-2xl font-display font-bold text-white">Market</span>
+              <span class="text-2xl font-display font-bold text-primary-400">Stores</span>
+              <span class="text-2xl font-display font-bold text-white">Craft</span>
             </a>
             <p class="text-sm max-w-md">
               The marketplace for digital creators. Sell templates, courses, designs, and more to a global audience.
@@ -43,7 +43,7 @@ import { RouterLink } from '@angular/router';
         </div>
 
         <div class="border-t border-gray-800 mt-12 pt-8 text-sm text-center">
-          <p>&copy; {{ currentYear }} Creator Marketplace. All rights reserved.</p>
+          <p>&copy; {{ currentYear }} StoresCraft. All rights reserved.</p>
         </div>
       </div>
     </footer>
