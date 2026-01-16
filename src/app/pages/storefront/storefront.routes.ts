@@ -14,6 +14,10 @@ export const storefrontRoutes: Routes = [
     loadComponent: () => import('./storefront-product.component').then(m => m.StorefrontProductComponent),
   },
   {
+    path: 'purchases',
+    loadComponent: () => import('./storefront-purchases.component').then(m => m.StorefrontPurchasesComponent),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

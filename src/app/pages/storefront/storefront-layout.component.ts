@@ -1,16 +1,20 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { StoreContextService } from '../../core/services/store-context.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
 import { CartService } from '../../core/services/cart.service';
+import { AuthService } from '../../core/services/auth.service';
+import { GuestAccessService } from '../../core/services/guest-access.service';
 import { CartSidebarComponent } from './cart-sidebar.component';
 import { StorefrontHomeComponent } from './storefront-home.component';
 import { StorefrontProductsComponent } from './storefront-products.component';
 import { StorefrontProductComponent } from './storefront-product.component';
+import { StorefrontPurchasesComponent } from './storefront-purchases.component';
+import { GuestAccessModalComponent } from '../../shared/components/guest-access-modal.component';
 
-type StorefrontPage = 'home' | 'products' | 'product';
+type StorefrontPage = 'home' | 'products' | 'product' | 'purchases';
 
 @Component({
   selector: 'app-storefront-layout',
@@ -20,7 +24,9 @@ type StorefrontPage = 'home' | 'products' | 'product';
     CartSidebarComponent,
     StorefrontHomeComponent,
     StorefrontProductsComponent,
-    StorefrontProductComponent
+    StorefrontProductComponent,
+    StorefrontPurchasesComponent,
+    GuestAccessModalComponent
   ],
   template: `
     @if (storeContext.loading()) {
@@ -76,22 +82,125 @@ type StorefrontPage = 'home' | 'products' | 'product';
                 </span>
               </button>
 
-              <!-- Cart Button - Large touch target -->
-              <button 
-                (click)="cartService.open()"
-                class="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors -mr-1"
-                aria-label="Open cart"
-              >
-                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                </svg>
-                @if (cartService.itemCount() > 0) {
-                  <span class="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 min-w-[20px] h-5 px-1.5 bg-gray-900 text-white text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
-                    {{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}
-                  </span>
+              <!-- Right Side Actions -->
+              <div class="flex items-center gap-1 sm:gap-2">
+                <!-- My Purchases Button -->
+                <button 
+                  (click)="navigateTo('purchases')"
+                  class="hidden sm:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                  </svg>
+                  <span>My Purchases</span>
+                </button>
+
+                <!-- Sign In / User Button -->
+                @if (authService.isSignedIn()) {
+                  <button 
+                    (click)="authService.openUserProfile()"
+                    class="hidden sm:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    <span>{{ authService.user()?.displayName || 'Account' }}</span>
+                  </button>
+                } @else if (guestAccess.isAuthenticated()) {
+                  <button 
+                    (click)="navigateTo('purchases')"
+                    class="hidden sm:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    <span>Guest</span>
+                  </button>
+                } @else {
+                  <button 
+                    (click)="openSignInModal()"
+                    class="hidden sm:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                    </svg>
+                    <span>Sign In</span>
+                  </button>
                 }
-              </button>
+
+                <!-- Mobile Menu Button -->
+                <button 
+                  (click)="toggleMobileMenu()"
+                  class="sm:hidden flex items-center justify-center w-11 h-11 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                  aria-label="Menu"
+                >
+                  <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                  </svg>
+                </button>
+
+                <!-- Cart Button - Large touch target -->
+                <button 
+                  (click)="cartService.open()"
+                  class="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors -mr-1"
+                  aria-label="Open cart"
+                >
+                  <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                  </svg>
+                  @if (cartService.itemCount() > 0) {
+                    <span class="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 min-w-[20px] h-5 px-1.5 bg-gray-900 text-white text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
+                      {{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}
+                    </span>
+                  }
+                </button>
+              </div>
             </div>
+
+            <!-- Mobile Menu Dropdown -->
+            @if (mobileMenuOpen()) {
+              <div class="sm:hidden border-t border-gray-100 py-2">
+                <button 
+                  (click)="navigateTo('purchases'); toggleMobileMenu()"
+                  class="w-full flex items-center gap-3 px-2 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                >
+                  <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                  </svg>
+                  My Purchases
+                </button>
+                @if (authService.isSignedIn()) {
+                  <button 
+                    (click)="authService.openUserProfile(); toggleMobileMenu()"
+                    class="w-full flex items-center gap-3 px-2 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                  >
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    {{ authService.user()?.displayName || 'My Account' }}
+                  </button>
+                  <button 
+                    (click)="authService.signOut(); toggleMobileMenu()"
+                    class="w-full flex items-center gap-3 px-2 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                  >
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    Sign Out
+                  </button>
+                } @else {
+                  <button 
+                    (click)="openSignInModal(); toggleMobileMenu()"
+                    class="w-full flex items-center gap-3 px-2 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                  >
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                    </svg>
+                    Sign In
+                  </button>
+                }
+              </div>
+            }
           </div>
         </header>
 
@@ -106,6 +215,9 @@ type StorefrontPage = 'home' | 'products' | 'product';
             }
             @case ('product') {
               <app-storefront-product />
+            }
+            @case ('purchases') {
+              <app-storefront-purchases />
             }
           }
         </main>
@@ -160,6 +272,13 @@ type StorefrontPage = 'home' | 'products' | 'product';
 
         <!-- Cart Sidebar / Bottom Sheet -->
         <app-cart-sidebar />
+
+        <!-- Guest Access Modal -->
+        <app-guest-access-modal 
+          #guestAccessModal
+          [mode]="guestModalMode()"
+          (authenticated)="onGuestAuthenticated()"
+        />
       </div>
     }
   `,
@@ -188,13 +307,19 @@ type StorefrontPage = 'home' | 'products' | 'product';
   `]
 })
 export class StorefrontLayoutComponent implements OnInit {
+  @ViewChild('guestAccessModal') guestAccessModal!: GuestAccessModalComponent;
+
   storeContext = inject(StoreContextService);
   subdomainService = inject(SubdomainService);
   cartService = inject(CartService);
+  authService = inject(AuthService);
+  guestAccess = inject(GuestAccessService);
   private router = inject(Router);
 
   currentPage = signal<StorefrontPage>('home');
   productId = signal<string | null>(null);
+  mobileMenuOpen = signal(false);
+  guestModalMode = signal<'purchases' | 'signin'>('purchases');
   currentYear = new Date().getFullYear();
 
   async ngOnInit() {
@@ -216,7 +341,9 @@ export class StorefrontLayoutComponent implements OnInit {
     // Remove query params for parsing
     const path = url.split('?')[0];
     
-    if (path.startsWith('/products')) {
+    if (path.startsWith('/purchases')) {
+      this.currentPage.set('purchases');
+    } else if (path.startsWith('/products')) {
       this.currentPage.set('products');
     } else if (path.startsWith('/product/')) {
       this.currentPage.set('product');
@@ -230,6 +357,7 @@ export class StorefrontLayoutComponent implements OnInit {
   }
 
   navigateTo(page: StorefrontPage | string) {
+    this.mobileMenuOpen.set(false);
     switch (page) {
       case 'home':
         this.router.navigate(['/'], { queryParamsHandling: 'merge' });
@@ -237,8 +365,32 @@ export class StorefrontLayoutComponent implements OnInit {
       case 'products':
         this.router.navigate(['/products'], { queryParamsHandling: 'merge' });
         break;
+      case 'purchases':
+        this.router.navigate(['/purchases'], { queryParamsHandling: 'merge' });
+        break;
       default:
         this.router.navigate(['/'], { queryParamsHandling: 'merge' });
     }
+  }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen.set(!this.mobileMenuOpen());
+  }
+
+  openSignInModal() {
+    // Try Clerk sign-in first for users with accounts
+    // If not signed in via Clerk, offer guest access modal
+    this.guestModalMode.set('signin');
+    this.guestAccessModal.open();
+  }
+
+  openPurchasesModal() {
+    this.guestModalMode.set('purchases');
+    this.guestAccessModal.open();
+  }
+
+  onGuestAuthenticated() {
+    // Navigate to purchases page after successful guest auth
+    this.navigateTo('purchases');
   }
 }

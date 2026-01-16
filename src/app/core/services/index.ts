@@ -7,3 +7,4 @@ export * from './download.service';
 export * from './subdomain.service';
 export * from './store-context.service';
 export * from './cart.service';
+export * from './guest-access.service';

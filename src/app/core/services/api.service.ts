@@ -10,9 +10,10 @@ export class ApiService {
 
   constructor() {}
 
-  private async getAuthHeaders(): Promise<HeadersInit> {
+  private async getAuthHeaders(customHeaders?: Record<string, string>): Promise<HeadersInit> {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
+      ...(customHeaders || {}),
     };
 
     // Get token from Clerk (we'll inject this later to avoid circular dependency)
@@ -40,8 +41,8 @@ export class ApiService {
     return null;
   }
 
-  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async get<T>(endpoint: string, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'GET',
       headers,
@@ -49,8 +50,8 @@ export class ApiService {
     return response.json();
   }
 
-  async post<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async post<T>(endpoint: string, body: any, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
       headers,
@@ -59,8 +60,8 @@ export class ApiService {
     return response.json();
   }
 
-  async put<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async put<T>(endpoint: string, body: any, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PUT',
       headers,
@@ -69,8 +70,8 @@ export class ApiService {
     return response.json();
   }
 
-  async patch<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async patch<T>(endpoint: string, body: any, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PATCH',
       headers,
@@ -79,8 +80,8 @@ export class ApiService {
     return response.json();
   }
 
-  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async delete<T>(endpoint: string, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'DELETE',
       headers,
