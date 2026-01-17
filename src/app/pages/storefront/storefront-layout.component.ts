@@ -12,7 +12,7 @@ import { StorefrontHomeComponent } from './storefront-home.component';
 import { StorefrontProductsComponent } from './storefront-products.component';
 import { StorefrontProductComponent } from './storefront-product.component';
 import { StorefrontPurchasesComponent } from './storefront-purchases.component';
-import { GuestAccessModalComponent } from '../../shared/components/guest-access-modal.component';
+import { PurchasesAuthModalComponent } from '../../shared/components/purchases-auth-modal.component';
 
 type StorefrontPage = 'home' | 'products' | 'product' | 'purchases';
 
@@ -26,7 +26,7 @@ type StorefrontPage = 'home' | 'products' | 'product' | 'purchases';
     StorefrontProductsComponent,
     StorefrontProductComponent,
     StorefrontPurchasesComponent,
-    GuestAccessModalComponent
+    PurchasesAuthModalComponent
   ],
   template: `
     @if (storeContext.loading()) {
@@ -86,7 +86,7 @@ type StorefrontPage = 'home' | 'products' | 'product' | 'purchases';
               <div class="flex items-center gap-1 sm:gap-2">
                 <!-- My Purchases Button -->
                 <button 
-                  (click)="navigateTo('purchases')"
+                  (click)="handlePurchasesClick()"
                   class="hidden sm:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,7 +161,7 @@ type StorefrontPage = 'home' | 'products' | 'product' | 'purchases';
             @if (mobileMenuOpen()) {
               <div class="sm:hidden border-t border-gray-100 py-2">
                 <button 
-                  (click)="navigateTo('purchases'); toggleMobileMenu()"
+                  (click)="handlePurchasesClick()"
                   class="w-full flex items-center gap-3 px-2 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
                 >
                   <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -273,11 +273,10 @@ type StorefrontPage = 'home' | 'products' | 'product' | 'purchases';
         <!-- Cart Sidebar / Bottom Sheet -->
         <app-cart-sidebar />
 
-        <!-- Guest Access Modal -->
-        <app-guest-access-modal 
-          #guestAccessModal
-          [mode]="guestModalMode()"
-          (authenticated)="onGuestAuthenticated()"
+        <!-- Purchases Auth Modal -->
+        <app-purchases-auth-modal 
+          #purchasesAuthModal
+          (authenticated)="onGuestAuthenticated($event)"
         />
       </div>
     }
@@ -307,7 +306,7 @@ type StorefrontPage = 'home' | 'products' | 'product' | 'purchases';
   `]
 })
 export class StorefrontLayoutComponent implements OnInit {
-  @ViewChild('guestAccessModal') guestAccessModal!: GuestAccessModalComponent;
+  @ViewChild('purchasesAuthModal') purchasesAuthModal!: PurchasesAuthModalComponent;
 
   storeContext = inject(StoreContextService);
   subdomainService = inject(SubdomainService);
@@ -319,7 +318,6 @@ export class StorefrontLayoutComponent implements OnInit {
   currentPage = signal<StorefrontPage>('home');
   productId = signal<string | null>(null);
   mobileMenuOpen = signal(false);
-  guestModalMode = signal<'purchases' | 'signin'>('purchases');
   currentYear = new Date().getFullYear();
 
   async ngOnInit() {
@@ -378,19 +376,30 @@ export class StorefrontLayoutComponent implements OnInit {
   }
 
   openSignInModal() {
-    // Try Clerk sign-in first for users with accounts
-    // If not signed in via Clerk, offer guest access modal
-    this.guestModalMode.set('signin');
-    this.guestAccessModal.open();
+    this.purchasesAuthModal.open();
   }
 
   openPurchasesModal() {
-    this.guestModalMode.set('purchases');
-    this.guestAccessModal.open();
+    this.purchasesAuthModal.open();
   }
 
-  onGuestAuthenticated() {
-    // Navigate to purchases page after successful guest auth
+  /**
+   * Handle "My Purchases" click - check auth status first
+   */
+  handlePurchasesClick() {
+    this.mobileMenuOpen.set(false);
+    
+    // If already authenticated (Clerk or guest), navigate directly
+    if (this.authService.isSignedIn() || this.guestAccess.isAuthenticated()) {
+      this.navigateTo('purchases');
+    } else {
+      // Open the auth modal
+      this.purchasesAuthModal.open();
+    }
+  }
+
+  onGuestAuthenticated(event: { type: 'guest' | 'clerk' }) {
+    // Both Clerk and guest users go to storefront purchases page
     this.navigateTo('purchases');
   }
 }

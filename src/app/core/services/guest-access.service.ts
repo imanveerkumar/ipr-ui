@@ -50,6 +50,12 @@ interface TokenValidation {
   type?: 'email' | 'phone';
 }
 
+interface UserCheckResponse {
+  exists: boolean;
+  hasClerkAccount: boolean;
+  hasGuestPurchases: boolean;
+}
+
 const GUEST_TOKEN_KEY = 'guest_access_token';
 
 @Injectable({
@@ -138,6 +144,26 @@ export class GuestAccessService {
   }
 
   /**
+   * Check if a user exists (either Clerk account or guest purchases)
+   */
+  async checkUserExists(identifier: string, type: 'email' | 'phone'): Promise<UserCheckResponse> {
+    try {
+      const response = await this.api.post<UserCheckResponse>('/guest-auth/check-user', {
+        identifier,
+        type,
+      });
+
+      if (!response.success || !response.data) {
+        return { exists: false, hasClerkAccount: false, hasGuestPurchases: false };
+      }
+
+      return response.data;
+    } catch {
+      return { exists: false, hasClerkAccount: false, hasGuestPurchases: false };
+    }
+  }
+
+  /**
    * Request OTP for email or phone
    */
   async requestOtp(identifier: string, type: 'email' | 'phone'): Promise<OtpResponse> {
@@ -200,8 +226,9 @@ export class GuestAccessService {
 
   /**
    * Fetch purchased products for authenticated guest
+   * @param storeId Optional store ID to filter purchases
    */
-  async fetchPurchases(): Promise<GuestPurchase[]> {
+  async fetchPurchases(storeId?: string): Promise<GuestPurchase[]> {
     const token = this.getStoredToken();
     if (!token) {
       this._error.set('Not authenticated');
@@ -212,8 +239,12 @@ export class GuestAccessService {
     this._error.set(null);
 
     try {
+      const endpoint = storeId 
+        ? `/guest-auth/purchases?storeId=${storeId}`
+        : '/guest-auth/purchases';
+      
       const response = await this.api.get<GuestPurchase[]>(
-        '/guest-auth/purchases',
+        endpoint,
         { headers: { 'x-guest-token': token } }
       );
 
