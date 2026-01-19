@@ -50,6 +50,7 @@ import { RichTextEditorComponent } from '../../../shared/components';
               required
               class="input"
               placeholder="My Amazing Product"
+              (input)="onTitleChange()"
             >
           </div>
 
@@ -64,6 +65,7 @@ import { RichTextEditorComponent } from '../../../shared/components';
               class="input"
               placeholder="my-product"
               pattern="[a-z0-9-]+"
+              (input)="onSlugChange()"
             >
             <p class="text-xs text-gray-500 mt-1">Only lowercase letters, numbers, and hyphens</p>
           </div>
@@ -158,6 +160,7 @@ export class ProductFormComponent implements OnInit {
   stores = signal<Store[]>([]);
   selectedFiles = signal<File[]>([]);
   productId: string | null = null;
+  slugManuallyEdited = false;
 
   form = {
     storeId: '',
@@ -184,6 +187,7 @@ export class ProductFormComponent implements OnInit {
     this.productId = this.route.snapshot.paramMap.get('id');
     if (this.productId && this.productId !== 'new') {
       this.isEditing.set(true);
+      this.slugManuallyEdited = true; // Don't auto-update slug when editing
       const product = await this.productService.getProduct(this.productId);
       this.form = {
         storeId: product.storeId,
@@ -193,6 +197,8 @@ export class ProductFormComponent implements OnInit {
         price: product.price / 100, // Convert from cents
         status: product.status,
       };
+    } else {
+      this.slugManuallyEdited = false; // Allow auto-generation for new products
     }
   }
 
@@ -205,6 +211,25 @@ export class ProductFormComponent implements OnInit {
 
   removeFile(file: File) {
     this.selectedFiles.set(this.selectedFiles().filter(f => f !== file));
+  }
+
+  onTitleChange() {
+    if (!this.isEditing() && this.form.title && !this.slugManuallyEdited) {
+      this.form.slug = this.generateSlug(this.form.title);
+    }
+  }
+
+  onSlugChange() {
+    this.slugManuallyEdited = true;
+  }
+
+  generateSlug(title: string): string {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Remove multiple consecutive hyphens
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
   }
 
   async save() {
