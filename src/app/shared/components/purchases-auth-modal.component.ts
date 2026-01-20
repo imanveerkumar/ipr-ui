@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, signal, inject, Output, EventEmitter, Input, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GuestAccessService } from '../../core/services/guest-access.service';
@@ -81,7 +81,33 @@ interface UserCheckResult {
                 <!-- Input Field -->
                 @if (method() === 'email') {
                   <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      Email Address <span class="text-red-500">*</span>
+                      <button 
+                        type="button"
+                        (click)="toggleTooltip('email')"
+                        class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                        aria-label="Help for Email Address field"
+                      >
+                        <svg viewBox="0 0 16 16" class="w-full h-full">
+                          <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                          <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                        </svg>
+                      </button>
+                      @if (activeTooltip() === 'email') {
+                        <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                          <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                          {{ getTooltipText('email') }}
+                          <button 
+                            (click)="hideTooltip()"
+                            class="ml-2 text-gray-300 hover:text-white text-sm"
+                            aria-label="Close tooltip"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      }
+                    </label>
                     <input 
                       type="email"
                       [(ngModel)]="email"
@@ -92,7 +118,33 @@ interface UserCheckResult {
                   </div>
                 } @else {
                   <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number <span class="text-red-500">*</span>
+                      <button 
+                        type="button"
+                        (click)="toggleTooltip('phone')"
+                        class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                        aria-label="Help for Phone Number field"
+                      >
+                        <svg viewBox="0 0 16 16" class="w-full h-full">
+                          <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                          <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                        </svg>
+                      </button>
+                      @if (activeTooltip() === 'phone') {
+                        <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                          <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                          {{ getTooltipText('phone') }}
+                          <button 
+                            (click)="hideTooltip()"
+                            class="ml-2 text-gray-300 hover:text-white text-sm"
+                            aria-label="Close tooltip"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      }
+                    </label>
                     <input 
                       type="tel"
                       [(ngModel)]="phone"
@@ -404,6 +456,7 @@ export class PurchasesAuthModalComponent implements OnInit {
   // Form data
   email = '';
   phone = '';
+  activeTooltip = signal<string | null>(null);
   otpDigits: string[] = ['', '', '', '', '', ''];
 
   private cooldownInterval: any = null;
@@ -641,5 +694,30 @@ export class PurchasesAuthModalComponent implements OnInit {
     if (this.isOtpComplete()) {
       setTimeout(() => this.verifyOtp(), 100);
     }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    // Close tooltip if clicked outside of tooltip or info button
+    if (!target.closest('.tooltip-container') && !target.closest('.info-button')) {
+      this.hideTooltip();
+    }
+  }
+
+  toggleTooltip(field: string) {
+    this.activeTooltip.set(this.activeTooltip() === field ? null : field);
+  }
+
+  hideTooltip() {
+    this.activeTooltip.set(null);
+  }
+
+  getTooltipText(field: string): string {
+    const tooltips: { [key: string]: string } = {
+      email: 'Enter the email address you used when making your purchase. We\'ll check if you have any downloads available.',
+      phone: 'Enter the phone number you used when making your purchase. Include country code (like +91 for India).'
+    };
+    return tooltips[field] || '';
   }
 }

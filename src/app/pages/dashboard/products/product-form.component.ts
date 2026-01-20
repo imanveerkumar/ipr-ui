@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -24,7 +24,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
       <div class="max-w-3xl mx-auto px-4 py-8">
         <form (ngSubmit)="save()" class="card p-6 space-y-6">
           <div>
-            <label for="storeId" class="block text-sm font-medium text-gray-700 mb-1">Store</label>
+            <label for="storeId" class="block text-sm font-medium text-gray-700 mb-1">
+              Store <span class="text-red-500">*</span>
+              <button 
+                type="button"
+                (click)="toggleTooltip('storeId')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Store field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'storeId') {
+                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('storeId') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <select
               id="storeId"
               [(ngModel)]="form.storeId"
@@ -41,7 +67,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
 
           <div>
-            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Product Title</label>
+            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">
+              Product Title <span class="text-red-500">*</span>
+              <button 
+                type="button"
+                (click)="toggleTooltip('title')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Product Title field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'title') {
+                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('title') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <input
               type="text"
               id="title"
@@ -55,7 +107,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
 
           <div>
-            <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">Product URL</label>
+            <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">
+              Product URL <span class="text-red-500">*</span>
+              <button 
+                type="button"
+                (click)="toggleTooltip('slug')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Product URL field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'slug') {
+                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('slug') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <input
               type="text"
               id="slug"
@@ -71,7 +149,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
 
           <div>
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+              Description
+              <button 
+                type="button"
+                (click)="toggleTooltip('description')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Description field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'description') {
+                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('description') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <app-rich-text-editor
               [(ngModel)]="form.description"
               name="description"
@@ -80,7 +184,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
 
           <div>
-            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
+            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">
+              Price (₹) <span class="text-red-500">*</span>
+              <button 
+                type="button"
+                (click)="toggleTooltip('price')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Price field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'price') {
+                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('price') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <input
               type="number"
               id="price"
@@ -95,7 +225,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
 
           <div>
-            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
+              Status
+              <button 
+                type="button"
+                (click)="toggleTooltip('status')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Status field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'status') {
+                <div class="mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('status') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <select
               id="status"
               [(ngModel)]="form.status"
@@ -109,7 +265,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
 
           <!-- File Upload Section -->
           <div class="border-t pt-6">
-            <h3 class="font-medium text-gray-900 mb-4">Product Files</h3>
+            <h3 class="font-medium text-gray-900 mb-4">
+              Product Files
+              <button 
+                type="button"
+                (click)="toggleTooltip('files')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Product Files"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'files') {
+                <div class="mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('files') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </h3>
             <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
               <input
                 type="file"
@@ -161,6 +343,7 @@ export class ProductFormComponent implements OnInit {
   selectedFiles = signal<File[]>([]);
   productId: string | null = null;
   slugManuallyEdited = false;
+  activeTooltip = signal<string | null>(null);
 
   form = {
     storeId: '',
@@ -221,6 +404,36 @@ export class ProductFormComponent implements OnInit {
 
   onSlugChange() {
     this.slugManuallyEdited = true;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    // Close tooltip if clicked outside of tooltip or info button
+    if (!target.closest('.tooltip-container') && !target.closest('.info-button')) {
+      this.hideTooltip();
+    }
+  }
+
+  toggleTooltip(field: string) {
+    this.activeTooltip.set(this.activeTooltip() === field ? null : field);
+  }
+
+  hideTooltip() {
+    this.activeTooltip.set(null);
+  }
+
+  getTooltipText(field: string): string {
+    const tooltips: { [key: string]: string } = {
+      storeId: 'Choose which of your stores this product will be listed in. Each store can have multiple products.',
+      title: 'Give your product a clear, catchy name that customers will see. Keep it descriptive and appealing.',
+      slug: 'This creates a web address for your product. It auto-generates from your title but you can customize it. Use only letters, numbers, and hyphens.',
+      description: 'Describe your product in detail. Explain what it includes, how it helps customers, and any special features. You can use formatting like bold text and lists.',
+      price: 'Set the price customers will pay for your product. Enter the amount in rupees (e.g., 99.00 for ₹99). This is what they\'ll be charged.',
+      status: 'Choose whether your product is ready for customers to see. Draft means only you can see it. Published means customers can find and buy it.',
+      files: 'Upload the actual files customers will download after purchase. These can be digital products like design files, PDFs, software, templates, etc. Supported formats: ZIP, PDF, PSD, AI, and more.'
+    };
+    return tooltips[field] || '';
   }
 
   generateSlug(title: string): string {

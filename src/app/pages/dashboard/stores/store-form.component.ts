@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -83,7 +83,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
 
         <form (ngSubmit)="save()" class="card p-6 space-y-6">
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Store Name</label>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+              Store Name <span class="text-red-500">*</span>
+              <button 
+                type="button"
+                (click)="toggleTooltip('name')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Store Name field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'name') {
+                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('name') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <input
               type="text"
               id="name"
@@ -96,7 +122,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
 
           <div>
-            <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">Store URL (Subdomain)</label>
+            <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">
+              Store URL (Subdomain) <span class="text-red-500">*</span>
+              <button 
+                type="button"
+                (click)="toggleTooltip('slug')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Store URL field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'slug') {
+                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('slug') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <div class="flex items-center">
               <input
                 type="text"
@@ -122,7 +174,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
 
           <div>
-            <label for="tagline" class="block text-sm font-medium text-gray-700 mb-1">Tagline</label>
+            <label for="tagline" class="block text-sm font-medium text-gray-700 mb-1">
+              Tagline
+              <button 
+                type="button"
+                (click)="toggleTooltip('tagline')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Tagline field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'tagline') {
+                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('tagline') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <input
               type="text"
               id="tagline"
@@ -134,7 +212,33 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
 
           <div>
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+              Description
+              <button 
+                type="button"
+                (click)="toggleTooltip('description')"
+                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                aria-label="Help for Description field"
+              >
+                <svg viewBox="0 0 16 16" class="w-full h-full">
+                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
+                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
+                </svg>
+              </button>
+              @if (activeTooltip() === 'description') {
+                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                  {{ getTooltipText('description') }}
+                  <button 
+                    (click)="hideTooltip()"
+                    class="ml-2 text-gray-300 hover:text-white text-sm"
+                    aria-label="Close tooltip"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </label>
             <app-rich-text-editor
               [(ngModel)]="form.description"
               name="description"
@@ -183,6 +287,7 @@ export class StoreFormComponent implements OnInit {
   slugError = signal<string | null>(null);
   store = signal<Store | null>(null);
   storeId: string | null = null;
+  activeTooltip = signal<string | null>(null);
 
   form = {
     name: '',
@@ -293,6 +398,33 @@ export class StoreFormComponent implements OnInit {
     navigator.clipboard.writeText(url);
     this.copied.set(true);
     setTimeout(() => this.copied.set(false), 2000);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    // Close tooltip if clicked outside of tooltip or info button
+    if (!target.closest('.tooltip-container') && !target.closest('.info-button')) {
+      this.hideTooltip();
+    }
+  }
+
+  toggleTooltip(field: string) {
+    this.activeTooltip.set(this.activeTooltip() === field ? null : field);
+  }
+
+  hideTooltip() {
+    this.activeTooltip.set(null);
+  }
+
+  getTooltipText(field: string): string {
+    const tooltips: { [key: string]: string } = {
+      name: 'Choose a memorable name for your online store. This is what customers will see as your brand name.',
+      slug: 'This creates your store\'s web address (like mystore.yoursite.com). Choose something simple and brand-related. Only use letters, numbers, and hyphens.',
+      tagline: 'A short, catchy phrase that describes what makes your store special. This appears under your store name.',
+      description: 'Write about what your store offers, your story, and what makes you unique. This helps customers understand your brand.'
+    };
+    return tooltips[field] || '';
   }
 
   cancel() {
