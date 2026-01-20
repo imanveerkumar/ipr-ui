@@ -105,13 +105,13 @@ export class SalesComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      const response = await this.api.get<Sale[]>('/orders/my-sales');
+      const response = await this.api.get<Sale[]>('/orders/sales');
       const salesData: Sale[] = response.data || [];
       this.sales.set(salesData);
 
-      // Calculate totals
+      // Calculate totals (include both PAID and FULFILLED)
       const total = salesData
-        .filter((s: Sale) => s.status === 'PAID')
+        .filter((s: Sale) => s.status === 'PAID' || s.status === 'FULFILLED')
         .reduce((sum: number, s: Sale) => sum + s.amount, 0);
       this.totalRevenue.set(total / 100);
 
@@ -119,7 +119,7 @@ export class SalesComponent implements OnInit {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const monthly = salesData
-        .filter((s: Sale) => s.status === 'PAID' && new Date(s.createdAt) >= startOfMonth)
+        .filter((s: Sale) => (s.status === 'PAID' || s.status === 'FULFILLED') && new Date(s.createdAt) >= startOfMonth)
         .reduce((sum: number, s: Sale) => sum + s.amount, 0);
       this.monthlyRevenue.set(monthly / 100);
     } catch (error) {

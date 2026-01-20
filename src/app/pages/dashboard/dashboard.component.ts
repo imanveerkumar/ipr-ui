@@ -3,7 +3,18 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../core/services/store.service';
 import { ProductService } from '../../core/services/product.service';
+import { ApiService } from '../../core/services/api.service';
 import { Store, Product } from '../../core/models/index';
+
+interface Sale {
+  id: string;
+  productTitle: string;
+  storeName: string;
+  customerEmail: string;
+  amount: number;
+  status: string;
+  createdAt: string;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -176,25 +187,42 @@ export class DashboardComponent implements OnInit {
   totalSales = signal(0);
   totalRevenue = signal(0);
 
-  constructor(private storeService: StoreService, private productService: ProductService) {}
+  constructor(
+    private storeService: StoreService,
+    private productService: ProductService,
+    private api: ApiService
+  ) {}
 
   async ngOnInit() {
-    const [stores, products] = await Promise.all([
-      this.storeService.getMyStores(),
-      this.productService.getMyProducts()
-    ]);
-    
-    this.stores.set(stores);
-    this.products.set(products);
-    
-    // Calculate totals
-    let totalProducts = 0;
-    stores.forEach(s => {
-      totalProducts += s._count?.products || 0;
-    });
-    this.totalProducts.set(totalProducts);
-    
-    // TODO: Fetch actual sales data from API
-    this.loading.set(false);
+    try {
+      const [stores, products, salesResponse] = await Promise.all([
+        this.storeService.getMyStores(),
+        this.productService.getMyProducts(),
+        this.api.get<Sale[]>('/orders/sales')
+      ]);
+      
+      this.stores.set(stores);
+      this.products.set(products);
+      
+      // Calculate total products
+      let totalProducts = 0;
+      stores.forEach(s => {
+        totalProducts += s._count?.products || 0;
+      });
+      this.totalProducts.set(totalProducts);
+      
+      // Calculate sales and revenue from API data
+      const salesData: Sale[] = salesResponse.data || [];
+      const paidSales = salesData.filter((s: Sale) => s.status === 'PAID' || s.status === 'FULFILLED');
+      
+      this.totalSales.set(paidSales.length);
+      
+      const revenue = paidSales.reduce((sum: number, s: Sale) => sum + s.amount, 0);
+      this.totalRevenue.set(revenue / 100); // Convert from paise to rupees
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }
