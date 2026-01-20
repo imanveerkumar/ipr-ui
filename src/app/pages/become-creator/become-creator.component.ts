@@ -133,13 +133,13 @@ export class BecomeCreatorComponent {
 
   async upgrade() {
     this.loading.set(true);
-    const success = await this.authService.upgradeToCreator();
+    const result = await this.authService.upgradeToCreator();
     this.loading.set(false);
 
-    if (success) {
+    if (result.success) {
       this.router.navigate(['/dashboard']);
     } else {
-      alert('Failed to upgrade. Please try again.');
+      alert(result.message || 'Failed to upgrade. Please try again.');
     }
   }
 }

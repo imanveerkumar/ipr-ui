@@ -135,17 +135,17 @@ export class AuthService {
     }
   }
 
-  async upgradeToCreator(): Promise<boolean> {
+  async upgradeToCreator(): Promise<{ success: boolean; message?: string }> {
     try {
       const response = await this.apiService.post<User>('/auth/upgrade-to-creator', {});
       if (response.success && response.data) {
         this._user.set(response.data);
-        return true;
+        return { success: true };
       }
-      return false;
-    } catch (error) {
+      return { success: false, message: response.message };
+    } catch (error: any) {
       console.error('Failed to upgrade to creator:', error);
-      return false;
+      return { success: false, message: error.message || 'Failed to upgrade' };
     }
   }
 

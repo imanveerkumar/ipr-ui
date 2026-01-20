@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, creatorGuard, adminGuard } from './core/guards';
+import { authGuard, creatorGuard, adminGuard, nonCreatorGuard } from './core/guards';
 
 // Dummy component for storefront routes - actual rendering handled by StorefrontLayoutComponent
 const StorefrontPassthrough = () => import('./pages/storefront/storefront-layout.component').then(m => m.StorefrontLayoutComponent);
@@ -67,7 +67,7 @@ export const routes: Routes = [
   {
     path: 'become-creator',
     loadComponent: () => import('./pages/become-creator/become-creator.component').then(m => m.BecomeCreatorComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, nonCreatorGuard],
   },
 
   // Creator routes

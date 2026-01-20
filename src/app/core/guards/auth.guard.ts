@@ -64,3 +64,31 @@ export const adminGuard: CanActivateFn = async () => {
   router.navigate(['/']);
   return false;
 };
+
+export const nonCreatorGuard: CanActivateFn = async () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  // Wait for Clerk to load
+  while (!authService.isLoaded()) {
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+
+  if (!authService.isSignedIn()) {
+    router.navigate(['/']);
+    return false;
+  }
+
+  // Wait for user data to load
+  while (!authService.user()) {
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+
+  if (!authService.isCreator()) {
+    return true;
+  }
+
+  // Redirect creators to dashboard
+  router.navigate(['/dashboard']);
+  return false;
+};
