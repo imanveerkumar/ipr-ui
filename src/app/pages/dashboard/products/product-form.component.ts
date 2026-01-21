@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { StoreService } from '../../../core/services/store.service';
 import { Store } from '../../../core/models/index';
@@ -10,331 +10,744 @@ import { RichTextEditorComponent } from '../../../shared/components';
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RichTextEditorComponent],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent, RouterLink],
   template: `
-    <div class="min-h-screen bg-gray-50">
-      <div class="bg-white border-b">
-        <div class="max-w-3xl mx-auto px-4 py-6">
-          <h1 class="text-2xl font-display font-bold text-gray-900">
-            {{ isEditing() ? 'Edit Product' : 'Create Product' }}
-          </h1>
+    <div class="page-wrapper">
+      <!-- Header Section -->
+      <section class="header-section">
+        <div class="container">
+          <div class="header-content">
+            <div class="header-text">
+              <div class="breadcrumb">
+                <a routerLink="/dashboard" class="breadcrumb-link">Dashboard</a>
+                <svg class="breadcrumb-separator" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+                <a routerLink="/dashboard/products" class="breadcrumb-link">Products</a>
+                <svg class="breadcrumb-separator" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 18l6-6-6-6"/>
+                </svg>
+                <span class="breadcrumb-current">{{ isEditing() ? 'Edit' : 'New' }}</span>
+              </div>
+              <h1 class="page-title">{{ isEditing() ? 'Edit Product' : 'Create Product' }}</h1>
+              <p class="page-subtitle">{{ isEditing() ? 'Update your product details' : 'Add a new digital product to your store' }}</p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="max-w-3xl mx-auto px-4 py-8">
-        <form (ngSubmit)="save()" class="card p-6 space-y-6">
-          <div>
-            <label for="storeId" class="block text-sm font-medium text-gray-700 mb-1">
-              Store <span class="text-red-500">*</span>
-              <button 
-                type="button"
-                (click)="toggleTooltip('storeId')"
-                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
-                aria-label="Help for Store field"
-              >
-                <svg viewBox="0 0 16 16" class="w-full h-full">
-                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
-                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
-                </svg>
-              </button>
-              @if (activeTooltip() === 'storeId') {
-                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
-                  {{ getTooltipText('storeId') }}
-                  <button 
-                    (click)="hideTooltip()"
-                    class="ml-2 text-gray-300 hover:text-white text-sm"
-                    aria-label="Close tooltip"
-                  >
-                    ×
-                  </button>
-                </div>
-              }
-            </label>
-            <select
-              id="storeId"
-              [(ngModel)]="form.storeId"
-              name="storeId"
-              required
-              class="input"
-              [disabled]="isEditing()"
-            >
-              <option value="">Select a store</option>
-              @for (store of stores(); track store.id) {
-                <option [value]="store.id">{{ store.name }}</option>
-              }
-            </select>
-          </div>
-
-          <div>
-            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">
-              Product Title <span class="text-red-500">*</span>
-              <button 
-                type="button"
-                (click)="toggleTooltip('title')"
-                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
-                aria-label="Help for Product Title field"
-              >
-                <svg viewBox="0 0 16 16" class="w-full h-full">
-                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
-                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
-                </svg>
-              </button>
-              @if (activeTooltip() === 'title') {
-                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
-                  {{ getTooltipText('title') }}
-                  <button 
-                    (click)="hideTooltip()"
-                    class="ml-2 text-gray-300 hover:text-white text-sm"
-                    aria-label="Close tooltip"
-                  >
-                    ×
-                  </button>
-                </div>
-              }
-            </label>
-            <input
-              type="text"
-              id="title"
-              [(ngModel)]="form.title"
-              name="title"
-              required
-              class="input"
-              placeholder="My Amazing Product"
-              (input)="onTitleChange()"
-            >
-          </div>
-
-          <div>
-            <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">
-              Product URL <span class="text-red-500">*</span>
-              <button 
-                type="button"
-                (click)="toggleTooltip('slug')"
-                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
-                aria-label="Help for Product URL field"
-              >
-                <svg viewBox="0 0 16 16" class="w-full h-full">
-                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
-                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
-                </svg>
-              </button>
-              @if (activeTooltip() === 'slug') {
-                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
-                  {{ getTooltipText('slug') }}
-                  <button 
-                    (click)="hideTooltip()"
-                    class="ml-2 text-gray-300 hover:text-white text-sm"
-                    aria-label="Close tooltip"
-                  >
-                    ×
-                  </button>
-                </div>
-              }
-            </label>
-            <input
-              type="text"
-              id="slug"
-              [(ngModel)]="form.slug"
-              name="slug"
-              required
-              class="input"
-              placeholder="my-product"
-              pattern="[a-z0-9-]+"
-              (input)="onSlugChange()"
-            >
-            <p class="text-xs text-gray-500 mt-1">Only lowercase letters, numbers, and hyphens</p>
-          </div>
-
-          <div>
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
-              Description
-              <button 
-                type="button"
-                (click)="toggleTooltip('description')"
-                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
-                aria-label="Help for Description field"
-              >
-                <svg viewBox="0 0 16 16" class="w-full h-full">
-                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
-                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
-                </svg>
-              </button>
-              @if (activeTooltip() === 'description') {
-                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
-                  {{ getTooltipText('description') }}
-                  <button 
-                    (click)="hideTooltip()"
-                    class="ml-2 text-gray-300 hover:text-white text-sm"
-                    aria-label="Close tooltip"
-                  >
-                    ×
-                  </button>
-                </div>
-              }
-            </label>
-            <app-rich-text-editor
-              [(ngModel)]="form.description"
-              name="description"
-              placeholder="Describe your product..."
-            ></app-rich-text-editor>
-          </div>
-
-          <div>
-            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">
-              Price (₹) <span class="text-red-500">*</span>
-              <button 
-                type="button"
-                (click)="toggleTooltip('price')"
-                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
-                aria-label="Help for Price field"
-              >
-                <svg viewBox="0 0 16 16" class="w-full h-full">
-                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
-                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
-                </svg>
-              </button>
-              @if (activeTooltip() === 'price') {
-                <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
-                  {{ getTooltipText('price') }}
-                  <button 
-                    (click)="hideTooltip()"
-                    class="ml-2 text-gray-300 hover:text-white text-sm"
-                    aria-label="Close tooltip"
-                  >
-                    ×
-                  </button>
-                </div>
-              }
-            </label>
-            <input
-              type="number"
-              id="price"
-              [(ngModel)]="form.price"
-              name="price"
-              required
-              min="0"
-              step="0.01"
-              class="input"
-              placeholder="99.00"
-            >
-          </div>
-
-          <div>
-            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">
-              Status
-              <button 
-                type="button"
-                (click)="toggleTooltip('status')"
-                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
-                aria-label="Help for Status field"
-              >
-                <svg viewBox="0 0 16 16" class="w-full h-full">
-                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
-                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
-                </svg>
-              </button>
-              @if (activeTooltip() === 'status') {
-                <div class="mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
-                  {{ getTooltipText('status') }}
-                  <button 
-                    (click)="hideTooltip()"
-                    class="ml-2 text-gray-300 hover:text-white text-sm"
-                    aria-label="Close tooltip"
-                  >
-                    ×
-                  </button>
-                </div>
-              }
-            </label>
-            <select
-              id="status"
-              [(ngModel)]="form.status"
-              name="status"
-              class="input"
-            >
-              <option value="DRAFT">Draft</option>
-              <option value="PUBLISHED">Published</option>
-            </select>
-          </div>
-
-          <!-- File Upload Section -->
-          <div class="border-t pt-6">
-            <h3 class="font-medium text-gray-900 mb-4">
-              Product Files
-              <button 
-                type="button"
-                (click)="toggleTooltip('files')"
-                class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
-                aria-label="Help for Product Files"
-              >
-                <svg viewBox="0 0 16 16" class="w-full h-full">
-                  <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1"/>
-                  <text x="8" y="12" text-anchor="middle" font-size="10" fill="currentColor">i</text>
-                </svg>
-              </button>
-              @if (activeTooltip() === 'files') {
-                <div class="mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                  <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
-                  {{ getTooltipText('files') }}
-                  <button 
-                    (click)="hideTooltip()"
-                    class="ml-2 text-gray-300 hover:text-white text-sm"
-                    aria-label="Close tooltip"
-                  >
-                    ×
-                  </button>
-                </div>
-              }
-            </h3>
-            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-              <input
-                type="file"
-                id="files"
-                (change)="onFilesSelected($event)"
-                multiple
-                class="hidden"
-              >
-              <label for="files" class="cursor-pointer">
-                <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                </svg>
-                <p class="text-gray-600">Click to upload files</p>
-                <p class="text-sm text-gray-400 mt-1">ZIP, PDF, PSD, AI, etc.</p>
+      <!-- Form Section -->
+      <section class="content-section">
+        <div class="container">
+          <form (ngSubmit)="save()" class="form-card">
+            <!-- Store Selection -->
+            <div class="form-group">
+              <label for="storeId" class="form-label">
+                Store
+                <span class="required-mark">*</span>
+                <button 
+                  type="button"
+                  (click)="toggleTooltip('storeId')"
+                  class="info-btn"
+                  aria-label="Help for Store field"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </button>
               </label>
+              @if (activeTooltip() === 'storeId') {
+                <div class="tooltip-box">
+                  {{ getTooltipText('storeId') }}
+                </div>
+              }
+              <select
+                id="storeId"
+                [(ngModel)]="form.storeId"
+                name="storeId"
+                required
+                class="form-select"
+                [disabled]="isEditing()"
+              >
+                <option value="">Select a store</option>
+                @for (store of stores(); track store.id) {
+                  <option [value]="store.id">{{ store.name }}</option>
+                }
+              </select>
             </div>
 
-            @if (selectedFiles().length > 0) {
-              <ul class="mt-4 space-y-2">
-                @for (file of selectedFiles(); track file.name) {
-                  <li class="flex items-center justify-between bg-gray-50 p-3 rounded">
-                    <span class="text-sm text-gray-700">{{ file.name }}</span>
-                    <button type="button" (click)="removeFile(file)" class="text-red-500 hover:text-red-700">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                      </svg>
-                    </button>
-                  </li>
-                }
-              </ul>
-            }
-          </div>
+            <!-- Product Title -->
+            <div class="form-group">
+              <label for="title" class="form-label">
+                Product Title
+                <span class="required-mark">*</span>
+                <button 
+                  type="button"
+                  (click)="toggleTooltip('title')"
+                  class="info-btn"
+                  aria-label="Help for Title field"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </button>
+              </label>
+              @if (activeTooltip() === 'title') {
+                <div class="tooltip-box">
+                  {{ getTooltipText('title') }}
+                </div>
+              }
+              <input
+                type="text"
+                id="title"
+                [(ngModel)]="form.title"
+                name="title"
+                required
+                class="form-input"
+                placeholder="My Amazing Product"
+                (input)="onTitleChange()"
+              >
+            </div>
 
-          <div class="flex justify-end gap-4 pt-4">
-            <button type="button" (click)="cancel()" class="btn-outline">Cancel</button>
-            <button type="submit" [disabled]="saving()" class="btn-primary">
-              {{ saving() ? 'Saving...' : (isEditing() ? 'Update Product' : 'Create Product') }}
-            </button>
-          </div>
-        </form>
-      </div>
+            <!-- Product URL/Slug -->
+            <div class="form-group">
+              <label for="slug" class="form-label">
+                Product URL
+                <span class="required-mark">*</span>
+                <button 
+                  type="button"
+                  (click)="toggleTooltip('slug')"
+                  class="info-btn"
+                  aria-label="Help for URL field"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </button>
+              </label>
+              @if (activeTooltip() === 'slug') {
+                <div class="tooltip-box">
+                  {{ getTooltipText('slug') }}
+                </div>
+              }
+              <input
+                type="text"
+                id="slug"
+                [(ngModel)]="form.slug"
+                name="slug"
+                required
+                class="form-input"
+                placeholder="my-product"
+                pattern="[a-z0-9-]+"
+                (input)="onSlugChange()"
+              >
+              <p class="form-hint">Only lowercase letters, numbers, and hyphens</p>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+              <label for="description" class="form-label">
+                Description
+                <button 
+                  type="button"
+                  (click)="toggleTooltip('description')"
+                  class="info-btn"
+                  aria-label="Help for Description field"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </button>
+              </label>
+              @if (activeTooltip() === 'description') {
+                <div class="tooltip-box">
+                  {{ getTooltipText('description') }}
+                </div>
+              }
+              <app-rich-text-editor
+                [(ngModel)]="form.description"
+                name="description"
+                placeholder="Describe your product..."
+              ></app-rich-text-editor>
+            </div>
+
+            <!-- Price and Status Row -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="price" class="form-label">
+                  Price (₹)
+                  <span class="required-mark">*</span>
+                  <button 
+                    type="button"
+                    (click)="toggleTooltip('price')"
+                    class="info-btn"
+                    aria-label="Help for Price field"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                  </button>
+                </label>
+                @if (activeTooltip() === 'price') {
+                  <div class="tooltip-box">
+                    {{ getTooltipText('price') }}
+                  </div>
+                }
+                <div class="price-input-wrapper">
+                  <span class="price-symbol">₹</span>
+                  <input
+                    type="number"
+                    id="price"
+                    [(ngModel)]="form.price"
+                    name="price"
+                    required
+                    min="0"
+                    step="0.01"
+                    class="form-input price-input"
+                    placeholder="99.00"
+                  >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="status" class="form-label">
+                  Status
+                  <button 
+                    type="button"
+                    (click)="toggleTooltip('status')"
+                    class="info-btn"
+                    aria-label="Help for Status field"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                  </button>
+                </label>
+                @if (activeTooltip() === 'status') {
+                  <div class="tooltip-box">
+                    {{ getTooltipText('status') }}
+                  </div>
+                }
+                <select
+                  id="status"
+                  [(ngModel)]="form.status"
+                  name="status"
+                  class="form-select"
+                >
+                  <option value="DRAFT">Draft</option>
+                  <option value="PUBLISHED">Published</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="form-section">
+              <div class="form-section-header">
+                <h3 class="form-section-title">
+                  Product Files
+                  <button 
+                    type="button"
+                    (click)="toggleTooltip('files')"
+                    class="info-btn"
+                    aria-label="Help for Files"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                  </button>
+                </h3>
+                @if (activeTooltip() === 'files') {
+                  <div class="tooltip-box">
+                    {{ getTooltipText('files') }}
+                  </div>
+                }
+              </div>
+              
+              <div class="file-upload-zone" (click)="fileInput.click()">
+                <input
+                  type="file"
+                  #fileInput
+                  (change)="onFilesSelected($event)"
+                  multiple
+                  class="hidden-input"
+                >
+                <div class="file-upload-content">
+                  <div class="file-upload-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                  </div>
+                  <p class="file-upload-text">Click to upload files</p>
+                  <p class="file-upload-hint">ZIP, PDF, PSD, AI, etc.</p>
+                </div>
+              </div>
+
+              @if (selectedFiles().length > 0) {
+                <ul class="file-list">
+                  @for (file of selectedFiles(); track file.name) {
+                    <li class="file-item">
+                      <div class="file-info">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <span class="file-name">{{ file.name }}</span>
+                      </div>
+                      <button type="button" (click)="removeFile(file)" class="file-remove-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button type="button" (click)="cancel()" class="secondary-button">Cancel</button>
+              <button type="submit" [disabled]="saving()" class="primary-button">
+                @if (saving()) {
+                  <svg class="spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                  </svg>
+                  Saving...
+                } @else {
+                  {{ isEditing() ? 'Update Product' : 'Create Product' }}
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
     </div>
   `,
+  styles: [`
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+
+    .page-wrapper {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      min-height: 100vh;
+      background: #f8fafc;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 1rem;
+      }
+    }
+
+    /* Header Section */
+    .header-section {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1.5rem 0;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .header-text {
+      flex: 1;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb-link {
+      font-size: 0.875rem;
+      color: #6b7280;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .breadcrumb-link:hover {
+      color: #111827;
+    }
+
+    .breadcrumb-separator {
+      color: #d1d5db;
+      flex-shrink: 0;
+    }
+
+    .breadcrumb-current {
+      font-size: 0.875rem;
+      color: #111827;
+      font-weight: 500;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 0.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      font-size: 0.9375rem;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    @media (max-width: 640px) {
+      .page-title {
+        font-size: 1.25rem;
+      }
+    }
+
+    /* Content Section */
+    .content-section {
+      padding: 2rem 0 4rem;
+    }
+
+    /* Form Card */
+    .form-card {
+      background: #ffffff;
+      border-radius: 1rem;
+      padding: 2rem;
+      border: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 640px) {
+      .form-card {
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+      }
+    }
+
+    /* Form Group */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    .required-mark {
+      color: #ef4444;
+    }
+
+    .info-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .info-btn:hover {
+      color: #6b7280;
+    }
+
+    .tooltip-box {
+      margin-top: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: #1f2937;
+      color: #ffffff;
+      font-size: 0.8125rem;
+      font-weight: 400;
+      border-radius: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 0.9375rem;
+      color: #111827;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: #111827;
+      box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+    }
+
+    .form-input:disabled,
+    .form-select:disabled {
+      background: #f9fafb;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .form-hint {
+      font-size: 0.8125rem;
+      color: #6b7280;
+      margin-top: 0.375rem;
+    }
+
+    /* Form Row */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+
+    /* Price Input */
+    .price-input-wrapper {
+      position: relative;
+    }
+
+    .price-symbol {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .price-input {
+      padding-left: 2rem;
+    }
+
+    /* Form Section */
+    .form-section {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .form-section-header {
+      margin-bottom: 1rem;
+    }
+
+    .form-section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0;
+    }
+
+    /* File Upload */
+    .file-upload-zone {
+      border: 2px dashed #d1d5db;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-upload-zone:hover {
+      border-color: #9ca3af;
+      background: #f9fafb;
+    }
+
+    .hidden-input {
+      display: none;
+    }
+
+    .file-upload-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .file-upload-text {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #374151;
+      margin: 0 0 0.25rem;
+    }
+
+    .file-upload-hint {
+      font-size: 0.8125rem;
+      color: #9ca3af;
+      margin: 0;
+    }
+
+    /* File List */
+    .file-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #6b7280;
+    }
+
+    .file-name {
+      font-size: 0.875rem;
+      color: #374151;
+    }
+
+    .file-remove-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .file-remove-btn:hover {
+      color: #ef4444;
+    }
+
+    /* Form Actions */
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 640px) {
+      .form-actions {
+        flex-direction: column-reverse;
+      }
+    }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: #111827;
+      color: #ffffff;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .primary-button:hover:not(:disabled) {
+      background: #1f2937;
+    }
+
+    .primary-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .secondary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      background: #ffffff;
+      color: #374151;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .secondary-button:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+
+    @media (max-width: 640px) {
+      .primary-button,
+      .secondary-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  `]
 })
 export class ProductFormComponent implements OnInit {
   isEditing = signal(false);
@@ -410,7 +823,7 @@ export class ProductFormComponent implements OnInit {
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
     // Close tooltip if clicked outside of tooltip or info button
-    if (!target.closest('.tooltip-container') && !target.closest('.info-button')) {
+    if (!target.closest('.tooltip-box') && !target.closest('.info-btn')) {
       this.hideTooltip();
     }
   }
