@@ -1,7 +1,8 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { Store, Product } from '../models';
 import { ApiService } from './api.service';
 import { SubdomainService } from './subdomain.service';
+import { CartService } from './cart.service';
 
 export interface StoreContext {
   store: Store | null;
@@ -49,7 +50,8 @@ export class StoreContextService {
 
   constructor(
     private api: ApiService,
-    private subdomainService: SubdomainService
+    private subdomainService: SubdomainService,
+    private cartService: CartService
   ) {}
 
   /**
@@ -91,6 +93,13 @@ export class StoreContextService {
         }
 
         this._store.set(store);
+        
+        // Cache store info in cart service for display purposes
+        this.cartService.cacheStoreInfo({
+          id: store.id,
+          name: store.name,
+          slug: store.slug,
+        });
         
         // Load products if not included
         if (!store.products) {

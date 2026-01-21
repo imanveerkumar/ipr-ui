@@ -18,11 +18,51 @@ export interface GuestOrderDetails {
   phone?: string;
 }
 
+export interface CartValidationItem {
+  productId: string;
+  productTitle: string;
+  productCoverImageUrl?: string;
+  storeId: string;
+  storeName: string;
+  storeSlug: string;
+  isValid: boolean;
+  errors: string[];
+}
+
+export interface CartStoreGroup {
+  storeId: string;
+  storeName: string;
+  storeSlug: string;
+  storeStatus: string;
+  isStoreAvailable: boolean;
+  items: CartValidationItem[];
+  colorIndex: number;
+}
+
+export interface CartValidationResult {
+  isValid: boolean;
+  items: CartValidationItem[];
+  storeGroups: CartStoreGroup[];
+  unavailableItems: CartValidationItem[];
+  summary: {
+    totalItems: number;
+    validItems: number;
+    invalidItems: number;
+    totalStores: number;
+    unavailableStores: number;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class CheckoutService {
   constructor(private api: ApiService) {}
+
+  async validateCart(productIds: string[]): Promise<CartValidationResult | null> {
+    const response = await this.api.post<CartValidationResult>('/orders/validate-cart', { productIds });
+    return response.data || null;
+  }
 
   async createOrder(productIds: string[]): Promise<Order | null> {
     const response = await this.api.post<Order>('/orders', { productIds });

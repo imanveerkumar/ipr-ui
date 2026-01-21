@@ -2,17 +2,18 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CartService } from '../../core/services/cart.service';
-import { CheckoutService } from '../../core/services/checkout.service';
+import { CartService, STORE_COLORS } from '../../core/services/cart.service';
+import { CheckoutService, CartValidationResult } from '../../core/services/checkout.service';
 import { AuthService } from '../../core/services/auth.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
+import { CartValidationModalComponent } from './cart-validation-modal.component';
 
 type ViewState = 'cart' | 'checkout';
 
 @Component({
   selector: 'app-cart-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, CartValidationModalComponent],
   template: `
     <!-- Overlay -->
     @if (cartService.isOpen()) {
@@ -124,89 +125,157 @@ type ViewState = 'cart' | 'checkout';
                 </button>
               </div>
             } @else {
-              <!-- Cart Items List -->
-              <div class="space-y-2.5">
-                @for (item of cartService.items(); track item.product.id; let i = $index) {
-                  <div 
-                    class="bg-white rounded-xl border border-gray-100 p-2.5 relative shadow-sm hover:shadow-md transition-shadow"
-                    [style.animation-delay]="i * 50 + 'ms'"
-                    style="animation: slideUp 0.3s ease-out forwards;"
-                  >
-                    <div class="flex gap-2.5">
-                      <!-- Product Image -->
-                      <div class="relative flex-shrink-0">
-                        @if (item.product.coverImageUrl) {
-                          <img 
-                            [src]="item.product.coverImageUrl" 
-                            [alt]="item.product.title"
-                            class="w-16 h-16 object-cover rounded-lg"
-                            loading="lazy"
-                          >
-                        } @else {
-                          <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-50 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                          </div>
-                        }
-                      </div>
-
-                      <!-- Product Details -->
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-start justify-between gap-2">
-                          <a 
-                            [routerLink]="['/product', item.product.id]"
-                            (click)="cartService.close()"
-                            class="font-semibold text-gray-900 hover:text-gray-600 transition-colors line-clamp-2 text-xs leading-snug"
-                          >
-                            {{ item.product.title }}
-                          </a>
-                          <button 
-                            (click)="cartService.removeItem(item.product.id)"
-                            class="p-1 rounded-full hover:bg-red-50 active:bg-red-100 transition-colors flex-shrink-0"
-                          >
-                            <svg class="w-3.5 h-3.5 text-gray-400 hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                          </button>
-                        </div>
-                        
-                        <div class="mt-2 flex items-center justify-between">
-                          <!-- Quantity Controls -->
-                          <div class="inline-flex items-center bg-gray-100 rounded-full">
-                            <button 
-                              (click)="cartService.decrementQuantity(item.product.id)"
-                              class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-200 active:bg-gray-300 transition-colors"
-                              [disabled]="item.quantity <= 1"
-                              [class.opacity-40]="item.quantity <= 1"
-                            >
-                              <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/>
-                              </svg>
-                            </button>
-                            <span class="px-2.5 text-xs font-bold text-gray-900 min-w-[1.75rem] text-center">
-                              {{ item.quantity }}
-                            </span>
-                            <button 
-                              (click)="cartService.incrementQuantity(item.product.id)"
-                              class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-200 active:bg-gray-300 transition-colors"
-                            >
-                              <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-                              </svg>
-                            </button>
-                          </div>
-                          
-                          <!-- Price -->
-                          <div class="text-right">
-                            <div class="text-sm font-bold text-gray-900">₹{{ (item.product.price * item.quantity) / 100 }}</div>
-                            @if (item.quantity > 1) {
-                              <div class="text-[10px] text-gray-500">₹{{ item.product.price / 100 }} each</div>
-                            }
-                          </div>
-                        </div>
-                      </div>
+              <!-- Multi-store notice -->
+              @if (cartService.hasMultipleStores()) {
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-3 mb-3">
+                  <div class="flex items-start gap-2.5">
+                    <div class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                      </svg>
                     </div>
+                    <div class="flex-1">
+                      <p class="text-xs font-medium text-blue-900">Products from {{ cartService.storeCount() }} different stores</p>
+                      <p class="text-[10px] text-blue-700 mt-0.5">Items are color-coded by store for easy identification</p>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Cart Items grouped by Store -->
+              <div class="space-y-4">
+                @for (group of cartService.storeGroups(); track group.storeId; let groupIndex = $index) {
+                  <div class="relative">
+                    <!-- Store Header (only shown when multiple stores) -->
+                    @if (cartService.hasMultipleStores()) {
+                      <div class="flex items-center gap-2 mb-2">
+                        <div 
+                          class="w-2 h-2 rounded-full"
+                          [class]="getStoreAccentColor(group.colorIndex)"
+                        ></div>
+                        <span class="text-xs font-semibold text-gray-700">{{ group.storeName }}</span>
+                        <span 
+                          class="text-[10px] font-medium px-2 py-0.5 rounded-full"
+                          [class]="getStoreBadgeColor(group.colorIndex)"
+                        >
+                          {{ group.items.length }} item{{ group.items.length !== 1 ? 's' : '' }}
+                        </span>
+                      </div>
+                    }
+
+                    <!-- Items in this store group -->
+                    <div class="space-y-2.5">
+                      @for (item of group.items; track item.product.id; let i = $index) {
+                        <div 
+                          class="rounded-xl p-2.5 relative shadow-sm hover:shadow-md transition-shadow"
+                          [class]="cartService.hasMultipleStores() 
+                            ? getStoreItemClasses(group.colorIndex) 
+                            : 'bg-white border border-gray-100'"
+                          [style.animation-delay]="(groupIndex * 50 + i * 30) + 'ms'"
+                          style="animation: slideUp 0.3s ease-out forwards;"
+                        >
+                          <!-- Store color indicator stripe (mobile-friendly) -->
+                          @if (cartService.hasMultipleStores()) {
+                            <div 
+                              class="absolute left-0 top-2 bottom-2 w-1 rounded-full"
+                              [class]="getStoreAccentColor(group.colorIndex)"
+                            ></div>
+                          }
+
+                          <div class="flex gap-2.5" [class.pl-2]="cartService.hasMultipleStores()">
+                            <!-- Product Image -->
+                            <div class="relative flex-shrink-0">
+                              @if (item.product.coverImageUrl) {
+                                <img 
+                                  [src]="item.product.coverImageUrl" 
+                                  [alt]="item.product.title"
+                                  class="w-16 h-16 object-cover rounded-lg"
+                                  loading="lazy"
+                                >
+                              } @else {
+                                <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-50 rounded-lg flex items-center justify-center">
+                                  <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                  </svg>
+                                </div>
+                              }
+                            </div>
+
+                            <!-- Product Details -->
+                            <div class="flex-1 min-w-0">
+                              <div class="flex items-start justify-between gap-2">
+                                <a 
+                                  [routerLink]="['/product', item.product.id]"
+                                  (click)="cartService.close()"
+                                  class="font-semibold text-gray-900 hover:text-gray-600 transition-colors line-clamp-2 text-xs leading-snug"
+                                >
+                                  {{ item.product.title }}
+                                </a>
+                                <button 
+                                  (click)="cartService.removeItem(item.product.id)"
+                                  class="p-1 rounded-full hover:bg-red-50 active:bg-red-100 transition-colors flex-shrink-0"
+                                >
+                                  <svg class="w-3.5 h-3.5 text-gray-400 hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                  </svg>
+                                </button>
+                              </div>
+
+                              <!-- Store name badge (when single store, show store info inline) -->
+                              @if (!cartService.hasMultipleStores() && item.product.store) {
+                                <p class="text-[10px] text-gray-500 mt-0.5">
+                                  From: {{ item.product.store.name }}
+                                </p>
+                              }
+                              
+                              <div class="mt-2 flex items-center justify-between">
+                                <!-- Quantity Controls -->
+                                <div class="inline-flex items-center bg-gray-100 rounded-full">
+                                  <button 
+                                    (click)="cartService.decrementQuantity(item.product.id)"
+                                    class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-200 active:bg-gray-300 transition-colors"
+                                    [disabled]="item.quantity <= 1"
+                                    [class.opacity-40]="item.quantity <= 1"
+                                  >
+                                    <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/>
+                                    </svg>
+                                  </button>
+                                  <span class="px-2.5 text-xs font-bold text-gray-900 min-w-[1.75rem] text-center">
+                                    {{ item.quantity }}
+                                  </span>
+                                  <button 
+                                    (click)="cartService.incrementQuantity(item.product.id)"
+                                    class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-200 active:bg-gray-300 transition-colors"
+                                  >
+                                    <svg class="w-3 h-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                  </button>
+                                </div>
+                                
+                                <!-- Price -->
+                                <div class="text-right">
+                                  <div class="text-sm font-bold text-gray-900">₹{{ (item.product.price * item.quantity) / 100 }}</div>
+                                  @if (item.quantity > 1) {
+                                    <div class="text-[10px] text-gray-500">₹{{ item.product.price / 100 }} each</div>
+                                  }
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Store subtotal (only shown when multiple stores) -->
+                    @if (cartService.hasMultipleStores()) {
+                      <div class="flex justify-end mt-2 mb-1">
+                        <span class="text-[10px] text-gray-500">
+                          Subtotal: <span class="font-semibold text-gray-700">₹{{ group.totalPrice / 100 }}</span>
+                        </span>
+                      </div>
+                    }
                   </div>
                 }
               </div>
@@ -487,26 +556,35 @@ type ViewState = 'cart' | 'checkout';
             </div>
             <button 
               (click)="proceedToCheckout()"
-              class="w-full py-3 text-sm font-semibold bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-all min-h-[48px] shadow-lg shadow-gray-900/20 flex items-center justify-center gap-2"
+              [disabled]="isValidating"
+              class="w-full py-3 text-sm font-semibold bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:bg-gray-950 disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[48px] shadow-lg shadow-gray-900/20 flex items-center justify-center gap-2"
             >
-              Continue to Checkout
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-              </svg>
+              @if (isValidating) {
+                <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Validating...</span>
+              } @else {
+                Continue to Checkout
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              }
             </button>
           } @else {
             <!-- Checkout View Footer -->
             <button 
               (click)="authService.isSignedIn() ? handleCheckout() : handleGuestCheckout()"
-              [disabled]="isCheckingOut || (!authService.isSignedIn() && (!guestEmail || !guestPhoneNumber))"
+              [disabled]="isCheckingOut || isValidating || (!authService.isSignedIn() && (!guestEmail || !guestPhoneNumber))"
               class="w-full py-3 text-sm font-semibold bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl hover:from-gray-800 hover:to-gray-700 active:from-gray-950 active:to-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[48px] shadow-lg shadow-gray-900/20 flex items-center justify-center gap-2"
             >
-              @if (isCheckingOut) {
+              @if (isCheckingOut || isValidating) {
                 <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>Processing...</span>
+                <span>{{ isValidating ? 'Validating...' : 'Processing...' }}</span>
               } @else {
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
@@ -521,6 +599,15 @@ type ViewState = 'cart' | 'checkout';
         </div>
       }
     </div>
+
+    <!-- Cart Validation Modal -->
+    <app-cart-validation-modal
+      [isOpen]="showValidationModal()"
+      [validation]="cartValidation()"
+      (close)="closeValidationModal()"
+      (removeItem)="removeInvalidItem($event)"
+      (removeAllUnavailable)="removeAllInvalidItems()"
+    />
   `,
   styles: [`
     .safe-area-bottom {
@@ -546,9 +633,14 @@ export class CartSidebarComponent {
   private subdomainService = inject(SubdomainService);
 
   isCheckingOut = false;
+  isValidating = false;
   
   // View state - cart or checkout
   currentView = signal<ViewState>('cart');
+
+  // Cart validation state
+  showValidationModal = signal(false);
+  cartValidation = signal<CartValidationResult | null>(null);
   
   // Guest checkout state
   showGuestForm = signal(false);
@@ -614,6 +706,20 @@ export class CartSidebarComponent {
     }, 0);
   });
 
+  // Store color helper methods
+  getStoreAccentColor(colorIndex: number): string {
+    return STORE_COLORS[colorIndex % STORE_COLORS.length].accent;
+  }
+
+  getStoreBadgeColor(colorIndex: number): string {
+    return STORE_COLORS[colorIndex % STORE_COLORS.length].badge;
+  }
+
+  getStoreItemClasses(colorIndex: number): string {
+    const colors = STORE_COLORS[colorIndex % STORE_COLORS.length];
+    return `${colors.bg} border ${colors.border}`;
+  }
+
   private validateEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -626,6 +732,77 @@ export class CartSidebarComponent {
     return phoneRegex.test(cleanPhone);
   }
 
+  // Cart validation methods
+  async validateCartBeforeCheckout(): Promise<boolean> {
+    if (!this.cartService.hasItems()) return false;
+
+    this.isValidating = true;
+    try {
+      const productIds = this.cartService.productIds();
+      const validation = await this.checkoutService.validateCart(productIds);
+      
+      if (!validation) {
+        // API error - allow proceeding (validation will happen server-side)
+        return true;
+      }
+
+      this.cartValidation.set(validation);
+
+      if (!validation.isValid) {
+        this.showValidationModal.set(true);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Cart validation failed:', error);
+      // On error, allow proceeding (server will validate again)
+      return true;
+    } finally {
+      this.isValidating = false;
+    }
+  }
+
+  closeValidationModal() {
+    this.showValidationModal.set(false);
+  }
+
+  removeInvalidItem(productId: string) {
+    this.cartService.removeItem(productId);
+    
+    // Update validation result
+    const validation = this.cartValidation();
+    if (validation) {
+      const updatedUnavailable = validation.unavailableItems.filter(
+        item => item.productId !== productId
+      );
+      
+      if (updatedUnavailable.length === 0) {
+        this.closeValidationModal();
+      } else {
+        this.cartValidation.set({
+          ...validation,
+          unavailableItems: updatedUnavailable,
+          summary: {
+            ...validation.summary,
+            invalidItems: updatedUnavailable.length,
+            totalItems: validation.summary.totalItems - 1,
+          }
+        });
+      }
+    }
+  }
+
+  removeAllInvalidItems() {
+    const validation = this.cartValidation();
+    if (validation) {
+      validation.unavailableItems.forEach(item => {
+        this.cartService.removeItem(item.productId);
+      });
+    }
+    this.closeValidationModal();
+  }
+
   handleOverlayClick() {
     if (this.currentView() === 'checkout') {
       this.goBackToCart();
@@ -634,8 +811,12 @@ export class CartSidebarComponent {
     }
   }
 
-  proceedToCheckout() {
-    this.currentView.set('checkout');
+  async proceedToCheckout() {
+    // Validate cart before proceeding to checkout
+    const isValid = await this.validateCartBeforeCheckout();
+    if (isValid) {
+      this.currentView.set('checkout');
+    }
   }
 
   goBackToCart() {
@@ -707,6 +888,11 @@ export class CartSidebarComponent {
       this.guestPhoneError.set('Please enter a valid phone number');
       return;
     }
+
+    // Validate cart before payment
+    const isValid = await this.validateCartBeforeCheckout();
+    if (!isValid) return;
+
     this.isCheckingOut = true;
 
     try {
@@ -742,9 +928,15 @@ export class CartSidebarComponent {
         // Show success message - redirect to a success page
         alert('Purchase successful! Check your email for the download link.');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Guest checkout failed:', error);
-      this.guestEmailError.set('Checkout failed. Please try again.');
+      // Check if the error is a validation error from API
+      if (error?.message?.includes('Cannot create order')) {
+        // Re-validate cart to show the modal
+        await this.validateCartBeforeCheckout();
+      } else {
+        this.guestEmailError.set('Checkout failed. Please try again.');
+      }
     } finally {
       this.isCheckingOut = false;
     }
@@ -752,6 +944,10 @@ export class CartSidebarComponent {
 
   async handleCheckout() {
     if (!this.cartService.hasItems()) return;
+
+    // Validate cart before payment
+    const isValid = await this.validateCartBeforeCheckout();
+    if (!isValid) return;
 
     this.isCheckingOut = true;
     try {
@@ -772,8 +968,13 @@ export class CartSidebarComponent {
         this.resetView();
         window.location.href = this.subdomainService.getMainSiteUrl('/library');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Checkout failed:', error);
+      // Check if the error is a validation error from API
+      if (error?.message?.includes('Cannot create order')) {
+        // Re-validate cart to show the modal
+        await this.validateCartBeforeCheckout();
+      }
     } finally {
       this.isCheckingOut = false;
     }
