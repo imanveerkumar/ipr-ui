@@ -127,21 +127,21 @@ import { Product } from '../../core/models';
                 </button>
 
                 <button 
-                  (click)="addToCart()"
+                  (click)="toggleCart()"
                   class="w-full py-4 text-base font-semibold border-2 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 min-h-[52px]"
                   [class.border-gray-200]="!isInCart()"
                   [class.bg-white]="!isInCart()"
                   [class.hover:border-gray-300]="!isInCart()"
                   [class.active:bg-gray-50]="!isInCart()"
-                  [class.border-emerald-500]="isInCart()"
-                  [class.bg-emerald-50]="isInCart()"
-                  [class.text-emerald-700]="isInCart()"
+                  [class.border-red-500]="isInCart()"
+                  [class.bg-red-50]="isInCart()"
+                  [class.text-red-700]="isInCart()"
                 >
                   @if (isInCart()) {
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
                     </svg>
-                    Added to Cart
+                    Remove from Cart
                   } @else {
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -336,6 +336,21 @@ export class StorefrontProductComponent implements OnInit, OnDestroy {
     const product = this.product();
     if (product) {
       this.cartService.addItem(product);
+    }
+  }
+
+  removeFromCart() {
+    const product = this.product();
+    if (product) {
+      this.cartService.removeItem(product.id);
+    }
+  }
+
+  toggleCart() {
+    if (this.isInCart()) {
+      this.removeFromCart();
+    } else {
+      this.addToCart();
     }
   }
 

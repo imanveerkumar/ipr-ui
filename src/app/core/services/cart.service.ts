@@ -91,9 +91,6 @@ export class CartService {
       // Add new item
       this._items.set([...items, { product, quantity, addedAt: new Date() }]);
     }
-
-    // Open cart when item is added
-    this.open();
   }
 
   /**

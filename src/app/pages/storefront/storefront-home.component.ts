@@ -126,15 +126,15 @@ import { Product } from '../../core/models';
                         Buy Now
                       </button>
                       <button 
-                        (click)="addToCart(product)"
+                        (click)="cartService.isInCart(product.id) ? removeFromCart(product) : addToCart(product)"
                         class="p-2.5 sm:p-3 bg-gray-100 rounded-lg sm:rounded-xl hover:bg-gray-200 active:bg-gray-300 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                         [class.bg-emerald-100]="cartService.isInCart(product.id)"
                         [class.text-emerald-700]="cartService.isInCart(product.id)"
-                        title="Add to cart"
+                        [title]="cartService.isInCart(product.id) ? 'Remove from cart' : 'Add to cart'"
                       >
                         @if (cartService.isInCart(product.id)) {
-                          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
                           </svg>
                         } @else {
                           <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,6 +262,10 @@ export class StorefrontHomeComponent {
 
   addToCart(product: Product) {
     this.cartService.addItem(product);
+  }
+
+  removeFromCart(product: Product) {
+    this.cartService.removeItem(product.id);
   }
 
   handleBuyNow(product: Product) {

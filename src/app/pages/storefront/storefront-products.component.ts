@@ -140,16 +140,16 @@ import { Product } from '../../core/models';
                     </div>
                   }
 
-                  <!-- Quick Add - Visible on hover/tap -->
+                  <!-- Quick Add/Remove - Visible on hover/tap -->
                   <button 
-                    (click)="addToCart(product); $event.stopPropagation()"
+                    (click)="cartService.isInCart(product.id) ? removeFromCart(product) : addToCart(product); $event.stopPropagation()"
                     class="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 p-2.5 sm:p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 active:bg-gray-100 transition-all opacity-0 group-hover:opacity-100 min-h-[40px] min-w-[40px]"
                     [class.opacity-100]="cartService.isInCart(product.id)"
                     [class.bg-emerald-100]="cartService.isInCart(product.id)"
                   >
                     @if (cartService.isInCart(product.id)) {
-                      <svg class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-700" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                      <svg class="w-4 h-4 sm:w-5 sm:h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
                       </svg>
                     } @else {
                       <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -272,6 +272,10 @@ export class StorefrontProductsComponent implements OnInit {
 
   addToCart(product: Product) {
     this.cartService.addItem(product);
+  }
+
+  removeFromCart(product: Product) {
+    this.cartService.removeItem(product.id);
   }
 
   handleBuyNow(product: Product) {
