@@ -6,14 +6,10 @@ import { ProductService } from '../../core/services/product.service';
 import { ApiService } from '../../core/services/api.service';
 import { Store, Product } from '../../core/models/index';
 
-interface Sale {
-  id: string;
-  productTitle: string;
-  storeName: string;
-  customerEmail: string;
-  amount: number;
-  status: string;
-  createdAt: string;
+interface SalesStats {
+  totalSales: number;
+  totalRevenue: number;
+  monthlyRevenue: number;
 }
 
 @Component({
@@ -1389,10 +1385,10 @@ export class DashboardComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      const [stores, products, salesResponse] = await Promise.all([
+      const [stores, products, statsResponse] = await Promise.all([
         this.storeService.getMyStores(),
         this.productService.getMyProducts(),
-        this.api.get<Sale[]>('/orders/sales')
+        this.api.get<SalesStats>('/orders/sales/stats')
       ]);
       
       this.stores.set(stores);
@@ -1405,14 +1401,12 @@ export class DashboardComponent implements OnInit {
       });
       this.totalProducts.set(totalProducts);
       
-      // Calculate sales and revenue from API data
-      const salesData: Sale[] = salesResponse.data || [];
-      const paidSales = salesData.filter((s: Sale) => s.status === 'PAID' || s.status === 'FULFILLED');
-      
-      this.totalSales.set(paidSales.length);
-      
-      const revenue = paidSales.reduce((sum: number, s: Sale) => sum + s.amount, 0);
-      this.totalRevenue.set(revenue / 100); // Convert from paise to rupees
+      // Get stats from API response
+      const stats = statsResponse.data;
+      if (stats) {
+        this.totalSales.set(stats.totalSales);
+        this.totalRevenue.set(stats.totalRevenue);
+      }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
