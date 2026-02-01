@@ -424,55 +424,6 @@ import { RouterLink } from '@angular/router';
           </div>
         </div>
       </section>
-
-      <!-- Final CTA Banner -->
-      <section class="section cta-banner">
-        <div class="padding-global">
-          <div class="cta-banner-inner">
-            <div class="badge">
-              <div class="badge-text"><strong>30 day</strong> money-back guarantee</div>
-              <div class="badge-check">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-            </div>
-            <div class="margin-bottom margin-xsmall">
-              <div class="max-width-xlarge">
-                <div class="text-align-center">
-                  <h2 class="cta-heading dark">Launch <em>your</em> shop today</h2>
-                </div>
-              </div>
-            </div>
-            <div class="max-width-small align-center">
-              <div class="text-color-light opac-80 text-align-center text-size-medium">
-                Try free for 14 days. No card needed.
-              </div>
-            </div>
-            <div class="margin-top margin-medium">
-              <a routerLink="/become-creator" class="button-secondary">Start free trial</a>
-            </div>
-            
-            <!-- Background illustrations -->
-            <div class="bg-illustrations">
-              <div class="bg-ill-1">
-                <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="60" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="40" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
-                </svg>
-              </div>
-              <div class="bg-ill-2">
-                <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="60" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="40" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   `,
   styles: [`
@@ -889,78 +840,6 @@ import { RouterLink } from '@angular/router';
     .button-secondary:hover {
       background-color: #f3f4f6;
       transform: translateY(-1px);
-    }
-
-    /* CTA Banner */
-    .cta-banner {
-      padding: 0;
-    }
-
-    .cta-banner-inner {
-      position: relative;
-      padding: 5rem 2rem;
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
-      border-radius: 2rem;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 9999px;
-      margin-bottom: 1.5rem;
-    }
-
-    .badge-text {
-      color: #ffffff;
-      font-size: 0.875rem;
-    }
-
-    .badge-check {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.25rem;
-      height: 1.25rem;
-      background-color: #22c55e;
-      border-radius: 9999px;
-      color: #ffffff;
-    }
-
-    .badge-check svg {
-      width: 0.75rem;
-      height: 0.75rem;
-    }
-
-    /* Background Illustrations */
-    .bg-illustrations {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .bg-ill-1 {
-      position: absolute;
-      top: -50px;
-      left: -50px;
-      opacity: 0.5;
-    }
-
-    .bg-ill-2 {
-      position: absolute;
-      bottom: -50px;
-      right: -50px;
-      opacity: 0.5;
     }
 
     /* Responsive Adjustments */
