@@ -36,11 +36,19 @@ import { RouterLink } from '@angular/router';
       <!-- BOTTOM SECTION (BEIGE) -->
       <div class="footer-bottom">
         <div class="bottom-content">
-          <!-- Description Text -->
-          <p class="footer-text">
-            From Smashed Patties At Shake Shack To Glamburgers 
-            At Honky Tonk, There's A Little Something For Everyone.
-          </p>
+          <!-- Expandable Section -->
+          <div class="expandable-section">
+            <button (click)="toggleExpanded()" class="expand-btn">
+              More Info <span [class.rotated]="isExpanded">▼</span>
+            </button>
+            <div *ngIf="isExpanded" class="expanded-content">
+              <a href="#" class="footer-link">Privacy Policy</a>
+              <a href="#" class="footer-link">About</a>
+              <a href="#" class="footer-link">Contact Us</a>
+              <a href="#" class="footer-link">Terms of Service</a>
+              <a href="#" class="footer-link">FAQ</a>
+            </div>
+          </div>
 
           <!-- Logo and Social Row -->
           <div class="logo-row">
@@ -340,6 +348,76 @@ import { RouterLink } from '@angular/router';
       }
     }
 
+    /* Expandable Section */
+    .expandable-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @media (min-width: 768px) {
+      .expandable-section {
+        align-items: flex-end;
+      }
+    }
+
+    .expand-btn {
+      background: none;
+      border: 2px solid var(--text-black);
+      padding: 8px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text-black);
+      cursor: pointer;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .expand-btn:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .expand-btn span {
+      transition: transform 0.3s;
+      font-size: 12px;
+    }
+
+    .expand-btn span.rotated {
+      transform: rotate(180deg);
+    }
+
+    .expanded-content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 200px;
+    }
+
+    @media (min-width: 768px) {
+      .expanded-content {
+        flex-direction: row;
+        gap: 16px;
+        max-width: none;
+      }
+    }
+
+    .footer-link {
+      color: var(--text-black);
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: var(--bg-red);
+      text-decoration: underline;
+    }
+
     /* Logo and Socials Row */
     .logo-row {
       display: flex;
@@ -438,4 +516,9 @@ import { RouterLink } from '@angular/router';
 })
 export class FooterComponent {
   currentYear = new Date().getFullYear();
+  isExpanded = false;
+
+  toggleExpanded() {
+    this.isExpanded = !this.isExpanded;
+  }
 }
