@@ -46,6 +46,14 @@ import { RichTextEditorComponent } from '../../../shared/components';
                     {{ publishing() ? 'Publishing...' : 'Publish Store' }}
                   </button>
                 }
+
+                <!-- Add Product button: navigates to product creation and passes current store id -->
+                <a [routerLink]="['/dashboard/products/new']" [queryParams]="{ storeId: store()?.id }" class="primary-button add-product-button" role="button">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                  </svg>
+                  Add Product
+                </a>
               </div>
             }
           </div>

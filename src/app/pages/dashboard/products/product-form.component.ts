@@ -795,6 +795,12 @@ export class ProductFormComponent implements OnInit {
       };
     } else {
       this.slugManuallyEdited = false; // Allow auto-generation for new products
+
+      // If navigated here from a store's Manage page, preselect that store
+      const storeIdFromQuery = this.route.snapshot.queryParamMap.get('storeId');
+      if (storeIdFromQuery) {
+        this.form.storeId = storeIdFromQuery;
+      }
     }
   }
 
