@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { Router } from '@angular/router';
 import { Clerk } from '@clerk/clerk-js';
 import { environment } from '../../../environments/environment';
 import { User } from '../models';
@@ -27,7 +28,7 @@ export class AuthService {
   });
   readonly isAdmin = computed(() => this._user()?.role === 'ADMIN');
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private router: Router) {}
 
   init() {
     this.initClerk();
@@ -77,6 +78,13 @@ export class AuthService {
             this._clerkUser.set(null);
             this._isSignedIn.set(false);
             this._user.set(null);
+
+            // If the user signs out from another tab or session, redirect to home
+            try {
+              this.router.navigateByUrl('/', { replaceUrl: true });
+            } catch (err) {
+              // ignore navigation failures
+            }
           }
         }
       });
@@ -117,6 +125,13 @@ export class AuthService {
     await this.clerk.signOut();
     this._user.set(null);
     this._isSignedIn.set(false);
+
+    // Navigate to home to ensure protected routes are no longer accessible
+    try {
+      this.router.navigateByUrl('/', { replaceUrl: true });
+    } catch (err) {
+      // ignore navigation errors
+    }
   }
 
   async openUserProfile() {

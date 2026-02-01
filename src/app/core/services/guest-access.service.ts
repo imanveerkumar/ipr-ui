@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from './api.service';
 
 export interface GuestPurchase {
@@ -79,7 +80,7 @@ export class GuestAccessService {
   readonly error = computed(() => this._error());
   readonly hasPurchases = computed(() => this._purchases().length > 0);
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private router: Router) {
     // Check for existing token on init
     this.validateStoredToken();
   }
@@ -308,6 +309,13 @@ export class GuestAccessService {
     this._identifierType.set(null);
     this._purchases.set([]);
     this._error.set(null);
+
+    // Redirect to home so any protected/guest-only pages get re-evaluated
+    try {
+      this.router.navigateByUrl('/', { replaceUrl: true });
+    } catch (err) {
+      // ignore navigation failures
+    }
   }
 
   /**
