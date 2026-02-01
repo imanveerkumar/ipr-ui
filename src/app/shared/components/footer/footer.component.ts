@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-footer',
@@ -9,7 +10,7 @@ import { RouterLink } from '@angular/router';
   template: `
     <footer class="footer">
       <!-- TOP SECTION (RED with Grid) -->
-      <div class="footer-top">
+      <div class="footer-top" *ngIf="!authService.isSignedIn() || !authService.isCreator()">
         <div class="wave-border-top"></div>
         
         <div class="cta-container">
@@ -517,6 +518,8 @@ import { RouterLink } from '@angular/router';
 export class FooterComponent {
   currentYear = new Date().getFullYear();
   isExpanded = false;
+
+  constructor(public authService: AuthService) {}
 
   toggleExpanded() {
     this.isExpanded = !this.isExpanded;
