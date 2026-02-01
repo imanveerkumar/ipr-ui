@@ -1065,7 +1065,7 @@ import { AuthService } from '../../../core/services/auth.service';
   template: `
     <div class="header-wrapper">
       <!-- Promo Banner -->
-      @if (showPromoBanner()) {
+      @if (showPromoBanner() && (!auth.isSignedIn() || !auth.isCreator())) {
         <div class="promo-banner">
           <span class="promo-text">
             🎉 <span class="promo-highlight">New Year Sale!</span> Get 30% off on premium products
