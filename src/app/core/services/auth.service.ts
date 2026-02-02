@@ -34,6 +34,8 @@ export class AuthService {
     this.initClerk();
     // Set token getter for API service
     this.apiService.setTokenGetter(() => this.getToken());
+    // Set sign out handler for automatic logout on auth failures
+    this.apiService.setSignOutHandler(() => this.signOut());
   }
 
   private async initClerk() {
@@ -96,6 +98,7 @@ export class AuthService {
 
   async getToken(): Promise<string | null> {
     if (!this.clerk?.session) {
+      console.warn('⚠️ No Clerk session available');
       return null;
     }
     try {
@@ -103,7 +106,15 @@ export class AuthService {
       const token = await this.clerk.session.getToken();
       return token;
     } catch (error) {
-      console.error('Failed to get token:', error);
+      console.error('❌ Failed to get token - session may have expired:', error);
+      // Session token retrieval failed - likely expired
+      // The session listener should handle this, but we can also check
+      if (!this.clerk?.user) {
+        console.warn('🚪 User session expired - clearing state');
+        this._clerkUser.set(null);
+        this._isSignedIn.set(false);
+        this._user.set(null);
+      }
       return null;
     }
   }

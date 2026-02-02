@@ -61,9 +61,14 @@ export class ApiService {
   }
 
   private tokenGetter: (() => Promise<string | null>) | null = null;
+  private signOutHandler: (() => Promise<void>) | null = null;
 
   setTokenGetter(getter: () => Promise<string | null>) {
     this.tokenGetter = getter;
+  }
+
+  setSignOutHandler(handler: () => Promise<void>) {
+    this.signOutHandler = handler;
   }
 
   private async getToken(): Promise<string | null> {
@@ -120,6 +125,48 @@ export class ApiService {
     return 'general';
   }
 
+  /**
+   * Handle authentication errors by logging out the user
+   */
+  private async handleAuthError(error: any): Promise<void> {
+    if (error.status === 401 && this.signOutHandler) {
+      console.warn('🚪 Authentication failed - logging out user');
+      try {
+        await this.signOutHandler();
+      } catch (err) {
+        console.error('Failed to sign out:', err);
+      }
+    }
+  }
+
+  /**
+   * Parse and validate HTTP response
+   */
+  private async parseResponse<T>(response: Response): Promise<T> {
+    // Check for authentication errors
+    if (response.status === 401) {
+      await this.handleAuthError({ status: 401 });
+      const error: any = new Error('Authentication required. Please sign in again.');
+      error.status = 401;
+      throw error;
+    }
+
+    // Check for other HTTP errors
+    if (!response.ok) {
+      const error: any = new Error(`HTTP ${response.status}: ${response.statusText}`);
+      error.status = response.status;
+      try {
+        const data = await response.json();
+        error.message = data.message || error.message;
+      } catch {
+        // Response not JSON, use default error message
+      }
+      throw error;
+    }
+
+    return response.json();
+  }
+
   async get<T>(endpoint: string, options?: ApiRequestOptions): Promise<ApiResponse<T>> {
     // Check rate limit
     this.checkRateLimit('GET', endpoint, options?.rateLimitConfig, options?.skipRateLimit);
@@ -142,7 +189,7 @@ export class ApiService {
             headers,
             signal: controller.signal,
           });
-          return response.json();
+          return await this.parseResponse<ApiResponse<T>>(response);
         } finally {
           clearTimeout(timeoutId);
         }
@@ -176,7 +223,7 @@ export class ApiService {
           body: JSON.stringify(body),
           signal: controller.signal,
         });
-        return response.json();
+        return await this.parseResponse<ApiResponse<T>>(response);
       },
       {
         key: requestKey,
@@ -204,7 +251,7 @@ export class ApiService {
           body: JSON.stringify(body),
           signal: controller.signal,
         });
-        return response.json();
+        return await this.parseResponse<ApiResponse<T>>(response);
       },
       {
         key: requestKey,
@@ -232,7 +279,7 @@ export class ApiService {
           body: JSON.stringify(body),
           signal: controller.signal,
         });
-        return response.json();
+        return await this.parseResponse<ApiResponse<T>>(response);
       },
       {
         key: requestKey,
@@ -259,7 +306,7 @@ export class ApiService {
           headers,
           signal: controller.signal,
         });
-        return response.json();
+        return await this.parseResponse<ApiResponse<T>>(response);
       },
       {
         key: requestKey,
@@ -313,7 +360,7 @@ export class ApiService {
       headers,
       body: formData,
     });
-    return response.json();
+    return await this.parseResponse<ApiResponse<T>>(response);
   }
 
   /**
