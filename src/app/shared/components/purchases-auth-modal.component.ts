@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, Output, EventEmitter, Input, HostListener } from '@angular/core';
+import { Component, OnInit, signal, inject, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GuestAccessService } from '../../core/services/guest-access.service';
