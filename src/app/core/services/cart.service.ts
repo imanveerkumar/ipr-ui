@@ -1,5 +1,5 @@
-import { Injectable, signal, computed, effect, inject } from '@angular/core';
-import { Product, Store } from '../models';
+import { Injectable, signal, computed, effect } from '@angular/core';
+import { Product } from '../models';
 
 export interface CartItem {
   product: Product;
