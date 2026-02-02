@@ -9,3 +9,8 @@ export * from './store-context.service';
 export * from './cart.service';
 export * from './guest-access.service';
 export * from './explore.service';
+
+// Request protection services
+export * from './request-manager.service';
+export * from './rate-limiter.service';
+export * from './loading-state.service';
