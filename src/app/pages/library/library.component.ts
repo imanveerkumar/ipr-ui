@@ -1,6 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { License } from '../../core/models/index';
 import { CheckoutService } from '../../core/services/checkout.service';
 import { DownloadService } from '../../core/services/download.service';
@@ -8,519 +9,230 @@ import { DownloadService } from '../../core/services/download.service';
 @Component({
   selector: 'app-library',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   template: `
-    <div class="page-wrapper">
+    <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Hero Section -->
-      <section class="hero-section">
-        <div class="padding-global">
-          <div class="hero-card">
-            <div class="max-w-4xl mx-auto text-center py-12 md:py-16 lg:py-20 px-4">
+      <section class="relative overflow-hidden">
+        <div class="bg-[#F9F4EB] border-b-2 border-black">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
+            <div class="text-center">
               <!-- Badge -->
-              <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm mb-6">
-                <svg class="w-4 h-4 mr-2 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
-                </svg>
-                <span class="text-sm font-medium text-gray-800">Your Digital Collection</span>
+              <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-[#2B57D6] border-2 border-black mb-4 transform -rotate-1">
+                <span class="text-xs font-bold text-white uppercase tracking-wider">Collection</span>
               </div>
               
               <!-- Main Heading -->
-              <h1 class="font-dm-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight uppercase tracking-tight">
+              <h1 class="font-dm-sans text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-2 md:mb-3 leading-tight">
                 My Library
               </h1>
               
               <!-- Subtext -->
-              <p class="text-base md:text-lg lg:text-xl text-gray-700/80 max-w-xl mx-auto">
-                Access all your purchased products and downloads in one place. Your digital assets, always available.
+              <p class="text-sm md:text-lg text-[#111111]/70 max-w-xl mx-auto mb-6 md:mb-8 font-medium">
+                Access your purchased digital assets, always available
               </p>
+
+              <!-- Search Bar -->
+              <div class="max-w-xl mx-auto mb-8 md:mb-12">
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    [(ngModel)]="searchQuery"
+                    placeholder="Search purchased products..."
+                    class="w-full pl-10 md:pl-12 pr-4 py-3 md:py-3.5 bg-white border-2 border-black rounded-xl text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+                  />
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 max-w-2xl mx-auto" *ngIf="!loading()">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ licenses().length }}</div>
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
+                  </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FFC60B] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getActiveCount() }}</div>
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Active</div>
+                  </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalDownloads() }}</div>
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Downloads</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Content Section -->
-      <section class="content-section">
-        <div class="padding-global">
-          <div class="max-w-5xl mx-auto">
-            @if (loading()) {
-              <!-- Loading Skeletons -->
-              <div class="space-y-4">
-                @for (i of [1, 2, 3]; track i) {
-                  <div class="product-card animate-pulse">
-                    <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                      <div class="w-full sm:w-32 h-48 sm:h-32 bg-gray-200/60 rounded-xl"></div>
-                      <div class="flex-1 space-y-3">
-                        <div class="h-6 bg-gray-200/60 rounded-lg w-2/3"></div>
-                        <div class="h-4 bg-gray-200/60 rounded-lg w-1/3"></div>
-                        <div class="h-4 bg-gray-200/60 rounded-lg w-1/2"></div>
-                      </div>
-                    </div>
-                  </div>
-                }
+      <!-- Main Content -->
+      <section class="py-6 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+          @if (loading()) {
+            <div class="py-16 flex flex-col items-center justify-center">
+              <div class="w-12 h-12 border-4 border-[#FFC60B] border-t-transparent rounded-full animate-spin mb-4"></div>
+              <p class="text-[#111111]/60 font-medium">Loading your library...</p>
+            </div>
+          } @else if (filteredLicenses().length === 0) {
+            <!-- Empty State -->
+            <div class="text-center py-12 md:py-16">
+              <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 bg-[#F9F4EB] border-2 border-black rounded-2xl flex items-center justify-center transform rotate-3">
+                <svg class="w-10 h-10 md:w-12 md:h-12 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
               </div>
-            } @else if (licenses().length === 0) {
-              <!-- Empty State -->
-              <div class="empty-state-card">
-                <div class="text-center py-8 md:py-12 lg:py-16 px-4">
-                  <div class="icon-container mx-auto mb-6">
-                    <svg class="w-12 h-12 md:w-14 md:h-14 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
-                  </div>
-                  <h2 class="font-dm-sans text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-                    No purchases yet
-                  </h2>
-                  <p class="text-gray-600 text-sm sm:text-base md:text-lg max-w-md mx-auto mb-8">
-                    Products you purchase will appear here. Start exploring amazing digital products from creators around the world.
-                  </p>
-                  <a routerLink="/" class="btn-primary">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    Explore Products
-                  </a>
-                </div>
-                
-                <!-- Decorative elements -->
-                <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-emerald-100/50 rounded-full blur-2xl"></div>
-                <div class="absolute -top-6 -right-6 w-32 h-32 bg-teal-100/50 rounded-full blur-2xl"></div>
-              </div>
-            } @else {
-              <!-- Products List -->
-              <div class="space-y-4">
-                @for (license of licenses(); track license.id) {
-                  <div class="product-card group">
-                    <div class="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-                      <!-- Product Image -->
+              <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-[#111111] mb-2">
+                {{ searchQuery() ? 'No matches found' : 'Your library is empty' }}
+              </h2>
+              <p class="text-sm md:text-base text-[#111111]/60 max-w-md mx-auto mb-8 font-medium">
+                {{ searchQuery() ? 'Try adjusting your search terms' : 'Start your collection by exploring amazing products from our creators.' }}
+              </p>
+              @if (!searchQuery()) {
+                <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-[#FFC60B] border-2 border-black rounded-lg font-bold text-[#111111] hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                  Explore Products
+                </a>
+              }
+            </div>
+          } @else {
+            <!-- Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              @for (license of filteredLicenses(); track license.id) {
+                <div class="group bg-white border-2 border-black rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300">
+                  <!-- Card Header (Image + Info) -->
+                  <div class="p-3 md:p-4 flex gap-4">
+                    <!-- Image -->
+                    <div class="w-20 h-20 md:w-24 md:h-24 shrink-0 bg-[#F9F4EB] border-2 border-black rounded-lg overflow-hidden">
                       @if (license.product.coverImageUrl) {
                         <img 
                           [src]="license.product.coverImageUrl" 
-                          alt="" 
-                          class="w-full sm:w-32 md:w-36 h-48 sm:h-32 md:h-36 object-cover rounded-xl shadow-sm group-hover:shadow-md transition-shadow shrink-0"
-                        >
+                          [alt]="license.product.title" 
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
                       } @else {
-                        <div class="w-full sm:w-32 md:w-36 h-48 sm:h-32 md:h-36 bg-gradient-to-br from-gray-100 to-gray-50 rounded-xl flex items-center justify-center shrink-0">
-                          <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        <div class="w-full h-full flex items-center justify-center">
+                          <svg class="w-8 h-8 text-[#111111]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                           </svg>
                         </div>
                       }
-                      
-                      <!-- Product Info -->
-                      <div class="flex-1 min-w-0 w-full">
-                        <h3 class="font-dm-sans text-lg sm:text-xl font-semibold text-gray-900 mb-1 group-hover:text-gray-700 transition-colors">
-                          {{ license.product.title }}
-                        </h3>
-                        @if (license.product.store) {
-                          <p class="text-sm text-gray-500 mb-3">by {{ license.product.store.name }}</p>
-                        }
-                        
-                        <!-- Meta Info -->
-                        <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-5">
-                          <div class="license-key-badge">
-                            <svg class="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                            </svg>
-                            <span class="font-mono text-xs text-gray-500 truncate max-w-[200px]">{{ license.licenseKey }}</span>
-                          </div>
-                          <div class="download-status">
-                            <div class="status-dot" [class]="license.downloadCount < license.maxDownloads ? 'bg-green-400' : 'bg-amber-400'"></div>
-                            <span class="text-sm text-gray-600">{{ license.downloadCount }} / {{ license.maxDownloads }} downloads</span>
-                          </div>
-                        </div>
-                      </div>
+                    </div>
 
-                      <!-- Download Buttons -->
-                      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto mt-4 sm:mt-0 shrink-0">
-                        @if (license.product.files && license.product.files.length > 0) {
-                          @for (pf of license.product.files; track pf.id) {
-                            <button 
-                              (click)="download(license.productId, pf.fileId)"
-                              [disabled]="downloading() === pf.fileId"
-                              class="btn-download"
-                            >
-                              @if (downloading() === pf.fileId) {
-                                <svg class="w-4 h-4 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
-                                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>Downloading...</span>
-                              } @else {
-                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                </svg>
-                                <span class="truncate max-w-[150px]">{{ pf.file.filename }}</span>
-                              }
-                            </button>
-                          }
-                        }
+                    <!-- Info -->
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-bold text-[#111111] text-sm md:text-base leading-tight mb-1 line-clamp-2">
+                        {{ license.product.title }}
+                      </h3>
+                      @if (license.product.store) {
+                        <div class="flex items-center gap-1.5 mb-2">
+                          <span class="text-xs text-[#111111]/60 font-medium truncate">
+                            by {{ license.product.store.name }}
+                          </span>
+                        </div>
+                      }
+                      
+                      <!-- License Key -->
+                      <div class="inline-flex items-center px-2 py-1 bg-[#F9F4EB] rounded border border-black/10 max-w-full">
+                        <svg class="w-3 h-3 text-[#111111]/40 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                        </svg>
+                        <code class="text-[10px] md:text-xs font-mono text-[#111111]/80 truncate select-all">
+                          {{ license.licenseKey }}
+                        </code>
                       </div>
                     </div>
                   </div>
-                }
-              </div>
-              
-              <!-- Stats Summary -->
-              <div class="stats-card mt-8">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                  <div class="stat-item">
-                    <div class="stat-value">{{ licenses().length }}</div>
-                    <div class="stat-label">Total Products</div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="stat-value">{{ getTotalDownloads() }}</div>
-                    <div class="stat-label">Downloads Used</div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="stat-value">{{ getTotalFiles() }}</div>
-                    <div class="stat-label">Files Available</div>
-                  </div>
-                  <div class="stat-item">
-                    <div class="stat-value">{{ getActiveCount() }}</div>
-                    <div class="stat-label">Active Licenses</div>
+
+                  <!-- Downloads Section -->
+                  <div class="px-3 md:px-4 pb-3 md:pb-4 border-t-2 border-black/5 pt-3 md:pt-4">
+                    <div class="flex items-center justify-between mb-3">
+                      <span class="text-xs font-bold text-[#111111] uppercase tracking-wider">Downloads</span>
+                      <span class="text-xs font-medium" [class.text-[#FA4B28]]="license.downloadCount >= license.maxDownloads" [class.text-[#68E079]]="license.downloadCount < license.maxDownloads">
+                        {{ license.downloadCount }} / {{ license.maxDownloads }} used
+                      </span>
+                    </div>
+
+                    @if (license.product.files && license.product.files.length > 0) {
+                      <div class="space-y-2">
+                        @for (pf of license.product.files; track pf.id) {
+                          <button 
+                            (click)="download(license.productId, pf.fileId)"
+                            [disabled]="downloading() === pf.fileId || license.downloadCount >= license.maxDownloads"
+                            class="w-full flex items-center justify-between px-3 py-2 bg-white border border-black rounded-lg hover:bg-[#F9F4EB] active:bg-[#F0EBE0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+                          >
+                            <div class="flex items-center min-w-0 mr-3">
+                              <svg class="w-4 h-4 text-[#111111]/40 mr-2 shrink-0 group-hover/btn:text-[#111111] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                              </svg>
+                              <span class="text-xs font-medium text-[#111111] truncate text-left">
+                                {{ pf.file.filename }}
+                              </span>
+                            </div>
+
+                            @if (downloading() === pf.fileId) {
+                              <svg class="w-4 h-4 animate-spin text-[#111111]" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            } @else {
+                              <svg class="w-4 h-4 text-[#111111] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                              </svg>
+                            }
+                          </button>
+                        }
+                      </div>
+                    } @else {
+                       <div class="text-xs text-[#111111]/50 italic text-center py-2">
+                         No files available
+                       </div>
+                    }
                   </div>
                 </div>
-              </div>
-            }
-          </div>
-        </div>
-      </section>
-
-      <!-- CTA Section -->
-      <section class="cta-section">
-        <div class="padding-global">
-          <div class="cta-card">
-            <div class="text-center relative z-10">
-              <h2 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                Discover more amazing products
-              </h2>
-              <p class="text-gray-700/80 text-base md:text-lg max-w-lg mx-auto mb-6">
-                Explore our marketplace and find digital products crafted by talented creators worldwide.
-              </p>
-              <a routerLink="/" class="btn-dark">
-                Browse Marketplace
-              </a>
+              }
             </div>
-            
-            <!-- Decorative elements -->
-            <div class="absolute -bottom-8 -left-8 w-32 h-32 bg-white/30 rounded-full blur-xl"></div>
-            <div class="absolute -top-8 -right-8 w-40 h-40 bg-white/20 rounded-full blur-xl"></div>
-            <div class="absolute bottom-6 right-6 text-5xl md:text-6xl">📚</div>
-          </div>
+          }
         </div>
       </section>
     </div>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-
-    .page-wrapper {
-      font-family: 'DM Sans', system-ui, sans-serif;
-      min-height: 100vh;
-      background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    :host {
+      display: block;
     }
-
     .font-dm-sans {
       font-family: 'DM Sans', sans-serif;
     }
-
-    .padding-global {
-      padding-left: 1rem;
-      padding-right: 1rem;
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
-
-    @media (min-width: 640px) {
-      .padding-global {
-        padding-left: 2rem;
-        padding-right: 2rem;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .padding-global {
-        padding-left: 3rem;
-        padding-right: 3rem;
-      }
-    }
-
-    /* Hero Section */
-    .hero-section {
-      padding-top: 1.5rem;
-      padding-bottom: 1rem;
-    }
-
-    @media (min-width: 768px) {
-      .hero-section {
-        padding-top: 2rem;
-      }
-    }
-
-    .hero-card {
-      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 30%, #6ee7b7 100%);
-      border-radius: 1.5rem;
-      transition: all 0.3s ease;
-    }
-
-    @media (min-width: 768px) {
-      .hero-card {
-        border-radius: 2rem;
-      }
-    }
-
-    .hero-card:hover {
-      transform: translateY(-2px);
-    }
-
-    /* Content Section */
-    .content-section {
-      padding-top: 2rem;
-      padding-bottom: 2rem;
-    }
-
-    @media (min-width: 768px) {
-      .content-section {
-        padding-top: 3rem;
-        padding-bottom: 3rem;
-      }
-    }
-
-    /* Product Card */
-    .product-card {
-      background: #ffffff;
-      border-radius: 1rem;
-      padding: 1rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.02);
-      border: 1px solid rgba(0, 0, 0, 0.04);
-      transition: all 0.2s ease;
-    }
-
-    @media (min-width: 640px) {
-      .product-card {
-        border-radius: 1.25rem;
-        padding: 1.5rem;
-      }
-    }
-
-    .product-card:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
-      border-color: rgba(0, 0, 0, 0.08);
-      transform: translateY(-1px);
-    }
-
-    /* Empty State Card */
-    .empty-state-card {
-      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #d1fae5 100%);
-      border-radius: 1.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    @media (min-width: 768px) {
-      .empty-state-card {
-        border-radius: 2rem;
-      }
-    }
-
-    .icon-container {
-      width: 5rem;
-      height: 5rem;
-      background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-      border-radius: 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-    }
-
-    @media (min-width: 768px) {
-      .icon-container {
-        width: 6rem;
-        height: 6rem;
-        border-radius: 1.5rem;
-      }
-    }
-
-    /* License Key Badge */
-    .license-key-badge {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.375rem 0.75rem;
-      background: #f9fafb;
-      border-radius: 0.5rem;
-      border: 1px solid #e5e7eb;
-    }
-
-    /* Download Status */
-    .download-status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .status-dot {
-      width: 0.5rem;
-      height: 0.5rem;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* Stats Card */
-    .stats-card {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      border-radius: 1.25rem;
-      padding: 1.5rem;
-      border: 1px solid #e2e8f0;
-    }
-
-    @media (min-width: 768px) {
-      .stats-card {
-        padding: 2rem;
-      }
-    }
-
-    .stat-item {
-      text-align: center;
-      padding: 0.5rem;
-    }
-
-    .stat-value {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #111827;
-      line-height: 1;
-      margin-bottom: 0.375rem;
-    }
-
-    @media (min-width: 768px) {
-      .stat-value {
-        font-size: 2rem;
-      }
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: #6b7280;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.025em;
-    }
-
-    @media (min-width: 768px) {
-      .stat-label {
-        font-size: 0.8125rem;
-      }
-    }
-
-    /* CTA Section */
-    .cta-section {
-      padding-top: 2rem;
-      padding-bottom: 4rem;
-    }
-
-    @media (min-width: 768px) {
-      .cta-section {
-        padding-top: 3rem;
-        padding-bottom: 6rem;
-      }
-    }
-
-    .cta-card {
-      background: linear-gradient(135deg, #bfdbfe 0%, #ddd6fe 50%, #e9d5ff 100%);
-      border-radius: 1.5rem;
-      padding: 3rem 1.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    @media (min-width: 768px) {
-      .cta-card {
-        border-radius: 2rem;
-        padding: 4rem 2rem;
-      }
-    }
-
-    /* Buttons */
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.875rem 1.75rem;
-      background-color: #1f2937;
-      color: #ffffff;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      border-radius: 0.625rem;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-primary:hover {
-      background-color: #374151;
-      transform: translateY(-1px);
-    }
-
-    .btn-dark {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem 2rem;
-      background-color: #1f2937;
-      color: #ffffff;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      transition: all 0.2s ease;
-    }
-
-    .btn-dark:hover {
-      background-color: #374151;
-      transform: translateY(-1px);
-    }
-
-    .btn-download {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      background-color: #1f2937;
-      color: #ffffff;
-      padding: 0.75rem 1.25rem;
-      border-radius: 0.625rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      border: none;
-      cursor: pointer;
-      min-height: 44px;
-      width: 100%;
-    }
-
-    @media (min-width: 640px) {
-      .btn-download {
-        width: auto;
-        padding: 0.75rem 1.5rem;
-      }
-    }
-
-    .btn-download:hover:not(:disabled) {
-      background-color: #374151;
-      transform: translateY(-1px);
-    }
-
-    .btn-download:disabled {
-      background-color: #9ca3af;
-      cursor: not-allowed;
-    }
-
-    .btn-download:active:not(:disabled) {
-      background-color: #111827;
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
     }
   `]
 })
@@ -528,6 +240,17 @@ export class LibraryComponent implements OnInit {
   licenses = signal<License[]>([]);
   loading = signal(true);
   downloading = signal<string | null>(null);
+  searchQuery = signal('');
+
+  filteredLicenses = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) return this.licenses();
+    
+    return this.licenses().filter(license => 
+      license.product.title.toLowerCase().includes(query) ||
+      license.product.store?.name.toLowerCase().includes(query)
+    );
+  });
 
   constructor(
     private checkoutService: CheckoutService,
@@ -535,9 +258,14 @@ export class LibraryComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const licenses = await this.checkoutService.getMyLicenses();
-    this.licenses.set(licenses);
-    this.loading.set(false);
+    try {
+      const licenses = await this.checkoutService.getMyLicenses();
+      this.licenses.set(licenses);
+    } catch (error) {
+      console.error('Failed to load library:', error);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async download(productId: string, fileId: string) {
