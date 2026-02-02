@@ -759,10 +759,13 @@ export class ExploreComponent implements OnInit {
   }
 
   getTabCount(tab: TabType): number {
+    const s = this.stats();
+    if (!s) return 0;
+    
     switch (tab) {
-      case 'products': return this.productsTotal();
-      case 'stores': return this.storesTotal();
-      case 'creators': return this.creatorsTotal();
+      case 'products': return s.totalProducts;
+      case 'stores': return s.totalStores;
+      case 'creators': return s.totalCreators;
     }
   }
 

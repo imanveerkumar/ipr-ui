@@ -137,6 +137,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       background-color: var(--bg-beige);
       border-bottom: 2px solid var(--text-black);
       position: relative;
+      margin-bottom: 20px;
     }
 
     .header-container {
@@ -167,6 +168,9 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       .header-inner {
         height: 72px;
         gap: 2rem;
+      }
+      .header {
+        margin-bottom: 25px;
       }
     }
 
@@ -766,6 +770,10 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
         background-image: radial-gradient(circle at 20px 0, transparent 20px, var(--bg-beige) 21px);
         background-size: 40px 25px;
       }
+    }
+
+    .cart-open .wave-border-bottom {
+      display: none;
     }
 
     /* === MOBILE MENU === */
@@ -1648,7 +1656,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       }
       
       <!-- Main Header -->
-      <header class="header">
+      <header class="header" [class.cart-open]="cartService.isOpen()">
         <div class="header-container">
           <div class="header-inner">
             <!-- Logo -->
