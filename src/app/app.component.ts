@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
+import { CartSidebarComponent } from './pages/storefront/cart-sidebar.component';
 import { AuthService, SubdomainService, StoreContextService } from './core/services';
 import { StorefrontLayoutComponent } from './pages/storefront/storefront-layout.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent, StorefrontLayoutComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent, StorefrontLayoutComponent, CartSidebarComponent],
   template: `
     @if (subdomainService.isStorefront()) {
       <!-- Storefront Mode: Show store-specific layout -->
@@ -23,6 +24,8 @@ import { StorefrontLayoutComponent } from './pages/storefront/storefront-layout.
         </main>
         <app-footer />
       </div>
+      <!-- Cart Sidebar (reuses storefront cart component) -->
+      <app-cart-sidebar />
     }
   `,
 })

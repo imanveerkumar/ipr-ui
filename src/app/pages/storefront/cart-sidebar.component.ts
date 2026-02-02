@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CartService, STORE_COLORS } from '../../core/services/cart.service';
 import { CheckoutService, CartValidationResult } from '../../core/services/checkout.service';
@@ -631,6 +631,7 @@ export class CartSidebarComponent {
   private checkoutService = inject(CheckoutService);
   authService = inject(AuthService);
   private subdomainService = inject(SubdomainService);
+  private router = inject(Router);
 
   isCheckingOut = false;
   isValidating = false;
@@ -966,7 +967,12 @@ export class CartSidebarComponent {
         this.cartService.clear();
         this.cartService.close();
         this.resetView();
-        window.location.href = this.subdomainService.getMainSiteUrl('/library');
+        // Use Router on main site for smooth navigation, window.location on storefront
+        if (this.subdomainService.isStorefront()) {
+          window.location.href = this.subdomainService.getMainSiteUrl('/library');
+        } else {
+          this.router.navigate(['/library']);
+        }
       }
     } catch (error: any) {
       console.error('Checkout failed:', error);

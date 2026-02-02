@@ -11,6 +11,8 @@ import {
   ExploreQueryParams 
 } from '../../core/services/explore.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
+import { CartService } from '../../core/services/cart.service';
+import { AuthService } from '../../core/services/auth.service';
 
 type TabType = 'products' | 'stores' | 'creators';
 type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
@@ -278,6 +280,22 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   >
                     -{{ exploreService.getDiscountPercentage(product.price, product.compareAtPrice) }}%
                   </div>
+
+                  <!-- Add to Cart Button (for logged-in users) -->
+                  <button
+                    *ngIf="authService.isSignedIn()"
+                    (click)="isInCart(product.id) ? removeFromCart(product.id, $event) : addToCart(product, $event)"
+                    class="absolute bottom-2 right-2 md:bottom-3 md:right-3 p-2 md:p-2.5 rounded-lg border-2 border-black transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] z-10"
+                    [class.bg-[#68E079]]="isInCart(product.id)"
+                    [class.bg-[#FFC60B]]="!isInCart(product.id)"
+                  >
+                    <svg *ngIf="!isInCart(product.id)" class="w-4 h-4 md:w-5 md:h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    <svg *ngIf="isInCart(product.id)" class="w-4 h-4 md:w-5 md:h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  </button>
                 </div>
 
                 <!-- Product Info -->
@@ -555,6 +573,8 @@ export class ExploreComponent implements OnInit {
   exploreService = inject(ExploreService);
   private subdomainService = inject(SubdomainService);
   private route = inject(ActivatedRoute);
+  cartService = inject(CartService);
+  authService = inject(AuthService);
 
   // State
   searchQuery = '';
@@ -808,5 +828,38 @@ export class ExploreComponent implements OnInit {
     // For now, we'll navigate to explore filtered by this creator
     // In future, this could be a dedicated creator profile page
     console.log('View creator:', creator.username);
+  }
+
+  addToCart(product: ExploreProduct, event: Event) {
+    event.stopPropagation();
+    
+    // Convert ExploreProduct to Product format for cart
+    const cartProduct = {
+      id: product.id,
+      title: product.title,
+      slug: product.slug,
+      price: product.price,
+      compareAtPrice: product.compareAtPrice,
+      currency: product.currency,
+      coverImageUrl: product.coverImageUrl,
+      storeId: product.store.id,
+      store: {
+        id: product.store.id,
+        name: product.store.name,
+        slug: product.store.slug,
+      },
+    } as any;
+    
+    this.cartService.addItem(cartProduct);
+    this.cartService.open();
+  }
+
+  isInCart(productId: string): boolean {
+    return this.cartService.isInCart(productId);
+  }
+
+  removeFromCart(productId: string, event: Event) {
+    event.stopPropagation();
+    this.cartService.removeItem(productId);
   }
 }
