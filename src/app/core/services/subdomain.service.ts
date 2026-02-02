@@ -99,7 +99,7 @@ export class SubdomainService {
       const knownTwoPartTlds = ['co.in', 'co.uk', 'com.au', 'org.uk'];
       const lastTwo = parts.slice(-2).join('.');
       
-      if (knownTwoPartTlds.some(tld => host.endsWith(tld))) {
+      if (knownTwoPartTlds.includes(lastTwo)) {
         return parts.slice(-3).join('.');
       }
       
