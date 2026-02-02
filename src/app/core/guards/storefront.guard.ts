@@ -1,12 +1,12 @@
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
+import { Router, CanActivateFn, UrlTree } from '@angular/router';
 import { SubdomainService } from '../services/subdomain.service';
 
 /**
  * Guard that only allows access to routes when on a storefront subdomain.
  * Redirects to /explore when accessed from the main site.
  */
-export const storefrontGuard: CanActivateFn = () => {
+export const storefrontGuard: CanActivateFn = (): boolean | UrlTree => {
   const subdomainService = inject(SubdomainService);
   const router = inject(Router);
 
@@ -16,6 +16,5 @@ export const storefrontGuard: CanActivateFn = () => {
   }
 
   // Redirect to explore page on main site
-  router.navigate(['/explore']);
-  return false;
+  return router.createUrlTree(['/explore']);
 };
