@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { 
   ExploreService, 
   ExploreProduct, 
@@ -554,6 +554,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 export class ExploreComponent implements OnInit {
   exploreService = inject(ExploreService);
   private subdomainService = inject(SubdomainService);
+  private route = inject(ActivatedRoute);
 
   // State
   searchQuery = '';
@@ -609,8 +610,22 @@ export class ExploreComponent implements OnInit {
   ];
 
   async ngOnInit() {
-    await this.loadStats();
-    await this.loadData();
+    // Read query params for initial search
+    this.route.queryParams.subscribe(async params => {
+      const q = params['q'];
+      const tab = params['tab'] as TabType | undefined;
+      
+      if (q) {
+        this.searchQuery = q;
+      }
+      
+      if (tab && ['products', 'stores', 'creators'].includes(tab)) {
+        this.activeTab.set(tab);
+      }
+      
+      await this.loadStats();
+      await this.loadData();
+    });
   }
 
   async loadStats() {

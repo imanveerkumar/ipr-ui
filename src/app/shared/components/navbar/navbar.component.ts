@@ -1,11 +1,21 @@
-import { Component, ElementRef, HostListener, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, ElementRef, HostListener, signal, inject, OnDestroy } from '@angular/core';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
+import { 
+  ExploreService, 
+  SearchSuggestions, 
+  SearchSuggestionProduct, 
+  SearchSuggestionStore, 
+  SearchSuggestionCreator 
+} from '../../../core/services/explore.service';
+import { SubdomainService } from '../../../core/services/subdomain.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule],
   styles: [`
     :host {
       --bg-red: #FA4B28;
@@ -1061,6 +1071,552 @@ import { AuthService } from '../../../core/services/auth.service';
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
+
+    /* === SEARCH DROPDOWN === */
+    .search-dropdown-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: var(--bg-beige);
+      border: 2px solid var(--text-black);
+      border-radius: 16px;
+      box-shadow: 6px 6px 0px var(--text-black);
+      z-index: 100;
+      max-height: 70vh;
+      overflow-y: auto;
+      animation: dropdown-enter 0.2s ease-out;
+    }
+
+    .search-dropdown-section {
+      padding: 12px;
+      border-bottom: 2px dashed var(--text-black);
+    }
+
+    .search-dropdown-section:last-child {
+      border-bottom: none;
+    }
+
+    .search-dropdown-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .search-dropdown-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #666;
+      margin: 0;
+    }
+
+    .search-dropdown-section-title svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .search-dropdown-section-badge {
+      background: var(--text-black);
+      color: #fff;
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    .search-dropdown-see-all {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--star-blue);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: opacity 0.2s;
+    }
+
+    .search-dropdown-see-all:hover {
+      opacity: 0.7;
+    }
+
+    .search-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .search-item:hover,
+    .search-item.active {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .search-item-image {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      border: 2px solid var(--text-black);
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #fff;
+    }
+
+    .search-item-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--text-black);
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--star-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .search-item-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .search-item-image-placeholder {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      border: 2px solid var(--text-black);
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .search-item-image-placeholder svg {
+      width: 20px;
+      height: 20px;
+      color: #999;
+    }
+
+    .search-item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .search-item-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-black);
+      margin: 0 0 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .search-item-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      color: #666;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .search-item-price {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-black);
+      flex-shrink: 0;
+    }
+
+    .search-item-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.625rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: var(--ticket-green);
+      border: 1px solid var(--text-black);
+      color: var(--text-black);
+      flex-shrink: 0;
+    }
+
+    .search-empty {
+      padding: 24px 16px;
+      text-align: center;
+    }
+
+    .search-empty-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      background: var(--bg-beige);
+      border: 2px solid var(--text-black);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-empty-icon svg {
+      width: 24px;
+      height: 24px;
+      color: #666;
+    }
+
+    .search-empty-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      color: #666;
+      margin: 0 0 4px;
+    }
+
+    .search-empty-hint {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      color: #999;
+      margin: 0;
+    }
+
+    .search-loading {
+      padding: 24px 16px;
+      text-align: center;
+    }
+
+    .search-loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e0e0e0;
+      border-top-color: var(--btn-yellow);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .search-loading-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      color: #666;
+      margin: 0;
+    }
+
+    .search-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 45;
+      display: none;
+    }
+
+    .search-overlay.active {
+      display: block;
+    }
+
+    /* === MOBILE SEARCH OVERLAY === */
+    .mobile-search-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-beige);
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-search-overlay.active {
+      transform: translateY(0);
+    }
+
+    @media (min-width: 768px) {
+      .mobile-search-overlay {
+        display: none !important;
+      }
+    }
+
+    .mobile-search-overlay-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--text-black);
+      background: #fff;
+    }
+
+    .mobile-search-overlay-back {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--text-black);
+      background: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .mobile-search-overlay-back:hover {
+      background: var(--bg-beige);
+    }
+
+    .mobile-search-overlay-back svg {
+      width: 20px;
+      height: 20px;
+      color: var(--text-black);
+    }
+
+    .mobile-search-overlay-input-container {
+      flex: 1;
+      position: relative;
+    }
+
+    .mobile-search-overlay-input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--text-black);
+      background: var(--bg-beige);
+      border: 2px solid var(--text-black);
+      border-radius: 50px;
+      outline: none;
+    }
+
+    .mobile-search-overlay-input:focus {
+      box-shadow: 3px 3px 0px var(--text-black);
+    }
+
+    .mobile-search-overlay-input-container .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: #888;
+      pointer-events: none;
+    }
+
+    .mobile-search-overlay-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    .mobile-search-tabs {
+      display: flex;
+      padding: 12px 16px;
+      gap: 8px;
+      border-bottom: 2px dashed var(--text-black);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .mobile-search-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mobile-search-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-black);
+      background: #fff;
+      border: 2px solid var(--text-black);
+      border-radius: 50px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .mobile-search-tab.active {
+      background: var(--btn-yellow);
+      box-shadow: 2px 2px 0px var(--text-black);
+    }
+
+    .mobile-search-tab svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .mobile-search-results {
+      padding: 12px 16px;
+    }
+
+    .mobile-search-results-empty {
+      padding: 48px 16px;
+      text-align: center;
+    }
+
+    .mobile-search-results-empty-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      background: #fff;
+      border: 2px solid var(--text-black);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-search-results-empty-icon svg {
+      width: 32px;
+      height: 32px;
+      color: #999;
+    }
+
+    .mobile-search-results-empty-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-black);
+      margin: 0 0 4px;
+    }
+
+    .mobile-search-results-empty-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      color: #666;
+      margin: 0;
+    }
+
+    .mobile-search-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 8px;
+      background: #fff;
+      border: 2px solid var(--text-black);
+    }
+
+    .mobile-search-item:active {
+      transform: scale(0.98);
+    }
+
+    .mobile-search-item-image {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      border: 2px solid var(--text-black);
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #f0f0f0;
+    }
+
+    .mobile-search-item-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid var(--text-black);
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--star-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .mobile-search-item-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .mobile-search-item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mobile-search-item-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-black);
+      margin: 0 0 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mobile-search-item-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      color: #666;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mobile-search-item-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .mobile-search-item-price {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-black);
+    }
+
+    .mobile-search-item-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: var(--ticket-green);
+      border: 1px solid var(--text-black);
+      color: var(--text-black);
+    }
   `],
   template: `
     <div class="header-wrapper">
@@ -1108,22 +1664,164 @@ import { AuthService } from '../../../core/services/auth.service';
             
             <!-- Search Section -->
             <div class="search-section">
-              <div class="search-container">
-                <input 
-                  type="text" 
-                  class="search-input" 
-                  placeholder="Search products..."
-                >
-                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
+              <div class="search-dropdown-wrapper">
+                <div class="search-container">
+                  <input 
+                    type="text" 
+                    class="search-input" 
+                    placeholder="Search products, stores, creators..."
+                    [(ngModel)]="searchQuery"
+                    (input)="onSearchInput()"
+                    (focus)="onSearchFocus()"
+                    (keydown)="onSearchKeydown($event)"
+                    #desktopSearchInput
+                  >
+                  <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                </div>
+                
+                <!-- Search Dropdown -->
+                @if (showSearchDropdown()) {
+                  <div class="search-dropdown">
+                    @if (isSearching()) {
+                      <div class="search-loading">
+                        <div class="search-loading-spinner"></div>
+                        <p class="search-loading-text">Searching...</p>
+                      </div>
+                    } @else if (!searchQuery || searchQuery.trim().length === 0) {
+                      <div class="search-empty">
+                        <div class="search-empty-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                          </svg>
+                        </div>
+                        <p class="search-empty-text">Start typing to search</p>
+                        <p class="search-empty-hint">Search for products, stores, or creators</p>
+                      </div>
+                    } @else if (hasNoResults()) {
+                      <div class="search-empty">
+                        <div class="search-empty-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z" />
+                          </svg>
+                        </div>
+                        <p class="search-empty-text">No results found</p>
+                        <p class="search-empty-hint">Try a different search term</p>
+                      </div>
+                    } @else {
+                      <!-- Products Section -->
+                      @if (searchSuggestions()?.products?.length) {
+                        <div class="search-dropdown-section">
+                          <div class="search-dropdown-section-header">
+                            <p class="search-dropdown-section-title">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                              </svg>
+                              Products
+                              <span class="search-dropdown-section-badge">{{ searchSuggestions()?.totalProducts }}</span>
+                            </p>
+                            <button class="search-dropdown-see-all" (click)="seeAllProducts()">See all →</button>
+                          </div>
+                          @for (product of searchSuggestions()?.products; track product.id) {
+                            <div class="search-item" (click)="navigateToProduct(product)">
+                              @if (product.coverImageUrl) {
+                                <img [src]="product.coverImageUrl" [alt]="product.title" class="search-item-image">
+                              } @else {
+                                <div class="search-item-image-placeholder">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                                  </svg>
+                                </div>
+                              }
+                              <div class="search-item-content">
+                                <p class="search-item-title">{{ product.title }}</p>
+                                <p class="search-item-subtitle">{{ product.storeName }}</p>
+                              </div>
+                              <span class="search-item-price">{{ formatPrice(product.price, product.currency) }}</span>
+                            </div>
+                          }
+                        </div>
+                      }
+                      
+                      <!-- Stores Section -->
+                      @if (searchSuggestions()?.stores?.length) {
+                        <div class="search-dropdown-section">
+                          <div class="search-dropdown-section-header">
+                            <p class="search-dropdown-section-title">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+                              </svg>
+                              Stores
+                              <span class="search-dropdown-section-badge">{{ searchSuggestions()?.totalStores }}</span>
+                            </p>
+                            <button class="search-dropdown-see-all" (click)="seeAllStores()">See all →</button>
+                          </div>
+                          @for (store of searchSuggestions()?.stores; track store.id) {
+                            <div class="search-item" (click)="navigateToStore(store)">
+                              @if (store.logoUrl) {
+                                <img [src]="store.logoUrl" [alt]="store.name" class="search-item-image">
+                              } @else {
+                                <div class="search-item-avatar">{{ store.name.charAt(0).toUpperCase() }}</div>
+                              }
+                              <div class="search-item-content">
+                                <p class="search-item-title">{{ store.name }}</p>
+                                <p class="search-item-subtitle">{{ store.productCount }} products</p>
+                              </div>
+                              <span class="search-item-badge">Store</span>
+                            </div>
+                          }
+                        </div>
+                      }
+                      
+                      <!-- Creators Section -->
+                      @if (searchSuggestions()?.creators?.length) {
+                        <div class="search-dropdown-section">
+                          <div class="search-dropdown-section-header">
+                            <p class="search-dropdown-section-title">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                              </svg>
+                              Creators
+                              <span class="search-dropdown-section-badge">{{ searchSuggestions()?.totalCreators }}</span>
+                            </p>
+                            <button class="search-dropdown-see-all" (click)="seeAllCreators()">See all →</button>
+                          </div>
+                          @for (creator of searchSuggestions()?.creators; track creator.id) {
+                            <div class="search-item" (click)="navigateToCreator(creator)">
+                              <div class="search-item-avatar">
+                                @if (creator.avatarUrl) {
+                                  <img [src]="creator.avatarUrl" [alt]="creator.displayName || creator.username">
+                                } @else {
+                                  {{ (creator.displayName || creator.username).charAt(0).toUpperCase() }}
+                                }
+                              </div>
+                              <div class="search-item-content">
+                                <p class="search-item-title">{{ creator.displayName || creator.username }}</p>
+                                <p class="search-item-subtitle">@{{ creator.username }} · {{ creator.storeCount }} stores</p>
+                              </div>
+                              <span class="search-item-badge">Creator</span>
+                            </div>
+                          }
+                        </div>
+                      }
+                    }
+                  </div>
+                }
               </div>
+            </div>
+            
+            <!-- Search Overlay for closing dropdown -->
+            <div 
+              class="search-overlay" 
+              [class.active]="showSearchDropdown()"
+              (click)="closeSearchDropdown()">
             </div>
             
             <!-- Actions Section -->
             <div class="actions-section">
               <!-- Mobile Search Button -->
-              <button class="icon-btn mobile-search-btn">
+              <button class="icon-btn mobile-search-btn" (click)="openMobileSearch()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
@@ -1267,11 +1965,12 @@ import { AuthService } from '../../../core/services/auth.service';
       
       <!-- Mobile Search -->
       <div class="mobile-search">
-        <div class="mobile-search-container">
+        <div class="mobile-search-container" (click)="openMobileSearchFromMenu()">
           <input 
             type="text" 
             class="mobile-search-input" 
             placeholder="Search products..."
+            readonly
           >
           <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -1369,18 +2068,244 @@ import { AuthService } from '../../../core/services/auth.service';
         }
       </div>
     </div>
+    
+    <!-- Mobile Search Overlay -->
+    <div class="mobile-search-overlay" [class.active]="mobileSearchOpen()">
+      <div class="mobile-search-overlay-header">
+        <button class="mobile-search-overlay-back" (click)="closeMobileSearch()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+        </button>
+        <div class="mobile-search-overlay-input-container">
+          <input 
+            type="text" 
+            class="mobile-search-overlay-input" 
+            placeholder="Search products, stores, creators..."
+            [(ngModel)]="mobileSearchQuery"
+            (input)="onMobileSearchInput()"
+            #mobileSearchInput
+          >
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Mobile Search Tabs -->
+      <div class="mobile-search-tabs">
+        <button 
+          class="mobile-search-tab" 
+          [class.active]="mobileSearchTab() === 'all'"
+          (click)="setMobileSearchTab('all')">
+          All
+        </button>
+        <button 
+          class="mobile-search-tab" 
+          [class.active]="mobileSearchTab() === 'products'"
+          (click)="setMobileSearchTab('products')">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+          </svg>
+          Products
+          @if (mobileSearchSuggestions()?.totalProducts) {
+            <span>({{ mobileSearchSuggestions()?.totalProducts }})</span>
+          }
+        </button>
+        <button 
+          class="mobile-search-tab" 
+          [class.active]="mobileSearchTab() === 'stores'"
+          (click)="setMobileSearchTab('stores')">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+          </svg>
+          Stores
+          @if (mobileSearchSuggestions()?.totalStores) {
+            <span>({{ mobileSearchSuggestions()?.totalStores }})</span>
+          }
+        </button>
+        <button 
+          class="mobile-search-tab" 
+          [class.active]="mobileSearchTab() === 'creators'"
+          (click)="setMobileSearchTab('creators')">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+          Creators
+          @if (mobileSearchSuggestions()?.totalCreators) {
+            <span>({{ mobileSearchSuggestions()?.totalCreators }})</span>
+          }
+        </button>
+      </div>
+      
+      <!-- Mobile Search Body -->
+      <div class="mobile-search-overlay-body">
+        @if (isMobileSearching()) {
+          <div class="search-loading" style="padding: 48px 16px;">
+            <div class="search-loading-spinner"></div>
+            <p class="search-loading-text">Searching...</p>
+          </div>
+        } @else if (!mobileSearchQuery || mobileSearchQuery.trim().length === 0) {
+          <div class="mobile-search-results-empty">
+            <div class="mobile-search-results-empty-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            </div>
+            <p class="mobile-search-results-empty-title">Search StoresCraft</p>
+            <p class="mobile-search-results-empty-text">Find amazing products, stores, and creators</p>
+          </div>
+        } @else if (hasMobileNoResults()) {
+          <div class="mobile-search-results-empty">
+            <div class="mobile-search-results-empty-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z" />
+              </svg>
+            </div>
+            <p class="mobile-search-results-empty-title">No results found</p>
+            <p class="mobile-search-results-empty-text">Try a different search term</p>
+          </div>
+        } @else {
+          <div class="mobile-search-results">
+            <!-- Products -->
+            @if ((mobileSearchTab() === 'all' || mobileSearchTab() === 'products') && mobileSearchSuggestions()?.products?.length) {
+              @if (mobileSearchTab() === 'all') {
+                <div class="search-dropdown-section-header" style="margin-bottom: 12px;">
+                  <p class="search-dropdown-section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                    </svg>
+                    Products
+                  </p>
+                </div>
+              }
+              @for (product of getMobileProducts(); track product.id) {
+                <div class="mobile-search-item" (click)="navigateToProduct(product)">
+                  @if (product.coverImageUrl) {
+                    <img [src]="product.coverImageUrl" [alt]="product.title" class="mobile-search-item-image">
+                  } @else {
+                    <div class="search-item-image-placeholder" style="width: 56px; height: 56px; border-radius: 10px;">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                      </svg>
+                    </div>
+                  }
+                  <div class="mobile-search-item-content">
+                    <p class="mobile-search-item-title">{{ product.title }}</p>
+                    <p class="mobile-search-item-subtitle">{{ product.storeName }}</p>
+                  </div>
+                  <div class="mobile-search-item-meta">
+                    <span class="mobile-search-item-price">{{ formatPrice(product.price, product.currency) }}</span>
+                  </div>
+                </div>
+              }
+            }
+            
+            <!-- Stores -->
+            @if ((mobileSearchTab() === 'all' || mobileSearchTab() === 'stores') && mobileSearchSuggestions()?.stores?.length) {
+              @if (mobileSearchTab() === 'all') {
+                <div class="search-dropdown-section-header" style="margin: 16px 0 12px;">
+                  <p class="search-dropdown-section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+                    </svg>
+                    Stores
+                  </p>
+                </div>
+              }
+              @for (store of getMobileStores(); track store.id) {
+                <div class="mobile-search-item" (click)="navigateToStore(store)">
+                  @if (store.logoUrl) {
+                    <img [src]="store.logoUrl" [alt]="store.name" class="mobile-search-item-image" style="border-radius: 50%;">
+                  } @else {
+                    <div class="mobile-search-item-avatar">{{ store.name.charAt(0).toUpperCase() }}</div>
+                  }
+                  <div class="mobile-search-item-content">
+                    <p class="mobile-search-item-title">{{ store.name }}</p>
+                    <p class="mobile-search-item-subtitle">{{ store.productCount }} products</p>
+                  </div>
+                  <div class="mobile-search-item-meta">
+                    <span class="mobile-search-item-badge">Store</span>
+                  </div>
+                </div>
+              }
+            }
+            
+            <!-- Creators -->
+            @if ((mobileSearchTab() === 'all' || mobileSearchTab() === 'creators') && mobileSearchSuggestions()?.creators?.length) {
+              @if (mobileSearchTab() === 'all') {
+                <div class="search-dropdown-section-header" style="margin: 16px 0 12px;">
+                  <p class="search-dropdown-section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg>
+                    Creators
+                  </p>
+                </div>
+              }
+              @for (creator of getMobileCreators(); track creator.id) {
+                <div class="mobile-search-item" (click)="navigateToCreator(creator)">
+                  <div class="mobile-search-item-avatar">
+                    @if (creator.avatarUrl) {
+                      <img [src]="creator.avatarUrl" [alt]="creator.displayName || creator.username">
+                    } @else {
+                      {{ (creator.displayName || creator.username).charAt(0).toUpperCase() }}
+                    }
+                  </div>
+                  <div class="mobile-search-item-content">
+                    <p class="mobile-search-item-title">{{ creator.displayName || creator.username }}</p>
+                    <p class="mobile-search-item-subtitle">@{{ creator.username }} · {{ creator.storeCount }} stores</p>
+                  </div>
+                  <div class="mobile-search-item-meta">
+                    <span class="mobile-search-item-badge">Creator</span>
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
+    </div>
   `,
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnDestroy {
+  private exploreService = inject(ExploreService);
+  private subdomainService = inject(SubdomainService);
+  private router = inject(Router);
+  
   profileMenuOpen = signal(false);
   mobileMenuOpen = signal(false);
   isScrolled = signal(false);
   showPromoBanner = signal(true);
+  
+  // Desktop search state
+  showSearchDropdown = signal(false);
+  searchQuery = '';
+  isSearching = signal(false);
+  searchSuggestions = signal<SearchSuggestions | null>(null);
+  private searchTimeout: any;
+  
+  // Mobile search state
+  mobileSearchOpen = signal(false);
+  mobileSearchQuery = '';
+  isMobileSearching = signal(false);
+  mobileSearchSuggestions = signal<SearchSuggestions | null>(null);
+  mobileSearchTab = signal<'all' | 'products' | 'stores' | 'creators'>('all');
+  private mobileSearchTimeout: any;
 
   constructor(
     public auth: AuthService,
     private elementRef: ElementRef
   ) {}
+  
+  ngOnDestroy() {
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+    if (this.mobileSearchTimeout) {
+      clearTimeout(this.mobileSearchTimeout);
+    }
+  }
 
   @HostListener('window:scroll')
   onScroll() {
@@ -1390,6 +2315,203 @@ export class NavbarComponent {
   @HostListener('document:keydown.escape')
   onEscapeKey() {
     this.closeAllMenus();
+    this.closeSearchDropdown();
+    this.closeMobileSearch();
+  }
+
+  // === SEARCH METHODS ===
+  
+  onSearchFocus() {
+    this.showSearchDropdown.set(true);
+  }
+  
+  onSearchInput() {
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+    
+    if (!this.searchQuery || this.searchQuery.trim().length === 0) {
+      this.searchSuggestions.set(null);
+      return;
+    }
+    
+    this.searchTimeout = setTimeout(() => {
+      this.performSearch();
+    }, 300);
+  }
+  
+  onSearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && this.searchQuery.trim()) {
+      this.closeSearchDropdown();
+      this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery.trim() } });
+    }
+  }
+  
+  async performSearch() {
+    if (!this.searchQuery || this.searchQuery.trim().length === 0) {
+      this.searchSuggestions.set(null);
+      return;
+    }
+    
+    this.isSearching.set(true);
+    
+    try {
+      const suggestions = await this.exploreService.getSearchSuggestions(this.searchQuery.trim(), 5);
+      this.searchSuggestions.set(suggestions);
+    } catch (error) {
+      console.error('Search failed:', error);
+      this.searchSuggestions.set(null);
+    } finally {
+      this.isSearching.set(false);
+    }
+  }
+  
+  closeSearchDropdown() {
+    this.showSearchDropdown.set(false);
+  }
+  
+  hasNoResults(): boolean {
+    const suggestions = this.searchSuggestions();
+    if (!suggestions) return false;
+    return suggestions.products.length === 0 && 
+           suggestions.stores.length === 0 && 
+           suggestions.creators.length === 0;
+  }
+  
+  // === MOBILE SEARCH METHODS ===
+  
+  openMobileSearch() {
+    this.mobileSearchOpen.set(true);
+    this.mobileSearchQuery = this.searchQuery; // Sync with desktop search
+    document.body.style.overflow = 'hidden';
+    
+    // Focus the input after a brief delay to allow animation
+    setTimeout(() => {
+      const input = document.querySelector('.mobile-search-overlay-input') as HTMLInputElement;
+      if (input) {
+        input.focus();
+      }
+    }, 100);
+  }
+  
+  closeMobileSearch() {
+    this.mobileSearchOpen.set(false);
+    document.body.style.overflow = '';
+  }
+  
+  openMobileSearchFromMenu() {
+    this.closeMobileMenu();
+    setTimeout(() => {
+      this.openMobileSearch();
+    }, 50);
+  }
+  
+  onMobileSearchInput() {
+    if (this.mobileSearchTimeout) {
+      clearTimeout(this.mobileSearchTimeout);
+    }
+    
+    if (!this.mobileSearchQuery || this.mobileSearchQuery.trim().length === 0) {
+      this.mobileSearchSuggestions.set(null);
+      return;
+    }
+    
+    this.mobileSearchTimeout = setTimeout(() => {
+      this.performMobileSearch();
+    }, 300);
+  }
+  
+  async performMobileSearch() {
+    if (!this.mobileSearchQuery || this.mobileSearchQuery.trim().length === 0) {
+      this.mobileSearchSuggestions.set(null);
+      return;
+    }
+    
+    this.isMobileSearching.set(true);
+    
+    try {
+      const suggestions = await this.exploreService.getSearchSuggestions(this.mobileSearchQuery.trim(), 10);
+      this.mobileSearchSuggestions.set(suggestions);
+    } catch (error) {
+      console.error('Mobile search failed:', error);
+      this.mobileSearchSuggestions.set(null);
+    } finally {
+      this.isMobileSearching.set(false);
+    }
+  }
+  
+  setMobileSearchTab(tab: 'all' | 'products' | 'stores' | 'creators') {
+    this.mobileSearchTab.set(tab);
+  }
+  
+  hasMobileNoResults(): boolean {
+    const suggestions = this.mobileSearchSuggestions();
+    if (!suggestions) return false;
+    return suggestions.products.length === 0 && 
+           suggestions.stores.length === 0 && 
+           suggestions.creators.length === 0;
+  }
+  
+  getMobileProducts(): SearchSuggestionProduct[] {
+    return this.mobileSearchSuggestions()?.products || [];
+  }
+  
+  getMobileStores(): SearchSuggestionStore[] {
+    return this.mobileSearchSuggestions()?.stores || [];
+  }
+  
+  getMobileCreators(): SearchSuggestionCreator[] {
+    return this.mobileSearchSuggestions()?.creators || [];
+  }
+  
+  // === NAVIGATION METHODS ===
+  
+  navigateToProduct(product: SearchSuggestionProduct) {
+    this.closeSearchDropdown();
+    this.closeMobileSearch();
+    const storeUrl = this.subdomainService.getStoreUrl(product.storeSlug, `/product/${product.slug}`);
+    window.location.href = storeUrl;
+  }
+  
+  navigateToStore(store: SearchSuggestionStore) {
+    this.closeSearchDropdown();
+    this.closeMobileSearch();
+    const storeUrl = this.subdomainService.getStoreUrl(store.slug);
+    window.location.href = storeUrl;
+  }
+  
+  navigateToCreator(creator: SearchSuggestionCreator) {
+    this.closeSearchDropdown();
+    this.closeMobileSearch();
+    // Navigate to explore with creator filter (for now)
+    this.router.navigate(['/explore'], { queryParams: { q: creator.username, tab: 'creators' } });
+  }
+  
+  seeAllProducts() {
+    this.closeSearchDropdown();
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'products' } });
+  }
+  
+  seeAllStores() {
+    this.closeSearchDropdown();
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'stores' } });
+  }
+  
+  seeAllCreators() {
+    this.closeSearchDropdown();
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'creators' } });
+  }
+  
+  // === UTILITY METHODS ===
+  
+  formatPrice(price: number, currency: string = 'INR'): string {
+    const amount = price / 100; // Convert from paise to rupees
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(amount);
   }
 
   getUserInitial(): string {
@@ -1432,6 +2554,8 @@ export class NavbarComponent {
   closeAllMenus() {
     this.closeProfileMenu();
     this.closeMobileMenu();
+    this.closeSearchDropdown();
+    this.closeMobileSearch();
   }
 
   async signIn() {

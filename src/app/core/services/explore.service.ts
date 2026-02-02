@@ -62,6 +62,42 @@ export interface ExploreStats {
   totalCreators: number;
 }
 
+export interface SearchSuggestionProduct {
+  id: string;
+  title: string;
+  slug: string;
+  price: number;
+  currency: string;
+  coverImageUrl?: string;
+  storeSlug: string;
+  storeName: string;
+}
+
+export interface SearchSuggestionStore {
+  id: string;
+  name: string;
+  slug: string;
+  logoUrl?: string;
+  productCount: number;
+}
+
+export interface SearchSuggestionCreator {
+  id: string;
+  username: string;
+  displayName?: string;
+  avatarUrl?: string;
+  storeCount: number;
+}
+
+export interface SearchSuggestions {
+  products: SearchSuggestionProduct[];
+  stores: SearchSuggestionStore[];
+  creators: SearchSuggestionCreator[];
+  totalProducts: number;
+  totalStores: number;
+  totalCreators: number;
+}
+
 export interface ExplorePaginatedResponse<T> {
   items: T[];
   total: number;
@@ -136,6 +172,28 @@ export class ExploreService {
   async getFeaturedCreators(limit: number = 6): Promise<ExploreCreator[]> {
     const response = await this.api.get<ExploreCreator[]>(`/explore/featured/creators?limit=${limit}`);
     return response.data || [];
+  }
+
+  async getSearchSuggestions(q: string, limit: number = 5): Promise<SearchSuggestions> {
+    if (!q || q.trim().length === 0) {
+      return {
+        products: [],
+        stores: [],
+        creators: [],
+        totalProducts: 0,
+        totalStores: 0,
+        totalCreators: 0,
+      };
+    }
+    const response = await this.api.get<SearchSuggestions>(`/explore/suggestions?q=${encodeURIComponent(q)}&limit=${limit}`);
+    return response.data || {
+      products: [],
+      stores: [],
+      creators: [],
+      totalProducts: 0,
+      totalStores: 0,
+      totalCreators: 0,
+    };
   }
 
   formatPrice(price: number, currency: string = 'INR'): string {
