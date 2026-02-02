@@ -1,7 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CartValidationResult, CartValidationItem } from '../../core/services/checkout.service';
-import { STORE_COLORS } from '../../core/services/cart.service';
+import { CartValidationResult } from '../../core/services/checkout.service';
 
 @Component({
   selector: 'app-cart-validation-modal',
