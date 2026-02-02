@@ -281,9 +281,9 @@ type ViewState = 'cart' | 'checkout';
               </div>
 
               <!-- Add more products hint -->
-              <button 
+              <button
                 (click)="cartService.close()"
-                routerLink="/products"
+                [routerLink]="authService.isSignedIn() ? '/explore' : '/products'"
                 class="mt-3 w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-xs text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-colors flex items-center justify-center gap-1.5"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
