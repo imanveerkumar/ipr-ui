@@ -140,6 +140,48 @@ export class CheckoutService {
     return response.data || [];
   }
 
+  async getMyOrdersPaginated(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<{
+    data: Order[];
+    meta: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+    };
+  }> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+    if (params.status) queryParams.append('status', params.status);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/orders?${queryString}` : '/orders';
+    
+    const response = await this.api.get<{
+      data: Order[];
+      meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+      };
+    }>(url);
+    
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 20, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
+  }
+
   async getMyLicenses(): Promise<License[]> {
     const response = await this.api.get<License[]>('/licenses');
     return response.data || [];
