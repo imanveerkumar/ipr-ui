@@ -17,334 +17,296 @@ interface SalesStats {
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="dashboard-wrapper">
-      <!-- Hero Header Section -->
-      <section class="hero-section">
-        <div class="hero-gradient">
-          <div class="container">
-            <!-- Welcome Badge -->
-            <div class="welcome-badge animate-fade-in">
-              <span class="badge-dot"></span>
-              <span>Creator Dashboard</span>
+    <div class="min-h-screen bg-white font-sans antialiased">
+      <!-- Hero Section -->
+      <section class="relative overflow-hidden">
+        <div class="bg-[#F9F4EB] border-b-2 border-black">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
+            <div class="text-center">
+              <!-- Badge -->
+              <div class="inline-flex items-center px-3 py-1.5 bg-[#68E079] border-2 border-black mb-4 transform -rotate-1 shadow-[2px_2px_0px_0px_#000]">
+                <span class="w-2 h-2 bg-[#111111] rounded-full mr-2 animate-pulse"></span>
+                <span class="text-xs font-bold text-[#111111] uppercase tracking-wider">Creator Dashboard</span>
+              </div>
+              
+              <!-- Main Heading -->
+              <h1 class="font-dm-sans text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-2 md:mb-3 leading-tight">
+                Welcome back, <span class="text-[#2B57D6]">Creator</span>
+              </h1>
+              
+              <!-- Subtext -->
+              <p class="text-sm md:text-lg text-[#111111]/70 max-w-xl mx-auto mb-6 md:mb-8 font-medium">
+                Manage your stores, track sales, and grow your digital empire
+              </p>
+
+              <!-- Hero Stats -->
+              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 max-w-2xl mx-auto" *ngIf="!loading()">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 md:bg-transparent border border-black/10 md:border-0">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                      <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stores().length }}</div>
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Stores</div>
+                  </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 md:bg-transparent border border-black/10 md:border-0">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#7C3AED] border border-black flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ totalProducts() }}</div>
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
+                  </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 md:bg-transparent border border-black/10 md:border-0">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">₹{{ formatRevenue(totalRevenue()) }}</div>
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Revenue</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <!-- Main Heading -->
-            <h1 class="hero-title animate-slide-up">
-              Welcome back, <span class="highlight-text">Creator</span>
-            </h1>
-            
-            <p class="hero-subtitle animate-slide-up delay-100">
-              Manage your stores, track sales, and grow your digital empire from one powerful dashboard.
-            </p>
-            
-            <!-- Quick Stats Summary -->
-            <div class="hero-stats animate-slide-up delay-200">
-              <div class="hero-stat-item">
-                <span class="hero-stat-value">{{ stores().length }}</span>
-                <span class="hero-stat-label">Active Stores</span>
-              </div>
-              <div class="hero-stat-divider"></div>
-              <div class="hero-stat-item">
-                <span class="hero-stat-value">{{ totalProducts() }}</span>
-                <span class="hero-stat-label">Products</span>
-              </div>
-              <div class="hero-stat-divider"></div>
-              <div class="hero-stat-item">
-                <span class="hero-stat-value">₹{{ formatRevenue(totalRevenue()) }}</span>
-                <span class="hero-stat-label">Total Revenue</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Decorative Elements -->
-          <div class="decorative-elements">
-            <div class="decor-circle decor-1"></div>
-            <div class="decor-circle decor-2"></div>
-            <div class="decor-circle decor-3"></div>
           </div>
         </div>
       </section>
 
       <!-- Main Content -->
-      <div class="content-section">
-        <div class="container">
+      <section class="py-6 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
           <!-- Stats Cards Grid -->
-          <div class="stats-grid animate-slide-up delay-300">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8 md:mb-12">
             <!-- Stores Card -->
-            <div class="stat-card" (click)="navigateTo('/dashboard/stores')">
-              <div class="stat-card-inner">
-                <div class="stat-icon-wrapper stores-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            <a routerLink="/dashboard/stores" class="group bg-white border-2 border-black p-4 md:p-5 hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-[#2B57D6] border-2 border-black flex items-center justify-center">
+                  <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
                   </svg>
                 </div>
-                <div class="stat-content">
-                  <span class="stat-label">Total Stores</span>
-                  <div class="stat-value-wrapper">
-                    @if (loading()) {
-                      <div class="skeleton-loader stat-skeleton"></div>
-                    } @else {
-                      <span class="stat-value">{{ stores().length }}</span>
-                    }
-                    <span class="stat-trend positive">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                      Active
-                    </span>
-                  </div>
-                </div>
-                <div class="stat-card-arrow">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </div>
+                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-[#111111] group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
               </div>
-            </div>
+              <p class="text-xs md:text-sm text-[#111111]/60 font-medium mb-1">Total Stores</p>
+              @if (loading()) {
+                <div class="h-8 w-16 bg-[#F9F4EB] animate-pulse"></div>
+              } @else {
+                <p class="text-2xl md:text-3xl font-bold text-[#111111]">{{ stores().length }}</p>
+              }
+              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-[#68E079] border border-black text-[10px] md:text-xs font-bold text-[#111111]">
+                <span class="w-1.5 h-1.5 bg-[#111111] rounded-full"></span>
+                Active
+              </div>
+            </a>
 
             <!-- Products Card -->
-            <div class="stat-card" (click)="navigateTo('/dashboard/products')">
-              <div class="stat-card-inner">
-                <div class="stat-icon-wrapper products-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+            <a routerLink="/dashboard/products" class="group bg-white border-2 border-black p-4 md:p-5 hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-[#7C3AED] border-2 border-black flex items-center justify-center">
+                  <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                   </svg>
                 </div>
-                <div class="stat-content">
-                  <span class="stat-label">Total Products</span>
-                  <div class="stat-value-wrapper">
-                    @if (loading()) {
-                      <div class="skeleton-loader stat-skeleton"></div>
-                    } @else {
-                      <span class="stat-value">{{ totalProducts() }}</span>
-                    }
-                    <span class="stat-trend neutral">Listed</span>
-                  </div>
-                </div>
-                <div class="stat-card-arrow">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                </div>
+                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-[#111111] group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
               </div>
-            </div>
+              <p class="text-xs md:text-sm text-[#111111]/60 font-medium mb-1">Total Products</p>
+              @if (loading()) {
+                <div class="h-8 w-16 bg-[#F9F4EB] animate-pulse"></div>
+              } @else {
+                <p class="text-2xl md:text-3xl font-bold text-[#111111]">{{ totalProducts() }}</p>
+              }
+              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-[#F9F4EB] border border-black text-[10px] md:text-xs font-bold text-[#111111]/70">
+                Listed
+              </div>
+            </a>
 
             <!-- Sales Card -->
-            <div class="stat-card" (click)="navigateTo('/dashboard/sales')">
-              <div class="stat-card-inner">
-                <div class="stat-icon-wrapper sales-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="1" x2="12" y2="23"></line>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            <a routerLink="/dashboard/sales" class="group bg-white border-2 border-black p-4 md:p-5 hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-[#FFC60B] border-2 border-black flex items-center justify-center">
+                  <svg class="w-5 h-5 md:w-6 md:h-6 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                   </svg>
                 </div>
-                <div class="stat-content">
-                  <span class="stat-label">Total Sales</span>
-                  <div class="stat-value-wrapper">
-                    @if (loading()) {
-                      <div class="skeleton-loader stat-skeleton"></div>
-                    } @else {
-                      <span class="stat-value">{{ totalSales() }}</span>
-                    }
-                    <span class="stat-trend positive">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                      Completed
-                    </span>
-                  </div>
-                </div>
-                <div class="stat-card-arrow">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-[#111111] group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+              <p class="text-xs md:text-sm text-[#111111]/60 font-medium mb-1">Total Sales</p>
+              @if (loading()) {
+                <div class="h-8 w-16 bg-[#F9F4EB] animate-pulse"></div>
+              } @else {
+                <p class="text-2xl md:text-3xl font-bold text-[#111111]">{{ totalSales() }}</p>
+              }
+              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-[#68E079] border border-black text-[10px] md:text-xs font-bold text-[#111111]">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                </svg>
+                Completed
+              </div>
+            </a>
+
+            <!-- Revenue Card -->
+            <div class="bg-white border-2 border-black p-4 md:p-5">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-[#68E079] border-2 border-black flex items-center justify-center">
+                  <svg class="w-5 h-5 md:w-6 md:h-6 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                 </div>
               </div>
-            </div>
-
-            <!-- Revenue Card -->
-            <div class="stat-card">
-              <div class="stat-card-inner">
-                <div class="stat-icon-wrapper revenue-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                  </svg>
-                </div>
-                <div class="stat-content">
-                  <span class="stat-label">Total Revenue</span>
-                  <div class="stat-value-wrapper">
-                    @if (loading()) {
-                      <div class="skeleton-loader stat-skeleton"></div>
-                    } @else {
-                      <span class="stat-value revenue-value">₹{{ formatRevenue(totalRevenue()) }}</span>
-                    }
-                    <span class="stat-trend positive">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                      Earned
-                    </span>
-                  </div>
-                </div>
+              <p class="text-xs md:text-sm text-[#111111]/60 font-medium mb-1">Total Revenue</p>
+              @if (loading()) {
+                <div class="h-8 w-24 bg-[#F9F4EB] animate-pulse"></div>
+              } @else {
+                <p class="text-2xl md:text-3xl font-bold text-[#111111]">₹{{ formatRevenue(totalRevenue()) }}</p>
+              }
+              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-[#68E079] border border-black text-[10px] md:text-xs font-bold text-[#111111]">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                </svg>
+                Earned
               </div>
             </div>
           </div>
 
           <!-- Quick Actions Section -->
-          <div class="section-header animate-slide-up delay-400">
-            <h2 class="section-title">Quick Actions</h2>
-            <p class="section-subtitle">Get started with these common tasks</p>
-          </div>
-          
-          <div class="quick-actions-grid animate-slide-up delay-400">
-            <!-- Create Store Action -->
-            <a routerLink="/dashboard/stores/new" class="action-card action-card-store">
-              <div class="action-card-content">
-                <div class="action-icon-wrapper">
-                  <div class="action-icon store-action-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M12 5v14M5 12h14"/>
-                    </svg>
-                  </div>
-                  <div class="action-icon-ring"></div>
-                </div>
-                <div class="action-text">
-                  <h3 class="action-title">Create Store</h3>
-                  <p class="action-description">Launch a new storefront and start selling</p>
-                </div>
-                <div class="action-arrow">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
+          <div class="mb-8 md:mb-12">
+            <h2 class="font-dm-sans text-lg md:text-xl font-bold text-[#111111] mb-1">Quick Actions</h2>
+            <p class="text-sm text-[#111111]/60 font-medium mb-4 md:mb-6">Get started with these common tasks</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+              <!-- Create Store Action -->
+              <a routerLink="/dashboard/stores/new" class="group flex items-center gap-4 p-4 md:p-5 bg-[#F9F4EB] border-2 border-black hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200">
+                <div class="w-12 h-12 md:w-14 md:h-14 bg-[#68E079] border-2 border-black flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6 md:w-7 md:h-7 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                   </svg>
                 </div>
-              </div>
-              <div class="action-card-bg"></div>
-            </a>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-bold text-[#111111] text-sm md:text-base mb-0.5">Create Store</h3>
+                  <p class="text-xs md:text-sm text-[#111111]/60 truncate">Launch a new storefront</p>
+                </div>
+                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-[#111111] group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
 
-            <!-- Add Product Action -->
-            <a routerLink="/dashboard/products/new" class="action-card action-card-product">
-              <div class="action-card-content">
-                <div class="action-icon-wrapper">
-                  <div class="action-icon product-action-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                      <line x1="12" y1="18" x2="12" y2="12"></line>
-                      <line x1="9" y1="15" x2="15" y2="15"></line>
-                    </svg>
-                  </div>
-                  <div class="action-icon-ring"></div>
-                </div>
-                <div class="action-text">
-                  <h3 class="action-title">Add Product</h3>
-                  <p class="action-description">Upload digital assets and start earning</p>
-                </div>
-                <div class="action-arrow">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
+              <!-- Add Product Action -->
+              <a routerLink="/dashboard/products/new" class="group flex items-center gap-4 p-4 md:p-5 bg-[#F9F4EB] border-2 border-black hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200">
+                <div class="w-12 h-12 md:w-14 md:h-14 bg-[#7C3AED] border-2 border-black flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                   </svg>
                 </div>
-              </div>
-              <div class="action-card-bg"></div>
-            </a>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-bold text-[#111111] text-sm md:text-base mb-0.5">Add Product</h3>
+                  <p class="text-xs md:text-sm text-[#111111]/60 truncate">Upload digital assets</p>
+                </div>
+                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-[#111111] group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
 
-            <!-- View Analytics Action -->
-            <a routerLink="/dashboard/sales" class="action-card action-card-analytics">
-              <div class="action-card-content">
-                <div class="action-icon-wrapper">
-                  <div class="action-icon analytics-action-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="18" y1="20" x2="18" y2="10"></line>
-                      <line x1="12" y1="20" x2="12" y2="4"></line>
-                      <line x1="6" y1="20" x2="6" y2="14"></line>
-                    </svg>
-                  </div>
-                  <div class="action-icon-ring"></div>
-                </div>
-                <div class="action-text">
-                  <h3 class="action-title">View Analytics</h3>
-                  <p class="action-description">Track sales and monitor performance</p>
-                </div>
-                <div class="action-arrow">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
+              <!-- View Analytics Action -->
+              <a routerLink="/dashboard/sales" class="group flex items-center gap-4 p-4 md:p-5 bg-[#F9F4EB] border-2 border-black hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200">
+                <div class="w-12 h-12 md:w-14 md:h-14 bg-[#FFC60B] border-2 border-black flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6 md:w-7 md:h-7 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                   </svg>
                 </div>
-              </div>
-              <div class="action-card-bg"></div>
-            </a>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-bold text-[#111111] text-sm md:text-base mb-0.5">View Analytics</h3>
+                  <p class="text-xs md:text-sm text-[#111111]/60 truncate">Track sales & performance</p>
+                </div>
+                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-[#111111] group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
           </div>
 
           <!-- Content Grid: Stores and Products -->
-          <div class="content-grid animate-slide-up delay-500">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8">
             <!-- Stores Section -->
-            <div class="content-card stores-card">
-              <div class="content-card-header">
-                <div class="content-card-title-wrapper">
-                  <div class="content-card-icon stores-title-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            <div class="bg-white border-2 border-black">
+              <div class="flex items-center justify-between p-4 md:p-5 border-b-2 border-black bg-[#F9F4EB]">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-[#2B57D6] border-2 border-black flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                      <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
                   </div>
-                  <h3 class="content-card-title">Your Stores</h3>
+                  <h3 class="font-bold text-[#111111] text-base md:text-lg">Your Stores</h3>
                 </div>
-                <a routerLink="/dashboard/stores" class="view-all-link">
+                <a routerLink="/dashboard/stores" class="flex items-center gap-1 text-sm font-bold text-[#111111]/70 hover:text-[#111111] transition-colors">
                   View All
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                   </svg>
                 </a>
               </div>
               
-              <div class="content-card-body">
+              <div class="p-3 md:p-4">
                 @if (loading()) {
                   @for (i of [1, 2, 3]; track i) {
-                    <div class="list-item-skeleton">
-                      <div class="skeleton-avatar"></div>
-                      <div class="skeleton-content">
-                        <div class="skeleton-line w-60"></div>
-                        <div class="skeleton-line w-40"></div>
+                    <div class="flex items-center gap-3 p-3 mb-2 bg-[#F9F4EB]/50 animate-pulse">
+                      <div class="w-10 h-10 bg-[#F9F4EB]"></div>
+                      <div class="flex-1">
+                        <div class="h-4 w-24 bg-[#F9F4EB] mb-2"></div>
+                        <div class="h-3 w-16 bg-[#F9F4EB]"></div>
                       </div>
                     </div>
                   }
                 } @else if (stores().length === 0) {
-                  <div class="empty-state">
-                    <div class="empty-state-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  <div class="text-center py-8 md:py-12">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-[#F9F4EB] border-2 border-black flex items-center justify-center transform rotate-3">
+                      <svg class="w-8 h-8 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
                       </svg>
                     </div>
-                    <h4 class="empty-state-title">No stores yet</h4>
-                    <p class="empty-state-text">Create your first store to start selling!</p>
-                    <a routerLink="/dashboard/stores/new" class="empty-state-button">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 5v14M5 12h14"/>
+                    <h4 class="font-bold text-[#111111] mb-1">No stores yet</h4>
+                    <p class="text-sm text-[#111111]/60 mb-4">Create your first store to start selling!</p>
+                    <a routerLink="/dashboard/stores/new" class="inline-flex items-center gap-2 px-4 py-2 bg-[#FFC60B] border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#ffdb4d] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                       </svg>
                       Create Store
                     </a>
                   </div>
                 } @else {
-                  <div class="list-items">
+                  <div class="space-y-2">
                     @for (store of stores().slice(0, 5); track store.id) {
-                      <a [routerLink]="['/dashboard/stores', store.id]" class="list-item store-item">
-                        <div class="list-item-avatar store-avatar">
-                          <span>{{ getStoreInitial(store.name) }}</span>
+                      <a [routerLink]="['/dashboard/stores', store.id]" class="group flex items-center gap-3 p-3 border border-black/10 hover:border-black hover:bg-[#F9F4EB]/50 transition-all">
+                        <div class="w-10 h-10 bg-[#2B57D6] border border-black flex items-center justify-center text-white font-bold text-lg shrink-0">
+                          {{ getStoreInitial(store.name) }}
                         </div>
-                        <div class="list-item-content">
-                          <h4 class="list-item-title">{{ store.name }}</h4>
-                          <p class="list-item-subtitle">{{ store.slug }}</p>
+                        <div class="flex-1 min-w-0">
+                          <h4 class="font-bold text-[#111111] text-sm truncate">{{ store.name }}</h4>
+                          <p class="text-xs text-[#111111]/60 truncate">{{ store.slug }}</p>
                         </div>
-                        <div class="list-item-meta">
-                          <span class="product-count-badge">
+                        <div class="flex items-center gap-2 shrink-0">
+                          <span class="px-2 py-1 bg-[#F9F4EB] border border-black/10 text-[10px] md:text-xs font-medium text-[#111111]/70">
                             {{ store._count?.products || 0 }} products
                           </span>
-                          <svg class="list-item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 18l6-6-6-6"/>
+                          <svg class="w-4 h-4 text-[#111111]/30 group-hover:text-[#111111] group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                           </svg>
                         </div>
                       </a>
@@ -355,80 +317,82 @@ interface SalesStats {
             </div>
 
             <!-- Products Section -->
-            <div class="content-card products-card">
-              <div class="content-card-header">
-                <div class="content-card-title-wrapper">
-                  <div class="content-card-icon products-title-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                      <line x1="3" y1="6" x2="21" y2="6"></line>
-                      <path d="M16 10a4 4 0 0 1-8 0"></path>
+            <div class="bg-white border-2 border-black">
+              <div class="flex items-center justify-between p-4 md:p-5 border-b-2 border-black bg-[#F9F4EB]">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-[#7C3AED] border-2 border-black flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                     </svg>
                   </div>
-                  <h3 class="content-card-title">Your Products</h3>
+                  <h3 class="font-bold text-[#111111] text-base md:text-lg">Your Products</h3>
                 </div>
-                <a routerLink="/dashboard/products" class="view-all-link">
+                <a routerLink="/dashboard/products" class="flex items-center gap-1 text-sm font-bold text-[#111111]/70 hover:text-[#111111] transition-colors">
                   View All
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                   </svg>
                 </a>
               </div>
               
-              <div class="content-card-body">
+              <div class="p-3 md:p-4">
                 @if (loading()) {
                   @for (i of [1, 2, 3]; track i) {
-                    <div class="list-item-skeleton">
-                      <div class="skeleton-image"></div>
-                      <div class="skeleton-content">
-                        <div class="skeleton-line w-60"></div>
-                        <div class="skeleton-line w-40"></div>
+                    <div class="flex items-center gap-3 p-3 mb-2 bg-[#F9F4EB]/50 animate-pulse">
+                      <div class="w-10 h-10 bg-[#F9F4EB]"></div>
+                      <div class="flex-1">
+                        <div class="h-4 w-24 bg-[#F9F4EB] mb-2"></div>
+                        <div class="h-3 w-16 bg-[#F9F4EB]"></div>
                       </div>
                     </div>
                   }
                 } @else if (products().length === 0) {
-                  <div class="empty-state">
-                    <div class="empty-state-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                  <div class="text-center py-8 md:py-12">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-[#F9F4EB] border-2 border-black flex items-center justify-center transform -rotate-3">
+                      <svg class="w-8 h-8 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                       </svg>
                     </div>
-                    <h4 class="empty-state-title">No products yet</h4>
-                    <p class="empty-state-text">Add your first product to start earning!</p>
-                    <a routerLink="/dashboard/products/new" class="empty-state-button">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 5v14M5 12h14"/>
+                    <h4 class="font-bold text-[#111111] mb-1">No products yet</h4>
+                    <p class="text-sm text-[#111111]/60 mb-4">Add your first product to start earning!</p>
+                    <a routerLink="/dashboard/products/new" class="inline-flex items-center gap-2 px-4 py-2 bg-[#FFC60B] border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#ffdb4d] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                       </svg>
                       Add Product
                     </a>
                   </div>
                 } @else {
-                  <div class="list-items">
+                  <div class="space-y-2">
                     @for (product of products().slice(0, 5); track product.id) {
-                      <a [routerLink]="['/dashboard/products', product.id]" class="list-item product-item">
-                        <div class="list-item-image">
+                      <a [routerLink]="['/dashboard/products', product.id]" class="group flex items-center gap-3 p-3 border border-black/10 hover:border-black hover:bg-[#F9F4EB]/50 transition-all">
+                        <div class="w-10 h-10 bg-[#F9F4EB] border border-black overflow-hidden shrink-0">
                           @if (product.coverImageUrl) {
-                            <img [src]="product.coverImageUrl" [alt]="product.title">
+                            <img [src]="product.coverImageUrl" [alt]="product.title" class="w-full h-full object-cover">
                           } @else {
-                            <div class="image-placeholder">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
+                            <div class="w-full h-full flex items-center justify-center">
+                              <svg class="w-5 h-5 text-[#111111]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
                               </svg>
                             </div>
                           }
                         </div>
-                        <div class="list-item-content">
-                          <h4 class="list-item-title">{{ product.title }}</h4>
-                          <p class="list-item-subtitle">{{ product.store?.name }}</p>
+                        <div class="flex-1 min-w-0">
+                          <h4 class="font-bold text-[#111111] text-sm truncate">{{ product.title }}</h4>
+                          <p class="text-xs text-[#111111]/60 truncate">{{ product.store?.name }}</p>
                         </div>
-                        <div class="list-item-meta">
-                          <span class="product-price">₹{{ product.price }}</span>
-                          <span class="product-status" [class.status-active]="product.status === 'PUBLISHED'" [class.status-draft]="product.status !== 'PUBLISHED'">
-                            {{ product.status === 'PUBLISHED' ? 'Active' : 'Draft' }}
+                        <div class="flex flex-col items-end gap-1 shrink-0">
+                          <span class="font-bold text-sm text-[#111111]">₹{{ product.price }}</span>
+                          <span class="px-2 py-0.5 text-[10px] font-bold uppercase"
+                            [class.bg-[#68E079]]="product.status === 'PUBLISHED'"
+                            [class.text-[#111111]]="product.status === 'PUBLISHED'"
+                            [class.border]="product.status === 'PUBLISHED'"
+                            [class.border-black]="product.status === 'PUBLISHED'"
+                            [class.bg-[#F9F4EB]]="product.status !== 'PUBLISHED'"
+                            [class.text-[#111111]/60]="product.status !== 'PUBLISHED'">
+                            {{ product.status === 'PUBLISHED' ? 'Live' : 'Draft' }}
                           </span>
                         </div>
                       </a>
@@ -440,932 +404,37 @@ interface SalesStats {
           </div>
 
           <!-- Tips Section -->
-          <div class="tips-section animate-slide-up delay-600">
-            <div class="tips-card">
-              <div class="tips-content">
-                <div class="tips-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+          <div class="bg-[#FFC60B] border-2 border-black p-4 md:p-5 shadow-[4px_4px_0px_0px_#000]">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shrink-0">
+                  <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                   </svg>
                 </div>
-                <div class="tips-text">
-                  <h3>Pro Tip</h3>
-                  <p>Add high-quality cover images to your products to increase conversions by up to 40%!</p>
+                <div>
+                  <h3 class="font-bold text-[#111111] mb-0.5">Pro Tip</h3>
+                  <p class="text-sm text-[#111111]/80">Add high-quality cover images to your products to increase conversions by up to 40%!</p>
                 </div>
               </div>
-              <a routerLink="/dashboard/products" class="tips-action">
+              <a routerLink="/dashboard/products" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
                 Update Products
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
               </a>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-
-    * {
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    .dashboard-wrapper {
-      font-family: 'DM Sans', system-ui, sans-serif;
-      min-height: 100vh;
-      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-      overflow-x: hidden;
-    }
-
-    /* Container */
-    .container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    @media (max-width: 640px) {
-      .container {
-        padding: 0 1rem;
-      }
-    }
-
-    /* Hero Section */
-    .hero-section {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-gradient {
-      background: linear-gradient(135deg, #c8f4d1 0%, #d4f8dd 25%, #e8fbee 50%, #f0fdf4 75%, #ffffff 100%);
-      padding: 3rem 0 4rem;
-      position: relative;
-      border-radius: 0 0 2rem 2rem;
-      margin: 0 1rem;
-    }
-
-    @media (max-width: 640px) {
-      .hero-gradient {
-        padding: 2rem 0 3rem;
-        margin: 0 0.5rem;
-        border-radius: 0 0 1.5rem 1.5rem;
-      }
-    }
-
-    /* Welcome Badge */
-    .welcome-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #1f2937;
-      margin-bottom: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .badge-dot {
-      width: 8px;
-      height: 8px;
-      background: #22c55e;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.1); }
-    }
-
-    /* Hero Title */
-    .hero-title {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #111827;
-      margin: 0 0 1rem;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-    }
-
-    @media (min-width: 768px) {
-      .hero-title {
-        font-size: 3rem;
-      }
-    }
-
-    .highlight-text {
-      color: #059669;
-      font-weight: 700;
-    }
-
-    .hero-subtitle {
-      font-size: 1.125rem;
-      color: #4b5563;
-      margin: 0 0 2rem;
-      max-width: 500px;
-      line-height: 1.6;
-    }
-
-    @media (max-width: 640px) {
-      .hero-subtitle {
-        font-size: 1rem;
-      }
-    }
-
-    /* Hero Stats */
-    .hero-stats {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .hero-stat-item {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .hero-stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    .hero-stat-label {
-      font-size: 0.875rem;
-      color: #6b7280;
-    }
-
-    .hero-stat-divider {
-      width: 1px;
-      height: 40px;
-      background: rgba(0, 0, 0, 0.1);
-    }
-
-    @media (max-width: 480px) {
-      .hero-stats {
-        gap: 1rem;
-      }
-      .hero-stat-value {
-        font-size: 1.25rem;
-      }
-      .hero-stat-divider {
-        height: 30px;
-      }
-    }
-
-    /* Decorative Elements */
-    .decorative-elements {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .decor-circle {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(16, 185, 129, 0.08);
-    }
-
-    .decor-1 {
-      width: 200px;
-      height: 200px;
-      top: -50px;
-      right: -50px;
-    }
-
-    .decor-2 {
-      width: 120px;
-      height: 120px;
-      top: 60%;
-      right: 10%;
-    }
-
-    .decor-3 {
-      width: 80px;
-      height: 80px;
-      top: 30%;
-      right: 25%;
-    }
-
-    @media (max-width: 768px) {
-      .decorative-elements {
-        display: none;
-      }
-    }
-
-    /* Content Section */
-    .content-section {
-      padding: 2rem 0 4rem;
-      margin-top: -1rem;
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-bottom: 3rem;
-    }
-
-    @media (max-width: 1024px) {
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 640px) {
-      .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-      }
-    }
-
-    /* Stat Card */
-    .stat-card {
-      position: relative;
-      background: #ffffff;
-      border-radius: 1.25rem;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    }
-
-    .stat-card-inner {
-      position: relative;
-      z-index: 1;
-      padding: 1.5rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .stat-icon-wrapper {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .stores-icon { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #059669; }
-    .products-icon { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); color: #7c3aed; }
-    .sales-icon { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
-    .revenue-icon { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); color: #db2777; }
-
-    .stat-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .stat-label {
-      font-size: 0.875rem;
-      color: #6b7280;
+    :host {
       display: block;
-      margin-bottom: 0.25rem;
     }
-
-    .stat-value-wrapper {
-      display: flex;
-      align-items: baseline;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .stat-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: #111827;
-      line-height: 1.2;
-    }
-
-    .revenue-value {
-      font-size: 1.5rem;
-    }
-
-    .stat-trend {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-    }
-
-    .stat-trend.positive {
-      background: #d1fae5;
-      color: #059669;
-    }
-
-    .stat-trend.neutral {
-      background: #f3f4f6;
-      color: #6b7280;
-    }
-
-    .stat-card-arrow {
-      position: absolute;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #d1d5db;
-      transition: all 0.3s;
-    }
-
-    .stat-card:hover .stat-card-arrow {
-      color: #9ca3af;
-      transform: translateY(-50%) translateX(4px);
-    }
-
-    /* Section Header */
-    .section-header {
-      margin-bottom: 1.5rem;
-    }
-
-    .section-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #111827;
-      margin: 0 0 0.25rem;
-    }
-
-    .section-subtitle {
-      font-size: 1rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    /* Quick Actions Grid */
-    .quick-actions-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 3rem;
-    }
-
-    @media (max-width: 768px) {
-      .quick-actions-grid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-      }
-    }
-
-    /* Action Card */
-    .action-card {
-      position: relative;
-      display: block;
-      border-radius: 1.25rem;
-      overflow: hidden;
-      text-decoration: none;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .action-card:hover {
-      transform: translateY(-4px);
-    }
-
-    .action-card-store { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); }
-    .action-card-product { background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); }
-    .action-card-analytics { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); }
-
-    .action-card-content {
-      position: relative;
-      z-index: 1;
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .action-icon-wrapper {
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .action-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .store-action-icon { background: #10b981; color: white; }
-    .product-action-icon { background: #8b5cf6; color: white; }
-    .analytics-action-icon { background: #f59e0b; color: white; }
-
-    .action-icon-ring {
-      position: absolute;
-      inset: -4px;
-      border-radius: 20px;
-      border: 2px dashed currentColor;
-      opacity: 0.2;
-    }
-
-    .action-card-store .action-icon-ring { color: #10b981; }
-    .action-card-product .action-icon-ring { color: #8b5cf6; }
-    .action-card-analytics .action-icon-ring { color: #f59e0b; }
-
-    .action-text {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .action-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0 0 0.25rem;
-    }
-
-    .action-description {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    .action-arrow {
-      color: #9ca3af;
-      transition: all 0.3s;
-      flex-shrink: 0;
-    }
-
-    .action-card:hover .action-arrow {
-      color: #6b7280;
-      transform: translateX(4px);
-    }
-
-    .action-card-bg {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .action-card-store .action-card-bg { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); }
-    .action-card-product .action-card-bg { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); }
-    .action-card-analytics .action-card-bg { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
-
-    .action-card:hover .action-card-bg {
-      opacity: 1;
-    }
-
-    /* Content Grid */
-    .content-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    @media (max-width: 1024px) {
-      .content-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-    }
-
-    /* Content Card */
-    .content-card {
-      background: #ffffff;
-      border-radius: 1.25rem;
-      overflow: hidden;
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    .content-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid #f3f4f6;
-    }
-
-    .content-card-title-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .content-card-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .stores-title-icon { background: #d1fae5; color: #059669; }
-    .products-title-icon { background: #ede9fe; color: #7c3aed; }
-
-    .content-card-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0;
-    }
-
-    .view-all-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.375rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #6b7280;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .view-all-link:hover {
-      color: #111827;
-    }
-
-    .content-card-body {
-      padding: 0.5rem;
-    }
-
-    /* List Items */
-    .list-items {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .list-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-      border-radius: 0.75rem;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .list-item:hover {
-      background: #f9fafb;
-    }
-
-    .list-item-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 1.125rem;
-      flex-shrink: 0;
-    }
-
-    .store-avatar {
-      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-      color: #059669;
-    }
-
-    .list-item-image {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      overflow: hidden;
-      flex-shrink: 0;
-      background: #f3f4f6;
-    }
-
-    .list-item-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .image-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #9ca3af;
-    }
-
-    .list-item-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .list-item-title {
-      font-size: 0.9375rem;
-      font-weight: 500;
-      color: #111827;
-      margin: 0 0 0.125rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .list-item-subtitle {
-      font-size: 0.8125rem;
-      color: #6b7280;
-      margin: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .list-item-meta {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.25rem;
-      flex-shrink: 0;
-    }
-
-    .product-count-badge {
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: #6b7280;
-      background: #f3f4f6;
-      padding: 0.25rem 0.625rem;
-      border-radius: 9999px;
-    }
-
-    .list-item-arrow {
-      color: #d1d5db;
-      transition: all 0.2s;
-    }
-
-    .list-item:hover .list-item-arrow {
-      color: #9ca3af;
-      transform: translateX(2px);
-    }
-
-    .product-price {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: #111827;
-    }
-
-    .product-status {
-      font-size: 0.6875rem;
-      font-weight: 500;
-      padding: 0.1875rem 0.5rem;
-      border-radius: 9999px;
-      text-transform: uppercase;
-      letter-spacing: 0.025em;
-    }
-
-    .status-active {
-      background: #d1fae5;
-      color: #059669;
-    }
-
-    .status-draft {
-      background: #f3f4f6;
-      color: #6b7280;
-    }
-
-    /* Empty State */
-    .empty-state {
-      padding: 3rem 1.5rem;
-      text-align: center;
-    }
-
-    .empty-state-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: #f3f4f6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1.25rem;
-      color: #9ca3af;
-    }
-
-    .empty-state-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0 0 0.5rem;
-    }
-
-    .empty-state-text {
-      font-size: 0.9375rem;
-      color: #6b7280;
-      margin: 0 0 1.5rem;
-    }
-
-    .empty-state-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.25rem;
-      background: #111827;
-      color: white;
-      font-size: 0.875rem;
-      font-weight: 500;
-      border-radius: 0.625rem;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .empty-state-button:hover {
-      background: #1f2937;
-      transform: translateY(-2px);
-    }
-
-    /* Skeleton Loaders */
-    .skeleton-loader {
-      background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 0.5rem;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .stat-skeleton {
-      width: 60px;
-      height: 32px;
-    }
-
-    .list-item-skeleton {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem;
-    }
-
-    .skeleton-avatar,
-    .skeleton-image {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    .skeleton-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .skeleton-line {
-      height: 12px;
-      border-radius: 4px;
-      background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    .skeleton-line.w-60 { width: 60%; }
-    .skeleton-line.w-40 { width: 40%; }
-
-    /* Tips Section */
-    .tips-section {
-      margin-top: 1rem;
-    }
-
-    .tips-card {
-      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-      border-radius: 1rem;
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .tips-content {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .tips-icon {
-      width: 40px;
-      height: 40px;
-      background: rgba(146, 64, 14, 0.1);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      color: #92400e;
-    }
-
-    .tips-text h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #92400e;
-      margin: 0 0 0.25rem;
-    }
-
-    .tips-text p {
-      font-size: 0.875rem;
-      color: #b45309;
-      margin: 0;
-    }
-
-    .tips-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.625rem 1rem;
-      background: rgba(255, 255, 255, 0.8);
-      color: #92400e;
-      font-size: 0.875rem;
-      font-weight: 500;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      transition: all 0.2s;
-      flex-shrink: 0;
-    }
-
-    .tips-action:hover {
-      background: #ffffff;
-      transform: translateY(-2px);
-    }
-
-    @media (max-width: 640px) {
-      .tips-card {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .tips-content {
-        flex-direction: column;
-      }
-    }
-
-    /* Animations */
-    .animate-fade-in {
-      animation: fadeIn 0.5s ease-out forwards;
-    }
-
-    .animate-slide-up {
-      animation: slideUp 0.6s ease-out forwards;
-    }
-
-    .delay-100 { animation-delay: 0.1s; }
-    .delay-200 { animation-delay: 0.2s; }
-    .delay-300 { animation-delay: 0.3s; }
-    .delay-400 { animation-delay: 0.4s; }
-    .delay-500 { animation-delay: 0.5s; }
-    .delay-600 { animation-delay: 0.6s; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Responsive Touch Feedback for Mobile */
-    @media (hover: none) and (pointer: coarse) {
-      .stat-card:active,
-      .action-card:active,
-      .list-item:active {
-        transform: scale(0.98);
-      }
+    .font-dm-sans {
+      font-family: 'DM Sans', sans-serif;
     }
   `]
 })
@@ -1394,14 +463,12 @@ export class DashboardComponent implements OnInit {
       this.stores.set(stores);
       this.products.set(products);
       
-      // Calculate total products
       let totalProducts = 0;
       stores.forEach(s => {
         totalProducts += s._count?.products || 0;
       });
       this.totalProducts.set(totalProducts);
       
-      // Get stats from API response
       const stats = statsResponse.data;
       if (stats) {
         this.totalSales.set(stats.totalSales);
