@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { Router } from '@angular/router';
 import { Clerk } from '@clerk/clerk-js';
 import { environment } from '../../../environments/environment';
 import { User } from '../models';
@@ -27,7 +28,7 @@ export class AuthService {
   });
   readonly isAdmin = computed(() => this._user()?.role === 'ADMIN');
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private router: Router) {}
 
   init() {
     this.initClerk();
@@ -38,7 +39,18 @@ export class AuthService {
   private async initClerk() {
     try {
       this.clerk = new Clerk(environment.clerkPublishableKey);
-      await this.clerk.load();
+      await this.clerk.load({
+        // Use custom router functions to prevent page reloads
+        routerPush: (to: string) => {
+          // Don't navigate - just stay on current page
+          // The auth listener will handle the state update
+          return Promise.resolve();
+        },
+        routerReplace: (to: string) => {
+          // Don't navigate - just stay on current page
+          return Promise.resolve();
+        },
+      });
       
       this._isLoaded.set(true);
       
@@ -66,6 +78,13 @@ export class AuthService {
             this._clerkUser.set(null);
             this._isSignedIn.set(false);
             this._user.set(null);
+
+            // If the user signs out from another tab or session, redirect to home
+            try {
+              this.router.navigateByUrl('/', { replaceUrl: true });
+            } catch (err) {
+              // ignore navigation failures
+            }
           }
         }
       });
@@ -91,11 +110,13 @@ export class AuthService {
 
   async signIn() {
     if (!this.clerk) return;
+    // Open sign-in modal - custom router prevents redirects
     await this.clerk.openSignIn();
   }
 
   async signUp() {
     if (!this.clerk) return;
+    // Open sign-up modal - custom router prevents redirects
     await this.clerk.openSignUp();
   }
 
@@ -104,6 +125,13 @@ export class AuthService {
     await this.clerk.signOut();
     this._user.set(null);
     this._isSignedIn.set(false);
+
+    // Navigate to home to ensure protected routes are no longer accessible
+    try {
+      this.router.navigateByUrl('/', { replaceUrl: true });
+    } catch (err) {
+      // ignore navigation errors
+    }
   }
 
   async openUserProfile() {
@@ -122,17 +150,17 @@ export class AuthService {
     }
   }
 
-  async upgradeToCreator(): Promise<boolean> {
+  async upgradeToCreator(): Promise<{ success: boolean; message?: string }> {
     try {
       const response = await this.apiService.post<User>('/auth/upgrade-to-creator', {});
       if (response.success && response.data) {
         this._user.set(response.data);
-        return true;
+        return { success: true };
       }
-      return false;
-    } catch (error) {
+      return { success: false, message: response.message };
+    } catch (error: any) {
       console.error('Failed to upgrade to creator:', error);
-      return false;
+      return { success: false, message: error.message || 'Failed to upgrade' };
     }
   }
 

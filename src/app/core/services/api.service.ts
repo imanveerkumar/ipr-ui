@@ -10,9 +10,10 @@ export class ApiService {
 
   constructor() {}
 
-  private async getAuthHeaders(): Promise<HeadersInit> {
+  private async getAuthHeaders(customHeaders?: Record<string, string>): Promise<HeadersInit> {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
+      ...(customHeaders || {}),
     };
 
     // Get token from Clerk (we'll inject this later to avoid circular dependency)
@@ -35,22 +36,45 @@ export class ApiService {
 
   private async getToken(): Promise<string | null> {
     if (this.tokenGetter) {
-      return this.tokenGetter();
+      try {
+        // Add timeout to token retrieval to prevent indefinite hanging
+        const tokenPromise = this.tokenGetter();
+        const timeoutPromise = new Promise<null>((resolve) => 
+          setTimeout(() => {
+            console.warn('⚠️ API Service - Token retrieval timed out');
+            resolve(null);
+          }, 5000)
+        );
+        
+        return await Promise.race([tokenPromise, timeoutPromise]);
+      } catch (e) {
+        console.error('Error getting token:', e);
+        return null;
+      }
     }
     return null;
   }
 
-  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'GET',
-      headers,
-    });
-    return response.json();
+  async get<T>(endpoint: string, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+    
+    try {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'GET',
+        headers,
+        signal: controller.signal,
+      });
+      return response.json();
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
-  async post<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async post<T>(endpoint: string, body: any, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
       headers,
@@ -59,8 +83,8 @@ export class ApiService {
     return response.json();
   }
 
-  async put<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async put<T>(endpoint: string, body: any, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PUT',
       headers,
@@ -69,8 +93,8 @@ export class ApiService {
     return response.json();
   }
 
-  async patch<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async patch<T>(endpoint: string, body: any, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PATCH',
       headers,
@@ -79,8 +103,8 @@ export class ApiService {
     return response.json();
   }
 
-  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async delete<T>(endpoint: string, options?: { headers?: Record<string, string> }): Promise<ApiResponse<T>> {
+    const headers = await this.getAuthHeaders(options?.headers);
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'DELETE',
       headers,

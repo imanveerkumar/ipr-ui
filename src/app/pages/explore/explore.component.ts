@@ -1,987 +1,902 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { RouterLink, ActivatedRoute } from '@angular/router';
+import { 
+  ExploreService, 
+  ExploreProduct, 
+  ExploreStore, 
+  ExploreCreator,
+  ExploreStats,
+  ExploreQueryParams 
+} from '../../core/services/explore.service';
+import { SubdomainService } from '../../core/services/subdomain.service';
+import { CartService } from '../../core/services/cart.service';
+import { AuthService } from '../../core/services/auth.service';
+
+type TabType = 'products' | 'stores' | 'creators';
+type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <!-- Main Wrapper -->
-    <div class="page-wrapper">
+    <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Hero Section -->
-      <section class="section tags-hero">
-        <div class="padding-global">
-          <div class="container-large">
-            <div class="margin-bottom margin-large">
-              <div class="heading-container">
-                <div class="max-width-xlarge">
-                  <div class="text-align-center">
-                    <h2 class="hero-heading">Every tool you require</h2>
+      <section class="relative overflow-hidden">
+        <div class="bg-[#F9F4EB] border-b-2 border-black">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
+            <div class="text-center">
+              <!-- Badge -->
+              <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-[#2B57D6] border-2 border-black mb-4 transform -rotate-1">
+                <span class="text-xs font-bold text-white uppercase tracking-wider">Discover</span>
+              </div>
+              
+              <!-- Main Heading -->
+              <h1 class="font-dm-sans text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-2 md:mb-3 leading-tight">
+                Explore Amazing Creations
+              </h1>
+              
+              <!-- Subtext -->
+              <p class="text-sm md:text-lg text-[#111111]/70 max-w-xl mx-auto mb-4 md:mb-6 font-medium">
+                Discover products, stores, and creators from our community
+              </p>
+
+              <!-- Search Bar -->
+              <div class="max-w-2xl mx-auto">
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    [(ngModel)]="searchQuery"
+                    (input)="onSearchInput()"
+                    (keyup.enter)="performSearch()"
+                    placeholder="Search products, stores, creators..."
+                    class="w-full pl-12 pr-24 py-3.5 md:py-4 bg-white border-2 border-black rounded-xl text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm sm:text-base"
+                  />
+                  <button
+                    (click)="performSearch()"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
+                  >
+                    Search
+                  </button>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 mt-4 md:mt-6" *ngIf="stats()">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalProducts }}</div>
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
                   </div>
                 </div>
-                <div class="margin-top margin-xsmall">
-                  <div class="max-width-medium align-center">
-                    <div class="text-color-primary opac-80 text-align-center text-size-medium">
-                      Set up a shop and begin selling your items instantly.
+                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalStores }}</div>
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Stores</div>
+                  </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalCreators }}</div>
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Creators</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Content -->
+      <section class="py-6 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+          <!-- Tabs & Filters -->
+          <div class="flex flex-col gap-4 mb-6 md:mb-8 sticky top-0 z-20 bg-white pt-2 pb-2 md:relative md:top-auto md:z-auto md:bg-transparent md:pt-0 md:pb-0">
+            <!-- Tabs -->
+            <div class="flex overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+              <div class="flex gap-2 md:gap-3 p-1 bg-[#F9F4EB] border-2 border-black rounded-xl">
+                <button
+                  *ngFor="let tab of tabs"
+                  (click)="switchTab(tab.value)"
+                  class="flex items-center gap-2 px-4 py-2.5 md:px-5 md:py-3 rounded-lg font-bold text-sm whitespace-nowrap transition-all duration-200"
+                  [class.bg-[#111111]]="activeTab() === tab.value"
+                  [class.text-white]="activeTab() === tab.value"
+                  [class.shadow-[2px_2px_0px_0px_#FFC60B]]="activeTab() === tab.value"
+                  [class.text-[#111111]]="activeTab() !== tab.value"
+                  [class.hover:bg-white]="activeTab() !== tab.value"
+                >
+                  <span [innerHTML]="tab.icon"></span>
+                  {{ tab.label }}
+                  <span 
+                    class="px-2 py-0.5 text-xs rounded-full"
+                    [class.bg-[#FFC60B]]="activeTab() === tab.value"
+                    [class.text-[#111111]]="activeTab() === tab.value"
+                    [class.bg-[#111111]/10]="activeTab() !== tab.value"
+                  >
+                    {{ getTabCount(tab.value) }}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Filters Row -->
+            <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-3">
+              <!-- Sort Dropdown -->
+              <div class="relative col-span-1 sm:col-span-auto">
+                <button
+                  (click)="toggleSortDropdown()"
+                  class="w-full sm:w-auto justify-center sm:justify-start flex items-center gap-2 px-3 sm:px-4 py-2.5 bg-white border-2 border-black rounded-lg font-medium text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
+                  </svg>
+                  <span class="truncate">{{ getCurrentSortLabel() }}</span>
+                  <svg class="w-4 h-4 transition-transform flex-shrink-0" [class.rotate-180]="showSortDropdown()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </button>
+                
+                <!-- Sort Options -->
+                <div
+                  *ngIf="showSortDropdown()"
+                  class="absolute top-full left-0 mt-2 w-48 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_#000] z-20 overflow-hidden"
+                >
+                  <button
+                    *ngFor="let option of sortOptions"
+                    (click)="selectSort(option)"
+                    class="w-full px-4 py-3 text-left text-sm font-medium text-[#111111] hover:bg-[#F9F4EB] transition-colors border-b border-black/10 last:border-b-0"
+                    [class.bg-[#FFC60B]]="currentSort().value === option.value && currentSort().order === option.order"
+                  >
+                    {{ option.label }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Price Filter (Products only) -->
+              <ng-container *ngIf="activeTab() === 'products'">
+                <div class="col-span-1 sm:col-span-auto">
+                  <button
+                    (click)="togglePriceFilter()"
+                    class="w-full sm:w-auto justify-center sm:justify-start flex items-center gap-2 px-3 sm:px-4 py-2.5 bg-white border-2 border-black rounded-lg font-medium text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors"
+                    [class.bg-[#68E079]]="hasPriceFilter()"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Price
+                    <svg class="w-4 h-4" *ngIf="hasPriceFilter()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  </button>
+                </div>
+                
+                <!-- Price Range Inputs -->
+                <div *ngIf="showPriceFilter()" class="col-span-2 sm:col-span-auto w-full sm:w-auto flex items-center gap-2">
+                  <input
+                    type="number"
+                    [(ngModel)]="minPrice"
+                    placeholder="Min"
+                    class="flex-1 sm:flex-none w-full sm:w-24 px-3 py-2 bg-white border-2 border-black rounded-lg text-sm font-medium text-[#111111] placeholder-[#111111]/40 focus:outline-none focus:ring-2 focus:ring-[#FFC60B]"
+                  />
+                  <span class="text-[#111111]/50">-</span>
+                  <input
+                    type="number"
+                    [(ngModel)]="maxPrice"
+                    placeholder="Max"
+                    class="flex-1 sm:flex-none w-full sm:w-24 px-3 py-2 bg-white border-2 border-black rounded-lg text-sm font-medium text-[#111111] placeholder-[#111111]/40 focus:outline-none focus:ring-2 focus:ring-[#FFC60B]"
+                  />
+                  <button
+                    (click)="applyPriceFilter()"
+                    class="px-3 py-2 bg-[#FFC60B] border-2 border-black rounded-lg text-sm font-bold text-[#111111] hover:bg-[#ffdb4d] transition-colors"
+                  >
+                    Apply
+                  </button>
+                </div>
+              </ng-container>
+
+              <!-- Clear Filters -->
+              <button
+                *ngIf="hasActiveFilters()"
+                (click)="clearFilters()"
+                class="col-span-2 sm:col-span-auto w-full sm:w-auto justify-center sm:justify-start flex items-center gap-2 px-3 sm:px-4 py-2.5 bg-[#FA4B28] border-2 border-black rounded-lg font-medium text-sm text-white hover:bg-[#e8421f] transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                Clear
+              </button>
+
+              <!-- Results Count -->
+              <div class="col-span-2 sm:col-span-auto sm:ml-auto text-center sm:text-right text-sm text-[#111111]/60 font-medium">
+                {{ getTotalResults() }} results
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div *ngIf="isLoading()" class="py-16 flex flex-col items-center justify-center">
+            <div class="w-12 h-12 border-4 border-[#FFC60B] border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p class="text-[#111111]/60 font-medium">Loading...</p>
+          </div>
+
+          <!-- Products Grid -->
+          <div *ngIf="!isLoading() && activeTab() === 'products'">
+            <div *ngIf="products().length === 0" class="py-16 text-center">
+              <div class="w-24 h-24 mx-auto mb-6 bg-[#F9F4EB] border-2 border-black rounded-2xl flex items-center justify-center">
+                <svg class="w-12 h-12 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-[#111111] mb-2">No products found</h3>
+              <p class="text-[#111111]/60 font-medium">Try adjusting your search or filters</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+              <div
+                *ngFor="let product of products()"
+                class="group bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col"
+                (click)="viewProduct(product)"
+              >
+                <!-- Product Image -->
+                <div class="aspect-square bg-[#F9F4EB] relative overflow-hidden">
+                  <img
+                    *ngIf="product.coverImageUrl"
+                    [src]="product.coverImageUrl"
+                    [alt]="product.title"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div *ngIf="!product.coverImageUrl" class="w-full h-full flex items-center justify-center">
+                    <svg class="w-12 h-12 text-[#111111]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                  </div>
+                  
+                  <!-- Discount Badge -->
+                  <div
+                    *ngIf="product.compareAtPrice && product.compareAtPrice > product.price"
+                    class="absolute top-2 left-2 md:top-3 md:left-3 px-1.5 py-0.5 md:px-2 md:py-1 bg-[#FA4B28] border border-black rounded md:rounded-lg text-[10px] md:text-xs font-bold text-white shadow-[1px_1px_0px_0px_#000] md:shadow-none"
+                  >
+                    -{{ exploreService.getDiscountPercentage(product.price, product.compareAtPrice) }}%
+                  </div>
+
+                  <!-- Action Buttons (for logged-in users) -->
+                  <div *ngIf="authService.isSignedIn()" class="absolute bottom-2 right-2 md:bottom-3 md:right-3 flex gap-1 md:gap-2 z-10">
+                    <!-- Add to Cart Button -->
+                    <button
+                      (click)="isInCart(product.id) ? removeFromCart(product.id, $event) : addToCart(product, $event)"
+                      class="p-2 md:p-2.5 rounded-lg border-2 border-black transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                      [class.bg-[#68E079]]="isInCart(product.id)"
+                      [class.bg-[#FFC60B]]="!isInCart(product.id)"
+                    >
+                      <svg *ngIf="!isInCart(product.id)" class="w-4 h-4 md:w-5 md:h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                      </svg>
+                      <svg *ngIf="isInCart(product.id)" class="w-4 h-4 md:w-5 md:h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    </button>
+
+                    <!-- Buy Now Button -->
+                    <button
+                      (click)="buyNow(product, $event)"
+                      class="px-2 md:px-3 py-2 md:py-2.5 bg-[#7C3AED] text-white border-2 border-black rounded-lg font-bold text-[10px] md:text-xs transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap"
+                    >
+                      Buy Now
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="p-2 md:p-4">
+                  <h3 class="font-bold text-[#111111] text-xs md:text-base line-clamp-2 mb-1 group-hover:text-[#2B57D6] transition-colors leading-tight">
+                    {{ product.title }}
+                  </h3>
+                  
+                  <!-- Creator -->
+                  <div class="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
+                    <div class="w-4 h-4 md:w-5 md:h-5 rounded-full bg-[#2B57D6] border border-black overflow-hidden flex-shrink-0">
+                      <img *ngIf="product.creator.avatarUrl" [src]="product.creator.avatarUrl" class="w-full h-full object-cover" />
+                    </div>
+                    <span class="text-[10px] md:text-xs text-[#111111]/60 font-medium truncate">
+                      {{ product.creator.displayName || product.creator.username }}
+                    </span>
+                  </div>
+                  
+                  <!-- Price -->
+                  <div class="flex items-center gap-1.5 md:gap-2">
+                    <span class="font-bold text-[#111111] text-xs md:text-base">
+                      {{ exploreService.formatPrice(product.price, product.currency) }}
+                    </span>
+                    <span
+                      *ngIf="product.compareAtPrice && product.compareAtPrice > product.price"
+                      class="text-[10px] md:text-xs text-[#111111]/40 line-through"
+                    >
+                      {{ exploreService.formatPrice(product.compareAtPrice, product.currency) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stores Grid -->
+          <div *ngIf="!isLoading() && activeTab() === 'stores'">
+            <div *ngIf="stores().length === 0" class="py-16 text-center">
+              <div class="w-24 h-24 mx-auto mb-6 bg-[#F9F4EB] border-2 border-black rounded-2xl flex items-center justify-center">
+                <svg class="w-12 h-12 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-[#111111] mb-2">No stores found</h3>
+              <p class="text-[#111111]/60 font-medium">Try adjusting your search or filters</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              <div
+                *ngFor="let store of stores()"
+                class="group bg-white border-2 border-black rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                (click)="viewStore(store)"
+              >
+                <!-- Store Banner -->
+                <div class="h-24 md:h-32 bg-gradient-to-br from-[#2B57D6] to-[#FA4B28] relative">
+                  <img
+                    *ngIf="store.bannerUrl"
+                    [src]="store.bannerUrl"
+                    [alt]="store.name"
+                    class="w-full h-full object-cover"
+                  />
+                  
+                  <!-- Store Logo -->
+                  <div class="absolute -bottom-6 left-4 w-14 h-14 md:w-16 md:h-16 bg-white border-2 border-black rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000]">
+                    <img
+                      *ngIf="store.logoUrl"
+                      [src]="store.logoUrl"
+                      [alt]="store.name"
+                      class="w-full h-full object-cover"
+                    />
+                    <div *ngIf="!store.logoUrl" class="w-full h-full bg-[#F9F4EB] flex items-center justify-center">
+                      <span class="text-lg md:text-xl font-bold text-[#111111]">{{ store.name.charAt(0) }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Store Info -->
+                <div class="p-4 pt-10">
+                  <h3 class="font-bold text-[#111111] text-base md:text-lg mb-1 group-hover:text-[#2B57D6] transition-colors">
+                    {{ store.name }}
+                  </h3>
+                  <p *ngIf="store.tagline" class="text-sm text-[#111111]/60 font-medium line-clamp-2 mb-3">
+                    {{ store.tagline }}
+                  </p>
+                  
+                  <!-- Stats -->
+                  <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1.5">
+                      <svg class="w-4 h-4 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                      </svg>
+                      <span class="text-sm font-medium text-[#111111]/60">{{ store.productCount }} products</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <div class="w-5 h-5 rounded-full bg-[#68E079] border border-black overflow-hidden flex-shrink-0">
+                        <img *ngIf="store.creator.avatarUrl" [src]="store.creator.avatarUrl" class="w-full h-full object-cover" />
+                      </div>
+                      <span class="text-sm font-medium text-[#111111]/60 truncate">
+                        {{ store.creator.displayName || store.creator.username }}
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Creators Grid -->
+          <div *ngIf="!isLoading() && activeTab() === 'creators'">
+            <div *ngIf="creators().length === 0" class="py-16 text-center">
+              <div class="w-24 h-24 mx-auto mb-6 bg-[#F9F4EB] border-2 border-black rounded-2xl flex items-center justify-center">
+                <svg class="w-12 h-12 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-[#111111] mb-2">No creators found</h3>
+              <p class="text-[#111111]/60 font-medium">Try adjusting your search or filters</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+              <div
+                *ngFor="let creator of creators()"
+                class="group bg-white border-2 border-black rounded-2xl p-4 md:p-5 hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 cursor-pointer text-center"
+                (click)="viewCreator(creator)"
+              >
+                <!-- Avatar -->
+                <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#FFC60B] to-[#FA4B28] border-2 border-black overflow-hidden shadow-[3px_3px_0px_0px_#000]">
+                  <img
+                    *ngIf="creator.avatarUrl"
+                    [src]="creator.avatarUrl"
+                    [alt]="creator.displayName || creator.username"
+                    class="w-full h-full object-cover"
+                  />
+                  <div *ngIf="!creator.avatarUrl" class="w-full h-full flex items-center justify-center">
+                    <span class="text-2xl md:text-3xl font-bold text-white">{{ (creator.displayName || creator.username).charAt(0).toUpperCase() }}</span>
+                  </div>
+                </div>
+                
+                <!-- Name -->
+                <h3 class="font-bold text-[#111111] text-base md:text-lg mb-1 group-hover:text-[#2B57D6] transition-colors">
+                  {{ creator.displayName || creator.username }}
+                </h3>
+                <p class="text-sm text-[#111111]/60 font-medium mb-3">&#64;{{ creator.username }}</p>
+                
+                <!-- Bio -->
+                <p *ngIf="creator.bio" class="text-sm text-[#111111]/70 line-clamp-2 mb-4">
+                  {{ creator.bio }}
+                </p>
+                
+                <!-- Stats -->
+                <div class="flex justify-center gap-4">
+                  <div class="text-center">
+                    <div class="text-lg font-bold text-[#111111]">{{ creator.storeCount }}</div>
+                    <div class="text-xs text-[#111111]/50 font-medium">Stores</div>
+                  </div>
+                  <div class="w-px bg-black/10"></div>
+                  <div class="text-center">
+                    <div class="text-lg font-bold text-[#111111]">{{ creator.productCount }}</div>
+                    <div class="text-xs text-[#111111]/50 font-medium">Products</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div 
+            *ngIf="!isLoading() && getTotalPages() > 1" 
+            class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 md:mt-12"
+          >
+            <div class="flex items-center gap-2">
+              <button
+                (click)="goToPage(currentPage() - 1)"
+                [disabled]="currentPage() === 1"
+                class="flex items-center justify-center w-10 h-10 bg-white border-2 border-black rounded-lg font-bold text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+              </button>
+              
+              <div class="flex items-center gap-1">
+                <ng-container *ngFor="let page of getVisiblePages()">
+                  <button
+                    *ngIf="page !== '...'"
+                    (click)="goToPage(+page)"
+                    class="w-10 h-10 rounded-lg font-bold text-sm transition-all duration-200"
+                    [class.bg-[#111111]]="currentPage() === +page"
+                    [class.text-white]="currentPage() === +page"
+                    [class.shadow-[2px_2px_0px_0px_#FFC60B]]="currentPage() === +page"
+                    [class.bg-white]="currentPage() !== +page"
+                    [class.border-2]="currentPage() !== +page"
+                    [class.border-black]="currentPage() !== +page"
+                    [class.text-[#111111]]="currentPage() !== +page"
+                    [class.hover:bg-[#F9F4EB]]="currentPage() !== +page"
+                  >
+                    {{ page }}
+                  </button>
+                  <span *ngIf="page === '...'" class="w-10 h-10 flex items-center justify-center text-[#111111]/50">
+                    ...
+                  </span>
+                </ng-container>
+              </div>
+              
+              <button
+                (click)="goToPage(currentPage() + 1)"
+                [disabled]="currentPage() >= getTotalPages()"
+                class="flex items-center justify-center w-10 h-10 bg-white border-2 border-black rounded-lg font-bold text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="text-sm text-[#111111]/60 font-medium">
+              Page {{ currentPage() }} of {{ getTotalPages() }}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="py-12 md:py-16 px-4 md:px-6 lg:px-8 bg-white">
+        <div class="max-w-4xl mx-auto">
+          <div class="bg-[#68E079] border-2 border-black rounded-[2rem] p-6 md:p-10 lg:p-12 text-center relative overflow-hidden shadow-[6px_6px_0px_0px_#000]">
+            <h2 class="font-dm-sans text-2xl md:text-3xl lg:text-4xl font-bold text-[#111111] mb-3 relative z-10">
+              Want to sell your products?
+            </h2>
+            <p class="text-base md:text-lg text-[#111111]/80 mb-6 font-medium relative z-10">
+              Join thousands of creators and start selling today
+            </p>
+            <a 
+              routerLink="/become-creator" 
+              class="relative z-10 inline-flex items-center px-6 py-3 md:px-8 md:py-4 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-base md:text-lg hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
+            >
+              Start selling for free
+            </a>
             
-            <!-- Tags Navigation -->
-            <div class="tags-wrapper">
-              <a href="#products" class="tag-anchor">
-                <div class="tag-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <path d="M16 10a4 4 0 0 1-8 0"></path>
-                  </svg>
-                </div>
-                <div>Products</div>
-              </a>
-              <a href="#customization" class="tag-anchor">
-                <div class="tag-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
-                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
-                    <path d="M2 2l7.586 7.586"></path>
-                    <circle cx="11" cy="11" r="2"></circle>
-                  </svg>
-                </div>
-                <div>Customization</div>
-              </a>
-              <a href="#marketing" class="tag-anchor">
-                <div class="tag-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                </div>
-                <div>Marketing</div>
-              </a>
-              <a href="#integrations" class="tag-anchor">
-                <div class="tag-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                  </svg>
-                </div>
-                <div>Integrations</div>
-              </a>
-              <a href="#payments" class="tag-anchor">
-                <div class="tag-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                    <line x1="1" y1="10" x2="23" y2="10"></line>
-                  </svg>
-                </div>
-                <div>Payments &amp; Security</div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Products Section -->
-      <section id="products" class="section zero-padding z-index-1">
-        <div class="padding-global">
-          <div class="container-xlarge">
-            <div class="feature-card products-variant">
-              <div class="feature-info-wrapper">
-                <div class="feature-content">
-                  <div class="margin-bottom margin-small">
-                    <div class="tag-anchor inline">
-                      <div class="tag-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                          <line x1="3" y1="6" x2="21" y2="6"></line>
-                          <path d="M16 10a4 4 0 0 1-8 0"></path>
-                        </svg>
-                      </div>
-                      <div>Products</div>
-                    </div>
-                  </div>
-                  <div class="margin-bottom margin-xxsmall">
-                    <h3>Offer goods and memberships</h3>
-                  </div>
-                  <p class="text-color-primary opac-80">Sell digital items, print-on-demand merchandise, or generate steady income with subscriptions.</p>
-                </div>
-                <div class="grid-2x3">
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Digital items of all kinds</div>
-                    <p class="text-color-primary opac-80">Sell ebooks, videos, audio &amp; music, or any other files like PSD, AI and many more.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Tangible items</div>
-                    <p class="text-color-primary opac-80">Sell physical products &amp; tangible items from your storefront.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Video streaming</div>
-                    <p class="text-color-primary opac-80">Offer your videos on demand, reduce the risk of piracy &amp; eliminate download issues with video streaming.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Subscriptions</div>
-                    <p class="text-color-primary opac-80">Create digital subscription products and charge your customers on a weekly, monthly or yearly basis.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Print on demand</div>
-                    <p class="text-color-primary opac-80">Sell t-shirts, hoodies, mugs &amp; hats using our built-in print on demand. We will automatically print incoming orders and send them to your customers.</p>
-                  </div>
-                  <div class="feature-item"></div>
-                </div>
-              </div>
-              <div class="splash-files products-splash">
-                <div class="splash-image-container">
-                  <img src="https://cdn.prod.website-files.com/6811f03f14c47749be0f02d0/68418a87663ff66b2581fea5_splash-customization.webp" alt="Products showcase" class="splash-image">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Customization Section -->
-      <section id="customization" class="section zero-padding z-index-1">
-        <div class="padding-global">
-          <div class="container-xlarge">
-            <div class="feature-card customization-variant">
-              <div class="feature-info-wrapper">
-                <div class="feature-content">
-                  <div class="margin-bottom margin-small">
-                    <div class="tag-anchor inline">
-                      <div class="tag-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
-                          <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
-                          <path d="M2 2l7.586 7.586"></path>
-                          <circle cx="11" cy="11" r="2"></circle>
-                        </svg>
-                      </div>
-                      <div>Personalization</div>
-                    </div>
-                  </div>
-                  <div class="margin-bottom margin-xxsmall">
-                    <h3>Stunning shop in under five minutes</h3>
-                  </div>
-                  <p class="text-color-primary opac-80">Effortlessly design a stunning shop that stands out and embodies your brand uniquely.</p>
-                </div>
-                <div class="grid-2x3">
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Personalization</div>
-                    <p class="text-color-primary opac-80">Add your logo, adjust colors and create the layout you want to match your brand.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Connect your own domain</div>
-                    <p class="text-color-primary opac-80">Link your existing domain to your store to strengthen your brand.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Shopping cart</div>
-                    <p class="text-color-primary opac-80">Earn more by letting your customers purchase multiple items at once with an online shopping cart.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Store language</div>
-                    <p class="text-color-primary opac-80">Give your customers an automatically translated version of your store's interface based on their location.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Optimized for mobile devices</div>
-                    <p class="text-color-primary opac-80">Create a mobile-optimized store and a flawless checkout experience for both desktop and mobile.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="splash-files customization-splash">
-                <div class="splash-image-container">
-                  <img src="https://cdn.prod.website-files.com/6811f03f14c47749be0f02d0/68418a87663ff66b2581fea5_splash-customization.webp" alt="Customization showcase" class="splash-image">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CTA Section 1 -->
-      <section class="section cta-section">
-        <div class="padding-global">
-          <div class="container-large">
-            <div class="heading-container">
-              <div class="max-width-xlarge">
-                <div class="text-align-center">
-                  <h2 class="cta-heading">Launch a shop that <em>reflects</em> you</h2>
-                </div>
-              </div>
-              <div class="margin-top margin-xsmall">
-                <div class="max-width-medium align-center">
-                  <div class="text-color-primary opac-80 text-align-center text-size-medium">
-                    Stunning shop, abundant features and no hidden transaction fees. Sign up to begin your 14-day free trial.
-                  </div>
-                </div>
-              </div>
-              <div class="margin-top margin-medium">
-                <a routerLink="/become-creator" class="button-primary">Start free trial</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Marketing Section -->
-      <section id="marketing" class="section zero-padding z-index-1">
-        <div class="padding-global">
-          <div class="container-xlarge">
-            <div class="feature-card marketing-variant">
-              <div class="feature-info-wrapper">
-                <div class="feature-content">
-                  <div class="margin-bottom margin-small">
-                    <div class="tag-anchor inline">
-                      <div class="tag-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                          <polyline points="17 8 12 3 7 8"></polyline>
-                          <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                      </div>
-                      <div>Marketing</div>
-                    </div>
-                  </div>
-                  <div class="margin-bottom margin-xxsmall">
-                    <h3>Integrated promotion tools</h3>
-                  </div>
-                  <p class="text-color-primary opac-80">Promote smarter, surpass competitors and expand your business effortlessly.</p>
-                </div>
-                <div class="grid-2x3">
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Discount codes</div>
-                    <p class="text-color-primary opac-80">Use discount codes to engage with customers and increase your sales.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Email marketing</div>
-                    <p class="text-color-primary opac-80">Send product updates to existing customers and collect newsletter subscribers on your store.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Upselling</div>
-                    <p class="text-color-primary opac-80">Offer powerful upsells to users who complete their checkout, increasing your average order value.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Tracking pixels</div>
-                    <p class="text-color-primary opac-80">Add Facebook and Twitter ad pixels to create ads for your store and track their performance.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Cart abandonment emails</div>
-                    <p class="text-color-primary opac-80">Automatically send emails with special offers to customers who have added products to their shopping cart but have not completed the checkout process.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Affiliate marketing</div>
-                    <p class="text-color-primary opac-80">Launch an affiliate program for your store: reward your affiliates with a commission for every sale they make on behalf of your store.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="splash-files marketing-splash">
-                <div class="splash-image-container">
-                  <img src="https://cdn.prod.website-files.com/6811f03f14c47749be0f02d0/6842cabf49ac4f0dcd171ae9_splash-marketing.webp" alt="Marketing showcase" class="splash-image">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Integrations Section -->
-      <section id="integrations" class="section zero-padding z-index-1">
-        <div class="padding-global">
-          <div class="container-xlarge">
-            <div class="feature-card integrations-variant">
-              <div class="feature-info-wrapper">
-                <div class="feature-content">
-                  <div class="margin-bottom margin-small">
-                    <div class="tag-anchor inline">
-                      <div class="tag-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                        </svg>
-                      </div>
-                      <div>Integrations</div>
-                    </div>
-                  </div>
-                  <div class="margin-bottom margin-xxsmall">
-                    <h3>Integrate</h3>
-                  </div>
-                  <p class="text-color-primary opac-80">Sell from your site, social platforms or anywhere.</p>
-                </div>
-                <div class="grid-2x3">
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">"Buy now" buttons</div>
-                    <p class="text-color-primary opac-80">Add "buy now" buttons for any website and turn your existing pages into a store.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Product links</div>
-                    <p class="text-color-primary opac-80">Sell anywhere with just a link. Works great for social media, messaging or direct communication.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Product cards</div>
-                    <p class="text-color-primary opac-80">Embed product cards to your website and monetize your existing content.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Store embed</div>
-                    <p class="text-color-primary opac-80">Turn any website into a store by embedding your whole store with all of your products.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">YouTube end screens &amp; cards</div>
-                    <p class="text-color-primary opac-80">Use our platform on cards and end screens within YouTube videos to increase traffic to your store.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="splash-files integrations-splash">
-                <div class="splash-image-container">
-                  <img src="https://cdn.prod.website-files.com/6811f03f14c47749be0f02d0/6811f03f14c47749be0f04db_splash-embed2.avif" alt="Integrations showcase" class="splash-image">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CTA Section 2 -->
-      <section class="section cta-section">
-        <div class="padding-global">
-          <div class="container-large">
-            <div class="heading-container">
-              <div class="max-width-xlarge">
-                <div class="text-align-center">
-                  <h2 class="cta-heading">Access all the expansion tools you need in one spot</h2>
-                </div>
-              </div>
-              <div class="margin-top margin-xsmall">
-                <div class="max-width-medium align-center">
-                  <div class="text-color-primary opac-80 text-align-center text-size-medium">
-                    Promote your items, sell them everywhere with one platform. Sign up to begin your 14 day free trial.
-                  </div>
-                </div>
-              </div>
-              <div class="margin-top margin-medium">
-                <a routerLink="/become-creator" class="button-primary">Start free trial</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Payments Section -->
-      <section id="payments" class="section zero-padding z-index-1">
-        <div class="padding-global">
-          <div class="container-xlarge">
-            <div class="feature-card payments-variant">
-              <div class="feature-info-wrapper">
-                <div class="feature-content">
-                  <div class="margin-bottom margin-small">
-                    <div class="tag-anchor inline">
-                      <div class="tag-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                          <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                      </div>
-                      <div>Payments &amp; Security</div>
-                    </div>
-                  </div>
-                  <div class="margin-bottom margin-xxsmall">
-                    <h3>Trusted payments and top-tier security</h3>
-                  </div>
-                  <p class="text-color-primary opac-80">Accept payments globally, secure your shop and your buyers.</p>
-                </div>
-                <div class="grid-2x3">
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">PayPal</div>
-                    <p class="text-color-primary opac-80">Use PayPal to accept payments from customers in over 200 countries.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Stripe</div>
-                    <p class="text-color-primary opac-80">Offer a credit card payment option on your store with Stripe.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Secure payments</div>
-                    <p class="text-color-primary opac-80">PCI-DSS-ready. Trusted payment processors handle buyer payment information.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">PDF stamping</div>
-                    <p class="text-color-primary opac-80">Automatically add buyer email addresses to every page of your PDF product file, ensuring each customer gets a uniquely marked file.</p>
-                  </div>
-                  <div class="feature-item">
-                    <div class="text-size-medium text-weight-medium">Limited downloads</div>
-                    <p class="text-color-primary opac-80">Control the number of times your customers can download their purchased files to prevent unauthorized sharing.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="splash-files payments-splash">
-                <div class="splash-image-container">
-                  <img src="https://cdn.prod.website-files.com/6811f03f14c47749be0f02d0/6811f03f14c47749be0f0453_splash-security.avif" alt="Payments showcase" class="splash-image">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Final CTA Banner -->
-      <section class="section cta-banner">
-        <div class="padding-global">
-          <div class="cta-banner-inner">
-            <div class="badge">
-              <div class="badge-text"><strong>30 day</strong> money-back guarantee</div>
-              <div class="badge-check">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-            </div>
-            <div class="margin-bottom margin-xsmall">
-              <div class="max-width-xlarge">
-                <div class="text-align-center">
-                  <h2 class="cta-heading dark">Launch <em>your</em> shop today</h2>
-                </div>
-              </div>
-            </div>
-            <div class="max-width-small align-center">
-              <div class="text-color-light opac-80 text-align-center text-size-medium">
-                Try free for 14 days. No card needed.
-              </div>
-            </div>
-            <div class="margin-top margin-medium">
-              <a routerLink="/become-creator" class="button-secondary">Start free trial</a>
-            </div>
-            
-            <!-- Background illustrations -->
-            <div class="bg-illustrations">
-              <div class="bg-ill-1">
-                <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="60" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="40" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
-                </svg>
-              </div>
-              <div class="bg-ill-2">
-                <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="60" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
-                  <circle cx="100" cy="100" r="40" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
-                </svg>
-              </div>
-            </div>
+            <!-- Decorative elements -->
+            <div class="absolute -bottom-4 -left-4 w-16 md:w-24 h-16 md:h-24 bg-white/30 rounded-full border-2 border-black"></div>
+            <div class="absolute -top-4 -right-4 w-20 md:w-32 h-20 md:h-32 bg-white/20 rounded-full border-2 border-black"></div>
           </div>
         </div>
       </section>
     </div>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
-
-    * {
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    :host {
+      display: block;
     }
-
-    .page-wrapper {
-      font-family: 'DM Sans', 'Open Sans', system-ui, sans-serif;
-      color: #111111;
-      overflow-x: hidden;
+    
+    .font-dm-sans {
+      font-family: 'DM Sans', sans-serif;
     }
-
-    /* Global Styles */
-    .padding-global {
-      padding-left: 2.5rem;
-      padding-right: 2.5rem;
+    
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
-
-    @media (max-width: 767px) {
-      .padding-global {
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
-      }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
     }
-
-    .container-large {
-      max-width: 80rem;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .container-xlarge {
-      max-width: 90rem;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .section {
-      padding-top: 6rem;
-      padding-bottom: 6rem;
-    }
-
-    @media (max-width: 767px) {
-      .section {
-        padding-top: 4rem;
-        padding-bottom: 4rem;
-      }
-    }
-
-    .section.zero-padding {
-      padding-top: 0;
-      padding-bottom: 1rem;
-    }
-
-    .z-index-1 {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Typography */
-    .text-align-center {
-      text-align: center;
-    }
-
-    .text-color-primary {
-      color: #111111;
-    }
-
-    .text-color-light {
-      color: #ffffff;
-    }
-
-    .opac-80 {
-      opacity: 0.8;
-    }
-
-    .text-size-medium {
-      font-size: 1rem;
-      line-height: 1.5;
-    }
-
-    .text-weight-medium {
-      font-weight: 500;
-    }
-
-    /* Margins */
-    .margin-bottom.margin-large {
-      margin-bottom: 4rem;
-    }
-
-    .margin-bottom.margin-small {
-      margin-bottom: 1rem;
-    }
-
-    .margin-bottom.margin-xxsmall {
-      margin-bottom: 0.5rem;
-    }
-
-    .margin-top.margin-xsmall {
-      margin-top: 0.75rem;
-    }
-
-    .margin-top.margin-medium {
-      margin-top: 2rem;
-    }
-
-    /* Layout */
-    .max-width-xlarge {
-      max-width: 64rem;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .max-width-medium {
-      max-width: 40rem;
-    }
-
-    .max-width-small {
-      max-width: 32rem;
-    }
-
-    .align-center {
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .heading-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* Hero Section */
-    .tags-hero {
-      padding-top: 8rem;
-      padding-bottom: 4rem;
-      background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
-    }
-
-    .hero-heading {
-      font-size: 3.5rem;
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      color: #111111;
-      margin: 0;
-    }
-
-    @media (max-width: 767px) {
-      .hero-heading {
-        font-size: 2.5rem;
-      }
-    }
-
-    /* Tags Navigation */
-    .tags-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .tag-anchor {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.625rem 1rem;
-      background-color: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 9999px;
-      color: #111111;
-      font-size: 0.875rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-
-    .tag-anchor:hover {
-      background-color: #f3f4f6;
-      border-color: #d1d5db;
-      transform: translateY(-1px);
-    }
-
-    .tag-anchor.inline {
-      cursor: default;
-    }
-
-    .tag-anchor.inline:hover {
-      transform: none;
-    }
-
-    .tag-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.25rem;
-      height: 1.25rem;
-      color: #6b7280;
-    }
-
-    .tag-icon svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Feature Cards */
-    .feature-card {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      padding: 3rem;
-      background: #ffffff;
-      border-radius: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 20px 40px rgba(0, 0, 0, 0.03);
-      margin-bottom: 1rem;
+    
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
       overflow: hidden;
-    }
-
-    @media (max-width: 991px) {
-      .feature-card {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-        padding: 2rem;
-      }
-    }
-
-    .feature-card.products-variant {
-      background: linear-gradient(135deg, #fef2c7 0%, #fff6ed 50%, #ffffff 100%);
-    }
-
-    .feature-card.customization-variant {
-      background: linear-gradient(135deg, #dbeafe 0%, #ece9fe 50%, #ffffff 100%);
-    }
-
-    .feature-card.marketing-variant {
-      background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 50%, #ffffff 100%);
-    }
-
-    .feature-card.integrations-variant {
-      background: linear-gradient(135deg, #fce7f3 0%, #fdf2f8 50%, #ffffff 100%);
-    }
-
-    .feature-card.payments-variant {
-      background: linear-gradient(135deg, #e0e7ff 0%, #eef2ff 50%, #ffffff 100%);
-    }
-
-    .feature-info-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .feature-content {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .feature-info-wrapper h3 {
-      font-size: 2rem;
-      font-weight: 700;
-      line-height: 1.2;
-      color: #111111;
-      margin: 0;
-    }
-
-    @media (max-width: 767px) {
-      .feature-info-wrapper h3 {
-        font-size: 1.5rem;
-      }
-    }
-
-    .feature-info-wrapper p {
-      margin: 0;
-      line-height: 1.6;
-    }
-
-    /* Feature Grid */
-    .grid-2x3 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 767px) {
-      .grid-2x3 {
-        grid-template-columns: 1fr;
-        gap: 1.25rem;
-      }
-    }
-
-    .feature-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.375rem;
-    }
-
-    .feature-item .text-size-medium {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: #111111;
-    }
-
-    .feature-item p {
-      font-size: 0.875rem;
-      margin: 0;
-    }
-
-    /* Splash Images */
-    .splash-files {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      min-height: 400px;
-      border-radius: 1rem;
-      overflow: hidden;
-    }
-
-    @media (max-width: 991px) {
-      .splash-files {
-        min-height: 300px;
-      }
-    }
-
-    .splash-image-container {
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-
-    .splash-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 1rem;
-    }
-
-    /* CTA Sections */
-    .cta-section {
-      padding-top: 5rem;
-      padding-bottom: 5rem;
-    }
-
-    .cta-heading {
-      font-size: 2.5rem;
-      font-weight: 700;
-      line-height: 1.2;
-      color: #111111;
-      margin: 0;
-    }
-
-    .cta-heading em {
-      font-style: italic;
-      color: #6366f1;
-    }
-
-    .cta-heading.dark {
-      color: #ffffff;
-    }
-
-    .cta-heading.dark em {
-      color: #a5b4fc;
-    }
-
-    @media (max-width: 767px) {
-      .cta-heading {
-        font-size: 2rem;
-      }
-    }
-
-    /* Buttons */
-    .button-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.875rem 2rem;
-      background-color: #1f2937;
-      color: #ffffff;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      border: none;
-      cursor: pointer;
-    }
-
-    .button-primary:hover {
-      background-color: #374151;
-      transform: translateY(-1px);
-    }
-
-    .button-secondary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem 2.5rem;
-      background-color: #ffffff;
-      color: #111111;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      border: none;
-      cursor: pointer;
-    }
-
-    .button-secondary:hover {
-      background-color: #f3f4f6;
-      transform: translateY(-1px);
-    }
-
-    /* CTA Banner */
-    .cta-banner {
-      padding: 0;
-    }
-
-    .cta-banner-inner {
-      position: relative;
-      padding: 5rem 2rem;
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
-      border-radius: 2rem;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 9999px;
-      margin-bottom: 1.5rem;
-    }
-
-    .badge-text {
-      color: #ffffff;
-      font-size: 0.875rem;
-    }
-
-    .badge-check {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.25rem;
-      height: 1.25rem;
-      background-color: #22c55e;
-      border-radius: 9999px;
-      color: #ffffff;
-    }
-
-    .badge-check svg {
-      width: 0.75rem;
-      height: 0.75rem;
-    }
-
-    /* Background Illustrations */
-    .bg-illustrations {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .bg-ill-1 {
-      position: absolute;
-      top: -50px;
-      left: -50px;
-      opacity: 0.5;
-    }
-
-    .bg-ill-2 {
-      position: absolute;
-      bottom: -50px;
-      right: -50px;
-      opacity: 0.5;
-    }
-
-    /* Responsive Adjustments */
-    @media (max-width: 479px) {
-      .tags-hero {
-        padding-top: 6rem;
-      }
-
-      .hero-heading {
-        font-size: 2rem;
-      }
-
-      .feature-card {
-        padding: 1.5rem;
-      }
-
-      .cta-banner-inner {
-        padding: 3rem 1.5rem;
-        border-radius: 1rem;
-      }
     }
   `]
 })
-export class ExploreComponent {}
+export class ExploreComponent implements OnInit {
+  exploreService = inject(ExploreService);
+  private subdomainService = inject(SubdomainService);
+  private route = inject(ActivatedRoute);
+  cartService = inject(CartService);
+  authService = inject(AuthService);
+
+  // State
+  searchQuery = '';
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  private searchTimeout: any;
+
+  // Signals
+  activeTab = signal<TabType>('products');
+  isLoading = signal(false);
+  showSortDropdown = signal(false);
+  showPriceFilter = signal(false);
+  currentPage = signal(1);
+  
+  stats = signal<ExploreStats | null>(null);
+  products = signal<ExploreProduct[]>([]);
+  stores = signal<ExploreStore[]>([]);
+  creators = signal<ExploreCreator[]>([]);
+  
+  productsTotal = signal(0);
+  storesTotal = signal(0);
+  creatorsTotal = signal(0);
+  
+  currentSort = signal<SortOption>({ label: 'Newest', value: 'createdAt', order: 'desc' });
+
+  // Tab configuration
+  tabs = [
+    { 
+      value: 'products' as TabType, 
+      label: 'Products',
+      icon: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>'
+    },
+    { 
+      value: 'stores' as TabType, 
+      label: 'Stores',
+      icon: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>'
+    },
+    { 
+      value: 'creators' as TabType, 
+      label: 'Creators',
+      icon: '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'
+    },
+  ];
+
+  // Sort options
+  sortOptions: SortOption[] = [
+    { label: 'Newest', value: 'createdAt', order: 'desc' },
+    { label: 'Oldest', value: 'createdAt', order: 'asc' },
+    { label: 'Name A-Z', value: 'title', order: 'asc' },
+    { label: 'Name Z-A', value: 'title', order: 'desc' },
+    { label: 'Price: Low to High', value: 'price', order: 'asc' },
+    { label: 'Price: High to Low', value: 'price', order: 'desc' },
+  ];
+
+  async ngOnInit() {
+    // Read query params for initial search
+    this.route.queryParams.subscribe(async params => {
+      const q = params['q'];
+      const tab = params['tab'] as TabType | undefined;
+      
+      if (q) {
+        this.searchQuery = q;
+      }
+      
+      if (tab && ['products', 'stores', 'creators'].includes(tab)) {
+        this.activeTab.set(tab);
+      }
+      
+      await this.loadStats();
+      await this.loadData();
+    });
+  }
+
+  async loadStats() {
+    try {
+      const stats = await this.exploreService.getStats();
+      this.stats.set(stats);
+    } catch (error) {
+      console.error('Failed to load stats:', error);
+    }
+  }
+
+  async loadData() {
+    this.isLoading.set(true);
+    
+    try {
+      const params: ExploreQueryParams = {
+        q: this.searchQuery || undefined,
+        page: this.currentPage(),
+        limit: 12,
+        sortBy: this.currentSort().value,
+        sortOrder: this.currentSort().order,
+      };
+
+      if (this.activeTab() === 'products') {
+        if (this.minPrice !== null) params.minPrice = this.minPrice * 100; // Convert to paise
+        if (this.maxPrice !== null) params.maxPrice = this.maxPrice * 100;
+        
+        const result = await this.exploreService.getProducts(params);
+        this.products.set(result.items);
+        this.productsTotal.set(result.total);
+      } else if (this.activeTab() === 'stores') {
+        const result = await this.exploreService.getStores(params);
+        this.stores.set(result.items);
+        this.storesTotal.set(result.total);
+      } else {
+        const result = await this.exploreService.getCreators(params);
+        this.creators.set(result.items);
+        this.creatorsTotal.set(result.total);
+      }
+    } catch (error) {
+      console.error('Failed to load data:', error);
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  onSearchInput() {
+    // Debounce search
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+    this.searchTimeout = setTimeout(() => {
+      this.performSearch();
+    }, 500);
+  }
+
+  performSearch() {
+    this.currentPage.set(1);
+    this.loadData();
+  }
+
+  switchTab(tab: TabType) {
+    if (this.activeTab() !== tab) {
+      this.activeTab.set(tab);
+      this.currentPage.set(1);
+      this.showPriceFilter.set(false);
+      this.loadData();
+    }
+  }
+
+  toggleSortDropdown() {
+    this.showSortDropdown.update(v => !v);
+  }
+
+  selectSort(option: SortOption) {
+    this.currentSort.set(option);
+    this.showSortDropdown.set(false);
+    this.currentPage.set(1);
+    this.loadData();
+  }
+
+  getCurrentSortLabel(): string {
+    return this.currentSort().label;
+  }
+
+  togglePriceFilter() {
+    this.showPriceFilter.update(v => !v);
+  }
+
+  hasPriceFilter(): boolean {
+    return this.minPrice !== null || this.maxPrice !== null;
+  }
+
+  applyPriceFilter() {
+    this.currentPage.set(1);
+    this.loadData();
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.searchQuery || this.minPrice !== null || this.maxPrice !== null);
+  }
+
+  clearFilters() {
+    this.searchQuery = '';
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.currentSort.set({ label: 'Newest', value: 'createdAt', order: 'desc' });
+    this.currentPage.set(1);
+    this.showPriceFilter.set(false);
+    this.loadData();
+  }
+
+  getTabCount(tab: TabType): number {
+    const s = this.stats();
+    if (!s) return 0;
+    
+    switch (tab) {
+      case 'products': return s.totalProducts;
+      case 'stores': return s.totalStores;
+      case 'creators': return s.totalCreators;
+    }
+  }
+
+  getTotalResults(): number {
+    switch (this.activeTab()) {
+      case 'products': return this.productsTotal();
+      case 'stores': return this.storesTotal();
+      case 'creators': return this.creatorsTotal();
+    }
+  }
+
+  getTotalPages(): number {
+    const total = this.getTotalResults();
+    return Math.ceil(total / 12);
+  }
+
+  getVisiblePages(): (number | string)[] {
+    const total = this.getTotalPages();
+    const current = this.currentPage();
+    const pages: (number | string)[] = [];
+    
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      
+      if (current > 3) pages.push('...');
+      
+      const start = Math.max(2, current - 1);
+      const end = Math.min(total - 1, current + 1);
+      
+      for (let i = start; i <= end; i++) pages.push(i);
+      
+      if (current < total - 2) pages.push('...');
+      
+      pages.push(total);
+    }
+    
+    return pages;
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.getTotalPages()) return;
+    this.currentPage.set(page);
+    this.loadData();
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  viewProduct(product: ExploreProduct) {
+    // Navigate to store subdomain with product
+    const storeUrl = this.subdomainService.getStoreUrl(product.store.slug, `/product/${product.slug}`);
+    window.location.href = storeUrl;
+  }
+
+  viewStore(store: ExploreStore) {
+    const storeUrl = this.subdomainService.getStoreUrl(store.slug);
+    window.location.href = storeUrl;
+  }
+
+  viewCreator(creator: ExploreCreator) {
+    // For now, we'll navigate to explore filtered by this creator
+    // In future, this could be a dedicated creator profile page
+    console.log('View creator:', creator.username);
+  }
+
+  addToCart(product: ExploreProduct, event: Event) {
+    event.stopPropagation();
+    
+    // Convert ExploreProduct to Product format for cart
+    const cartProduct = {
+      id: product.id,
+      title: product.title,
+      slug: product.slug,
+      price: product.price,
+      compareAtPrice: product.compareAtPrice,
+      currency: product.currency,
+      coverImageUrl: product.coverImageUrl,
+      storeId: product.store.id,
+      store: {
+        id: product.store.id,
+        name: product.store.name,
+        slug: product.store.slug,
+      },
+    } as any;
+    
+    this.cartService.addItem(cartProduct);
+    // Removed: this.cartService.open();
+  }
+
+  async buyNow(product: ExploreProduct, event: Event) {
+    event.stopPropagation();
+    
+    // Convert ExploreProduct to Product format for cart
+    const cartProduct = {
+      id: product.id,
+      title: product.title,
+      slug: product.slug,
+      price: product.price,
+      compareAtPrice: product.compareAtPrice,
+      currency: product.currency,
+      coverImageUrl: product.coverImageUrl,
+      storeId: product.store.id,
+      store: {
+        id: product.store.id,
+        name: product.store.name,
+        slug: product.store.slug,
+      },
+    } as any;
+    
+    this.cartService.addItem(cartProduct);
+    this.cartService.open();
+  }
+
+  isInCart(productId: string): boolean {
+    return this.cartService.isInCart(productId);
+  }
+
+  removeFromCart(productId: string, event: Event) {
+    event.stopPropagation();
+    this.cartService.removeItem(productId);
+  }
+}

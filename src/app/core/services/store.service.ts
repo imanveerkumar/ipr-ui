@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ApiService } from './api.service';
+import { SubdomainService } from './subdomain.service';
 import { Store, ApiResponse } from '../models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StoreService {
-  constructor(private api: ApiService) {}
+  private api = inject(ApiService);
+  private subdomainService = inject(SubdomainService);
 
   async getMyStores(): Promise<Store[]> {
     const response = await this.api.get<Store[]>('/stores/my-stores');
@@ -51,5 +53,20 @@ export class StoreService {
   async deleteStore(id: string): Promise<boolean> {
     const response = await this.api.delete(`/stores/${id}`);
     return response.success;
+  }
+
+  /**
+   * Get the public URL for a store (subdomain-based)
+   */
+  getStoreUrl(store: Store | string, path: string = ''): string {
+    const slug = typeof store === 'string' ? store : store.slug;
+    return this.subdomainService.getStoreUrl(slug, path);
+  }
+
+  /**
+   * Check if a slug is valid for use as a store subdomain
+   */
+  isValidSlug(slug: string): boolean {
+    return this.subdomainService.isValidSubdomain(slug);
   }
 }

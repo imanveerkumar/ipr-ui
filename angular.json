@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "creator-marketplace": {
+    "storescraft": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -43,8 +43,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "10kB",
-                  "maximumError": "20kB"
+                  "maximumWarning": "15kB",
+                  "maximumError": "40kB"
                 }
               ],
               "outputHashing": "all"
@@ -61,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "creator-marketplace:build:production"
+              "buildTarget": "storescraft:build:production"
             },
             "development": {
-              "buildTarget": "creator-marketplace:build:development"
+              "buildTarget": "storescraft:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -1,7 +1,21 @@
 import { Routes } from '@angular/router';
-import { authGuard, creatorGuard, adminGuard } from './core/guards';
+import { authGuard, creatorGuard, adminGuard, nonCreatorGuard } from './core/guards';
+
+// Dummy component for storefront routes - actual rendering handled by StorefrontLayoutComponent
+const StorefrontPassthrough = () => import('./pages/storefront/storefront-layout.component').then(m => m.StorefrontLayoutComponent);
 
 export const routes: Routes = [
+  // Storefront routes - these are handled by StorefrontLayoutComponent when on subdomain
+  // but we need them in the router so navigation doesn't get redirected to '/'
+  {
+    path: 'purchases',
+    loadComponent: StorefrontPassthrough,
+  },
+  {
+    path: 'products',
+    loadComponent: StorefrontPassthrough,
+  },
+  
   // Public routes
   {
     path: '',
@@ -23,8 +37,23 @@ export const routes: Routes = [
     path: 'profile/:username',
     loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
   },
+  // Guest download access (no auth required)
+  {
+    path: 'guest/downloads/:token',
+    loadComponent: () => import('./pages/guest/guest-downloads.component').then(m => m.GuestDownloadsComponent),
+  },
+  // Guest purchases page (no auth required - uses guest auth)
+  {
+    path: 'guest/purchases',
+    loadComponent: () => import('./pages/guest/guest-purchases.component').then(m => m.GuestPurchasesComponent),
+  },
 
   // Auth required routes
+  {
+    path: 'wishlist',
+    loadComponent: () => import('./pages/wishlist/wishlist.component').then(m => m.WishlistComponent),
+    canActivate: [authGuard],
+  },
   {
     path: 'library',
     loadComponent: () => import('./pages/library/library.component').then(m => m.LibraryComponent),
@@ -43,7 +72,7 @@ export const routes: Routes = [
   {
     path: 'become-creator',
     loadComponent: () => import('./pages/become-creator/become-creator.component').then(m => m.BecomeCreatorComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, nonCreatorGuard],
   },
 
   // Creator routes

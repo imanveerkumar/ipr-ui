@@ -1,10 +1,11 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Product } from '../../core/models/index';
 import { ProductService } from '../../core/services/product.service';
 import { CheckoutService } from '../../core/services/checkout.service';
 import { AuthService } from '../../core/services/auth.service';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-product',
@@ -70,17 +71,38 @@ import { AuthService } from '../../core/services/auth.service';
               <!-- Purchase button -->
               <div class="mt-8">
                 @if (auth.isSignedIn()) {
-                  <button 
-                    (click)="purchase()" 
-                    [disabled]="purchasing()"
-                    class="btn-primary w-full text-lg py-3"
-                  >
-                    @if (purchasing()) {
-                      Processing...
-                    } @else {
-                      Buy Now - ₹{{ (product()?.price || 0) / 100 }}
-                    }
-                  </button>
+                  <div class="flex flex-col sm:flex-row gap-3">
+                    <button 
+                      (click)="addToCart()" 
+                      class="flex-1 flex items-center justify-center gap-2 px-6 py-3 border-2 border-black rounded-xl font-bold transition-all duration-200"
+                      [class.bg-green-100]="isInCart()"
+                      [class.bg-gray-100]="!isInCart()"
+                      [class.hover:bg-gray-200]="!isInCart()"
+                    >
+                      @if (isInCart()) {
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        In Cart
+                      } @else {
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Add to Cart
+                      }
+                    </button>
+                    <button 
+                      (click)="purchase()" 
+                      [disabled]="purchasing()"
+                      class="flex-1 btn-primary text-lg py-3"
+                    >
+                      @if (purchasing()) {
+                        Processing...
+                      } @else {
+                        Buy Now - ₹{{ (product()?.price || 0) / 100 }}
+                      }
+                    </button>
+                  </div>
                 } @else {
                   <button (click)="auth.signIn()" class="btn-primary w-full text-lg py-3">
                     Sign in to Purchase
@@ -103,6 +125,8 @@ export class ProductComponent implements OnInit {
   product = signal<Product | null>(null);
   loading = signal(true);
   purchasing = signal(false);
+  
+  cartService = inject(CartService);
 
   constructor(
     private route: ActivatedRoute,
@@ -126,6 +150,23 @@ export class ProductComponent implements OnInit {
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  addToCart() {
+    const product = this.product();
+    if (!product) return;
+    
+    if (this.isInCart()) {
+      this.cartService.removeItem(product.id);
+    } else {
+      this.cartService.addItem(product);
+      this.cartService.open();
+    }
+  }
+
+  isInCart(): boolean {
+    const product = this.product();
+    return product ? this.cartService.isInCart(product.id) : false;
   }
 
   async purchase() {
