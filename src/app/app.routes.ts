@@ -50,6 +50,11 @@ export const routes: Routes = [
 
   // Auth required routes
   {
+    path: 'wishlist',
+    loadComponent: () => import('./pages/wishlist/wishlist.component').then(m => m.WishlistComponent),
+    canActivate: [authGuard],
+  },
+  {
     path: 'library',
     loadComponent: () => import('./pages/library/library.component').then(m => m.LibraryComponent),
     canActivate: [authGuard],
