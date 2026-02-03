@@ -1,9 +1,10 @@
-import { Component, OnInit, signal, HostListener } from '@angular/core';
+import { Component, OnInit, signal, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { StoreService } from '../../../core/services/store.service';
+import { ToasterService } from '../../../core/services/toaster.service';
 import { Store } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components';
 
@@ -675,6 +676,8 @@ export class ProductFormComponent implements OnInit {
     status: 'DRAFT',
   };
 
+  private toaster = inject(ToasterService);
+
   constructor(
     private productService: ProductService,
     private storeService: StoreService,
@@ -805,8 +808,16 @@ export class ProductFormComponent implements OnInit {
       let product: any;
       if (this.isEditing() && this.productId) {
         product = await this.productService.updateProduct(this.productId, data);
+        this.toaster.success({
+          title: 'Product Updated',
+          message: 'Your product has been updated successfully.',
+        });
       } else {
         product = await this.productService.createProduct(data);
+        this.toaster.success({
+          title: 'Product Created',
+          message: 'Your new product has been created successfully.',
+        });
       }
 
       if (product) {
@@ -818,7 +829,7 @@ export class ProductFormComponent implements OnInit {
       this.router.navigate(['/dashboard/products']);
     } catch (error) {
       console.error('Failed to save product:', error);
-      alert('Failed to save product. Please try again.');
+      this.toaster.handleError(error, 'Failed to save product. Please try again.');
     } finally {
       this.saving.set(false);
     }

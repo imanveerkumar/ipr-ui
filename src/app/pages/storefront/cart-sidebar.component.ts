@@ -6,6 +6,7 @@ import { CartService, STORE_COLORS } from '../../core/services/cart.service';
 import { CheckoutService, CartValidationResult } from '../../core/services/checkout.service';
 import { AuthService } from '../../core/services/auth.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
+import { ToasterService } from '../../core/services/toaster.service';
 import { CartValidationModalComponent } from './cart-validation-modal.component';
 
 type ViewState = 'cart' | 'checkout';
@@ -632,6 +633,7 @@ export class CartSidebarComponent {
   authService = inject(AuthService);
   private subdomainService = inject(SubdomainService);
   private router = inject(Router);
+  private toaster = inject(ToasterService);
 
   isCheckingOut = false;
   isValidating = false;
@@ -926,8 +928,11 @@ export class CartSidebarComponent {
         this.guestEmail = '';
         this.guestPhoneNumber = '';
         
-        // Show success message - redirect to a success page
-        alert('Purchase successful! Check your email for the download link.');
+        // Show success message
+        this.toaster.success({
+          title: 'Purchase Successful!',
+          message: 'Check your email for the download link.',
+        });
       }
     } catch (error: any) {
       console.error('Guest checkout failed:', error);

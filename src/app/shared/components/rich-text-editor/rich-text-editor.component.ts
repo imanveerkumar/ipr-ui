@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, signal, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, signal, forwardRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { QuillModule, QuillEditorComponent } from 'ngx-quill';
 import { ApiService } from '../../../core/services/api.service';
+import { ToasterService } from '../../../core/services/toaster.service';
 
 @Component({
   selector: 'app-rich-text-editor',
@@ -100,6 +101,8 @@ export class RichTextEditorComponent implements ControlValueAccessor {
     this.loadStorageBaseUrl();
   }
 
+  private toaster = inject(ToasterService);
+
   private async loadStorageBaseUrl() {
     try {
       const response = await this.apiService.get<{ baseUrl: string }>('/files/storage-url');
@@ -160,7 +163,7 @@ export class RichTextEditorComponent implements ControlValueAccessor {
       this.insertMedia(fileUrl, file.name, file.type);
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('Failed to upload file. Please try again.');
+      this.toaster.handleError(error, 'Failed to upload file. Please try again.');
     } finally {
       this.uploading.set(false);
       input.value = ''; // Reset input

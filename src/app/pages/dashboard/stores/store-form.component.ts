@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { StoreService } from '../../../core/services/store.service';
+import { ToasterService } from '../../../core/services/toaster.service';
 import { Store } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components';
 
@@ -689,6 +690,7 @@ export class StoreFormComponent implements OnInit {
   storeService = inject(StoreService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toaster = inject(ToasterService);
 
   isEditing = signal(false);
   saving = signal(false);
@@ -741,14 +743,24 @@ export class StoreFormComponent implements OnInit {
     try {
       if (this.isEditing() && this.storeId) {
         const updated = await this.storeService.updateStore(this.storeId, this.form);
-        if (updated) this.store.set(updated);
+        if (updated) {
+          this.store.set(updated);
+          this.toaster.success({
+            title: 'Store Updated',
+            message: 'Your store has been updated successfully.',
+          });
+        }
       } else {
         await this.storeService.createStore(this.form);
+        this.toaster.success({
+          title: 'Store Created',
+          message: 'Your new store has been created successfully.',
+        });
         this.router.navigate(['/dashboard/stores']);
       }
     } catch (error) {
       console.error('Failed to save store:', error);
-      alert('Failed to save store. Please try again.');
+      this.toaster.handleError(error, 'Failed to save store. Please try again.');
     } finally {
       this.saving.set(false);
     }
@@ -759,10 +771,16 @@ export class StoreFormComponent implements OnInit {
     this.publishing.set(true);
     try {
       const updated = await this.storeService.publishStore(this.storeId);
-      if (updated) this.store.set(updated);
+      if (updated) {
+        this.store.set(updated);
+        this.toaster.success({
+          title: 'Store Published',
+          message: 'Your store is now live and visible to customers.',
+        });
+      }
     } catch (error) {
       console.error('Failed to publish store:', error);
-      alert('Failed to publish store. Please try again.');
+      this.toaster.handleError(error, 'Failed to publish store. Please try again.');
     } finally {
       this.publishing.set(false);
     }
@@ -773,10 +791,16 @@ export class StoreFormComponent implements OnInit {
     this.publishing.set(true);
     try {
       const updated = await this.storeService.unpublishStore(this.storeId);
-      if (updated) this.store.set(updated);
+      if (updated) {
+        this.store.set(updated);
+        this.toaster.info({
+          title: 'Store Unpublished',
+          message: 'Your store is now hidden from customers.',
+        });
+      }
     } catch (error) {
       console.error('Failed to unpublish store:', error);
-      alert('Failed to unpublish store. Please try again.');
+      this.toaster.handleError(error, 'Failed to unpublish store. Please try again.');
     } finally {
       this.publishing.set(false);
     }
@@ -788,10 +812,14 @@ export class StoreFormComponent implements OnInit {
     this.deleting.set(true);
     try {
       await this.storeService.deleteStore(this.storeId);
+      this.toaster.success({
+        title: 'Store Deleted',
+        message: 'Your store has been permanently deleted.',
+      });
       this.router.navigate(['/dashboard/stores']);
     } catch (error) {
       console.error('Failed to delete store:', error);
-      alert('Failed to delete store. Please try again.');
+      this.toaster.handleError(error, 'Failed to delete store. Please try again.');
     } finally {
       this.deleting.set(false);
     }

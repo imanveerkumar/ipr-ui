@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { ToasterService } from '../../core/services/toaster.service';
 
 @Component({
   selector: 'app-become-creator',
@@ -104,6 +105,7 @@ import { AuthService } from '../../core/services/auth.service';
 export class BecomeCreatorComponent {
     private router = inject(Router);
   private authService = inject(AuthService);
+  private toaster = inject(ToasterService);
   loading = signal(false);
 
 
@@ -113,9 +115,16 @@ export class BecomeCreatorComponent {
     this.loading.set(false);
 
     if (result.success) {
+      this.toaster.success({
+        title: 'Welcome, Creator!',
+        message: 'Your account has been upgraded. Start creating your store!',
+      });
       this.router.navigate(['/dashboard']);
     } else {
-      alert(result.message || 'Failed to upgrade. Please try again.');
+      this.toaster.error({
+        title: 'Upgrade Failed',
+        message: result.message || 'Failed to upgrade. Please try again.',
+      });
     }
   }
 }

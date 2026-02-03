@@ -9,6 +9,7 @@ export * from './store-context.service';
 export * from './cart.service';
 export * from './guest-access.service';
 export * from './explore.service';
+export * from './toaster.service';
 
 // Request protection services
 export * from './request-manager.service';

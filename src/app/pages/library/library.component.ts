@@ -1,10 +1,11 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { License } from '../../core/models/index';
 import { CheckoutService } from '../../core/services/checkout.service';
 import { DownloadService } from '../../core/services/download.service';
+import { ToasterService } from '../../core/services/toaster.service';
 
 @Component({
   selector: 'app-library',
@@ -257,12 +258,15 @@ export class LibraryComponent implements OnInit {
     private downloadService: DownloadService,
   ) {}
 
+  private toaster = inject(ToasterService);
+
   async ngOnInit() {
     try {
       const licenses = await this.checkoutService.getMyLicenses();
       this.licenses.set(licenses);
     } catch (error) {
       console.error('Failed to load library:', error);
+      this.toaster.handleError(error, 'Failed to load your library.');
     } finally {
       this.loading.set(false);
     }
@@ -274,7 +278,7 @@ export class LibraryComponent implements OnInit {
       await this.downloadService.downloadFile(productId, fileId);
     } catch (error) {
       console.error('Download failed:', error);
-      alert('Download failed. Please try again.');
+      this.toaster.handleError(error, 'Download failed. Please try again.');
     } finally {
       this.downloading.set(null);
     }
