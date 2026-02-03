@@ -68,7 +68,7 @@ type SortOrder = 'desc' | 'asc';
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ meta().total }}</div>
+                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ overallStats().totalOrders }}</div>
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Total Orders</div>
                   </div>
                 </div>
@@ -401,6 +401,13 @@ export class OrdersComponent implements OnInit {
     hasPreviousPage: false,
   });
 
+  // Overall stats (not affected by pagination)
+  overallStats = signal({
+    totalOrders: 0,
+    completedOrders: 0,
+    totalSpent: 0,
+  });
+
   // Expose Math for template
   Math = Math;
 
@@ -415,7 +422,11 @@ export class OrdersComponent implements OnInit {
   constructor(private checkoutService: CheckoutService) {}
 
   async ngOnInit() {
-    await this.loadOrders();
+    // Load orders and stats in parallel
+    await Promise.all([
+      this.loadOrders(),
+      this.loadOverallStats(),
+    ]);
   }
 
   async loadOrders(showFullLoader = true) {
@@ -440,6 +451,28 @@ export class OrdersComponent implements OnInit {
     } finally {
       this.loading.set(false);
       this.isFiltering.set(false);
+    }
+  }
+
+  async loadOverallStats() {
+    try {
+      // Fetch all orders without pagination to calculate accurate stats
+      const allOrdersResult = await this.checkoutService.getMyOrdersPaginated({
+        page: 1,
+        limit: 1000, // Get a large number to cover all orders
+      });
+      
+      const allOrders = allOrdersResult.data;
+      const completedOrders = allOrders.filter(o => o.status === 'PAID' || o.status === 'FULFILLED');
+      const totalSpent = completedOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+      
+      this.overallStats.set({
+        totalOrders: allOrdersResult.meta.total,
+        completedOrders: completedOrders.length,
+        totalSpent: totalSpent,
+      });
+    } catch (error) {
+      console.error('Failed to load overall stats:', error);
     }
   }
 
@@ -512,14 +545,11 @@ export class OrdersComponent implements OnInit {
   }
 
   getCompletedCount(): number {
-    return this.orders().filter(o => o.status === 'PAID' || o.status === 'FULFILLED').length;
+    return this.overallStats().completedOrders;
   }
 
   getTotalSpent(): string {
-    const total = this.orders()
-      .filter(o => o.status === 'PAID' || o.status === 'FULFILLED')
-      .reduce((sum, order) => sum + order.totalAmount, 0);
-    return '₹' + (total / 100).toLocaleString('en-IN');
+    return '₹' + (this.overallStats().totalSpent / 100).toLocaleString('en-IN');
   }
 
   getStatusClass(status: string): string {
