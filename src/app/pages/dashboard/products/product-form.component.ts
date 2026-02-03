@@ -47,12 +47,19 @@ import { RichTextEditorComponent } from '../../../shared/components';
                 <span class="tooltip-content">Select which store this product belongs to. Cannot be changed after creation.</span>
               </span>
             </label>
-            <select id="storeId" [(ngModel)]="form.storeId" name="storeId" required class="form-select" [disabled]="isEditing()">
+            <select id="storeId" [(ngModel)]="form.storeId" name="storeId" required class="form-select" 
+              [class.input-error]="storeError() && formTouched().storeId"
+              [disabled]="isEditing()"
+              (blur)="validateStore()"
+              (change)="validateStore()">
               <option value="">Select a store</option>
               @for (store of stores(); track store.id) {
                 <option [value]="store.id">{{ store.name }}</option>
               }
             </select>
+            @if (storeError() && formTouched().storeId) {
+              <p class="form-error">{{ storeError() }}</p>
+            }
           </div>
 
           <!-- Product Title -->
@@ -64,7 +71,16 @@ import { RichTextEditorComponent } from '../../../shared/components';
                 <span class="tooltip-content">A clear, descriptive title helps customers find and understand your product.</span>
               </span>
             </label>
-            <input type="text" id="title" [(ngModel)]="form.title" name="title" required class="form-input" placeholder="My Amazing Product" (input)="onTitleChange()">
+            <input type="text" id="title" [(ngModel)]="form.title" name="title" required class="form-input" 
+              [class.input-error]="titleError() && formTouched().title"
+              placeholder="My Amazing Product" 
+              (input)="onTitleChange(); validateTitle()"
+              (blur)="validateTitle()"
+              [attr.maxlength]="MAX_TITLE_LENGTH">
+            @if (titleError() && formTouched().title) {
+              <p class="form-error">{{ titleError() }}</p>
+            }
+            <p class="form-hint">{{ form.title.length }}/{{ MAX_TITLE_LENGTH }} characters</p>
           </div>
 
           <!-- Product URL/Slug -->
@@ -76,8 +92,17 @@ import { RichTextEditorComponent } from '../../../shared/components';
                 <span class="tooltip-content">The URL-friendly version of the product name. Auto-generated from title but can be customized.</span>
               </span>
             </label>
-            <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input" placeholder="my-product" pattern="[a-z0-9-]+" (input)="onSlugChange()">
-            <p class="form-hint">Only lowercase letters, numbers, and hyphens allowed.</p>
+            <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input" 
+              [class.input-error]="slugError() && formTouched().slug"
+              placeholder="my-product" 
+              pattern="[a-z0-9-]+" 
+              (input)="onSlugChange(); validateSlug()"
+              (blur)="validateSlug()"
+              [attr.maxlength]="MAX_SLUG_LENGTH">
+            @if (slugError() && formTouched().slug) {
+              <p class="form-error">{{ slugError() }}</p>
+            }
+            <p class="form-hint">Only lowercase letters, numbers, and hyphens allowed. {{ form.slug.length }}/{{ MAX_SLUG_LENGTH }}</p>
           </div>
 
           <!-- Description -->
@@ -104,8 +129,16 @@ import { RichTextEditorComponent } from '../../../shared/components';
               </label>
               <div class="price-input-wrapper">
                 <span class="price-symbol">₹</span>
-                <input type="number" id="price" [(ngModel)]="form.price" name="price" required min="0" step="0.01" class="form-input price-input" placeholder="99.00">
+                <input type="number" id="price" [(ngModel)]="form.price" name="price" required min="0" step="0.01" 
+                  class="form-input price-input" 
+                  [class.input-error]="priceError() && formTouched().price"
+                  placeholder="99.00"
+                  (input)="validatePrice()"
+                  (blur)="validatePrice()">
               </div>
+              @if (priceError() && formTouched().price) {
+                <p class="form-error">{{ priceError() }}</p>
+              }
             </div>
             <div class="form-group">
               <label for="status" class="form-label">
@@ -167,7 +200,7 @@ import { RichTextEditorComponent } from '../../../shared/components';
           <!-- Form Actions -->
           <div class="form-actions">
             <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
-            <button type="submit" [disabled]="saving()" class="btn btn-cta">
+            <button type="submit" [disabled]="saving() || !isFormValid()" class="btn btn-cta">
               @if (saving()) {
                 Saving...
               } @else {
@@ -432,10 +465,28 @@ import { RichTextEditorComponent } from '../../../shared/components';
       opacity: 0.4;
     }
 
+    .form-input.input-error,
+    .form-select.input-error {
+      border-color: #FA4B28;
+      background-color: #FFF5F5;
+    }
+
+    .form-input.input-error:focus,
+    .form-select.input-error:focus {
+      box-shadow: 0 0 0 3px rgba(250, 75, 40, 0.2);
+    }
+
     .form-hint {
       font-size: 0.8125rem;
       color: #111111;
       opacity: 0.6;
+      margin-top: 0.5rem;
+    }
+
+    .form-error {
+      font-size: 0.8125rem;
+      color: #FA4B28;
+      font-weight: 600;
       margin-top: 0.5rem;
     }
 
@@ -666,6 +717,13 @@ export class ProductFormComponent implements OnInit {
   productId: string | null = null;
   slugManuallyEdited = false;
   activeTooltip = signal<string | null>(null);
+  
+  // Validation error signals
+  storeError = signal<string | null>(null);
+  titleError = signal<string | null>(null);
+  slugError = signal<string | null>(null);
+  priceError = signal<string | null>(null);
+  formTouched = signal({ storeId: false, title: false, slug: false, price: false });
 
   form = {
     storeId: '',
@@ -675,6 +733,13 @@ export class ProductFormComponent implements OnInit {
     price: 0,
     status: 'DRAFT',
   };
+
+  // Validation constants
+  readonly MIN_TITLE_LENGTH = 2;
+  readonly MAX_TITLE_LENGTH = 100;
+  readonly MIN_SLUG_LENGTH = 2;
+  readonly MAX_SLUG_LENGTH = 50;
+  readonly MAX_PRICE = 10000000; // 1 crore INR
 
   private toaster = inject(ToasterService);
 
@@ -730,6 +795,77 @@ export class ProductFormComponent implements OnInit {
 
   onSlugChange() {
     this.slugManuallyEdited = true;
+  }
+
+  // Validation methods
+  validateStore() {
+    this.formTouched.update(t => ({ ...t, storeId: true }));
+    if (!this.form.storeId) {
+      this.storeError.set('Please select a store');
+    } else {
+      this.storeError.set(null);
+    }
+  }
+
+  validateTitle() {
+    this.formTouched.update(t => ({ ...t, title: true }));
+    const title = this.form.title.trim();
+    
+    if (!title) {
+      this.titleError.set('Product title is required');
+    } else if (title.length < this.MIN_TITLE_LENGTH) {
+      this.titleError.set(`Title must be at least ${this.MIN_TITLE_LENGTH} characters`);
+    } else if (title.length > this.MAX_TITLE_LENGTH) {
+      this.titleError.set(`Title must be less than ${this.MAX_TITLE_LENGTH} characters`);
+    } else {
+      this.titleError.set(null);
+    }
+  }
+
+  validateSlug() {
+    this.formTouched.update(t => ({ ...t, slug: true }));
+    const slug = this.form.slug.toLowerCase();
+    
+    if (!slug) {
+      this.slugError.set('Product URL is required');
+    } else if (slug.length < this.MIN_SLUG_LENGTH) {
+      this.slugError.set(`URL must be at least ${this.MIN_SLUG_LENGTH} characters`);
+    } else if (slug.length > this.MAX_SLUG_LENGTH) {
+      this.slugError.set(`URL must be less than ${this.MAX_SLUG_LENGTH} characters`);
+    } else if (!/^[a-z0-9-]*$/.test(slug)) {
+      this.slugError.set('Only lowercase letters, numbers, and hyphens allowed');
+    } else if (slug.startsWith('-') || slug.endsWith('-')) {
+      this.slugError.set('URL cannot start or end with a hyphen');
+    } else if (slug.includes('--')) {
+      this.slugError.set('URL cannot contain consecutive hyphens');
+    } else {
+      this.slugError.set(null);
+    }
+    // Auto-format slug
+    this.form.slug = slug.replace(/[^a-z0-9-]/g, '');
+  }
+
+  validatePrice() {
+    this.formTouched.update(t => ({ ...t, price: true }));
+    const price = this.form.price;
+    
+    if (price === null || price === undefined || isNaN(price)) {
+      this.priceError.set('Price is required');
+    } else if (price < 0) {
+      this.priceError.set('Price cannot be negative');
+    } else if (price > this.MAX_PRICE) {
+      this.priceError.set(`Price cannot exceed ₹${this.MAX_PRICE.toLocaleString()}`);
+    } else {
+      this.priceError.set(null);
+    }
+  }
+
+  isFormValid(): boolean {
+    return !this.storeError() && !this.titleError() && !this.slugError() && !this.priceError()
+      && this.form.storeId !== ''
+      && this.form.title.trim().length >= this.MIN_TITLE_LENGTH
+      && this.form.slug.trim().length >= this.MIN_SLUG_LENGTH
+      && this.form.price >= 0;
   }
 
   onDragOver(event: DragEvent) {
@@ -802,12 +938,15 @@ export class ProductFormComponent implements OnInit {
     try {
       const data: any = {
         ...this.form,
+        slug: this.form.slug.toLowerCase(), // Ensure slug is lowercase
         price: Math.round(this.form.price * 100),
       };
 
       let product: any;
       if (this.isEditing() && this.productId) {
-        product = await this.productService.updateProduct(this.productId, data);
+        // Remove storeId when updating - it's not allowed in UpdateProductDto
+        const { storeId, ...updateData } = data;
+        product = await this.productService.updateProduct(this.productId, updateData);
         this.toaster.success({
           title: 'Product Updated',
           message: 'Your product has been updated successfully.',

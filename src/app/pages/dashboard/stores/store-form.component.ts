@@ -84,7 +84,16 @@ import { RichTextEditorComponent } from '../../../shared/components';
                 <span class="tooltip-content">Choose a memorable name for your store. This will be displayed to customers.</span>
               </span>
             </label>
-            <input type="text" id="name" [(ngModel)]="form.name" name="name" required class="form-input" placeholder="My Awesome Store">
+            <input type="text" id="name" [(ngModel)]="form.name" name="name" required class="form-input" 
+              [class.input-error]="nameError() && formTouched().name"
+              placeholder="My Awesome Store" 
+              (blur)="validateName()" 
+              (input)="validateName()"
+              [attr.maxlength]="MAX_NAME_LENGTH">
+            @if (nameError() && formTouched().name) {
+              <p class="form-error">{{ nameError() }}</p>
+            }
+            <p class="form-hint">{{ form.name.length }}/{{ MAX_NAME_LENGTH }} characters</p>
           </div>
 
           <!-- Slug -->
@@ -123,7 +132,16 @@ import { RichTextEditorComponent } from '../../../shared/components';
                 <span class="tooltip-content">A short phrase that describes your store. Displayed below the store name.</span>
               </span>
             </label>
-            <input type="text" id="tagline" [(ngModel)]="form.tagline" name="tagline" class="form-input" placeholder="A short catchy phrase">
+            <input type="text" id="tagline" [(ngModel)]="form.tagline" name="tagline" class="form-input" 
+              [class.input-error]="taglineError() && formTouched().tagline"
+              placeholder="A short catchy phrase"
+              (blur)="validateTagline()"
+              (input)="validateTagline()"
+              [attr.maxlength]="MAX_TAGLINE_LENGTH">
+            @if (taglineError() && formTouched().tagline) {
+              <p class="form-error">{{ taglineError() }}</p>
+            }
+            <p class="form-hint">{{ form.tagline.length }}/{{ MAX_TAGLINE_LENGTH }} characters (optional)</p>
           </div>
 
           <!-- Description -->
@@ -141,7 +159,7 @@ import { RichTextEditorComponent } from '../../../shared/components';
           <!-- Form Actions -->
           <div class="form-actions">
             <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
-            <button type="submit" [disabled]="saving() || !!slugError()" class="btn btn-cta">
+            <button type="submit" [disabled]="saving() || !isFormValid()" class="btn btn-cta">
               @if (saving()) {
                 Saving...
               } @else {
@@ -569,6 +587,15 @@ import { RichTextEditorComponent } from '../../../shared/components';
       opacity: 0.4;
     }
 
+    .form-input.input-error {
+      border-color: #FA4B28;
+      background-color: #FFF5F5;
+    }
+
+    .form-input.input-error:focus {
+      box-shadow: 0 0 0 3px rgba(250, 75, 40, 0.2);
+    }
+
     .form-hint {
       font-size: 0.8125rem;
       color: #111111;
@@ -698,9 +725,12 @@ export class StoreFormComponent implements OnInit {
   deleting = signal(false);
   copied = signal(false);
   slugError = signal<string | null>(null);
+  nameError = signal<string | null>(null);
+  taglineError = signal<string | null>(null);
   store = signal<Store | null>(null);
   storeId: string | null = null;
   activeTooltip = signal<string | null>(null);
+  formTouched = signal({ name: false, slug: false, tagline: false });
 
   form = {
     name: '',
@@ -708,6 +738,45 @@ export class StoreFormComponent implements OnInit {
     description: '',
     tagline: ''
   };
+
+  // Validation constants
+  readonly MIN_NAME_LENGTH = 2;
+  readonly MAX_NAME_LENGTH = 50;
+  readonly MIN_SLUG_LENGTH = 3;
+  readonly MAX_SLUG_LENGTH = 30;
+  readonly MAX_TAGLINE_LENGTH = 100;
+
+  validateName() {
+    this.formTouched.update(t => ({ ...t, name: true }));
+    const name = this.form.name.trim();
+    
+    if (!name) {
+      this.nameError.set('Store name is required');
+    } else if (name.length < this.MIN_NAME_LENGTH) {
+      this.nameError.set(`Store name must be at least ${this.MIN_NAME_LENGTH} characters`);
+    } else if (name.length > this.MAX_NAME_LENGTH) {
+      this.nameError.set(`Store name must be less than ${this.MAX_NAME_LENGTH} characters`);
+    } else {
+      this.nameError.set(null);
+    }
+  }
+
+  validateTagline() {
+    this.formTouched.update(t => ({ ...t, tagline: true }));
+    const tagline = this.form.tagline.trim();
+    
+    if (tagline.length > this.MAX_TAGLINE_LENGTH) {
+      this.taglineError.set(`Tagline must be less than ${this.MAX_TAGLINE_LENGTH} characters`);
+    } else {
+      this.taglineError.set(null);
+    }
+  }
+
+  isFormValid(): boolean {
+    return !this.nameError() && !this.slugError() && !this.taglineError() 
+      && this.form.name.trim().length >= this.MIN_NAME_LENGTH 
+      && this.form.slug.trim().length >= this.MIN_SLUG_LENGTH;
+  }
 
   async ngOnInit() {
     this.storeId = this.route.snapshot.paramMap.get('id');
@@ -725,13 +794,23 @@ export class StoreFormComponent implements OnInit {
   }
 
   validateSlug() {
+    this.formTouched.update(t => ({ ...t, slug: true }));
     const slug = this.form.slug.toLowerCase();
-    if (!this.storeService.isValidSlug(slug)) {
-      if (!/^[a-z0-9-]*$/.test(slug)) {
-        this.slugError.set('Only lowercase letters, numbers, and hyphens allowed');
-      } else {
-        this.slugError.set('This subdomain is reserved');
-      }
+    
+    if (!slug) {
+      this.slugError.set('Store URL is required');
+    } else if (slug.length < this.MIN_SLUG_LENGTH) {
+      this.slugError.set(`Store URL must be at least ${this.MIN_SLUG_LENGTH} characters`);
+    } else if (slug.length > this.MAX_SLUG_LENGTH) {
+      this.slugError.set(`Store URL must be less than ${this.MAX_SLUG_LENGTH} characters`);
+    } else if (!/^[a-z0-9-]*$/.test(slug)) {
+      this.slugError.set('Only lowercase letters, numbers, and hyphens allowed');
+    } else if (slug.startsWith('-') || slug.endsWith('-')) {
+      this.slugError.set('URL cannot start or end with a hyphen');
+    } else if (slug.includes('--')) {
+      this.slugError.set('URL cannot contain consecutive hyphens');
+    } else if (!this.storeService.isValidSlug(slug)) {
+      this.slugError.set('This subdomain is reserved');
     } else {
       this.slugError.set(null);
     }
