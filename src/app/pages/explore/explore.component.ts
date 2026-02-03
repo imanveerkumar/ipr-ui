@@ -835,7 +835,7 @@ export class ExploreComponent implements OnInit {
 
   viewProduct(product: ExploreProduct) {
     // Navigate to store subdomain with product
-    const storeUrl = this.subdomainService.getStoreUrl(product.store.slug, `/product/${product.slug}`);
+    const storeUrl = this.subdomainService.getStoreUrl(product.store.slug, `/product/${product.id}`);
     window.location.href = storeUrl;
   }
 
