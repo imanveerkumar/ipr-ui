@@ -1,9 +1,10 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clerk } from '@clerk/clerk-js';
 import { environment } from '../../../environments/environment';
 import { User } from '../models';
 import { ApiService } from './api.service';
+import { GlobalLoaderService } from './global-loader.service';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,8 @@ export class AuthService {
     return user?.role === 'CREATOR' || user?.role === 'ADMIN';
   });
   readonly isAdmin = computed(() => this._user()?.role === 'ADMIN');
+
+  private globalLoader = inject(GlobalLoaderService);
 
   constructor(private apiService: ApiService, private router: Router) {}
 
@@ -59,6 +62,7 @@ export class AuthService {
       this._isLoaded.set(true);
       
       if (this.clerk.user) {
+        // User is already signed in on page load
         this._clerkUser.set(this.clerk.user);
         this._isSignedIn.set(true);
         await this.fetchCurrentUser();
@@ -68,7 +72,7 @@ export class AuthService {
       // Listen for auth changes - only fetch user on actual auth state changes
       let previousUserId = this.clerk.user?.id;
       
-      this.clerk.addListener((event) => {
+      this.clerk.addListener(async (event) => {
         const currentUserId = event.user?.id;
         
         // Only update if user actually changed (sign in/out)
@@ -76,10 +80,18 @@ export class AuthService {
           previousUserId = currentUserId;
           
           if (event.user) {
+            // User just signed in - show loader
+            this.globalLoader.show('Signing in...');
+            
             this._clerkUser.set(event.user);
             this._isSignedIn.set(true);
-            this.fetchCurrentUser();
+            await this.fetchCurrentUser();
             this.handlePostAuthRedirect();
+            
+            // Hide loader after a brief delay
+            setTimeout(() => {
+              this.globalLoader.hide();
+            }, 500);
           } else {
             this._clerkUser.set(null);
             this._isSignedIn.set(false);
@@ -142,15 +154,26 @@ export class AuthService {
 
   async signOut() {
     if (!this.clerk) return;
-    await this.clerk.signOut();
-    this._user.set(null);
-    this._isSignedIn.set(false);
-
-    // Navigate to home to ensure protected routes are no longer accessible
+    
+    // Show loader during sign out
+    this.globalLoader.show('Signing out...');
+    
     try {
-      this.router.navigateByUrl('/', { replaceUrl: true });
-    } catch (err) {
-      // ignore navigation errors
+      await this.clerk.signOut();
+      this._user.set(null);
+      this._isSignedIn.set(false);
+
+      // Navigate to home to ensure protected routes are no longer accessible
+      try {
+        await this.router.navigateByUrl('/', { replaceUrl: true });
+      } catch (err) {
+        // ignore navigation errors
+      }
+    } finally {
+      // Hide loader after a brief delay to allow page refresh
+      setTimeout(() => {
+        this.globalLoader.hide();
+      }, 500);
     }
   }
 

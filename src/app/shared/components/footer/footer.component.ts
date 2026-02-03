@@ -56,13 +56,16 @@ import { AuthService } from '../../../core/services/auth.service';
             <div class="logo-container">
               <span class="logo-text">StoresCraft</span>
               <div class="mascot">
-                <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="50" cy="50" r="48" fill="white" stroke="black" stroke-width="3"/>
-                  <path d="M30 40C30 40 35 35 40 40" stroke="black" stroke-width="3" stroke-linecap="round"/>
-                  <path d="M60 40C60 40 65 35 70 40" stroke="black" stroke-width="3" stroke-linecap="round"/>
-                  <path d="M30 65C30 65 50 80 70 65" stroke="black" stroke-width="3" stroke-linecap="round"/>
-                  <path d="M75 55L90 45" stroke="black" stroke-width="3" stroke-linecap="round"/>
-                  <circle cx="85" cy="40" r="2" fill="black"/>
+                <svg fill="#000000" width="60" height="60" viewBox="96.631 514.201 32.951 32.951" xmlns="http://www.w3.org/2000/svg">
+                  <g>
+                    <path d="M113.107,547.151a16.475,16.475,0,1,1,16.475-16.475A16.494,16.494,0,0,1,113.107,547.151Zm0-30.95a14.475,14.475,0,1,0,14.475,14.475A14.492,14.492,0,0,0,113.107,516.2Z"/>
+                    
+                    <path d="M113.107,542.035a8.766,8.766,0,0,1-8.756-8.755,1,1,0,0,1,2,0,6.756,6.756,0,0,0,13.511,0,1,1,0,0,1,2,0A8.766,8.766,0,0,1,113.107,542.035Z"/>
+                    
+                    <path d="M105.43,530.218a1,1,0,0,1-1-1v-4.862a1,1,0,0,1,2,0v4.862A1,1,0,0,1,105.43,530.218Z"/>
+                    
+                    <path d="M121.046,530.218a1,1,0,0,1-1-1v-4.862a1,1,0,0,1,2,0v4.862A1,1,0,0,1,121.046,530.218Z"/>
+                  </g>
                 </svg>
               </div>
             </div>

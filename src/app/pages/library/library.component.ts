@@ -50,8 +50,9 @@ import { ToasterService } from '../../core/services/toaster.service';
                 </div>
               </div>
 
-              <!-- Stats -->
-              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 max-w-2xl mx-auto" *ngIf="!loading()">
+              <!-- Stats - Always visible with skeleton state -->
+              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 max-w-2xl mx-auto">
+                <!-- Products stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,10 +60,15 @@ import { ToasterService } from '../../core/services/toaster.service';
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ licenses().length }}</div>
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ licenses().length }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
                   </div>
                 </div>
+                <!-- Active stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FFC60B] border border-black rounded-lg flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,10 +76,15 @@ import { ToasterService } from '../../core/services/toaster.service';
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getActiveCount() }}</div>
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getActiveCount() }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Active</div>
                   </div>
                 </div>
+                <!-- Downloads stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,7 +92,11 @@ import { ToasterService } from '../../core/services/toaster.service';
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalDownloads() }}</div>
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalDownloads() }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Downloads</div>
                   </div>
                 </div>
@@ -95,9 +110,27 @@ import { ToasterService } from '../../core/services/toaster.service';
       <section class="py-6 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
           @if (loading()) {
-            <div class="py-16 flex flex-col items-center justify-center">
-              <div class="w-12 h-12 border-4 border-[#FFC60B] border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p class="text-[#111111]/60 font-medium">Loading your library...</p>
+            <!-- Loading Skeleton -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              @for (i of [1,2,3,4,5,6]; track i) {
+                <div class="bg-white border-2 border-black rounded-xl overflow-hidden">
+                  <div class="p-3 md:p-4 flex gap-4">
+                    <div class="w-20 h-20 md:w-24 md:h-24 shrink-0 bg-[#F9F4EB] border-2 border-black rounded-lg animate-pulse"></div>
+                    <div class="flex-1 min-w-0">
+                      <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse w-3/4 mb-2"></div>
+                      <div class="h-3 bg-[#111111]/5 rounded animate-pulse w-1/2 mb-3"></div>
+                      <div class="h-6 w-32 bg-[#F9F4EB] rounded border border-black/10 animate-pulse"></div>
+                    </div>
+                  </div>
+                  <div class="px-3 md:px-4 pb-3 md:pb-4 border-t-2 border-black/5 pt-3 md:pt-4">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="h-3 w-20 bg-[#111111]/10 rounded animate-pulse"></div>
+                      <div class="h-3 w-16 bg-[#68E079]/30 rounded animate-pulse"></div>
+                    </div>
+                    <div class="h-10 bg-[#F9F4EB] border border-black rounded-lg animate-pulse"></div>
+                  </div>
+                </div>
+              }
             </div>
           } @else if (filteredLicenses().length === 0) {
             <!-- Empty State -->

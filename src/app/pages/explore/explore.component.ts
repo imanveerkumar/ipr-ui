@@ -13,6 +13,7 @@ import {
 import { SubdomainService } from '../../core/services/subdomain.service';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
+import { StatSkeletonComponent } from '../../shared/components/skeleton/skeleton.component';
 
 type TabType = 'products' | 'stores' | 'creators';
 type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
@@ -20,7 +21,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, StatSkeletonComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Hero Section -->
@@ -68,8 +69,9 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                 </div>
               </div>
 
-              <!-- Stats -->
-              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 mt-4 md:mt-6" *ngIf="stats()">
+              <!-- Stats - Always visible with skeleton state -->
+              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 mt-4 md:mt-6">
+                <!-- Products stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,10 +79,15 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalProducts }}</div>
+                    @if (stats()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalProducts }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
                   </div>
                 </div>
+                <!-- Stores stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,10 +95,15 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalStores }}</div>
+                    @if (stats()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalStores }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Stores</div>
                   </div>
                 </div>
+                <!-- Creators stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black rounded-lg flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,7 +111,11 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalCreators }}</div>
+                    @if (stats()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalCreators }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Creators</div>
                   </div>
                 </div>
@@ -235,10 +251,19 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </div>
           </div>
 
-          <!-- Loading State -->
-          <div *ngIf="isLoading()" class="py-16 flex flex-col items-center justify-center">
-            <div class="w-12 h-12 border-4 border-[#FFC60B] border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p class="text-[#111111]/60 font-medium">Loading...</p>
+          <!-- Loading Skeleton -->
+          <div *ngIf="isLoading()" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+            <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden">
+              <div class="aspect-square bg-[#F9F4EB] animate-pulse"></div>
+              <div class="p-2 md:p-4">
+                <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse mb-2 w-3/4"></div>
+                <div class="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
+                  <div class="w-4 h-4 md:w-5 md:h-5 rounded-full bg-[#111111]/10 animate-pulse"></div>
+                  <div class="h-2 md:h-3 bg-[#111111]/5 rounded animate-pulse w-16"></div>
+                </div>
+                <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse w-1/3"></div>
+              </div>
+            </div>
           </div>
 
           <!-- Products Grid -->
@@ -601,7 +626,7 @@ export class ExploreComponent implements OnInit {
 
   // Signals
   activeTab = signal<TabType>('products');
-  isLoading = signal(false);
+  isLoading = signal(true);
   showSortDropdown = signal(false);
   showPriceFilter = signal(false);
   currentPage = signal(1);

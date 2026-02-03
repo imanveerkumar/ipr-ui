@@ -39,8 +39,9 @@ interface SalesStats {
                 Manage your stores, track sales, and grow your digital empire
               </p>
 
-              <!-- Hero Stats -->
-              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 max-w-2xl mx-auto" *ngIf="!loading()">
+              <!-- Hero Stats - Always visible with skeleton state -->
+              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 max-w-2xl mx-auto">
+                <!-- Stores stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 md:bg-transparent border border-black/10 md:border-0">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,10 +50,15 @@ interface SalesStats {
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stores().length }}</div>
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stores().length }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Stores</div>
                   </div>
                 </div>
+                <!-- Products stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 md:bg-transparent border border-black/10 md:border-0">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-[#7C3AED] border border-black flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,10 +66,15 @@ interface SalesStats {
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ totalProducts() }}</div>
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ totalProducts() }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
                   </div>
                 </div>
+                <!-- Revenue stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 md:bg-transparent border border-black/10 md:border-0">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +82,11 @@ interface SalesStats {
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">₹{{ formatRevenue(totalRevenue()) }}</div>
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">₹{{ formatRevenue(totalRevenue()) }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-10 md:w-16 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
                     <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Revenue</div>
                   </div>
                 </div>

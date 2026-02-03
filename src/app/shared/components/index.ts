@@ -6,4 +6,5 @@ export * from './purchases-auth-modal.component';
 export * from './data-grid/data-grid.component';
 export * from './toaster/toaster.component';
 export * from './global-loader';
+export * from './skeleton';
 export type { GridColumn, GridPagination, GridDataRequest } from './data-grid/data-grid.component';
