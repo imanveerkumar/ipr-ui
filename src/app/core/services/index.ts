@@ -15,3 +15,4 @@ export * from './toaster.service';
 export * from './request-manager.service';
 export * from './rate-limiter.service';
 export * from './loading-state.service';
+export * from './global-loader.service';

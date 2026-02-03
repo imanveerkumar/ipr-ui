@@ -5,13 +5,14 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { CartSidebarComponent } from './pages/storefront/cart-sidebar.component';
 import { ToasterComponent } from './shared/components/toaster/toaster.component';
+import { GlobalLoaderComponent } from './shared/components/global-loader/global-loader.component';
 import { AuthService, SubdomainService, StoreContextService } from './core/services';
 import { StorefrontLayoutComponent } from './pages/storefront/storefront-layout.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent, StorefrontLayoutComponent, CartSidebarComponent, ToasterComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent, StorefrontLayoutComponent, CartSidebarComponent, ToasterComponent, GlobalLoaderComponent],
   template: `
     @if (subdomainService.isStorefront()) {
       <!-- Storefront Mode: Show store-specific layout -->
@@ -31,6 +32,9 @@ import { StorefrontLayoutComponent } from './pages/storefront/storefront-layout.
     
     <!-- Global Toaster Component -->
     <app-toaster />
+    
+    <!-- Global Loader Component -->
+    <app-global-loader />
   `,
 })
 export class AppComponent implements OnInit {
