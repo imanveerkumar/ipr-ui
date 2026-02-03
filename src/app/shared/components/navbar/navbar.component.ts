@@ -181,6 +181,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       gap: 6px;
       text-decoration: none;
       flex-shrink: 0;
+      cursor: pointer;
     }
 
     .logo-text {
@@ -1665,7 +1666,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
         <div class="header-container">
           <div class="header-inner">
             <!-- Logo -->
-            <a routerLink="/" class="logo" (click)="closeAllMenus()">
+            <a class="logo" (click)="handleLogoClick()">
               <span class="logo-text">StoresCraft.     </span>
 
             </a>
@@ -1970,7 +1971,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     <!-- Mobile Menu -->
     <div class="mobile-menu" [class.active]="mobileMenuOpen()">
       <div class="mobile-menu-header">
-        <a routerLink="/" class="logo" (click)="closeMobileMenu()">
+        <a class="logo" (click)="handleLogoClick()">
           <span class="logo-text">StoresCraft</span>
           <div class="mascot">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2599,6 +2600,15 @@ export class NavbarComponent implements OnDestroy {
     this.closeMobileMenu();
     this.closeSearchDropdown();
     this.closeMobileSearch();
+  }
+
+  handleLogoClick() {
+    this.closeAllMenus();
+    if (this.auth.isSignedIn() && this.auth.isCreator()) {
+      this.router.navigate(['/explore']);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   async signIn() {

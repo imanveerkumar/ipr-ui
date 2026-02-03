@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, inject, effect } from '@angular/core';
+import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AuthService } from '../../core/services/auth.service';
@@ -688,6 +688,16 @@ import { AuthService } from '../../core/services/auth.service';
 export class HomeComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
   authService = inject(AuthService);
+  private router = inject(Router);
+
+  constructor() {
+    // Use effect to react to auth state changes
+    effect(() => {
+      if (this.authService.isLoaded() && this.authService.isSignedIn() && this.authService.isCreator()) {
+        this.router.navigate(['/explore']);
+      }
+    });
+  }
 
   async handleCreatorCtaClick(event: Event) {
     if (this.authService.isSignedIn()) return;
