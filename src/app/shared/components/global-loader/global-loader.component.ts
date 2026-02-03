@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GlobalLoaderService } from '../../../core/services/global-loader.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-global-loader',
@@ -206,6 +207,7 @@ import { GlobalLoaderService } from '../../../core/services/global-loader.servic
 export class GlobalLoaderComponent implements OnInit, OnDestroy {
   private loaderService = inject(GlobalLoaderService);
   private router = inject(Router);
+  private authService = inject(AuthService);
   private routerSubscription?: Subscription;
 
   isVisible = signal(false);
@@ -217,6 +219,7 @@ export class GlobalLoaderComponent implements OnInit, OnDestroy {
 
   private hideTimeout?: ReturnType<typeof setTimeout>;
   private hasCompletedFirstNavigation = false;
+  private navCompleted = signal(false);
   
   /** Delay in ms to wait for header to settle after initial navigation */
   private readonly INITIAL_LOAD_SETTLE_DELAY = 300;
@@ -231,7 +234,44 @@ export class GlobalLoaderComponent implements OnInit, OnDestroy {
         // Auth operations use the transparent overlay (not initial load)
         this.showAuthLoader(serviceStatusText);
       } else {
-        this.hideLoader();
+        // Only hide if we are not waiting for initial load
+        // But the service controls explicit shows/hides.
+        // If service goes false, we generally hide.
+        // However, if we are in initial load state, and service wasn't the one keeping it open...
+        // Actually, existing code says: if serviceLoading is false -> hideLoader().
+        // This might conflict with our initial load logic if serviceLoading flickers?
+        // But service is for explicit calls. Initial load is implicit.
+        
+        // Wait, the existing code forces hideLoader() if serviceLoading becomes false.
+        // If we are showing initial loader, and serviceLoading is false (default), this effect runs on init?
+        // On init: serviceLoading = false. hideLoader() called.
+        // But showInitialLoader() is called in ngOnInit.
+        // If effect runs after ngOnInit?
+        
+        // The existing effect is dangerous if it runs on valid initial load.
+        // Let's modify it to respect initial load state.
+        
+         if (!this.isInitialLoad()) {
+            this.hideLoader();
+         }
+      }
+    });
+
+    // New effect for initial load synchronization
+    effect(() => {
+      // Check if we can hide the initial loader
+      // Requirements:
+      // 1. Initial navigation complete
+      // 2. Auth service loaded
+      // 3. No explicit loader service request active
+      if (
+        this.navCompleted() && 
+        this.authService.isLoaded() && 
+        !this.loaderService.isLoading()
+      ) {
+         if (this.isVisible() && this.isInitialLoad() && !this.isFadingOut()) {
+            this.hideLoaderWithDelay(this.INITIAL_LOAD_SETTLE_DELAY);
+         }
       }
     });
   }
@@ -257,8 +297,8 @@ export class GlobalLoaderComponent implements OnInit, OnDestroy {
         // Hide only if service is not loading (auth operation in progress)
         if (!this.loaderService.isLoading()) {
           if (wasFirstNavigation) {
-            // Add delay for initial load to let header settle
-            this.hideLoaderWithDelay(this.INITIAL_LOAD_SETTLE_DELAY);
+            // Signal that navigation is done - let the effect handle hiding when auth is also ready
+            this.navCompleted.set(true);
           } else {
             this.hideLoader();
           }

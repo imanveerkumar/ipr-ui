@@ -59,7 +59,7 @@ export class AuthService {
         },
       });
       
-      this._isLoaded.set(true);
+      // Removed early this._isLoaded.set(true); to wait for user data
       
       if (this.clerk.user) {
         // User is already signed in on page load
@@ -68,6 +68,8 @@ export class AuthService {
         await this.fetchCurrentUser();
         this.handlePostAuthRedirect();
       }
+
+      this._isLoaded.set(true); // Now auth is fully loaded including user data
 
       // Listen for auth changes - only fetch user on actual auth state changes
       let previousUserId = this.clerk.user?.id;
