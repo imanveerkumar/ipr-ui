@@ -119,7 +119,7 @@ type ViewState = 'cart' | 'checkout';
                 <p class="text-gray-500 text-xs mb-6 max-w-[180px]">Discover amazing digital products and add them to your cart</p>
                 <button 
                   (click)="cartService.close()" 
-                  routerLink="/products"
+                  [routerLink]="authService.isSignedIn() ? '/explore' : '/products'"
                   class="w-full px-5 py-3 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-all min-h-[44px] shadow-lg shadow-gray-900/20"
                 >
                   Browse Products
