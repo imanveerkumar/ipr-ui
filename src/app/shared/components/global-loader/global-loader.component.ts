@@ -53,7 +53,10 @@ import { AuthService } from '../../../core/services/auth.service';
        ============================================ */
     .loader-overlay-initial {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       z-index: 9999;
       background-color: var(--loader-bg-cream);
       display: flex;
@@ -220,9 +223,6 @@ export class GlobalLoaderComponent implements OnInit, OnDestroy {
   private hideTimeout?: ReturnType<typeof setTimeout>;
   private hasCompletedFirstNavigation = false;
   private navCompleted = signal(false);
-  
-  /** Delay in ms to wait for header to settle after initial navigation */
-  private readonly INITIAL_LOAD_SETTLE_DELAY = 300;
 
   constructor() {
     // React to service loading state changes (only for auth operations)
@@ -270,7 +270,9 @@ export class GlobalLoaderComponent implements OnInit, OnDestroy {
         !this.loaderService.isLoading()
       ) {
          if (this.isVisible() && this.isInitialLoad() && !this.isFadingOut()) {
-            this.hideLoaderWithDelay(this.INITIAL_LOAD_SETTLE_DELAY);
+            // Use longer delay for logged in users to allow header to settle
+            const delay = this.authService.isSignedIn() ? 300 : 10;
+            this.hideLoaderWithDelay(delay);
          }
       }
     });
