@@ -540,6 +540,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </p>
             <a 
               routerLink="/become-creator" 
+              (click)="handleCreatorCtaClick($event)"
               class="relative z-10 inline-flex items-center px-6 py-3 md:px-8 md:py-4 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-base md:text-lg hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
             >
               Start selling for free
@@ -585,6 +586,12 @@ export class ExploreComponent implements OnInit {
   private route = inject(ActivatedRoute);
   cartService = inject(CartService);
   authService = inject(AuthService);
+
+  async handleCreatorCtaClick(event: Event) {
+    if (this.authService.isSignedIn()) return;
+    event.preventDefault();
+    await this.authService.openCreatorSignup();
+  }
 
   // State
   searchQuery = '';

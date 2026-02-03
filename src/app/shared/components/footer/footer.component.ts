@@ -21,7 +21,7 @@ import { AuthService } from '../../../core/services/auth.service';
           </div>
 
           <!-- Main CTA Button -->
-          <a routerLink="/become-creator" class="book-btn">
+          <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="book-btn">
             <u>Get Started</u>
           </a>
 
@@ -523,5 +523,11 @@ export class FooterComponent {
 
   toggleExpanded() {
     this.isExpanded = !this.isExpanded;
+  }
+
+  async handleCreatorCtaClick(event: Event) {
+    if (this.authService.isSignedIn()) return;
+    event.preventDefault();
+    await this.authService.openCreatorSignup();
   }
 }

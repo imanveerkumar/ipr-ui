@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -34,7 +35,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
               
               <!-- CTA Button -->
               <div class="mb-4">
-                <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+                <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
                   Begin free trial
                 </a>
               </div>
@@ -142,7 +143,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
               <p class="text-lg text-white/90 max-w-xl mx-auto mb-8 font-medium">
                 Pick from complimentary online shop designs. Customize as you like or launch immediately.
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+              <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
                 Build your shop
               </a>
             </div>
@@ -170,7 +171,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
               <p class="text-lg text-white/90 max-w-xl mx-auto mb-8 font-medium">
                 Design a unique shop that looks great on desktop and mobile, piece by piece like building blocks. Drag, drop, done, zero coding.
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+              <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
                 Build your shop
               </a>
             </div>
@@ -205,7 +206,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
           <p class="text-lg text-[#111111]/80 max-w-lg mx-auto mb-8 font-medium">
             Offer eBooks, music, videos, graphics, and more.<br>Up to 20GB per file. Your massive, beautiful files.
           </p>
-          <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] mb-12">
+          <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] mb-12">
             Build your shop
           </a>
           
@@ -233,7 +234,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
               <p class="text-lg text-[#111111]/80 mb-8 font-medium">
                 Convert fans into members with monthly, yearly, or one-time plans, featuring automated billing. Ideal for newsletters, fitness programs, exclusive content, and recurring digital goods. Steady revenue for you, seamless for them.
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+              <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
                 Build your shop
               </a>
               
@@ -291,7 +292,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
               <p class="text-lg text-[#111111]/80 mb-8 font-medium">
                 Books, posters, stickers, decor, whatever!<br>Macaroni art? Absolutely!
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+              <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
                 Build your shop
               </a>
             </div>
@@ -319,7 +320,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
             </div>
           </div>
           
-          <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+          <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
             Create your store
           </a>
         </div>
@@ -350,7 +351,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
                   </div>
                 </div>
                 
-                <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+                    <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
                   Create your store
                 </a>
               </div>
@@ -421,7 +422,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
               <p class="text-lg text-[#111111]/80 mb-8 font-medium">
                 Accelerate purchases with streamlined checkout. PayPal, Stripe, Apple Pay, Google Pay, and cards supported.
               </p>
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+              <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
                 Build your shop
               </a>
             </div>
@@ -556,7 +557,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
             
             <!-- CTA -->
             <div class="p-8 text-center bg-[#F9F4EB]">
-              <a routerLink="/become-creator" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+              <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="inline-flex items-center px-8 py-4 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-lg hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
                 Start free trial
               </a>
               <p class="text-sm text-[#111111]/60 mt-4 font-medium">14-day free trial, no card required.</p>
@@ -655,7 +656,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
             <h2 class="font-dm-sans text-3xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-4 relative z-10">
               Ready to launch a shop?<br>Why wait!
             </h2>
-            <a routerLink="/become-creator" class="relative z-10 inline-flex items-center px-8 py-4 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-lg hover:bg-gray-800 transition-colors duration-200 mt-6 shadow-[4px_4px_0px_0px_#fff]">
+            <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="relative z-10 inline-flex items-center px-8 py-4 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-lg hover:bg-gray-800 transition-colors duration-200 mt-6 shadow-[4px_4px_0px_0px_#fff]">
               Start free
             </a>
             
@@ -686,6 +687,13 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class HomeComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
+  authService = inject(AuthService);
+
+  async handleCreatorCtaClick(event: Event) {
+    if (this.authService.isSignedIn()) return;
+    event.preventDefault();
+    await this.authService.openCreatorSignup();
+  }
 
   getSafeSvg(svg: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(svg);

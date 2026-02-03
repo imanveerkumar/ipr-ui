@@ -10,6 +10,8 @@ import { ApiService } from './api.service';
 })
 export class AuthService {
   private clerk: Clerk | null = null;
+  private postAuthRedirectUrl: string | null = null;
+  private readonly postAuthStorageKey = 'post_auth_redirect_url';
   
   // Signals for reactive state
   private _isLoaded = signal(false);
@@ -60,6 +62,7 @@ export class AuthService {
         this._clerkUser.set(this.clerk.user);
         this._isSignedIn.set(true);
         await this.fetchCurrentUser();
+        this.handlePostAuthRedirect();
       }
 
       // Listen for auth changes - only fetch user on actual auth state changes
@@ -76,6 +79,7 @@ export class AuthService {
             this._clerkUser.set(event.user);
             this._isSignedIn.set(true);
             this.fetchCurrentUser();
+            this.handlePostAuthRedirect();
           } else {
             this._clerkUser.set(null);
             this._isSignedIn.set(false);
@@ -123,6 +127,11 @@ export class AuthService {
     if (!this.clerk) return;
     // Open sign-in modal - custom router prevents redirects
     await this.clerk.openSignIn();
+  }
+
+  async openCreatorSignup() {
+    this.setPostAuthRedirect('/become-creator');
+    await this.signUp();
   }
 
   async signUp() {
@@ -177,5 +186,37 @@ export class AuthService {
 
   async refreshUser() {
     await this.fetchCurrentUser();
+  }
+
+  private setPostAuthRedirect(url: string) {
+    this.postAuthRedirectUrl = url;
+    try {
+      sessionStorage.setItem(this.postAuthStorageKey, url);
+    } catch (err) {
+      // ignore storage failures
+    }
+  }
+
+  private consumePostAuthRedirect(): string | null {
+    const url = this.postAuthRedirectUrl || sessionStorage.getItem(this.postAuthStorageKey);
+    if (url) {
+      this.postAuthRedirectUrl = null;
+      try {
+        sessionStorage.removeItem(this.postAuthStorageKey);
+      } catch (err) {
+        // ignore storage failures
+      }
+    }
+    return url;
+  }
+
+  private handlePostAuthRedirect() {
+    const url = this.consumePostAuthRedirect();
+    if (!url) return;
+    try {
+      this.router.navigateByUrl(url, { replaceUrl: true });
+    } catch (err) {
+      // ignore navigation errors
+    }
   }
 }

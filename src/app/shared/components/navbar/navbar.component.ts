@@ -2606,7 +2606,7 @@ export class NavbarComponent implements OnDestroy {
   }
 
   async signUp() {
-    await this.auth.signUp();
+    await this.auth.openCreatorSignup();
   }
 
   async signInMobile() {
@@ -2616,7 +2616,7 @@ export class NavbarComponent implements OnDestroy {
 
   async signUpMobile() {
     this.closeMobileMenu();
-    await this.auth.signUp();
+    await this.auth.openCreatorSignup();
   }
 
   async signOut() {
