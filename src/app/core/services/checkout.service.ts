@@ -91,7 +91,7 @@ export class CheckoutService {
     return response.data || null;
   }
 
-  async openRazorpayCheckout(paymentData: PaymentInitResponse, userEmail: string, userPhone?: string): Promise<boolean> {
+  async openRazorpayCheckout(paymentData: PaymentInitResponse, userEmail: string, userPhone?: string): Promise<{ success: boolean; cancelled?: boolean; error?: string }> {
     return new Promise((resolve) => {
       const options = {
         key: paymentData.razorpayKeyId,
@@ -105,19 +105,32 @@ export class CheckoutService {
           contact: userPhone || '',
         },
         handler: async (response: any) => {
-          const verified = await this.verifyPayment(
-            response.razorpay_order_id,
-            response.razorpay_payment_id,
-            response.razorpay_signature
-          );
-          resolve(verified);
+          try {
+            const verified = await this.verifyPayment(
+              response.razorpay_order_id,
+              response.razorpay_payment_id,
+              response.razorpay_signature
+            );
+            resolve({ success: verified, error: verified ? undefined : 'Payment verification failed' });
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            resolve({ success: false, error: 'Payment verification failed. Please contact support.' });
+          }
         },
         modal: {
-          ondismiss: () => resolve(false),
+          ondismiss: () => resolve({ success: false, cancelled: true }),
         },
       };
 
       const razorpay = new Razorpay(options);
+      
+      // Handle payment failure events
+      razorpay.on('payment.failed', (response: any) => {
+        console.error('Razorpay payment failed:', response.error);
+        const errorMessage = response.error?.description || 'Payment failed. Please try again.';
+        resolve({ success: false, error: errorMessage });
+      });
+      
       razorpay.open();
     });
   }

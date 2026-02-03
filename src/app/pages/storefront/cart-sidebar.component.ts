@@ -940,13 +940,13 @@ export class CartSidebarComponent {
       if (!paymentData) throw new Error('Failed to initiate payment');
       
       // Open Razorpay checkout
-      const success = await this.checkoutService.openRazorpayCheckout(
+      const result = await this.checkoutService.openRazorpayCheckout(
         paymentData,
         this.guestEmail,
         this.guestPhone || undefined
       );
       
-      if (success) {
+      if (result.success) {
         this.cartService.clear();
         this.cartService.close();
         this.resetView();
@@ -957,6 +957,16 @@ export class CartSidebarComponent {
         this.toaster.success({
           title: 'Purchase Successful!',
           message: 'Check your email for the download link.',
+        });
+      } else if (result.cancelled) {
+        this.toaster.error({
+          title: 'Payment Cancelled',
+          message: 'You closed the payment window. Please try again when ready.',
+        });
+      } else {
+        this.toaster.error({
+          title: 'Payment Failed',
+          message: result.error || 'Something went wrong. Please try again.',
         });
       }
     } catch (error: any) {
@@ -991,18 +1001,35 @@ export class CartSidebarComponent {
       if (!paymentData) throw new Error('Failed to initiate payment');
       
       const userEmail = this.authService.user()?.email || '';
-      const success = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
+      const result = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
       
-      if (success) {
+      if (result.success) {
         this.cartService.clear();
         this.cartService.close();
         this.resetView();
+        
+        // Show success message
+        this.toaster.success({
+          title: 'Purchase Successful!',
+          message: 'Redirecting to your library...',
+        });
+        
         // Use Router on main site for smooth navigation, window.location on storefront
         if (this.subdomainService.isStorefront()) {
           window.location.href = this.subdomainService.getMainSiteUrl('/library');
         } else {
           this.router.navigate(['/library']);
         }
+      } else if (result.cancelled) {
+        this.toaster.error({
+          title: 'Payment Cancelled',
+          message: 'You closed the payment window. Please try again when ready.',
+        });
+      } else {
+        this.toaster.error({
+          title: 'Payment Failed',
+          message: result.error || 'Something went wrong. Please try again.',
+        });
       }
     } catch (error: any) {
       console.error('Checkout failed:', error);

@@ -201,12 +201,22 @@ export class ProductComponent implements OnInit {
 
       // Open Razorpay checkout
       const userEmail = this.auth.user()?.email || '';
-      const success = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
+      const result = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
 
-      if (success) {
+      if (result.success) {
         this.toaster.success({
           title: 'Purchase Successful!',
           message: 'Check your library to access your files.',
+        });
+      } else if (result.cancelled) {
+        this.toaster.error({
+          title: 'Payment Cancelled',
+          message: 'You closed the payment window. Please try again when ready.',
+        });
+      } else {
+        this.toaster.error({
+          title: 'Payment Failed',
+          message: result.error || 'Something went wrong. Please try again.',
         });
       }
     } catch (error) {
