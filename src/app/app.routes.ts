@@ -26,7 +26,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/explore/explore.component').then(m => m.ExploreComponent),
   },
   {
-    path: 'store/:slug',
+    path: 'store/:id',
     loadComponent: () => import('./pages/store/store.component').then(m => m.StoreComponent),
   },
   {
@@ -34,7 +34,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/product/product.component').then(m => m.ProductComponent),
   },
   {
-    path: 'profile/:username',
+    path: 'profile/:id',
     loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
   },
   // Guest download access (no auth required)
