@@ -149,6 +149,11 @@ export class GlobalErrorHandler implements ErrorHandler {
       return true;
     }
 
+    // Skip Angular change detection errors (NG0100)
+    if (errorInfo.message?.includes('NG0100') || errorInfo.message?.includes('ExpressionChangedAfterItHasBeenCheckedError')) {
+      return true;
+    }
+
     return false;
   }
 
