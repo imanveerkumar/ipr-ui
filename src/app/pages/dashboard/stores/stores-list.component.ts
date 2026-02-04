@@ -42,7 +42,35 @@ import { Store } from '../../../core/models/index';
     </section>
 
     <!-- Stats Bar -->
-    @if (!loading() && stores().length > 0) {
+    @if (loading()) {
+      <section class="bg-white border-b-2 border-black">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+          <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
+            <!-- Total Stores Skeleton -->
+            <div class="flex items-center gap-2 shrink-0">
+              <div class="w-8 h-8 bg-black/10 rounded animate-pulse"></div>
+              <div class="w-24 h-5 bg-black/10 rounded animate-pulse"></div>
+            </div>
+            
+            <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
+            
+            <!-- Published Skeleton -->
+            <div class="flex items-center gap-2 shrink-0">
+              <div class="w-8 h-8 bg-black/10 rounded animate-pulse"></div>
+              <div class="w-20 h-5 bg-black/10 rounded animate-pulse"></div>
+            </div>
+            
+            <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
+            
+            <!-- Draft Skeleton -->
+            <div class="flex items-center gap-2 shrink-0">
+              <div class="w-8 h-8 bg-black/10 rounded animate-pulse"></div>
+              <div class="w-16 h-5 bg-black/10 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    } @else if (stores().length > 0) {
       <section class="bg-white border-b-2 border-black">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">

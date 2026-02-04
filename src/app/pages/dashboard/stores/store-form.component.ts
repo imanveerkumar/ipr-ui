@@ -6,11 +6,12 @@ import { StoreService } from '../../../core/services/store.service';
 import { ToasterService } from '../../../core/services/toaster.service';
 import { Store } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components';
+import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-store-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RichTextEditorComponent, RouterLink],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent, RouterLink, SkeletonComponent],
   template: `
     <!-- Hero Section -->
     <section class="hero-section">
@@ -27,7 +28,13 @@ import { RichTextEditorComponent } from '../../../shared/components';
             <h1 class="page-title">{{ isEditing() ? 'Edit Store' : 'Create Store' }}</h1>
             <p class="page-subtitle">{{ isEditing() ? 'Update your store details and settings' : 'Set up your new online storefront' }}</p>
           </div>
-          @if (isEditing() && store()) {
+          @if (isLoading()) {
+            <div class="hero-actions">
+              <app-skeleton variant="text-md" width="80px" height="32px"></app-skeleton>
+              <app-skeleton variant="text-md" width="100px" height="40px"></app-skeleton>
+              <app-skeleton variant="text-md" width="120px" height="40px"></app-skeleton>
+            </div>
+          } @else if (isEditing() && store()) {
             <div class="hero-actions">
               <span class="status-badge" [class.status-published]="store()?.status === 'PUBLISHED'" [class.status-draft]="store()?.status !== 'PUBLISHED'">{{ store()?.status }}</span>
               @if (store()?.status === 'PUBLISHED') {
@@ -71,8 +78,42 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
         }
 
+        <!-- Loading Skeleton -->
+        <div *ngIf="isLoading()" class="form-card">
+          <div class="mb-8">
+            <app-skeleton variant="text-lg" width="200px" class="mb-6"></app-skeleton>
+            
+            <div class="space-y-6">
+              <div>
+                <app-skeleton variant="text-sm" width="100px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="48px" class="w-full rounded-lg"></app-skeleton>
+                <app-skeleton variant="text-sm" width="150px" class="mt-1"></app-skeleton>
+              </div>
+              
+              <div>
+                <app-skeleton variant="text-sm" width="120px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="text-sm" width="180px" class="mb-2"></app-skeleton>
+                <div class="flex gap-2">
+                  <app-skeleton variant="full" height="48px" class="flex-1 rounded-lg"></app-skeleton>
+                  <app-skeleton variant="full" height="48px" width="120px" class="bg-transparent"></app-skeleton>
+                </div>
+              </div>
+
+              <div>
+                <app-skeleton variant="text-sm" width="80px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="80px" class="w-full rounded-lg"></app-skeleton>
+              </div>
+
+              <div>
+                <app-skeleton variant="text-sm" width="140px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="200px" class="w-full rounded-lg"></app-skeleton>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Form Card -->
-        <form (ngSubmit)="save()" class="form-card">
+        <form *ngIf="!isLoading()" (ngSubmit)="save()" class="form-card">
           <h2 class="form-card-title">Store Details</h2>
 
           <!-- Store Name -->
@@ -720,6 +761,7 @@ export class StoreFormComponent implements OnInit {
   private toaster = inject(ToasterService);
 
   isEditing = signal(false);
+  isLoading = signal(false);
   saving = signal(false);
   publishing = signal(false);
   deleting = signal(false);
@@ -782,14 +824,22 @@ export class StoreFormComponent implements OnInit {
     this.storeId = this.route.snapshot.paramMap.get('id');
     if (this.storeId && this.storeId !== 'new') {
       this.isEditing.set(true);
-      const store = await this.storeService.getStore(this.storeId);
-      this.store.set(store);
-      this.form = {
-        name: store.name,
-        slug: store.slug,
-        description: store.description || '',
-        tagline: store.tagline || ''
-      };
+      this.isLoading.set(true);
+      try {
+        const store = await this.storeService.getStore(this.storeId);
+        this.store.set(store);
+        this.form = {
+          name: store.name,
+          slug: store.slug,
+          description: store.description || '',
+          tagline: store.tagline || ''
+        };
+      } catch (error) {
+        this.toaster.error('Error loading store details');
+        this.router.navigate(['/dashboard/stores']);
+      } finally {
+        this.isLoading.set(false);
+      }
     }
   }
 

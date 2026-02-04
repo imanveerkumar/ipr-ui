@@ -13,7 +13,6 @@ import {
 import { SubdomainService } from '../../core/services/subdomain.service';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
-import { StatSkeletonComponent } from '../../shared/components/skeleton/skeleton.component';
 
 type TabType = 'products' | 'stores' | 'creators';
 type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
@@ -21,7 +20,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, StatSkeletonComponent],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Hero Section -->
@@ -252,19 +251,72 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
           </div>
 
           <!-- Loading Skeleton -->
-          <div *ngIf="isLoading()" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
-            <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden">
-              <div class="aspect-square bg-[#F9F4EB] animate-pulse"></div>
-              <div class="p-2 md:p-4">
-                <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse mb-2 w-3/4"></div>
-                <div class="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
-                  <div class="w-4 h-4 md:w-5 md:h-5 rounded-full bg-[#111111]/10 animate-pulse"></div>
-                  <div class="h-2 md:h-3 bg-[#111111]/5 rounded animate-pulse w-16"></div>
+          <ng-container *ngIf="isLoading()">
+            <!-- Products Skeleton -->
+            <div *ngIf="activeTab() === 'products'" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+              <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden">
+                <div class="aspect-square bg-[#F9F4EB] animate-pulse"></div>
+                <div class="p-2 md:p-4">
+                  <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse mb-2 w-3/4"></div>
+                  <div class="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
+                    <div class="w-4 h-4 md:w-5 md:h-5 rounded-full bg-[#111111]/10 animate-pulse"></div>
+                    <div class="h-2 md:h-3 bg-[#111111]/5 rounded animate-pulse w-16"></div>
+                  </div>
+                  <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse w-1/3"></div>
                 </div>
-                <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse w-1/3"></div>
               </div>
             </div>
-          </div>
+
+            <!-- Stores Skeleton -->
+            <div *ngIf="activeTab() === 'stores'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-white border-2 border-black rounded-2xl overflow-hidden">
+                <!-- Banner + Logo Skeleton -->
+                <div class="h-24 md:h-32 bg-[#F9F4EB] relative animate-pulse">
+                  <div class="absolute -bottom-6 left-4 w-14 h-14 md:w-16 md:h-16 bg-white border-2 border-black rounded-xl overflow-hidden flex items-center justify-center">
+                    <div class="w-full h-full bg-[#111111]/10"></div>
+                  </div>
+                </div>
+                <!-- Info Skeleton -->
+                <div class="p-4 pt-10">
+                  <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse mb-2 w-1/2"></div>
+                  <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-full mb-1"></div>
+                  <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-2/3 mb-4"></div>
+                  <!-- Stats Skeleton -->
+                  <div class="flex items-center gap-4">
+                    <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse w-20"></div>
+                    <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse w-24"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Creators Skeleton -->
+            <div *ngIf="activeTab() === 'creators'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+              <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="bg-white border-2 border-black rounded-2xl p-4 md:p-5 text-center">
+                <!-- Avatar Skeleton -->
+                <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-4 rounded-full bg-[#111111]/10 animate-pulse border-2 border-transparent"></div>
+                <!-- Name Skeleton -->
+                <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse mb-2 w-2/3 mx-auto"></div>
+                <!-- Handle Skeleton -->
+                <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-1/3 mx-auto mb-4"></div>
+                <!-- Bio Skeleton -->
+                <div class="h-3 bg-[#111111]/5 rounded animate-pulse w-full mb-1"></div>
+                <div class="h-3 bg-[#111111]/5 rounded animate-pulse w-4/5 mx-auto mb-4"></div>
+                <!-- Stats Skeleton -->
+                <div class="flex justify-center gap-4">
+                  <div class="text-center">
+                    <div class="h-4 w-6 bg-[#111111]/10 rounded animate-pulse mx-auto mb-1"></div>
+                    <div class="h-2 w-8 bg-[#111111]/5 rounded animate-pulse mx-auto"></div>
+                  </div>
+                  <div class="w-px bg-black/10"></div>
+                  <div class="text-center">
+                    <div class="h-4 w-6 bg-[#111111]/10 rounded animate-pulse mx-auto mb-1"></div>
+                    <div class="h-2 w-8 bg-[#111111]/5 rounded animate-pulse mx-auto"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
 
           <!-- Products Grid -->
           <div *ngIf="!isLoading() && activeTab() === 'products'">

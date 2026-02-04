@@ -7,11 +7,12 @@ import { StoreService } from '../../../core/services/store.service';
 import { ToasterService } from '../../../core/services/toaster.service';
 import { Store } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components';
+import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RichTextEditorComponent, RouterLink],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent, RouterLink, SkeletonComponent],
   template: `
     <!-- Hero Section -->
     <section class="hero-section">
@@ -27,6 +28,30 @@ import { RichTextEditorComponent } from '../../../shared/components';
           <div class="hero-text">
             <h1 class="page-title">{{ isEditing() ? 'Edit Product' : 'Create Product' }}</h1>
             <p class="page-subtitle">{{ isEditing() ? 'Update your product details' : 'Add a new digital product to your store' }}</p>
+
+            @if (!isEditing() && stores().length === 0 && !isLoading()) {
+              <div class="mt-6 bg-[#FFC60B] border-2 border-black p-4 md:p-5 shadow-[4px_4px_0px_0px_#000]">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shrink-0">
+                      <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-[#111111] mb-0.5">Note</h3>
+                      <p class="text-sm text-[#111111]/80">There are no store created. Create a store first.</p>
+                    </div>
+                  </div>
+                  <a routerLink="/dashboard/stores/new" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
+                    Create Store
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            }
           </div>
         </div>
       </div>
@@ -35,7 +60,42 @@ import { RichTextEditorComponent } from '../../../shared/components';
     <!-- Content Section -->
     <section class="content-section">
       <div class="container">
-        <form (ngSubmit)="save()" class="form-card">
+        <!-- Loading Skeleton -->
+        <div *ngIf="isLoading()" class="form-card">
+          <div class="mb-8">
+            <app-skeleton variant="text-lg" width="200px" class="mb-6"></app-skeleton>
+            
+            <div class="space-y-6">
+              <div>
+                <app-skeleton variant="text-sm" width="100px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="48px" class="w-full rounded-lg"></app-skeleton>
+              </div>
+              
+              <div>
+                <app-skeleton variant="text-sm" width="120px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="48px" class="w-full rounded-lg"></app-skeleton>
+                <app-skeleton variant="text-sm" width="150px" class="mt-1"></app-skeleton>
+              </div>
+
+              <div>
+                <app-skeleton variant="text-sm" width="140px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="48px" class="w-full rounded-lg"></app-skeleton>
+              </div>
+
+              <div>
+                <app-skeleton variant="text-sm" width="80px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="200px" class="w-full rounded-lg"></app-skeleton>
+              </div>
+              
+              <div>
+                <app-skeleton variant="text-sm" width="60px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="48px" class="w-full rounded-lg"></app-skeleton>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form *ngIf="!isLoading()" (ngSubmit)="save()" class="form-card">
           <h2 class="form-card-title">Product Details</h2>
 
           <!-- Store Selection -->
@@ -710,6 +770,7 @@ import { RichTextEditorComponent } from '../../../shared/components';
 })
 export class ProductFormComponent implements OnInit {
   isEditing = signal(false);
+  isLoading = signal(false);
   saving = signal(false);
   stores = signal<Store[]>([]);
   selectedFiles = signal<File[]>([]);
@@ -751,28 +812,39 @@ export class ProductFormComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const stores = await this.storeService.getMyStores();
-    this.stores.set(stores);
+    this.isLoading.set(true);
+    try {
+      const stores = await this.storeService.getMyStores();
+      this.stores.set(stores);
 
-    this.productId = this.route.snapshot.paramMap.get('id');
-    if (this.productId && this.productId !== 'new') {
-      this.isEditing.set(true);
-      this.slugManuallyEdited = true;
-      const product = await this.productService.getProduct(this.productId);
-      this.form = {
-        storeId: product.storeId,
-        title: product.title,
-        slug: product.slug,
-        description: product.description || '',
-        price: product.price / 100,
-        status: product.status,
-      };
-    } else {
-      this.slugManuallyEdited = false;
-      const storeIdFromQuery = this.route.snapshot.queryParamMap.get('storeId');
-      if (storeIdFromQuery) {
-        this.form.storeId = storeIdFromQuery;
+      this.productId = this.route.snapshot.paramMap.get('id');
+      if (this.productId && this.productId !== 'new') {
+        this.isEditing.set(true);
+        this.slugManuallyEdited = true;
+        const product = await this.productService.getProduct(this.productId);
+        this.form = {
+          storeId: product.storeId,
+          title: product.title,
+          slug: product.slug,
+          description: product.description || '',
+          price: product.price / 100,
+          status: product.status,
+        };
+      } else {
+        this.slugManuallyEdited = false;
+        const storeIdFromQuery = this.route.snapshot.queryParamMap.get('storeId');
+        if (storeIdFromQuery) {
+          this.form.storeId = storeIdFromQuery;
+        }
       }
+    } catch (error) {
+      this.toaster.error('Error loading product details');
+      // If we can't load stores for new product or get product for edit, maybe redirect
+      if (this.productId !== 'new') {
+         this.router.navigate(['/dashboard/products']);
+      }
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
