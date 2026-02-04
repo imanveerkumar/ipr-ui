@@ -1,10 +1,11 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { StoreService } from '../../core/services/store.service';
 import { ProductService } from '../../core/services/product.service';
 import { ApiService } from '../../core/services/api.service';
 import { ToasterService } from '../../core/services/toaster.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Store, Product } from '../../core/models/index';
 
 interface SalesStats {
@@ -32,7 +33,7 @@ interface SalesStats {
               
               <!-- Main Heading -->
               <h1 class="font-dm-sans text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-2 md:mb-3 leading-tight">
-                WELCOME, <span class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]">CREATOR</span>
+                WELCOME, <span class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]">{{ auth.user()?.firstName || auth.user()?.displayName || 'CREATOR' }}</span>
               </h1>
               
               <!-- Subtext -->
@@ -511,6 +512,7 @@ interface SalesStats {
   `]
 })
 export class DashboardComponent implements OnInit {
+  auth = inject(AuthService);
   stores = signal<Store[]>([]);
   products = signal<Product[]>([]);
   loading = signal(true);
