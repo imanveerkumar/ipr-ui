@@ -12,6 +12,7 @@ import {
   SearchSuggestionCreator 
 } from '../../../core/services/explore.service';
 import { SubdomainService } from '../../../core/services/subdomain.service';
+import { ConfirmService } from '../../../core/services/confirm.service';
 
 @Component({
   selector: 'app-navbar',
@@ -2316,6 +2317,7 @@ export class NavbarComponent implements OnDestroy {
   private subdomainService = inject(SubdomainService);
   private router = inject(Router);
   cartService = inject(CartService);
+  confirmService = inject(ConfirmService);
   
   profileMenuOpen = signal(false);
   mobileMenuOpen = signal(false);
@@ -2631,6 +2633,18 @@ export class NavbarComponent implements OnDestroy {
 
   async signOut() {
     this.closeAllMenus();
+
+    const confirmed = await this.confirmService.confirm({
+      title: 'Sign Out',
+      message: 'Are you sure you want to sign out?',
+      confirmText: 'Sign Out',
+      cancelText: 'Cancel',
+      accent: 'yellow', // modal background/header uses mustard
+      confirmColor: 'danger' // confirm button should be red for sign out
+    });
+
+    if (!confirmed) return;
+
     await this.auth.signOut();
   }
 

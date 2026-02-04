@@ -8,11 +8,12 @@ import { ToasterComponent } from './shared/components/toaster/toaster.component'
 import { GlobalLoaderComponent } from './shared/components/global-loader/global-loader.component';
 import { AuthService, SubdomainService, StoreContextService } from './core/services';
 import { StorefrontLayoutComponent } from './pages/storefront/storefront-layout.component';
+import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent, StorefrontLayoutComponent, CartSidebarComponent, ToasterComponent, GlobalLoaderComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent, StorefrontLayoutComponent, CartSidebarComponent, ToasterComponent, GlobalLoaderComponent, ConfirmModalComponent],
   template: `
     @if (subdomainService.isStorefront()) {
       <!-- Storefront Mode: Show store-specific layout -->
@@ -35,6 +36,9 @@ import { StorefrontLayoutComponent } from './pages/storefront/storefront-layout.
     
     <!-- Global Loader Component -->
     <app-global-loader />
+
+    <!-- Global Confirm Modal (reusable) -->
+    <app-confirm-modal />
   `,
 })
 export class AppComponent implements OnInit {
