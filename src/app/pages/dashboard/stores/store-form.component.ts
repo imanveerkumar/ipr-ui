@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { StoreService } from '../../../core/services/store.service';
+import { SubdomainService } from '../../../core/services/subdomain.service';
 import { ToasterService } from '../../../core/services/toaster.service';
 import { Store } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components';
@@ -148,7 +149,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
             </label>
             <div class="slug-input-wrapper">
               <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input slug-input" placeholder="my-store" pattern="[a-z0-9-]+" (input)="validateSlug()">
-              <span class="slug-suffix">.yoursite.com</span>
+              <span class="slug-suffix">.{{ baseDomain() }}</span>
             </div>
             <p class="form-hint">Only lowercase letters, numbers, and hyphens allowed.</p>
             @if (slugError()) {
@@ -160,7 +161,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
           @if (form.slug) {
             <div class="url-preview-card">
               <div class="url-preview-label">Live Preview URL</div>
-              <p class="url-preview-value">https://{{ form.slug }}.yoursite.com</p>
+              <p class="url-preview-value">https://{{ form.slug }}.{{ baseDomain() }}</p>
             </div>
           }
 
@@ -756,6 +757,8 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
 })
 export class StoreFormComponent implements OnInit {
   storeService = inject(StoreService);
+  subdomainService = inject(SubdomainService);
+  readonly baseDomain = this.subdomainService.baseDomain;
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toaster = inject(ToasterService);

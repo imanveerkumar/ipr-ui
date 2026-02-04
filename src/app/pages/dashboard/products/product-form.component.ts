@@ -495,7 +495,17 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       }
     }
 
-    .form-input,
+    .form-input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      color: #111111;
+      background: #ffffff;
+      border: 2px solid #111111;
+      font-family: inherit;
+      cursor: text;
+    }
+
     .form-select {
       width: 100%;
       padding: 0.875rem 1rem;
@@ -504,6 +514,14 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       background: #ffffff;
       border: 2px solid #111111;
       font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23111111' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 1rem center;
+      background-repeat: no-repeat;
+      background-size: 1.25em 1.25em;
+      padding-right: 2.5rem;
+      cursor: pointer;
     }
 
     .form-input:focus,
