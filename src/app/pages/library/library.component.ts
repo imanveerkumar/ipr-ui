@@ -45,8 +45,14 @@ import { ToasterService } from '../../core/services/toaster.service';
                     type="text"
                     [(ngModel)]="searchQuery"
                     placeholder="Search purchased products..."
-                    class="w-full pl-10 md:pl-12 pr-4 py-3 md:py-3.5 bg-white border-2 border-black rounded-xl text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-white border-2 border-black rounded-xl text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
                   />
+                  <button
+                    (click)="performSearch()"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
+                  >
+                    Search
+                  </button>
                 </div>
               </div>
 
@@ -329,5 +335,10 @@ export class LibraryComponent implements OnInit {
 
   getActiveCount(): number {
     return this.licenses().filter(license => license.downloadCount < license.maxDownloads).length;
+  }
+
+  performSearch() {
+    // Trim whitespace to make searches consistent and trigger computed filtering
+    this.searchQuery.set(this.searchQuery().trim());
   }
 }
