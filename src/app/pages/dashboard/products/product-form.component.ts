@@ -317,6 +317,29 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
           </div>
         </form>
 
+        <!-- Danger Zone Skeleton -->
+        @if (isEditing() && canEdit() && isLoading()) {
+          <div class="danger-zone-card">
+            <h2 class="danger-zone-title"><app-skeleton variant="text-lg" width="160px"></app-skeleton></h2>
+            <div class="danger-zone-content">
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <app-skeleton variant="text-sm" width="200px" class="mb-2"></app-skeleton>
+                  <app-skeleton variant="full" height="48px" class="w-1/3 rounded-lg"></app-skeleton>
+                </div>
+                <app-skeleton variant="full" height="40px" width="140px" class="rounded-lg"></app-skeleton>
+              </div>
+
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <app-skeleton variant="text-sm" width="200px" class="mb-2"></app-skeleton>
+                  <app-skeleton variant="full" height="48px" class="w-1/3 rounded-lg"></app-skeleton>
+                </div>
+                <app-skeleton variant="full" height="40px" width="140px" class="rounded-lg"></app-skeleton>
+              </div>
+            </div>
+          </div>
+        }
         <!-- Danger Zone -->
         @if (isEditing() && canEdit() && !isLoading()) {
           <div class="danger-zone-card">
@@ -1024,14 +1047,19 @@ export class ProductFormComponent implements OnInit {
 
   async ngOnInit() {
     this.isLoading.set(true);
+
+    // Set edit mode immediately so the header shows 'Edit Product' without waiting for stores
+    this.productId = this.route.snapshot.paramMap.get('id');
+    if (this.productId && this.productId !== 'new') {
+      this.isEditing.set(true);
+      this.slugManuallyEdited = true;
+    }
+
     try {
       const stores = await this.storeService.getMyStores();
       this.stores.set(stores);
 
-      this.productId = this.route.snapshot.paramMap.get('id');
       if (this.productId && this.productId !== 'new') {
-        this.isEditing.set(true);
-        this.slugManuallyEdited = true;
         // Fetch product as owner (includes all states) and derive state client-side
         const product = await this.productService.getProductByIdForOwner(this.productId);
         if (product) {

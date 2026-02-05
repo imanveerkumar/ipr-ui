@@ -263,8 +263,31 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
           </div>
         </form>
 
+        <!-- Danger Zone Skeleton -->
+        @if (isEditing() && canEdit() && isLoading()) {
+          <div class="danger-zone-card">
+            <h2 class="danger-zone-title"><app-skeleton variant="text-lg" width="160px"></app-skeleton></h2>
+            <div class="danger-zone-content">
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <app-skeleton variant="text-sm" width="200px" class="mb-2"></app-skeleton>
+                  <app-skeleton variant="full" height="48px" class="w-1/3 rounded-lg"></app-skeleton>
+                </div>
+                <app-skeleton variant="full" height="40px" width="140px" class="rounded-lg"></app-skeleton>
+              </div>
+
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <app-skeleton variant="text-sm" width="200px" class="mb-2"></app-skeleton>
+                  <app-skeleton variant="full" height="48px" class="w-1/3 rounded-lg"></app-skeleton>
+                </div>
+                <app-skeleton variant="full" height="40px" width="140px" class="rounded-lg"></app-skeleton>
+              </div>
+            </div>
+          </div>
+        }
         <!-- Danger Zone -->
-        @if (isEditing() && canEdit()) {
+        @if (isEditing() && canEdit() && !isLoading()) {
           <div class="danger-zone-card">
             <h2 class="danger-zone-title">Danger Zone</h2>
             <div class="danger-zone-content">
