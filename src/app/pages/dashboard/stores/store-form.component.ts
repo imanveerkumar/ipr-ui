@@ -248,13 +248,18 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
           <!-- Form Actions -->
           <div class="form-actions" [class.hidden]="!canEdit()">
             <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
-            <button type="submit" [disabled]="saving() || !isFormValid()" class="btn btn-cta">
-              @if (saving()) {
-                Saving...
-              } @else {
-                {{ isEditing() ? 'Update Store' : 'Create Store' }}
-              }
-            </button>
+            @if (isEditing()) {
+              <button type="submit" [disabled]="saving() || !isFormValid()" class="btn btn-cta">
+                @if (saving()) { Saving... } @else { Update Store }
+              </button>
+            } @else {
+              <button type="button" (click)="save(false)" [disabled]="saving() || !isFormValid()" class="btn btn-cta">
+                @if (saving()) { Saving... } @else { Create and Draft }
+              </button>
+              <button type="button" (click)="save(true)" [disabled]="publishing() || !isFormValid()" class="btn btn-primary">
+                @if (publishing()) { Publishing... } @else { Create and Publish }
+              </button>
+            }
           </div>
         </form>
 
@@ -1064,8 +1069,11 @@ export class StoreFormComponent implements OnInit {
     this.form.slug = slug.replace(/[^a-z0-9-]/g, '');
   }
 
-  async save() {
-    this.saving.set(true);
+  async save(publish: boolean = false) {
+    // If creating+publishing, use publishing flag UI; otherwise use saving
+    if (!this.isEditing() && publish) this.publishing.set(true);
+    else this.saving.set(true);
+
     try {
       if (this.isEditing() && this.storeId) {
         const updated = await this.storeService.updateStore(this.storeId, this.form);
@@ -1077,10 +1085,10 @@ export class StoreFormComponent implements OnInit {
           });
         }
       } else {
-        await this.storeService.createStore(this.form);
+        await this.storeService.createStore({ ...this.form, publish });
         this.toaster.success({
-          title: 'Store Created',
-          message: 'Your new store has been created successfully.',
+          title: publish ? 'Store Published' : 'Store Created',
+          message: publish ? 'Your store is now live and visible to customers.' : 'Your new store has been created successfully.',
         });
         this.router.navigate(['/dashboard/stores']);
       }
@@ -1088,7 +1096,8 @@ export class StoreFormComponent implements OnInit {
       console.error('Failed to save store:', error);
       this.toaster.handleError(error, 'Failed to save store. Please try again.');
     } finally {
-      this.saving.set(false);
+      if (!this.isEditing() && publish) this.publishing.set(false);
+      else this.saving.set(false);
     }
   }
 

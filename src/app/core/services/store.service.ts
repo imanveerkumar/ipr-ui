@@ -50,7 +50,7 @@ export class StoreService {
     return response.data || null;
   }
 
-  async createStore(data: Partial<Store>): Promise<Store | null> {
+  async createStore(data: Partial<Store> & { publish?: boolean }): Promise<Store | null> {
     const response = await this.api.post<Store>('/stores', data);
     return response.data || null;
   }
