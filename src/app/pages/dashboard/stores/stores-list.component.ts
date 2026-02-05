@@ -239,6 +239,29 @@ import { ToasterService } from '../../../core/services/toaster.service';
           </div>
         } @else {
           <!-- Stores Grid -->
+          <div class="mb-4 flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+              <label class="group relative inline-flex items-center cursor-pointer">
+                <input type="checkbox"
+                       [checked]="isAllSelected()"
+                       (change)="toggleSelectAll($event)"
+                       class="sr-only">
+                <div class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all">
+                  @if (isAllSelected()) {
+                    <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  }
+                </div>
+                <span class="ml-2 inline text-sm font-bold text-[#111111]">Select all</span>
+
+                <!-- Tooltip note -->
+                <div class="absolute top-full left-0 mt-2 w-[18rem] bg-white border-2 border-black p-2 text-sm text-[#111111] shadow-[4px_4px_0px_0px_#000] z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+                  Select all stores on this page. Use bulk actions to manage multiple items at once.
+                </div>
+              </label>
+            </div>
+          </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             @for (store of currentStores(); track store.id) {
               <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all group">
@@ -480,12 +503,28 @@ export class StoresListComponent implements OnInit {
     return this.activeStores().filter(s => s.status !== 'PUBLISHED').length;
   }
 
+  isAllSelected(): boolean {
+    const items = this.currentStores();
+    return items.length > 0 && items.every(s => this.selectedIds().includes(s.id));
+  }
+
   toggleSelection(id: string) {
     const current = this.selectedIds();
     if (current.includes(id)) {
       this.selectedIds.set(current.filter(i => i !== id));
     } else {
       this.selectedIds.set([...current, id]);
+    }
+  }
+
+  toggleSelectAll(event: Event) {
+    event?.preventDefault();
+    event?.stopPropagation();
+    if (this.isAllSelected()) {
+      this.clearSelection();
+    } else {
+      const ids = this.currentStores().map(s => s.id);
+      this.selectedIds.set(ids);
     }
   }
 
@@ -514,6 +553,16 @@ export class StoresListComponent implements OnInit {
   }
 
   async unarchiveStore(store: Store) {
+    const confirmed = await this.confirmService.confirm({
+      title: 'Unarchive Store',
+      message: `Are you sure you want to unarchive "${store.name}"? It will be visible to customers again.`,
+      confirmText: 'Unarchive',
+      cancelText: 'Cancel',
+      accent: 'yellow'
+    });
+
+    if (!confirmed) return;
+
     try {
       await this.storeService.unarchiveStore(store.id);
       this.toaster.success({ title: 'Store Unarchived', message: 'The store has been restored to active.' });
@@ -544,6 +593,16 @@ export class StoresListComponent implements OnInit {
   }
 
   async restoreStore(store: Store) {
+    const confirmed = await this.confirmService.confirm({
+      title: 'Restore Store',
+      message: `Are you sure you want to restore "${store.name}"? You can move it back to Active.`,
+      confirmText: 'Restore',
+      cancelText: 'Cancel',
+      accent: 'yellow'
+    });
+
+    if (!confirmed) return;
+
     try {
       await this.storeService.restoreStore(store.id);
       this.toaster.success({ title: 'Store Restored', message: 'The store has been restored from the Bin.' });
@@ -577,6 +636,16 @@ export class StoresListComponent implements OnInit {
 
   async bulkUnarchive() {
     const count = this.selectedIds().length;
+    const confirmed = await this.confirmService.confirm({
+      title: 'Restore Stores',
+      message: `Are you sure you want to restore ${count} store${count > 1 ? 's' : ''}?`,
+      confirmText: 'Restore',
+      cancelText: 'Cancel',
+      accent: 'yellow'
+    });
+
+    if (!confirmed) return;
+
     try {
       // Unarchive one by one since bulk unarchive might not exist
       await Promise.all(this.selectedIds().map(id => this.storeService.unarchiveStore(id)));
@@ -612,6 +681,16 @@ export class StoresListComponent implements OnInit {
 
   async bulkRestore() {
     const count = this.selectedIds().length;
+    const confirmed = await this.confirmService.confirm({
+      title: 'Restore Stores',
+      message: `Are you sure you want to restore ${count} store${count > 1 ? 's' : ''}?`,
+      confirmText: 'Restore',
+      cancelText: 'Cancel',
+      accent: 'yellow'
+    });
+
+    if (!confirmed) return;
+
     try {
       await this.storeService.bulkRestoreStores(this.selectedIds());
       this.toaster.success({ title: 'Stores Restored', message: `${count} store${count > 1 ? 's' : ''} restored from Bin.` });

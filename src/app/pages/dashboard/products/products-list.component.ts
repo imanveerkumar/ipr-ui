@@ -114,7 +114,7 @@ type TabType = 'active' | 'archived' | 'bin';
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xl sm:text-2xl font-black text-[#111111]">{{ activeProducts().length }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Total</span>
+                <span class="text-sm font-medium text-[#111111]/70">Total Products</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
@@ -136,7 +136,7 @@ type TabType = 'active' | 'archived' | 'bin';
     @if (selectedIds().length > 0) {
       <section class="fixed bottom-4 left-0 right-0 z-50 pointer-events-none">
         <div class="max-w-4xl mx-auto px-4 sm:px-6">
-          <div class="bg-[#FFC60B] text-[#111111] shadow-[4px_4px_0px_0px_#000] px-4 py-3 flex items-center justify-between gap-3 pointer-events-auto relative">
+          <div class="bg-[#FFC60B] text-[#111111] shadow-[4px_4px_0px_0px_#000] px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto relative">
             <div class="flex items-center gap-3">
               <!-- Desktop clear button -->
               <button (click)="clearSelection()" class="hidden sm:inline-flex w-8 h-8 flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_#000] bg-white text-[#111111] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
@@ -150,10 +150,10 @@ type TabType = 'active' | 'archived' | 'bin';
                   <path d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
-              <span class="text-sm font-bold">{{ selectedIds().length }} selected</span>
+              <span class="text-[#111111] font-bold">{{ selectedIds().length }} selected</span>
             </div>
             
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               @if (currentTab() === 'active') {
                 <button (click)="bulkArchive()" class="px-3 py-1.5 text-sm font-bold bg-[#FFC60B] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#e5b00a] transition-all">
                   Archive
@@ -253,6 +253,29 @@ type TabType = 'active' | 'archived' | 'bin';
           </div>
         } @else {
           <!-- Products Grid -->
+          <div class="mb-4 flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+              <label class="group relative inline-flex items-center cursor-pointer">
+                <input type="checkbox"
+                       [checked]="isAllSelected()"
+                       (change)="toggleSelectAll($event)"
+                       class="sr-only">
+                <div class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all">
+                  @if (isAllSelected()) {
+                    <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  }
+                </div>
+                <span class="ml-2 inline text-sm font-bold text-[#111111]">Select all</span>
+
+                <!-- Tooltip note -->
+                <div class="absolute top-full left-0 mt-2 w-[18rem] bg-white border-2 border-black p-2 text-sm text-[#111111] shadow-[4px_4px_0px_0px_#000] z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+                  Select all products on this page. Use bulk actions to manage multiple items at once.
+                </div>
+              </label>
+            </div>
+          </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             @for (product of currentProducts(); track product.id) {
               <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all group">
@@ -430,14 +453,30 @@ export class ProductsListComponent implements OnInit {
     return this.selectedIds().includes(id);
   }
 
+  isAllSelected(): boolean {
+    const items = this.currentProducts();
+    return items.length > 0 && items.every(p => this.selectedIds().includes(p.id));
+  }
+
   toggleSelection(id: string, event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
+    event?.preventDefault();
+    event?.stopPropagation();
     const current = this.selectedIds();
     if (current.includes(id)) {
       this.selectedIds.set(current.filter(i => i !== id));
     } else {
       this.selectedIds.set([...current, id]);
+    }
+  }
+
+  toggleSelectAll(event: Event) {
+    event?.preventDefault();
+    event?.stopPropagation();
+    if (this.isAllSelected()) {
+      this.clearSelection();
+    } else {
+      const ids = this.currentProducts().map(p => p.id);
+      this.selectedIds.set(ids);
     }
   }
 
@@ -467,6 +506,16 @@ export class ProductsListComponent implements OnInit {
   }
 
   async unarchiveProduct(product: Product) {
+    const confirmed = await this.confirmService.confirm({
+      title: 'Unarchive Product',
+      message: `Are you sure you want to unarchive "${product.title}"? It will be visible to customers again.`,
+      confirmText: 'Unarchive',
+      cancelText: 'Cancel',
+      accent: 'yellow',
+    });
+
+    if (!confirmed) return;
+
     try {
       await this.productService.unarchiveProduct(product.id);
       this.toaster.success({ title: 'Product Restored', message: 'The product is now active.' });
@@ -498,6 +547,16 @@ export class ProductsListComponent implements OnInit {
   }
 
   async restoreProduct(product: Product) {
+    const confirmed = await this.confirmService.confirm({
+      title: 'Restore Product',
+      message: `Are you sure you want to restore "${product.title}"? You can move it back to Active.`,
+      confirmText: 'Restore',
+      cancelText: 'Cancel',
+      accent: 'yellow',
+    });
+
+    if (!confirmed) return;
+
     try {
       await this.productService.restoreProduct(product.id);
       this.toaster.success({ title: 'Product Restored', message: 'The product is now active.' });
@@ -531,8 +590,18 @@ export class ProductsListComponent implements OnInit {
   }
 
   async bulkUnarchive() {
+    const count = this.selectedIds().length;
+    const confirmed = await this.confirmService.confirm({
+      title: 'Restore Products',
+      message: `Are you sure you want to restore ${count} product${count > 1 ? 's' : ''}?`,
+      confirmText: 'Restore',
+      cancelText: 'Cancel',
+      accent: 'yellow',
+    });
+
+    if (!confirmed) return;
+
     try {
-      const count = this.selectedIds().length;
       // Unarchive one by one since there's no bulk unarchive
       for (const id of this.selectedIds()) {
         await this.productService.unarchiveProduct(id);
@@ -569,8 +638,18 @@ export class ProductsListComponent implements OnInit {
   }
 
   async bulkRestore() {
+    const count = this.selectedIds().length;
+    const confirmed = await this.confirmService.confirm({
+      title: 'Restore Products',
+      message: `Are you sure you want to restore ${count} product${count > 1 ? 's' : ''}?`,
+      confirmText: 'Restore',
+      cancelText: 'Cancel',
+      accent: 'yellow',
+    });
+
+    if (!confirmed) return;
+
     try {
-      const count = this.selectedIds().length;
       await this.productService.bulkRestoreProducts(this.selectedIds());
       this.toaster.success({ title: 'Products Restored', message: `${count} product${count > 1 ? 's' : ''} restored.` });
       this.clearSelection();
