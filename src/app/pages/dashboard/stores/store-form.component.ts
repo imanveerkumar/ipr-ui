@@ -269,8 +269,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
                   <h3 class="danger-zone-item-heading">Archive this store</h3>
                   <p class="danger-zone-item-desc">Hide this store and all its products from customers. You can unarchive it later.</p>
                 </div>
-                <button type="button" (click)="archiveStore()" 
-                  class="btn-danger-outline">
+                <button type="button" (click)="archiveStore()" class="btn btn-secondary danger-btn">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
                   </svg>
@@ -284,8 +283,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
                   <h3 class="danger-zone-item-heading">Delete this store</h3>
                   <p class="danger-zone-item-desc">Move to Bin. The store and its products can be restored within 30 days.</p>
                 </div>
-                <button type="button" (click)="softDeleteStore()" [disabled]="deleting()"
-                  class="btn-danger">
+                <button type="button" (click)="softDeleteStore()" [disabled]="deleting()" class="btn btn-danger danger-btn">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <polyline points="3 6 5 6 21 6"/>
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -827,18 +825,19 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     /* Danger Zone Card */
     .danger-zone-card {
       background: #ffffff;
-      border: 2px solid #FA4B28;
+      border: 2px solid #111111;
+      box-shadow: 4px 4px 0px 0px #111111;
       margin-top: 2rem;
       margin-bottom: 2rem;
     }
 
     .danger-zone-title {
       font-size: 1.25rem;
-      font-weight: 700;
-      color: #FA4B28;
+      font-weight: 800;
+      color: #111111;
       margin: 0;
       padding: 1.25rem 1.5rem;
-      border-bottom: 2px solid #FA4B28;
+      border-bottom: 2px solid #111111;
     }
 
     .danger-zone-content {
@@ -871,7 +870,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
 
     .danger-zone-item-heading {
       font-size: 0.9375rem;
-      font-weight: 600;
+      font-weight: 700;
       color: #111111;
       margin: 0 0 0.25rem 0;
     }
@@ -883,19 +882,13 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     }
 
     .btn-danger {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.625rem 1.25rem;
       background: #FA4B28;
       color: white;
       border: 2px solid #FA4B28;
       font-weight: 600;
-      font-size: 0.875rem;
       cursor: pointer;
       transition: all 0.15s ease;
-      white-space: nowrap;
+      box-shadow: 2px 2px 0px 0px #111111;
     }
 
     .btn-danger:hover {
@@ -909,27 +902,30 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     }
 
     .btn-danger-outline {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.625rem 1.25rem;
       background: white;
       color: #FA4B28;
       border: 2px solid #FA4B28;
       font-weight: 600;
-      font-size: 0.875rem;
       cursor: pointer;
       transition: all 0.15s ease;
-      white-space: nowrap;
     }
 
     .btn-danger-outline:hover {
       background: #FEF2F2;
     }
 
+    /* Danger button shared size */
+    .danger-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 140px;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
     @media (max-width: 640px) {
-      .btn-danger, .btn-danger-outline {
+      .btn-danger, .btn-danger-outline, .danger-btn {
         width: 100%;
       }
     }

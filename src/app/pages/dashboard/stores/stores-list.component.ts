@@ -365,9 +365,6 @@ import { ToasterService } from '../../../core/services/toaster.service';
                       <a [routerLink]="['/dashboard/stores', store.id]" 
                          class="inline-flex items-center gap-1 text-sm font-bold text-[#111111] group-hover:text-[#2B57D6] transition-colors">
                         Manage
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                          <polyline points="9 18 15 12 9 6"/>
-                        </svg>
                       </a>
                     } @else if (activeTab() === 'archived') {
                       <!-- Top-right actions intentionally empty; use quick actions below -->
@@ -379,47 +376,29 @@ import { ToasterService } from '../../../core/services/toaster.service';
                   @if (activeTab() === 'active') {
                     <div class="flex items-center gap-2 mt-3 pt-3 border-t border-black/10">
                       <button (click)="archiveStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#FFC60B] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e5b00a] transition-all flex items-center justify-center gap-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                          <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
-                        </svg>
+                        class="flex-1 py-1.5 text-sm font-bold bg-[#FFC60B] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e5b00a] transition-all flex items-center justify-center">
                         Archive
                       </button>
                       <button (click)="deleteStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#FA4B28] text-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all flex items-center justify-center gap-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                          <polyline points="3 6 5 6 21 6"/>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
+                        class="flex-1 py-1.5 text-sm font-bold bg-[#FA4B28] text-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all flex items-center justify-center">
                         Delete
                       </button>
                     </div>
                   } @else if (activeTab() === 'archived') {
                     <div class="flex items-center gap-2 mt-3 pt-3 border-t border-black/10">
                       <button (click)="unarchiveStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all flex items-center justify-center gap-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                          <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
-                        </svg>
+                        class="flex-1 py-1.5 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all flex items-center justify-center">
                         Unarchive
                       </button>
                       <button (click)="deleteStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#fa4b28] text-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all flex items-center justify-center gap-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                          <polyline points="3 6 5 6 21 6"/>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
+                        class="flex-1 py-1.5 text-sm font-bold bg-[#fa4b28] text-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all flex items-center justify-center">
                         Delete
                       </button>
                     </div>
                   } @else if (activeTab() === 'deleted') {
                     <div class="flex items-center gap-2 mt-3 pt-3 border-t border-black/10">
                       <button (click)="restoreStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all flex items-center justify-center gap-1">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                          <polyline points="1 4 1 10 7 10"/>
-                          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
-                        </svg>
+                        class="flex-1 py-1.5 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all flex items-center justify-center">
                         Restore
                       </button>
                     </div>
