@@ -5,7 +5,8 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { StoreService } from '../../../core/services/store.service';
 import { ToasterService } from '../../../core/services/toaster.service';
-import { Store } from '../../../core/models/index';
+import { ConfirmService } from '../../../core/services/confirm.service';
+import { Store, Product } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components';
 import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 
@@ -14,6 +15,52 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
   standalone: true,
   imports: [CommonModule, FormsModule, RichTextEditorComponent, RouterLink, SkeletonComponent],
   template: `
+    <!-- State Banner for Archived/Deleted Products -->
+    @if (isEditing() && !isLoading()) {
+      @if (productState().isDeleted) {
+        <section class="bg-[#FA4B28] border-b-2 border-black">
+          <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                <div>
+                  <p class="font-bold text-white">This product is in the Bin</p>
+                  <p class="text-sm text-white/80">It cannot be edited or purchased. Restore it to make changes.</p>
+                </div>
+              </div>
+              <button type="button" (click)="restoreProduct()" 
+                class="px-4 py-2 bg-white text-[#FA4B28] font-bold border-2 border-white hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                Restore Product
+              </button>
+            </div>
+          </div>
+        </section>
+      } @else if (productState().isArchived) {
+        <section class="bg-[#FFC60B] border-b-2 border-black">
+          <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
+                </svg>
+                <div>
+                  <p class="font-bold text-[#111111]">This product is archived</p>
+                  <p class="text-sm text-[#111111]/80">It cannot be edited, purchased, or seen by customers. Unarchive to make changes.</p>
+                </div>
+              </div>
+              <button type="button" (click)="unarchiveProduct()" 
+                class="px-4 py-2 bg-white text-[#111111] font-bold border-2 border-black hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                Unarchive Product
+              </button>
+            </div>
+          </div>
+        </section>
+      }
+    }
+
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="container">
@@ -95,7 +142,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
           </div>
         </div>
 
-        <form *ngIf="!isLoading()" (ngSubmit)="save()" class="form-card">
+        <form *ngIf="!isLoading()" (ngSubmit)="save()" class="form-card" [class.opacity-60]="!canEdit()" [class.pointer-events-none]="!canEdit()">
           <h2 class="form-card-title">Product Details</h2>
 
           <!-- Store Selection -->
@@ -258,7 +305,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
           </div>
 
           <!-- Form Actions -->
-          <div class="form-actions">
+          <div class="form-actions" [class.hidden]="!canEdit()">
             <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
             <button type="submit" [disabled]="saving() || !isFormValid()" class="btn btn-cta">
               @if (saving()) {
@@ -269,6 +316,47 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
             </button>
           </div>
         </form>
+
+        <!-- Danger Zone -->
+        @if (isEditing() && canEdit() && !isLoading()) {
+          <div class="danger-zone-card">
+            <h2 class="danger-zone-title">Danger Zone</h2>
+            <div class="danger-zone-content">
+              <!-- Archive Section -->
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <h3 class="danger-zone-item-title">Archive this product</h3>
+                  <p class="danger-zone-item-desc">Hide this product from customers. You can unarchive it later.</p>
+                </div>
+                <button type="button" (click)="archiveProduct()" 
+                  class="btn-danger-outline">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
+                  </svg>
+                  Archive
+                </button>
+              </div>
+              
+              <!-- Delete Section -->
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <h3 class="danger-zone-item-title">Delete this product</h3>
+                  <p class="danger-zone-item-desc">Move to Bin. The product can be restored within 30 days.</p>
+                </div>
+                <button type="button" (click)="deleteProduct()" 
+                  class="btn-danger">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                  </svg>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        }
       </div>
     </section>
   `,
@@ -784,6 +872,111 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
         width: 100%;
       }
     }
+
+    /* Danger Zone */
+    .danger-zone-card {
+      background: #ffffff;
+      border: 2px solid #FA4B28;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .danger-zone-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #FA4B28;
+      margin: 0;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 2px solid #FA4B28;
+    }
+
+    .danger-zone-content {
+      padding: 0;
+    }
+
+    .danger-zone-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .danger-zone-item:last-child {
+      border-bottom: none;
+    }
+
+    @media (min-width: 640px) {
+      .danger-zone-item {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .danger-zone-item-info {
+      flex: 1;
+    }
+
+    .danger-zone-item-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #111111;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .danger-zone-item-desc {
+      font-size: 0.875rem;
+      color: #666666;
+      margin: 0;
+    }
+
+    .btn-danger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      background: #FA4B28;
+      color: white;
+      border: 2px solid #FA4B28;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-danger:hover {
+      background: #e53e1e;
+      border-color: #e53e1e;
+    }
+
+    .btn-danger-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      background: white;
+      color: #FA4B28;
+      border: 2px solid #FA4B28;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-danger-outline:hover {
+      background: #FEF2F2;
+    }
+
+    @media (max-width: 640px) {
+      .btn-danger, .btn-danger-outline {
+        width: 100%;
+      }
+    }
   `]
 })
 export class ProductFormComponent implements OnInit {
@@ -796,6 +989,18 @@ export class ProductFormComponent implements OnInit {
   productId: string | null = null;
   slugManuallyEdited = false;
   activeTooltip = signal<string | null>(null);
+  productState = signal<{ isOwner: boolean; isDeleted: boolean; isArchived: boolean; isPublished: boolean; canEdit: boolean; canPurchase: boolean; storeIsAccessible: boolean }>({
+    isOwner: true,
+    isDeleted: false,
+    isArchived: false,
+    isPublished: false,
+    canEdit: true,
+    canPurchase: false,
+    storeIsAccessible: true
+  });
+  
+  // Computed property for edit access
+  canEdit = () => this.productState().canEdit;
   
   // Validation error signals
   storeError = signal<string | null>(null);
@@ -821,6 +1026,7 @@ export class ProductFormComponent implements OnInit {
   readonly MAX_PRICE = 10000000; // 1 crore INR
 
   private toaster = inject(ToasterService);
+  private confirmService = inject(ConfirmService);
 
   constructor(
     private productService: ProductService,
@@ -839,15 +1045,34 @@ export class ProductFormComponent implements OnInit {
       if (this.productId && this.productId !== 'new') {
         this.isEditing.set(true);
         this.slugManuallyEdited = true;
-        const product = await this.productService.getProduct(this.productId);
-        this.form = {
-          storeId: product.storeId,
-          title: product.title,
-          slug: product.slug,
-          description: product.description || '',
-          price: product.price / 100,
-          status: product.status,
-        };
+        // Fetch product as owner (includes all states) and derive state client-side
+        const product = await this.productService.getProductByIdForOwner(this.productId);
+        if (product) {
+          this.form = {
+            storeId: product.storeId,
+            title: product.title,
+            slug: product.slug,
+            description: product.description || '',
+            price: product.price / 100,
+            status: product.status,
+          };
+
+          // Derive state from returned product (owner context)
+          const isDeleted = !!product.deletedAt;
+          const isArchived = !!product.isArchived;
+          const isPublished = product.status === 'PUBLISHED';
+          const storeIsAccessible = !!product.store && !product.store.deletedAt && !product.store.isArchived && product.store.status === 'PUBLISHED';
+
+          this.productState.set({
+            isOwner: true,
+            isDeleted,
+            isArchived,
+            isPublished,
+            canEdit: !isDeleted && !isArchived,
+            canPurchase: isPublished && !isDeleted && !isArchived && storeIsAccessible,
+            storeIsAccessible,
+          });
+        }
       } else {
         this.slugManuallyEdited = false;
         const storeIdFromQuery = this.route.snapshot.queryParamMap.get('storeId');
@@ -1066,5 +1291,87 @@ export class ProductFormComponent implements OnInit {
 
   cancel() {
     this.router.navigate(['/dashboard/products']);
+  }
+
+  async archiveProduct() {
+    if (!this.productId) return;
+    
+    const confirmed = await this.confirmService.confirm({
+      title: 'Archive Product',
+      message: `Are you sure you want to archive "${this.form.title}"? It will be hidden from customers but can be unarchived later.`,
+      confirmText: 'Archive',
+      cancelText: 'Cancel',
+      accent: 'yellow'
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await this.productService.archiveProduct(this.productId);
+      this.toaster.success({
+        title: 'Product Archived',
+        message: 'The product has been archived successfully.'
+      });
+      this.router.navigate(['/dashboard/products'], { queryParams: { tab: 'archived' } });
+    } catch (error) {
+      this.toaster.handleError(error, 'Failed to archive product');
+    }
+  }
+
+  async unarchiveProduct() {
+    if (!this.productId) return;
+
+    try {
+      await this.productService.unarchiveProduct(this.productId);
+      this.toaster.success({
+        title: 'Product Unarchived',
+        message: 'The product has been restored to active status.'
+      });
+      // Reload to get fresh state
+      window.location.reload();
+    } catch (error) {
+      this.toaster.handleError(error, 'Failed to unarchive product');
+    }
+  }
+
+  async deleteProduct() {
+    if (!this.productId) return;
+    
+    const confirmed = await this.confirmService.confirm({
+      title: 'Delete Product',
+      message: `Are you sure you want to delete "${this.form.title}"? It will be moved to the Bin and can be restored within 30 days.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      accent: 'danger'
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await this.productService.deleteProduct(this.productId);
+      this.toaster.success({
+        title: 'Product Deleted',
+        message: 'The product has been moved to the Bin.'
+      });
+      this.router.navigate(['/dashboard/products'], { queryParams: { tab: 'deleted' } });
+    } catch (error) {
+      this.toaster.handleError(error, 'Failed to delete product');
+    }
+  }
+
+  async restoreProduct() {
+    if (!this.productId) return;
+
+    try {
+      await this.productService.restoreProduct(this.productId);
+      this.toaster.success({
+        title: 'Product Restored',
+        message: 'The product has been restored from the Bin.'
+      });
+      // Reload to get fresh state
+      window.location.reload();
+    } catch (error) {
+      this.toaster.handleError(error, 'Failed to restore product');
+    }
   }
 }
