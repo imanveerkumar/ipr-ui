@@ -956,8 +956,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       align-items: center;
       justify-content: center;
       min-width: 140px;
-      padding-left: 1rem;
-      padding-right: 1rem;
+      padding: 0.5rem 1rem;
     }
 
     @media (max-width: 640px) {
@@ -1289,7 +1288,8 @@ export class ProductFormComponent implements OnInit {
       message: `Are you sure you want to archive "${this.form.title}"? It will be hidden from customers but can be unarchived later.`,
       confirmText: 'Archive',
       cancelText: 'Cancel',
-      accent: 'yellow'
+      accent: 'yellow',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -1301,8 +1301,10 @@ export class ProductFormComponent implements OnInit {
         message: 'The product has been archived successfully.'
       });
       this.router.navigate(['/dashboard/products'], { queryParams: { tab: 'archived' } });
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to archive product');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -1330,7 +1332,8 @@ export class ProductFormComponent implements OnInit {
       message: `Are you sure you want to delete "${this.form.title}"? It will be moved to the Bin and can be restored within 30 days.`,
       confirmText: 'Delete',
       cancelText: 'Cancel',
-      accent: 'danger'
+      accent: 'danger',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -1342,8 +1345,10 @@ export class ProductFormComponent implements OnInit {
         message: 'The product has been moved to the Bin.'
       });
       this.router.navigate(['/dashboard/products'], { queryParams: { tab: 'deleted' } });
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to delete product');
+      this.confirmService.setPending(false);
     }
   }
 

@@ -270,9 +270,6 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
                   <p class="danger-zone-item-desc">Hide this store and all its products from customers. You can unarchive it later.</p>
                 </div>
                 <button type="button" (click)="archiveStore()" class="btn btn-secondary danger-btn">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
-                  </svg>
                   Archive
                 </button>
               </div>
@@ -284,12 +281,6 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
                   <p class="danger-zone-item-desc">Move to Bin. The store and its products can be restored within 30 days.</p>
                 </div>
                 <button type="button" (click)="softDeleteStore()" [disabled]="deleting()" class="btn btn-danger danger-btn">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <polyline points="3 6 5 6 21 6"/>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                    <line x1="10" y1="11" x2="10" y2="17"/>
-                    <line x1="14" y1="11" x2="14" y2="17"/>
-                  </svg>
                   @if (deleting()) { Deleting... } @else { Delete }
                 </button>
               </div>
@@ -920,8 +911,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       align-items: center;
       justify-content: center;
       min-width: 140px;
-      padding-left: 1rem;
-      padding-right: 1rem;
+      padding: 0.5rem 1rem;
     }
 
     @media (max-width: 640px) {
@@ -1208,7 +1198,8 @@ export class StoreFormComponent implements OnInit {
       message: `Are you sure you want to archive "${this.form.name}"? All products in this store will also be hidden from customers.`,
       confirmText: 'Archive',
       cancelText: 'Cancel',
-      accent: 'yellow'
+      accent: 'yellow',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -1220,8 +1211,10 @@ export class StoreFormComponent implements OnInit {
         message: 'The store has been archived successfully.'
       });
       this.router.navigate(['/dashboard/stores'], { queryParams: { tab: 'archived' } });
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to archive store');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -1249,7 +1242,8 @@ export class StoreFormComponent implements OnInit {
       message: `Are you sure you want to delete "${this.form.name}"? It will be moved to the Bin and can be restored within 30 days.`,
       confirmText: 'Delete',
       cancelText: 'Cancel',
-      accent: 'danger'
+      accent: 'danger',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -1262,8 +1256,10 @@ export class StoreFormComponent implements OnInit {
         message: 'The store has been moved to the Bin.'
       });
       this.router.navigate(['/dashboard/stores'], { queryParams: { tab: 'deleted' } });
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to delete store');
+      this.confirmService.setPending(false);
     } finally {
       this.deleting.set(false);
     }

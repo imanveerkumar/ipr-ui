@@ -517,7 +517,8 @@ export class StoresListComponent implements OnInit {
       message: `Are you sure you want to archive "${store.name}"? All products in this store will also be hidden from customers.`,
       confirmText: 'Archive',
       cancelText: 'Cancel',
-      accent: 'yellow'
+      accent: 'yellow',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -526,8 +527,10 @@ export class StoresListComponent implements OnInit {
       await this.storeService.archiveStore(store.id);
       this.toaster.success({ title: 'Store Archived', message: 'The store has been archived.' });
       await this.loadStores();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to archive store');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -537,7 +540,8 @@ export class StoresListComponent implements OnInit {
       message: `Are you sure you want to unarchive "${store.name}"? It will be visible to customers again.`,
       confirmText: 'Unarchive',
       cancelText: 'Cancel',
-      accent: 'yellow'
+      accent: 'yellow',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -546,8 +550,10 @@ export class StoresListComponent implements OnInit {
       await this.storeService.unarchiveStore(store.id);
       this.toaster.success({ title: 'Store Unarchived', message: 'The store has been restored to active.' });
       await this.loadStores();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to unarchive store');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -557,7 +563,8 @@ export class StoresListComponent implements OnInit {
       message: `Are you sure you want to delete "${store.name}"? It will be moved to the Bin and can be restored within 30 days.`,
       confirmText: 'Delete',
       cancelText: 'Cancel',
-      accent: 'danger'
+      accent: 'danger',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -566,8 +573,10 @@ export class StoresListComponent implements OnInit {
       await this.storeService.deleteStore(store.id);
       this.toaster.success({ title: 'Store Deleted', message: 'The store has been moved to the Bin.' });
       await this.loadStores();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to delete store');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -598,7 +607,8 @@ export class StoresListComponent implements OnInit {
       message: `Are you sure you want to archive ${count} store${count > 1 ? 's' : ''}?`,
       confirmText: 'Archive',
       cancelText: 'Cancel',
-      accent: 'yellow'
+      accent: 'yellow',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -608,8 +618,10 @@ export class StoresListComponent implements OnInit {
       this.toaster.success({ title: 'Stores Archived', message: `${count} store${count > 1 ? 's' : ''} archived.` });
       this.clearSelection();
       await this.loadStores();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to archive stores');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -631,8 +643,10 @@ export class StoresListComponent implements OnInit {
       this.toaster.success({ title: 'Stores Unarchived', message: `${count} store${count > 1 ? 's' : ''} unarchived.` });
       this.clearSelection();
       await this.loadStores();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to unarchive stores');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -643,7 +657,8 @@ export class StoresListComponent implements OnInit {
       message: `Are you sure you want to delete ${count} store${count > 1 ? 's' : ''}? They will be moved to the Bin.`,
       confirmText: 'Delete',
       cancelText: 'Cancel',
-      accent: 'danger'
+      accent: 'danger',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -653,8 +668,10 @@ export class StoresListComponent implements OnInit {
       this.toaster.success({ title: 'Stores Deleted', message: `${count} store${count > 1 ? 's' : ''} moved to Bin.` });
       this.clearSelection();
       await this.loadStores();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to delete stores');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -665,7 +682,8 @@ export class StoresListComponent implements OnInit {
       message: `Are you sure you want to restore ${count} store${count > 1 ? 's' : ''}?`,
       confirmText: 'Restore',
       cancelText: 'Cancel',
-      accent: 'yellow'
+      accent: 'yellow',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -675,8 +693,10 @@ export class StoresListComponent implements OnInit {
       this.toaster.success({ title: 'Stores Restored', message: `${count} store${count > 1 ? 's' : ''} restored from Bin.` });
       this.clearSelection();
       await this.loadStores();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.handleError(error, 'Failed to restore stores');
+      this.confirmService.setPending(false);
     }
   }
 }

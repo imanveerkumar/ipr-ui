@@ -492,16 +492,19 @@ export class ProductsListComponent implements OnInit {
       confirmText: 'Archive',
       cancelText: 'Cancel',
       accent: 'yellow',
+      waitForCompletion: true,
     });
 
-    if (confirmed) {
-      try {
-        await this.productService.archiveProduct(product.id);
-        this.toaster.success({ title: 'Product Archived', message: 'The product has been archived.' });
-        await this.loadAllProducts();
-      } catch (error) {
-        this.toaster.error('Failed to archive product');
-      }
+    if (!confirmed) return;
+
+    try {
+      await this.productService.archiveProduct(product.id);
+      this.toaster.success({ title: 'Product Archived', message: 'The product has been archived.' });
+      await this.loadAllProducts();
+      this.confirmService.finish(true);
+    } catch (error) {
+      this.toaster.error('Failed to archive product');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -512,6 +515,7 @@ export class ProductsListComponent implements OnInit {
       confirmText: 'Unarchive',
       cancelText: 'Cancel',
       accent: 'yellow',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -520,8 +524,10 @@ export class ProductsListComponent implements OnInit {
       await this.productService.unarchiveProduct(product.id);
       this.toaster.success({ title: 'Product Restored', message: 'The product is now active.' });
       await this.loadAllProducts();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to unarchive product');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -533,16 +539,19 @@ export class ProductsListComponent implements OnInit {
       cancelText: 'Cancel',
       accent: 'danger',
       confirmColor: 'danger',
+      waitForCompletion: true,
     });
 
-    if (confirmed) {
-      try {
-        await this.productService.deleteProduct(product.id);
-        this.toaster.success({ title: 'Product Deleted', message: 'The product has been moved to Bin.' });
-        await this.loadAllProducts();
-      } catch (error) {
-        this.toaster.error('Failed to delete product');
-      }
+    if (!confirmed) return;
+
+    try {
+      await this.productService.deleteProduct(product.id);
+      this.toaster.success({ title: 'Product Deleted', message: 'The product has been moved to Bin.' });
+      await this.loadAllProducts();
+      this.confirmService.finish(true);
+    } catch (error) {
+      this.toaster.error('Failed to delete product');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -553,6 +562,7 @@ export class ProductsListComponent implements OnInit {
       confirmText: 'Restore',
       cancelText: 'Cancel',
       accent: 'yellow',
+      waitForCompletion: true,
     });
 
     if (!confirmed) return;
@@ -561,8 +571,10 @@ export class ProductsListComponent implements OnInit {
       await this.productService.restoreProduct(product.id);
       this.toaster.success({ title: 'Product Restored', message: 'The product is now active.' });
       await this.loadAllProducts();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to restore product');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -577,15 +589,17 @@ export class ProductsListComponent implements OnInit {
       accent: 'yellow',
     });
 
-    if (confirmed) {
-      try {
-        await this.productService.bulkArchiveProducts(this.selectedIds());
-        this.toaster.success({ title: 'Products Archived', message: `${count} product${count > 1 ? 's' : ''} archived.` });
-        this.clearSelection();
-        await this.loadAllProducts();
-      } catch (error) {
-        this.toaster.error('Failed to archive products');
-      }
+    if (!confirmed) return;
+
+    try {
+      await this.productService.bulkArchiveProducts(this.selectedIds());
+      this.toaster.success({ title: 'Products Archived', message: `${count} product${count > 1 ? 's' : ''} archived.` });
+      this.clearSelection();
+      await this.loadAllProducts();
+      this.confirmService.finish(true);
+    } catch (error) {
+      this.toaster.error('Failed to archive products');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -609,8 +623,10 @@ export class ProductsListComponent implements OnInit {
       this.toaster.success({ title: 'Products Restored', message: `${count} product${count > 1 ? 's' : ''} restored.` });
       this.clearSelection();
       await this.loadAllProducts();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to unarchive products');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -625,15 +641,17 @@ export class ProductsListComponent implements OnInit {
       confirmColor: 'danger',
     });
 
-    if (confirmed) {
-      try {
-        await this.productService.bulkDeleteProducts(this.selectedIds());
-        this.toaster.success({ title: 'Products Deleted', message: `${count} product${count > 1 ? 's' : ''} moved to Bin.` });
-        this.clearSelection();
-        await this.loadAllProducts();
-      } catch (error) {
-        this.toaster.error('Failed to delete products');
-      }
+    if (!confirmed) return;
+
+    try {
+      await this.productService.bulkDeleteProducts(this.selectedIds());
+      this.toaster.success({ title: 'Products Deleted', message: `${count} product${count > 1 ? 's' : ''} moved to Bin.` });
+      this.clearSelection();
+      await this.loadAllProducts();
+      this.confirmService.finish(true);
+    } catch (error) {
+      this.toaster.error('Failed to delete products');
+      this.confirmService.setPending(false);
     }
   }
 
@@ -654,8 +672,10 @@ export class ProductsListComponent implements OnInit {
       this.toaster.success({ title: 'Products Restored', message: `${count} product${count > 1 ? 's' : ''} restored.` });
       this.clearSelection();
       await this.loadAllProducts();
+      this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to restore products');
+      this.confirmService.setPending(false);
     }
   }
 }
