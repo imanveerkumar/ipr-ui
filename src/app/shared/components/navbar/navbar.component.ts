@@ -756,33 +756,6 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       background: #fecaca;
     }
 
-    /* === WAVE BORDER === */
-    .wave-border-bottom {
-      position: absolute;
-      bottom: -20px;
-      left: 0;
-      width: 100%;
-      height: 20px;
-      background-color: transparent;
-      background-image: radial-gradient(circle at 15px 0, transparent 15px, var(--bg-beige) 16px);
-      background-size: 30px 20px;
-      background-repeat: repeat-x;
-      z-index: 5;
-    }
-
-    @media (min-width: 768px) {
-      .wave-border-bottom {
-        bottom: -25px;
-        height: 25px;
-        background-image: radial-gradient(circle at 20px 0, transparent 20px, var(--bg-beige) 21px);
-        background-size: 40px 25px;
-      }
-    }
-
-    .cart-open .wave-border-bottom {
-      display: none;
-    }
-
     /* === MOBILE MENU === */
     .mobile-menu-overlay {
       display: block;
@@ -1957,8 +1930,6 @@ import { ConfirmService } from '../../../core/services/confirm.service';
           </div>
         </div>
         
-        <!-- Wave Border Bottom -->
-        <div class="wave-border-bottom"></div>
       </header>
     </div>
     

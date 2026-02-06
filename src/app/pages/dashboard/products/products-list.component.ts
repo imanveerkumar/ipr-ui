@@ -16,24 +16,22 @@ type TabType = 'active' | 'archived' | 'bin';
     <!-- Hero Section -->
     <section class="bg-[#F9F4EB] border-b-2 border-black">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <!-- Breadcrumb -->
-        <nav class="flex items-center gap-2 mb-4 flex-wrap">
-          <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-black transition-colors">
-            Dashboard
-          </a>
-          <svg class="w-4 h-4 text-black/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M9 18l6-6-6-6"/>
-          </svg>
-          <span class="text-sm font-bold text-black">Products</span>
-        </nav>
-        
-        <!-- Header Content -->
-        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div>
-            <h1 class="text-2xl sm:text-3xl font-black text-[#111111] tracking-tight mb-1">My Products</h1>
-            <p class="text-[#111111]/70 font-medium">Manage and organize your digital products</p>
+        <div class="grid sm:grid-cols-3 grid-cols-1 items-center gap-4">
+          <div class="flex items-center gap-2">
+            <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-black transition-colors">
+              Dashboard
+            </a>
+            <svg class="w-4 h-4 text-black/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+            <span class="text-sm font-bold text-black">Products</span>
           </div>
-          
+
+          <div class="flex justify-center">
+            <h1 class="text-2xl sm:text-3xl font-black text-[#111111] tracking-tight mb-0">My Products</h1>
+          </div>
+
+          <div class="flex justify-end">
             <a routerLink="/dashboard/products/new" 
                class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -41,6 +39,7 @@ type TabType = 'active' | 'archived' | 'bin';
               </svg>
               Add Product
             </a>
+          </div>
         </div>
       </div>
     </section>
