@@ -11,20 +11,20 @@ import { RouterLink } from '@angular/router';
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
         <div class="bg-[#F9F4EB] border-b-2 border-black">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 lg:py-24">
-            <div class="text-center">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
+            <div class="text-left">
               <!-- Badge -->
-              <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-[#FA4B28] border-2 border-black mb-6 transform -rotate-1">
+              <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-[#FA4B28] border-2 border-black mb-4 transform -rotate-1">
                 <span class="text-xs font-bold text-white uppercase tracking-wider">Coming Soon</span>
               </div>
               
               <!-- Main Heading -->
-              <h1 class="font-dm-sans text-3xl md:text-5xl lg:text-6xl font-bold text-[#111111] mb-6 leading-tight">
+              <h1 class="font-display tracking-tighter mt-0 text-3xl md:text-5xl lg:text-6xl font-bold text-[#111111] mb-1 md:mb-2 leading-tight">
                 Wishlist
               </h1>
               
               <!-- Subtext -->
-              <p class="text-base md:text-xl text-[#111111]/70 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
+              <p class="text-base md:text-xl text-[#111111]/70 max-w-2xl mb-6 font-medium leading-relaxed">
                 We're crafting a beautiful space for you to save your favorites. <br class="hidden md:block">
                 This feature is currently under development.
               </p>
