@@ -138,7 +138,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       background-color: var(--bg-beige);
       border-bottom: 2px solid var(--text-black);
       position: relative;
-      margin-bottom: 20px;
+      margin-bottom: 0;
     }
 
     .header-container {
@@ -171,7 +171,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
         gap: 2rem;
       }
       .header {
-        margin-bottom: 25px;
+        margin-bottom: 0;
       }
     }
 
