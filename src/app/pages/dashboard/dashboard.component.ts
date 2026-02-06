@@ -23,23 +23,16 @@ interface SalesStats {
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
         <div class="bg-[#F9F4EB] border-b-2 border-black">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
-            <div class="text-center">
-              <!-- Badge -->
-              <div class="inline-flex items-center px-3 py-1.5 bg-[#68E079] border-2 border-black mb-4 transform -rotate-1 shadow-[2px_2px_0px_0px_#000]">
-                <span class="w-2 h-2 bg-[#111111] rounded-full mr-2 animate-pulse"></span>
-                <span class="text-xs font-bold text-[#111111] uppercase tracking-wider">Creator Dashboard</span>
-              </div>
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
+            <div class="text-left">
+
               
               <!-- Main Heading -->
-              <h1 class="font-dm-sans text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-2 md:mb-3 leading-tight">
-                WELCOME, <span class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]">{{ auth.user()?.firstName || auth.user()?.displayName || 'CREATOR' }}</span>
+              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-1 md:mb-2 leading-tight">
+                Welcome, <span class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]">{{ auth.user()?.firstName || auth.user()?.displayName || 'Creator' }}</span>
               </h1>
               
-              <!-- Subtext -->
-              <p class="text-sm md:text-lg text-[#111111]/70 max-w-xl mx-auto mb-6 md:mb-8 font-medium">
-                Manage your stores, track sales, and grow your digital empire
-              </p>
+
 
               <!-- Stats and Quick Actions Row -->
               <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 md:gap-8 mb-8">
