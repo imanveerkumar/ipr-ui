@@ -54,7 +54,6 @@ interface PaginatedResponse<T> {
         <!-- Header Content -->
         <div>
           <h1 class="text-2xl sm:text-3xl font-black text-[#111111] tracking-tight mb-1">Sales & Analytics</h1>
-          <p class="text-[#111111]/70 font-medium">Track your product sales and revenue</p>
         </div>
       </div>
     </section>
