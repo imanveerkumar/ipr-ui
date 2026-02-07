@@ -79,6 +79,21 @@ export class StoreService {
     return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
   }
 
+  // Get stats for current user's stores (supports filters)
+  async getMyStats(params?: StoresQueryParams): Promise<{ total: number; published: number; drafts: number; tabs: { active: number; archived: number; bin: number } }> {
+    const queryParams = new URLSearchParams();
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.status) queryParams.append('status', params.status);
+    if (params?.sortField) queryParams.append('sortField', params.sortField);
+    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/stores/my-stats?${queryString}` : '/stores/my-stats';
+
+    const response = await this.api.get<{ total: number; published: number; drafts: number; tabs: { active: number; archived: number; bin: number } }>(url);
+    return response.data || { total: 0, published: 0, drafts: 0, tabs: { active: 0, archived: 0, bin: 0 } };
+  }
+
   async getStoreById(id: string): Promise<Store | null> {
     const response = await this.api.get<Store>(`/stores/${id}`);
     return response.data || null;

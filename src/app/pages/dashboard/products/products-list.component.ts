@@ -810,6 +810,9 @@ export class ProductsListComponent implements OnInit {
   }
 
   async loadStats() {
+    // If suppression flag is set (e.g., from a sort change), skip a network call and reset flag
+    if (this.suppressStats) { this.suppressStats = false; return; }
+
     try {
       const params: any = {
         search: this.searchQuery() || undefined,
@@ -838,7 +841,7 @@ export class ProductsListComponent implements OnInit {
     }
   }
 
-  async loadProducts() {
+  async loadProducts(skipStats: boolean = false) {
     this.loading.set(true);
     try {
       const params = {
@@ -871,7 +874,7 @@ export class ProductsListComponent implements OnInit {
       this.meta.set(response.meta);
 
       // Refresh stats after loading products so counts respect current filters
-      await this.loadStats();
+      if (!skipStats) await this.loadStats();
     } catch (error) {
       this.toaster.error('Failed to load products');
     } finally {
@@ -897,6 +900,9 @@ export class ProductsListComponent implements OnInit {
       this.loading.set(false);
     }
   }
+
+  // Suppress stats network call for certain actions (e.g., sorting)
+  private suppressStats = false;
 
   switchTab(tab: TabType) {
     this.currentTab.set(tab);
@@ -992,13 +998,17 @@ export class ProductsListComponent implements OnInit {
 
   onSortChange() {
     this.currentPage.set(1);
-    this.loadProducts();
+    // Prevent stats network call for this action
+    this.suppressStats = true;
+    this.loadProducts(true);
   }
 
   toggleSortOrder() {
     this.sortOrder.set(this.sortOrder() === 'asc' ? 'desc' : 'asc');
     this.currentPage.set(1);
-    this.loadProducts();
+    // Prevent stats network call for this action
+    this.suppressStats = true;
+    this.loadProducts(true);
   }
 
   setViewMode(mode: 'gallery' | 'list') {
