@@ -40,8 +40,8 @@ type TabType = 'active' | 'archived' | 'bin';
         </div>
 
         <!-- Search Bar, Filter, and Add Product -->
-        <div class="mt-6 flex flex-col sm:flex-row gap-4 items-center justify-center">
-          <div class="relative flex-1 max-w-xl">
+        <div class="mt-6 flex items-center gap-3 flex-wrap">
+          <div class="relative flex-1 min-w-0 max-w-full">
             <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
               <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -53,32 +53,27 @@ type TabType = 'active' | 'archived' | 'bin';
               (input)="onSearchInput()"
               (keyup.enter)="performSearch()"
               placeholder="Search products..."
-              class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-white border-2 border-black rounded-none text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+              class="w-full pl-10 md:pl-12 pr-3 py-2 md:py-3 bg-white border-2 border-black rounded-none text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
             />
-            <button
-              (click)="performSearch()"
-              class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-none font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
-            >
-              Search
-            </button>
           </div>
 
           <button
             (click)="toggleFilters()"
-            class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap"
+            class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-white text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap"
+            aria-label="Toggle filters"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
             </svg>
-            Filter
+            <span class="hidden sm:inline">Filter</span>
           </button>
 
           <a routerLink="/dashboard/products/new" 
-             class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
+             class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path d="M12 5v14M5 12h14"/>
             </svg>
-            Add Product
+            <span class="hidden sm:inline">Add Product</span>
           </a>
         </div>
       </div>
