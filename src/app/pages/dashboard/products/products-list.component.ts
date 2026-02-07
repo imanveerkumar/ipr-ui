@@ -186,8 +186,8 @@ type TabType = 'active' | 'archived' | 'bin';
                       <!-- Skeleton Loading -->
                       @for (i of [1,2,3]; track i) {
                         <div class="px-3 py-2 flex items-center gap-3 border-b border-black/10 last:border-b-0">
-                          <div class="w-4 h-4 bg-[#F9F4EB] border-2 border-black animate-pulse"></div>
-                          <div class="flex-1 h-4 bg-[#F9F4EB] animate-pulse"></div>
+                          <div class="w-4 h-4 bg-[#F9F4EB] border-2 border-black rounded animate-shimmer" aria-hidden="true"></div>
+                          <div class="flex-1 h-4 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
                         </div>
                       }
                     } @else if (stores().length === 0) {
@@ -253,6 +253,8 @@ type TabType = 'active' | 'archived' | 'bin';
             Active
             @if (!loading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#68E079] text-[#111111]">{{ tabCounts().active }}</span>
+            } @else {
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
             }
           </button>
           
@@ -264,6 +266,8 @@ type TabType = 'active' | 'archived' | 'bin';
             Archived
             @if (!loading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FFC60B] text-[#111111]">{{ tabCounts().archived }}</span>
+            } @else {
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
             }
           </button>
           
@@ -275,6 +279,8 @@ type TabType = 'active' | 'archived' | 'bin';
             Bin
             @if (!loading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FA4B28] text-white">{{ tabCounts().bin }}</span>
+            } @else {
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
             }
           </button>
         </div>
@@ -287,18 +293,18 @@ type TabType = 'active' | 'archived' | 'bin';
           <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
               <div class="flex items-center gap-2 shrink-0">
-                <div class="w-8 h-8 bg-black/10 rounded animate-pulse"></div>
-                <div class="w-24 h-5 bg-black/10 rounded animate-pulse"></div>
+                <div class="w-8 h-8 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                <div class="w-24 h-5 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <div class="w-8 h-8 bg-black/10 rounded animate-pulse"></div>
-                <div class="w-20 h-5 bg-black/10 rounded animate-pulse"></div>
+                <div class="w-8 h-8 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                <div class="w-20 h-5 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <div class="w-8 h-8 bg-black/10 rounded animate-pulse"></div>
-                <div class="w-16 h-5 bg-black/10 rounded animate-pulse"></div>
+                <div class="w-8 h-8 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                <div class="w-16 h-5 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
               </div>
             </div>
           </div>
@@ -381,17 +387,35 @@ type TabType = 'active' | 'archived' | 'bin';
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         
         @if (loading()) {
+          <!-- Controls Skeleton (Select all + Sort) -->
+          <div class="mb-4 flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+              <div class="h-4 w-28 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <div class="h-10 w-36 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+              <div class="h-10 w-10 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+            </div>
+          </div>
+
           <!-- Loading Skeleton -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-              <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000]">
-                <div class="h-44 sm:h-48 bg-black/10 animate-pulse"></div>
+              <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+                <!-- Reserve checkbox space to avoid layout shift when items load -->
+                <div class="absolute top-3 left-3 z-10">
+                  <div class="w-5 h-5 bg-[#F9F4EB] border-2 border-black animate-shimmer" aria-hidden="true"></div>
+                </div>
+
+                <div class="h-44 sm:h-48 bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></div>
                 <div class="p-4 sm:p-5">
-                  <div class="h-5 w-3/4 bg-black/10 animate-pulse mb-2"></div>
-                  <div class="h-4 w-1/2 bg-black/10 animate-pulse mb-4"></div>
+                  <div class="h-5 w-3/4 bg-[#F9F4EB] animate-shimmer rounded mb-2" aria-hidden="true"></div>
+                  <div class="h-4 w-1/2 bg-[#F9F4EB] animate-shimmer rounded mb-4" aria-hidden="true"></div>
                   <div class="flex justify-between items-center">
-                    <div class="h-6 w-20 bg-black/10 animate-pulse"></div>
-                    <div class="h-4 w-12 bg-black/10 animate-pulse"></div>
+                    <div class="h-6 w-20 bg-[#F9F4EB] animate-shimmer rounded" aria-hidden="true"></div>
+                    <div class="h-4 w-12 bg-[#F9F4EB] animate-shimmer rounded" aria-hidden="true"></div>
                   </div>
                 </div>
               </div>
