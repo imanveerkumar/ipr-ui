@@ -46,6 +46,17 @@ export class SubdomainService {
       baseDomain,
     };
 
+    // If subdomain routing is disabled via configuration, only use ?_store query param (works on any host)
+    if ((environment as any).subdomain === false) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const devStore = urlParams.get('_store');
+      if (devStore) {
+        result.isStorefront = true;
+        result.subdomain = devStore;
+      }
+      return result;
+    }
+
     // Handle localhost development
     if (host === 'localhost' || host === '127.0.0.1') {
       // Check for subdomain in localhost (e.g., store.localhost)
@@ -123,6 +134,12 @@ export class SubdomainService {
     const protocol = window.location.protocol;
     const port = window.location.port;
     const baseDomain = this.baseDomain();
+
+    // If subdomain routing is disabled via configuration, always use main site with ?_store query param
+    if ((environment as any).subdomain === false) {
+      const portPart = port ? `:${port}` : '';
+      return `${protocol}//${baseDomain}${portPart}${path}${path.includes('?') ? '&' : '?'}_store=${storeSlug}`;
+    }
 
     // For localhost development, use query param
     if (baseDomain === 'localhost') {
