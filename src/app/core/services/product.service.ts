@@ -149,6 +149,19 @@ export class ProductService {
     return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
   }
 
+  // Get stats for current user's products (supports filters)
+  async getMyStats(params?: ProductsQueryParams): Promise<{ total: number; published: number; drafts: number; tabs: { active: number; archived: number; bin: number } }> {
+    const queryParams = new URLSearchParams();
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.status && params.status !== 'ALL') queryParams.append('status', params.status);
+    if (params?.storeIds && params.storeIds.length > 0) params.storeIds.forEach(id => queryParams.append('storeIds', id));
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/products/my/stats?${queryString}` : '/products/my/stats';
+    const response = await this.api.get<{ total: number; published: number; drafts: number; tabs: { active: number; archived: number; bin: number } }>(url);
+    return response.data || { total: 0, published: 0, drafts: 0, tabs: { active: 0, archived: 0, bin: 0 } };
+  }
+
   async bulkDeleteProducts(ids: string[]): Promise<{ count: number }> {
     const response = await this.api.post<{ count: number }>('/products/bulk/delete', { ids });
     return response.data || { count: 0 };

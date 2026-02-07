@@ -717,23 +717,25 @@ export class ProductsListComponent implements OnInit {
 
   async loadStats() {
     try {
-      // Load all products to get accurate counts
-      const [active, archived, deleted] = await Promise.all([
-        this.productService.getMyProducts(),
-        this.productService.getMyArchivedProducts(),
-        this.productService.getMyDeletedProducts(),
-      ]);
-      
+      const params: any = {
+        search: this.searchQuery() || undefined,
+        status: this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
+        storeIds: this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined,
+      };
+
+      const result = await this.productService.getMyStats(params);
+
+      // Update tab counts and stats based on server response (which respects filters)
       this.tabCounts.set({
-        active: active.length,
-        archived: archived.length,
-        bin: deleted.length
+        active: result.tabs.active,
+        archived: result.tabs.archived,
+        bin: result.tabs.bin,
       });
-      
+
       this.stats.set({
-        total: active.length,
-        published: active.filter(p => p.status === 'PUBLISHED').length,
-        drafts: active.filter(p => p.status !== 'PUBLISHED').length
+        total: result.total,
+        published: result.published,
+        drafts: result.drafts,
       });
     } catch (error) {
       // Fallback to 0
@@ -773,6 +775,9 @@ export class ProductsListComponent implements OnInit {
       }
 
       this.meta.set(response.meta);
+
+      // Refresh stats after loading products so counts respect current filters
+      await this.loadStats();
     } catch (error) {
       this.toaster.error('Failed to load products');
     } finally {
