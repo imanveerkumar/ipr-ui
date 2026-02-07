@@ -1,17 +1,20 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../core/services/product.service';
+import { StoreService } from '../../../core/services/store.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { ToasterService } from '../../../core/services/toaster.service';
 import { Product, Store } from '../../../core/models/index';
+import { PaginationMeta, PaginatedResponse } from '../../../core/services/pagination.types';
 
 type TabType = 'active' | 'archived' | 'bin';
 
 @Component({
   selector: 'app-products-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   template: `
     <!-- Hero Section -->
     <section class="bg-[#F9F4EB] border-b-2 border-black">
@@ -32,17 +35,211 @@ type TabType = 'active' | 'archived' | 'bin';
           </div>
 
           <div class="flex justify-end">
-            <a routerLink="/dashboard/products/new" 
-               class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path d="M12 5v14M5 12h14"/>
-              </svg>
-              Add Product
-            </a>
+            <!-- Empty div for spacing -->
           </div>
+        </div>
+
+        <!-- Search Bar, Filter, and Add Product -->
+        <div class="mt-6 flex flex-col sm:flex-row gap-4 items-center justify-center">
+          <div class="relative flex-1 max-w-xl">
+            <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              (input)="onSearchInput()"
+              (keyup.enter)="performSearch()"
+              placeholder="Search products..."
+              class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-white border-2 border-black rounded-none text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+            />
+            <button
+              (click)="performSearch()"
+              class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-none font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
+            >
+              Search
+            </button>
+          </div>
+
+          <button
+            (click)="toggleFilters()"
+            class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+            </svg>
+            Filter
+          </button>
+
+          <a routerLink="/dashboard/products/new" 
+             class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Add Product
+          </a>
         </div>
       </div>
     </section>
+
+    <!-- Filter Modal -->
+    @if (showFilters()) {
+      <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" (click)="closeFiltersOnBackdrop($event)">
+        <div class="bg-white border-2 border-black shadow-[8px_8px_0px_0px_#000] max-w-md w-full max-h-[80vh] overflow-y-auto" (click)="$event.stopPropagation()">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-xl font-black text-[#111111]">Filters</h3>
+              <button
+                (click)="toggleFilters()"
+                class="w-8 h-8 flex items-center justify-center border-2 border-black hover:bg-[#F9F4EB] transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="space-y-6">
+              <!-- Status Filter -->
+              <div>
+                <label class="block text-sm font-bold text-[#111111] mb-3">Status</label>
+                <div class="space-y-2">
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="status"
+                      value="ALL"
+                      [(ngModel)]="filterStatus"
+                      class="w-4 h-4 text-[#FFC60B] border-2 border-black focus:ring-[#FFC60B]"
+                    />
+                    <span class="text-sm font-medium text-[#111111]">All Products</span>
+                  </label>
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="status"
+                      value="PUBLISHED"
+                      [(ngModel)]="filterStatus"
+                      class="w-4 h-4 text-[#FFC60B] border-2 border-black focus:ring-[#FFC60B]"
+                    />
+                    <span class="text-sm font-medium text-[#111111]">Live</span>
+                  </label>
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="status"
+                      value="DRAFT"
+                      [(ngModel)]="filterStatus"
+                      class="w-4 h-4 text-[#FFC60B] border-2 border-black focus:ring-[#FFC60B]"
+                    />
+                    <span class="text-sm font-medium text-[#111111]">Draft</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Store Filter -->
+              <div class="relative">
+                <label class="block text-sm font-bold text-[#111111] mb-3">Store</label>
+                <!-- Dropdown Trigger -->
+                <div
+                  (click)="toggleStoreDropdown()"
+                  class="w-full px-3 py-2 bg-white border-2 border-black text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] text-sm font-medium cursor-pointer min-h-[40px] flex items-center justify-between"
+                  [class.focus\:ring-2]="showStoreDropdown()"
+                  [class.focus\:ring-\[#FFC60B\]]="showStoreDropdown()"
+                >
+                  <div class="flex flex-wrap gap-1">
+                    @if (filterStoreIds().length === 0) {
+                      <span class="text-[#111111]/50">Select stores...</span>
+                    } @else {
+                      @for (store of getSelectedStores(); track store.id) {
+                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-[#FFC60B] text-[#111111] text-xs font-bold border border-black">
+                          {{ store.name }}
+                          <button
+                            (click)="removeStore(store.id); $event.stopPropagation()"
+                            class="hover:bg-[#111111]/20 p-0.5"
+                          >
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                          </button>
+                        </span>
+                      }
+                    }
+                  </div>
+                  <svg
+                    class="w-4 h-4 text-[#111111] transition-transform"
+                    [class.rotate-180]="showStoreDropdown()"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </div>
+
+                <!-- Dropdown Options -->
+                @if (showStoreDropdown()) {
+                  <div class="absolute z-10 w-full mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] max-h-48 overflow-y-auto">
+                    @if (storesLoading()) {
+                      <!-- Skeleton Loading -->
+                      @for (i of [1,2,3]; track i) {
+                        <div class="px-3 py-2 flex items-center gap-3 border-b border-black/10 last:border-b-0">
+                          <div class="w-4 h-4 bg-[#F9F4EB] border-2 border-black animate-pulse"></div>
+                          <div class="flex-1 h-4 bg-[#F9F4EB] animate-pulse"></div>
+                        </div>
+                      }
+                    } @else if (stores().length === 0) {
+                      <div class="px-3 py-2 text-sm text-[#111111]/60 font-medium">
+                        No stores found
+                      </div>
+                    } @else {
+                      @for (store of stores(); track store.id) {
+                        <div
+                          (click)="toggleStoreSelection(store.id)"
+                          class="px-3 py-2 hover:bg-[#F9F4EB] cursor-pointer flex items-center gap-3 border-b border-black/10 last:border-b-0"
+                        >
+                          <div class="w-4 h-4 border-2 border-black flex items-center justify-center"
+                               [class.bg-\[#FFC60B\]]="isStoreSelected(store.id)">
+                            @if (isStoreSelected(store.id)) {
+                              <svg class="w-3 h-3 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                <polyline points="20 6 9 17 4 12"/>
+                              </svg>
+                            }
+                          </div>
+                          <span class="text-sm font-medium text-[#111111]">{{ store.name }}</span>
+                        </div>
+                      }
+                    }
+                  </div>
+                }
+              </div>
+
+              <!-- Future filters can be added here -->
+              <div class="border-t border-black/20 pt-4">
+                <p class="text-xs text-[#111111]/60 font-medium">More filters coming soon...</p>
+              </div>
+            </div>
+
+            <div class="flex gap-3 mt-8">
+              <button
+                (click)="resetFilters()"
+                class="flex-1 px-4 py-2 bg-white border-2 border-black text-[#111111] font-bold hover:bg-[#F9F4EB] transition-colors"
+              >
+                Reset
+              </button>
+              <button
+                (click)="applyFilters()"
+                class="flex-1 px-4 py-2 bg-[#FFC60B] border-2 border-black text-[#111111] font-bold hover:bg-[#ffdb4d] transition-colors"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
 
     <!-- Tabs Section -->
     <section class="bg-white border-b-2 border-black">
@@ -55,7 +252,7 @@ type TabType = 'active' | 'archived' | 'bin';
               : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
             Active
             @if (!loading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#68E079] text-[#111111]">{{ activeProducts().length }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#68E079] text-[#111111]">{{ tabCounts().active }}</span>
             }
           </button>
           
@@ -66,7 +263,7 @@ type TabType = 'active' | 'archived' | 'bin';
               : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
             Archived
             @if (!loading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FFC60B] text-[#111111]">{{ archivedProducts().length }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FFC60B] text-[#111111]">{{ tabCounts().archived }}</span>
             }
           </button>
           
@@ -77,14 +274,13 @@ type TabType = 'active' | 'archived' | 'bin';
               : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
             Bin
             @if (!loading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FA4B28] text-white">{{ deletedProducts().length }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FA4B28] text-white">{{ tabCounts().bin }}</span>
             }
           </button>
         </div>
       </div>
     </section>
 
-    <!-- Stats Bar (only for active tab) -->
     @if (currentTab() === 'active') {
       @if (loading()) {
         <section class="bg-white border-b-2 border-black">
@@ -107,22 +303,22 @@ type TabType = 'active' | 'archived' | 'bin';
             </div>
           </div>
         </section>
-      } @else if (activeProducts().length > 0) {
+      } @else {
         <section class="bg-white border-b-2 border-black">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xl sm:text-2xl font-black text-[#111111]">{{ activeProducts().length }}</span>
+                <span class="text-xl sm:text-2xl font-black text-[#111111]">{{ stats().total }}</span>
                 <span class="text-sm font-medium text-[#111111]/70">Total Products</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xl sm:text-2xl font-black text-[#68E079]">{{ getPublishedCount() }}</span>
+                <span class="text-xl sm:text-2xl font-black text-[#68E079]">{{ stats().published }}</span>
                 <span class="text-sm font-medium text-[#111111]/70">Published</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xl sm:text-2xl font-black text-[#FFC60B]">{{ getDraftCount() }}</span>
+                <span class="text-xl sm:text-2xl font-black text-[#FFC60B]">{{ stats().drafts }}</span>
                 <span class="text-sm font-medium text-[#111111]/70">Drafts</span>
               </div>
             </div>
@@ -224,23 +420,17 @@ type TabType = 'active' | 'archived' | 'bin';
             </div>
             <h3 class="text-xl sm:text-2xl font-black text-[#111111] mb-2">
               @if (currentTab() === 'active') {
-                No products yet
+                {{ searchQuery() ? 'No products found' : 'No products yet' }}
               } @else if (currentTab() === 'archived') {
-                No archived products
+                {{ searchQuery() ? 'No archived products found' : 'No archived products' }}
               } @else {
-                Bin is empty
+                {{ searchQuery() ? 'No deleted products found' : 'Bin is empty' }}
               }
             </h3>
-            <p class="text-[#111111]/70 font-medium mb-6 max-w-md">
-              @if (currentTab() === 'active') {
-                Create your first digital product and start selling to customers worldwide.
-              } @else if (currentTab() === 'archived') {
-                Products you archive will appear here. They won't be visible to customers.
-              } @else {
-                Deleted products will appear here. You can restore them at any time.
-              }
-            </p>
-            @if (currentTab() === 'active') {
+            <div class="text-[#111111]/70 font-medium mb-6 max-w-md">
+              {{ emptyStateMessage() }}
+            </div>
+            @if (currentTab() === 'active' && !searchQuery()) {
               <a routerLink="/dashboard/products/new" 
                  class="inline-flex items-center gap-2 px-6 py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -273,6 +463,36 @@ type TabType = 'active' | 'archived' | 'bin';
                   Select all products on this page. Use bulk actions to manage multiple items at once.
                 </div>
               </label>
+            </div>
+
+            <!-- Sort Dropdown -->
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-bold text-[#111111]">Sort:</span>
+              <select
+                [(ngModel)]="sortField"
+                (change)="onSortChange()"
+                class="px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+              >
+                <option value="createdAt">Newest</option>
+                <option value="title">Title</option>
+                <option value="price">Price</option>
+                <option value="status">Status</option>
+              </select>
+              <button
+                (click)="toggleSortOrder()"
+                class="p-2 bg-white border-2 border-black rounded-lg hover:translate-x-[1px] hover:translate-y-[1px] transition-all shadow-[2px_2px_0px_0px_#000]"
+                [title]="sortOrder() === 'asc' ? 'Ascending' : 'Descending'"
+              >
+                @if (sortOrder() === 'asc') {
+                  <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+                  </svg>
+                } @else {
+                  <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                }
+              </button>
             </div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -382,6 +602,57 @@ type TabType = 'active' | 'archived' | 'bin';
               </div>
             }
           </div>
+
+          <!-- Pagination -->
+          @if (meta().totalPages > 1) {
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p class="text-sm text-[#111111]/60 font-medium">
+                Showing {{ ((meta().page - 1) * meta().limit) + 1 }} - {{ getEndIndex() }} of {{ meta().total }} products
+              </p>
+              
+              <div class="flex items-center gap-2">
+                <button
+                  (click)="goToPage(meta().page - 1)"
+                  [disabled]="!meta().hasPreviousPage"
+                  class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                  Prev
+                </button>
+                
+                <div class="flex items-center gap-1">
+                  @for (page of getVisiblePages(); track page) {
+                    @if (page === '...') {
+                      <span class="px-2 py-1 text-sm text-[#111111]/60">...</span>
+                    } @else {
+                      <button
+                        (click)="goToPage(+page)"
+                        class="w-10 h-10 flex items-center justify-center border-2 border-black rounded-lg font-bold text-sm transition-all"
+                        [class.bg-[#FFC60B]]="meta().page === +page"
+                        [class.bg-white]="meta().page !== +page"
+                        [class.hover:bg-[#F9F4EB]]="meta().page !== +page"
+                      >
+                        {{ page }}
+                      </button>
+                    }
+                  }
+                </div>
+                
+                <button
+                  (click)="goToPage(meta().page + 1)"
+                  [disabled]="!meta().hasNextPage"
+                  class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          }
         }
       </div>
     </section>
@@ -394,6 +665,7 @@ type TabType = 'active' | 'archived' | 'bin';
 })
 export class ProductsListComponent implements OnInit {
   private productService = inject(ProductService);
+  private storeService = inject(StoreService);
   private confirmService = inject(ConfirmService);
   private toaster = inject(ToasterService);
 
@@ -404,6 +676,32 @@ export class ProductsListComponent implements OnInit {
   currentTab = signal<TabType>('active');
   selectedIds = signal<string[]>([]);
 
+  // Pagination and search signals
+  searchQuery = signal('');
+  sortField = signal<string>('createdAt');
+  sortOrder = signal<'asc' | 'desc'>('desc');
+  currentPage = signal(1);
+  pageSize = signal(12);
+  meta = signal<PaginationMeta>({
+    total: 0,
+    page: 1,
+    limit: 12,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false
+  });
+  stats = signal({ total: 0, published: 0, drafts: 0 });
+  tabCounts = signal({ active: 0, archived: 0, bin: 0 });
+  private searchTimeout: any;
+
+  // Filter signals
+  showFilters = signal(false);
+  showStoreDropdown = signal(false);
+  filterStatus = signal<'ALL' | 'PUBLISHED' | 'DRAFT'>('ALL');
+  filterStoreIds = signal<string[]>([]);
+  stores = signal<any[]>([]);
+  storesLoading = signal(false);
+
   currentProducts = computed(() => {
     switch (this.currentTab()) {
       case 'archived': return this.archivedProducts();
@@ -413,9 +711,76 @@ export class ProductsListComponent implements OnInit {
   });
 
   async ngOnInit() {
-    await this.loadAllProducts();
+    await this.loadStats();
+    await this.loadProducts();
   }
 
+  async loadStats() {
+    try {
+      // Load all products to get accurate counts
+      const [active, archived, deleted] = await Promise.all([
+        this.productService.getMyProducts(),
+        this.productService.getMyArchivedProducts(),
+        this.productService.getMyDeletedProducts(),
+      ]);
+      
+      this.tabCounts.set({
+        active: active.length,
+        archived: archived.length,
+        bin: deleted.length
+      });
+      
+      this.stats.set({
+        total: active.length,
+        published: active.filter(p => p.status === 'PUBLISHED').length,
+        drafts: active.filter(p => p.status !== 'PUBLISHED').length
+      });
+    } catch (error) {
+      // Fallback to 0
+      this.tabCounts.set({ active: 0, archived: 0, bin: 0 });
+      this.stats.set({ total: 0, published: 0, drafts: 0 });
+    }
+  }
+
+  async loadProducts() {
+    this.loading.set(true);
+    try {
+      const params = {
+        page: this.currentPage(),
+        limit: this.pageSize(),
+        search: this.searchQuery(),
+        sortField: this.sortField(),
+        sortOrder: this.sortOrder(),
+        status: this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
+        storeIds: this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined
+      };
+
+      let response: PaginatedResponse<Product>;
+
+      switch (this.currentTab()) {
+        case 'archived':
+          response = await this.productService.getMyArchivedProductsPaginated(params);
+          this.archivedProducts.set(response.data);
+          break;
+        case 'bin':
+          response = await this.productService.getMyDeletedProductsPaginated(params);
+          this.deletedProducts.set(response.data);
+          break;
+        default:
+          response = await this.productService.getMyProductsPaginated(params);
+          this.activeProducts.set(response.data);
+          break;
+      }
+
+      this.meta.set(response.meta);
+    } catch (error) {
+      this.toaster.error('Failed to load products');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  // Keep the old method for backward compatibility with bulk operations
   async loadAllProducts() {
     this.loading.set(true);
     try {
@@ -437,14 +802,162 @@ export class ProductsListComponent implements OnInit {
   switchTab(tab: TabType) {
     this.currentTab.set(tab);
     this.clearSelection();
+    this.currentPage.set(1);
+    this.loadProducts();
   }
 
-  getPublishedCount(): number {
-    return this.activeProducts().filter(p => p.status === 'PUBLISHED').length;
+  onSearchInput() {
+    // Debounce search
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      this.currentPage.set(1);
+      this.loadProducts();
+    }, 300);
   }
 
-  getDraftCount(): number {
-    return this.activeProducts().filter(p => p.status !== 'PUBLISHED').length;
+  performSearch() {
+    this.currentPage.set(1);
+    this.loadProducts();
+  }
+
+  toggleFilters() {
+    const isOpening = !this.showFilters();
+    this.showFilters.set(isOpening);
+    this.showStoreDropdown.set(false); // Close store dropdown when main modal opens/closes
+    
+    if (isOpening) {
+      this.loadStores();
+    }
+  }
+
+  closeFiltersOnBackdrop(event: Event) {
+    if (event.target === event.currentTarget) {
+      this.showFilters.set(false);
+      this.showStoreDropdown.set(false);
+    }
+  }
+
+  applyFilters() {
+    this.currentPage.set(1);
+    this.loadProducts();
+    this.showFilters.set(false);
+    this.showStoreDropdown.set(false);
+  }
+
+  resetFilters() {
+    this.filterStatus.set('ALL');
+    this.filterStoreIds.set([]);
+    this.currentPage.set(1);
+    this.loadProducts();
+    this.showFilters.set(false);
+    this.showStoreDropdown.set(false);
+  }
+
+  async loadStores() {
+    this.storesLoading.set(true);
+    try {
+      const stores = await this.storeService.getMyStores();
+      this.stores.set(stores);
+    } catch (error) {
+      this.toaster.error('Failed to load stores');
+    } finally {
+      this.storesLoading.set(false);
+    }
+  }
+
+  toggleStoreDropdown() {
+    this.showStoreDropdown.set(!this.showStoreDropdown());
+  }
+
+  toggleStoreSelection(storeId: string) {
+    const current = this.filterStoreIds();
+    if (current.includes(storeId)) {
+      this.filterStoreIds.set(current.filter(id => id !== storeId));
+    } else {
+      this.filterStoreIds.set([...current, storeId]);
+    }
+  }
+
+  isStoreSelected(storeId: string): boolean {
+    return this.filterStoreIds().includes(storeId);
+  }
+
+  removeStore(storeId: string) {
+    this.filterStoreIds.set(this.filterStoreIds().filter(id => id !== storeId));
+  }
+
+  getSelectedStores() {
+    const selectedIds = this.filterStoreIds();
+    return this.stores().filter(store => selectedIds.includes(store.id));
+  }
+
+  onSortChange() {
+    this.currentPage.set(1);
+    this.loadProducts();
+  }
+
+  toggleSortOrder() {
+    this.sortOrder.set(this.sortOrder() === 'asc' ? 'desc' : 'asc');
+    this.currentPage.set(1);
+    this.loadProducts();
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.meta().totalPages) {
+      this.currentPage.set(page);
+      this.loadProducts();
+      // Scroll to top of products
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  getVisiblePages(): (number | string)[] {
+    const current = this.meta().page;
+    const total = this.meta().totalPages;
+    const pages: (number | string)[] = [];
+
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      if (current > 4) {
+        pages.push('...');
+      }
+
+      const start = Math.max(2, current - 1);
+      const end = Math.min(total - 1, current + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (current < total - 3) {
+        pages.push('...');
+      }
+
+      if (total > 1) {
+        pages.push(total);
+      }
+    }
+
+    return pages;
+  }
+
+  emptyStateMessage = computed(() => {
+    if (this.currentTab() === 'active') {
+      return this.searchQuery() ? 'Try adjusting your search terms or filters' : 'Create your first digital product and start selling to customers worldwide.';
+    } else if (this.currentTab() === 'archived') {
+      return this.searchQuery() ? 'Try adjusting your search terms' : 'Products you archive will appear here. They won\'t be visible to customers.';
+    } else {
+      return this.searchQuery() ? 'Try adjusting your search terms' : 'Deleted products will appear here. You can restore them at any time.';
+    }
+  });
+
+  getEndIndex(): number {
+    return Math.min(this.meta().page * this.meta().limit, this.meta().total);
   }
 
   // Selection methods
@@ -522,7 +1035,8 @@ export class ProductsListComponent implements OnInit {
     try {
       await this.productService.unarchiveProduct(product.id);
       this.toaster.success({ title: 'Product Restored', message: 'The product is now active.' });
-      await this.loadAllProducts();
+      await this.loadStats();
+      await this.loadProducts();
       this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to unarchive product');
@@ -546,7 +1060,8 @@ export class ProductsListComponent implements OnInit {
     try {
       await this.productService.deleteProduct(product.id);
       this.toaster.success({ title: 'Product Deleted', message: 'The product has been moved to Bin.' });
-      await this.loadAllProducts();
+      await this.loadStats();
+      await this.loadProducts();
       this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to delete product');
@@ -569,7 +1084,8 @@ export class ProductsListComponent implements OnInit {
     try {
       await this.productService.restoreProduct(product.id);
       this.toaster.success({ title: 'Product Restored', message: 'The product is now active.' });
-      await this.loadAllProducts();
+      await this.loadStats();
+      await this.loadProducts();
       this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to restore product');
@@ -594,7 +1110,8 @@ export class ProductsListComponent implements OnInit {
       await this.productService.bulkArchiveProducts(this.selectedIds());
       this.toaster.success({ title: 'Products Archived', message: `${count} product${count > 1 ? 's' : ''} archived.` });
       this.clearSelection();
-      await this.loadAllProducts();
+      await this.loadStats();
+      await this.loadProducts();
       this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to archive products');
@@ -621,7 +1138,8 @@ export class ProductsListComponent implements OnInit {
       }
       this.toaster.success({ title: 'Products Restored', message: `${count} product${count > 1 ? 's' : ''} restored.` });
       this.clearSelection();
-      await this.loadAllProducts();
+      await this.loadStats();
+      await this.loadProducts();
       this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to unarchive products');
@@ -646,7 +1164,8 @@ export class ProductsListComponent implements OnInit {
       await this.productService.bulkDeleteProducts(this.selectedIds());
       this.toaster.success({ title: 'Products Deleted', message: `${count} product${count > 1 ? 's' : ''} moved to Bin.` });
       this.clearSelection();
-      await this.loadAllProducts();
+      await this.loadStats();
+      await this.loadProducts();
       this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to delete products');
@@ -670,7 +1189,8 @@ export class ProductsListComponent implements OnInit {
       await this.productService.bulkRestoreProducts(this.selectedIds());
       this.toaster.success({ title: 'Products Restored', message: `${count} product${count > 1 ? 's' : ''} restored.` });
       this.clearSelection();
-      await this.loadAllProducts();
+      await this.loadStats();
+      await this.loadProducts();
       this.confirmService.finish(true);
     } catch (error) {
       this.toaster.error('Failed to restore products');

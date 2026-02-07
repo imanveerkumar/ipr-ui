@@ -2,6 +2,16 @@ import { Injectable, inject } from '@angular/core';
 import { ApiService } from './api.service';
 import { SubdomainService } from './subdomain.service';
 import { Store, ApiResponse } from '../models';
+import { PaginationMeta, PaginatedResponse } from './pagination.types';
+
+export interface StoresQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: 'PUBLISHED' | 'DRAFT';
+  sortOrder?: 'asc' | 'desc';
+  sortField?: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -15,14 +25,58 @@ export class StoreService {
     return response.data || [];
   }
 
+  async getMyStoresPaginated(params: StoresQueryParams): Promise<PaginatedResponse<Store>> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+    if (params.status) queryParams.append('status', params.status);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+    if (params.sortField) queryParams.append('sortField', params.sortField);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/stores/my-stores?${queryString}` : '/stores/my-stores';
+    
+    const response = await this.api.get<PaginatedResponse<Store>>(url);
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
+  }
+
   async getMyArchivedStores(): Promise<Store[]> {
     const response = await this.api.get<Store[]>('/stores/my-stores/archived');
     return response.data || [];
   }
 
+  async getMyArchivedStoresPaginated(params: StoresQueryParams): Promise<PaginatedResponse<Store>> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/stores/my-stores/archived?${queryString}` : '/stores/my-stores/archived';
+    
+    const response = await this.api.get<PaginatedResponse<Store>>(url);
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
+  }
+
   async getMyDeletedStores(): Promise<Store[]> {
     const response = await this.api.get<Store[]>('/stores/my-stores/deleted');
     return response.data || [];
+  }
+
+  async getMyDeletedStoresPaginated(params: StoresQueryParams): Promise<PaginatedResponse<Store>> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/stores/my-stores/deleted?${queryString}` : '/stores/my-stores/deleted';
+    
+    const response = await this.api.get<PaginatedResponse<Store>>(url);
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
   }
 
   async getStoreById(id: string): Promise<Store | null> {

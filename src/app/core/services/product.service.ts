@@ -1,6 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { Product } from '../models';
+import { PaginationMeta, PaginatedResponse } from './pagination.types';
+
+export interface ProductsQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: 'ALL' | 'PUBLISHED' | 'DRAFT';
+  sortOrder?: 'asc' | 'desc';
+  sortField?: string;
+  storeIds?: string[];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -73,14 +84,69 @@ export class ProductService {
     return response.data || [];
   }
 
+  async getMyProductsPaginated(params: ProductsQueryParams): Promise<PaginatedResponse<Product>> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+    if (params.status && params.status !== 'ALL') queryParams.append('status', params.status);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+    if (params.sortField) queryParams.append('sortField', params.sortField);
+    if (params.storeIds && params.storeIds.length > 0) {
+      params.storeIds.forEach(id => queryParams.append('storeIds', id));
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/products/my?${queryString}` : '/products/my';
+    
+    const response = await this.api.get<PaginatedResponse<Product>>(url);
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
+  }
+
   async getMyArchivedProducts(): Promise<Product[]> {
     const response = await this.api.get<Product[]>('/products/my/archived');
     return response.data || [];
   }
 
+  async getMyArchivedProductsPaginated(params: ProductsQueryParams): Promise<PaginatedResponse<Product>> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+    if (params.status && params.status !== 'ALL') queryParams.append('status', params.status);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+    if (params.storeIds && params.storeIds.length > 0) {
+      params.storeIds.forEach(id => queryParams.append('storeIds', id));
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/products/my/archived?${queryString}` : '/products/my/archived';
+    
+    const response = await this.api.get<PaginatedResponse<Product>>(url);
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
+  }
+
   async getMyDeletedProducts(): Promise<Product[]> {
     const response = await this.api.get<Product[]>('/products/my/deleted');
     return response.data || [];
+  }
+
+  async getMyDeletedProductsPaginated(params: ProductsQueryParams): Promise<PaginatedResponse<Product>> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+    if (params.status && params.status !== 'ALL') queryParams.append('status', params.status);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+    if (params.storeIds && params.storeIds.length > 0) {
+      params.storeIds.forEach(id => queryParams.append('storeIds', id));
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/products/my/deleted?${queryString}` : '/products/my/deleted';
+    
+    const response = await this.api.get<PaginatedResponse<Product>>(url);
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
   }
 
   async bulkDeleteProducts(ids: string[]): Promise<{ count: number }> {
