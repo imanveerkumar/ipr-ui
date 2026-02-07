@@ -160,8 +160,10 @@ import { ToasterService } from '../../../core/services/toaster.service';
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#68E079] text-[#111111] whitespace-nowrap' 
               : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
             Active
-            @if (!loading()) {
+            @if (!statsLoading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#68E079] text-[#111111]">{{ tabCounts().active }}</span>
+            } @else {
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
             }
           </button>
           <button (click)="setActiveTab('archived')"
@@ -169,8 +171,10 @@ import { ToasterService } from '../../../core/services/toaster.service';
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FFC60B] text-[#111111] whitespace-nowrap' 
               : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
             Archived
-            @if (!loading()) {
+            @if (!statsLoading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FFC60B] text-[#111111]">{{ tabCounts().archived }}</span>
+            } @else {
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
             }
           </button>
           <button (click)="setActiveTab('deleted')"
@@ -178,8 +182,10 @@ import { ToasterService } from '../../../core/services/toaster.service';
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FA4B28] text-[#111111] whitespace-nowrap' 
               : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
             Bin
-            @if (!loading()) {
+            @if (!statsLoading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FA4B28] text-white">{{ tabCounts().deleted }}</span>
+            } @else {
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
             }
           </button>
         </div>
@@ -291,22 +297,37 @@ import { ToasterService } from '../../../core/services/toaster.service';
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         
         @if (loading()) {
-          <!-- Loading Skeleton -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            @for (i of [1, 2, 3]; track i) {
-              <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000]">
-                <div class="h-28 sm:h-32 bg-black/10 animate-pulse"></div>
-                <div class="p-4 sm:p-5">
-                  <div class="h-5 w-2/3 bg-black/10 animate-pulse mb-3"></div>
-                  <div class="h-4 w-3/4 bg-black/10 animate-pulse mb-4"></div>
-                  <div class="flex justify-between items-center pt-4 border-t-2 border-black/10">
-                    <div class="h-4 w-24 bg-black/10 animate-pulse"></div>
-                    <div class="h-4 w-16 bg-black/10 animate-pulse"></div>
+          <!-- Loading Skeleton (Gallery / List based on view) -->
+          @if (viewMode() === 'gallery') {
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              @for (i of [1, 2, 3]; track i) {
+                <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+                  <div class="h-28 sm:h-32 bg-black/10 animate-pulse"></div>
+                  <div class="p-4 sm:p-5">
+                    <div class="h-5 w-2/3 bg-black/10 animate-pulse mb-3"></div>
+                    <div class="h-4 w-3/4 bg-black/10 animate-pulse mb-4"></div>
+                    <div class="flex justify-between items-center pt-4 border-t-2 border-black/10">
+                      <div class="h-4 w-24 bg-black/10 animate-pulse"></div>
+                      <div class="h-4 w-16 bg-black/10 animate-pulse"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            }
-          </div>
+              }
+            </div>
+          } @else {
+            <div class="bg-white border-2 border-black">
+              @for (i of [1,2,3,4,5]; track i) {
+                <div class="flex items-center gap-4 px-3 py-3 border-b border-black last:border-b-0">
+                  <div class="w-28 h-14 sm:w-32 sm:h-16 bg-black/10 animate-pulse flex-shrink-0"></div>
+                  <div class="flex-1 min-w-0">
+                    <div class="h-5 w-2/3 bg-black/10 animate-pulse mb-2"></div>
+                    <div class="h-4 w-1/2 bg-black/10 animate-pulse"></div>
+                  </div>
+                  <div class="w-20 h-4 bg-black/10 animate-pulse"></div>
+                </div>
+              }
+            </div>
+          }
         } @else if (currentStores().length === 0) {
           <!-- Empty State -->
           <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] p-8 sm:p-12 flex flex-col items-center text-center">
@@ -797,7 +818,8 @@ export class StoresListComponent implements OnInit {
     this.clearSelection();
     this.currentPage.set(1);
     this.router.navigate([], { queryParams: { tab }, queryParamsHandling: 'merge' });
-    this.loadStores();
+    // Switching tabs doesn't change overall stats — avoid reloading them
+    this.loadStores(true);
   }
 
   getPublishedCount(): number {

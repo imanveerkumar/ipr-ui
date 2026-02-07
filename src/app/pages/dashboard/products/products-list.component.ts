@@ -246,7 +246,7 @@ type TabType = 'active' | 'archived' | 'bin';
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#68E079] text-[#111111] whitespace-nowrap' 
               : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
             Active
-            @if (!loading()) {
+            @if (!statsLoading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#68E079] text-[#111111]">{{ tabCounts().active }}</span>
             } @else {
               <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
@@ -259,7 +259,7 @@ type TabType = 'active' | 'archived' | 'bin';
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FFC60B] text-[#111111] whitespace-nowrap' 
               : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
             Archived
-            @if (!loading()) {
+            @if (!statsLoading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FFC60B] text-[#111111]">{{ tabCounts().archived }}</span>
             } @else {
               <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
@@ -272,7 +272,7 @@ type TabType = 'active' | 'archived' | 'bin';
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FA4B28] text-[#111111] whitespace-nowrap' 
               : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
             Bin
-            @if (!loading()) {
+            @if (!statsLoading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FA4B28] text-white">{{ tabCounts().bin }}</span>
             } @else {
               <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
@@ -283,7 +283,7 @@ type TabType = 'active' | 'archived' | 'bin';
     </section>
 
     @if (currentTab() === 'active') {
-      @if (loading()) {
+      @if (statsLoading()) {
         <section class="bg-white border-b-2 border-black">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
@@ -395,27 +395,51 @@ type TabType = 'active' | 'archived' | 'bin';
             </div>
           </div>
 
-          <!-- Loading Skeleton -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-              <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000]">
-                <!-- Reserve checkbox space to avoid layout shift when items load -->
-                <div class="absolute top-3 left-3 z-10">
-                  <div class="w-5 h-5 bg-[#F9F4EB] border-2 border-black animate-shimmer" aria-hidden="true"></div>
-                </div>
+          <!-- Loading Skeleton (Gallery / List based on view) -->
+          @if (viewMode() === 'gallery') {
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+                <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+                  <!-- Reserve checkbox space to avoid layout shift when items load -->
+                  <div class="absolute top-3 left-3 z-10">
+                    <div class="w-5 h-5 bg-[#F9F4EB] border-2 border-black animate-shimmer" aria-hidden="true"></div>
+                  </div>
 
-                <div class="h-44 sm:h-48 bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></div>
-                <div class="p-4 sm:p-5">
-                  <div class="h-5 w-3/4 bg-[#F9F4EB] animate-shimmer rounded mb-2" aria-hidden="true"></div>
-                  <div class="h-4 w-1/2 bg-[#F9F4EB] animate-shimmer rounded mb-4" aria-hidden="true"></div>
-                  <div class="flex justify-between items-center">
-                    <div class="h-6 w-20 bg-[#F9F4EB] animate-shimmer rounded" aria-hidden="true"></div>
-                    <div class="h-4 w-12 bg-[#F9F4EB] animate-shimmer rounded" aria-hidden="true"></div>
+                  <div class="h-44 sm:h-48 bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></div>
+                  <div class="p-4 sm:p-5">
+                    <div class="h-5 w-3/4 bg-[#F9F4EB] animate-shimmer rounded mb-2" aria-hidden="true"></div>
+                    <div class="h-4 w-1/2 bg-[#F9F4EB] animate-shimmer rounded mb-4" aria-hidden="true"></div>
+                    <div class="flex justify-between items-center">
+                      <div class="h-6 w-20 bg-[#F9F4EB] animate-shimmer rounded" aria-hidden="true"></div>
+                      <div class="h-4 w-12 bg-[#F9F4EB] animate-shimmer rounded" aria-hidden="true"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            }
-          </div>
+              }
+            </div>
+          } @else {
+            <div class="bg-white border-2 border-black">
+              @for (i of [1,2,3,4,5,6]; track i) {
+                <div class="flex items-center gap-4 px-3 py-3 border-b border-black last:border-b-0">
+                  <div class="flex-shrink-0 ml-1">
+                    <div class="w-5 h-5 bg-[#F9F4EB] border-2 border-black animate-shimmer" aria-hidden="true"></div>
+                  </div>
+
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#F9F4EB] flex items-center justify-center overflow-hidden rounded-sm flex-shrink-0 animate-shimmer" aria-hidden="true"></div>
+
+                  <div class="flex-1 min-w-0 py-1">
+                    <div class="h-5 w-1/3 bg-[#F9F4EB] rounded mb-2 animate-shimmer" aria-hidden="true"></div>
+                    <div class="h-4 w-1/4 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                  </div>
+
+                  <div class="flex items-center gap-4 ml-4">
+                    <div class="h-5 w-12 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                    <div class="h-4 w-12 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
         } @else if (currentProducts().length === 0) {
           <!-- Empty State -->
           <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] p-8 sm:p-12 flex flex-col items-center text-center">
@@ -760,6 +784,7 @@ export class ProductsListComponent implements OnInit {
   loading = signal(true);
   currentTab = signal<TabType>('active');
   selectedIds = signal<string[]>([]);
+  statsLoading = signal(true);
 
   // Pagination and search signals
   searchQuery = signal('');
@@ -813,6 +838,7 @@ export class ProductsListComponent implements OnInit {
     // If suppression flag is set (e.g., from a sort change), skip a network call and reset flag
     if (this.suppressStats) { this.suppressStats = false; return; }
 
+    this.statsLoading.set(true);
     try {
       const params: any = {
         search: this.searchQuery() || undefined,
@@ -838,6 +864,8 @@ export class ProductsListComponent implements OnInit {
       // Fallback to 0
       this.tabCounts.set({ active: 0, archived: 0, bin: 0 });
       this.stats.set({ total: 0, published: 0, drafts: 0 });
+    } finally {
+      this.statsLoading.set(false);
     }
   }
 
@@ -908,7 +936,8 @@ export class ProductsListComponent implements OnInit {
     this.currentTab.set(tab);
     this.clearSelection();
     this.currentPage.set(1);
-    this.loadProducts();
+    // Tab switch shouldn't refresh stats — pass skipStats to avoid the extra network call
+    this.loadProducts(true);
   }
 
   onSearchInput() {
