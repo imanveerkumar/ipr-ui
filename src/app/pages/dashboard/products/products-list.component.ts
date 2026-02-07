@@ -475,7 +475,7 @@ type TabType = 'active' | 'archived' | 'bin';
                     </svg>
                   }
                 </div>
-                <span class="ml-2 inline text-sm font-bold text-[#111111]">Select all</span>
+                <span class="ml-2 hidden sm:inline text-sm font-bold text-[#111111]">Select all</span>
 
                 <!-- Tooltip note -->
                 <div class="absolute top-full left-0 mt-2 w-[18rem] bg-white border-2 border-black p-2 text-sm text-[#111111] shadow-[4px_4px_0px_0px_#000] z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
@@ -512,115 +512,181 @@ type TabType = 'active' | 'archived' | 'bin';
                   </svg>
                 }
               </button>
+
+              <!-- View Mode Selector -->
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-[#111111]">View:</span>
+                <select
+                  [ngModel]="viewMode()"
+                  (ngModelChange)="setViewMode($event)"
+                  class="px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+                >
+                  <option value="gallery">Gallery</option>
+                  <option value="list">List</option>
+                </select>
+              </div>
             </div>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            @for (product of currentProducts(); track product.id) {
-              <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all group">
-                
-                <!-- Selection Checkbox -->
-                <div class="absolute top-3 left-3 z-10">
-                  <label class="relative cursor-pointer">
-                    <input type="checkbox"
-                      [checked]="isSelected(product.id)"
-                      (change)="toggleSelection(product.id, $event)"
-                      class="peer sr-only">
-                    <div class="w-5 h-5 bg-white border-2 border-black peer-checked:bg-[#FFC60B] flex items-center justify-center transition-colors shadow-[2px_2px_0px_0px_#000]">
-                      @if (isSelected(product.id)) {
-                        <svg class="w-3 h-3 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                          <polyline points="20 6 9 17 4 12"/>
-                        </svg>
+@if (viewMode() === 'gallery') {
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              @for (product of currentProducts(); track product.id) {
+                <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all group">
+                  
+                  <!-- Selection Checkbox -->
+                  <div class="absolute top-3 left-3 z-10">
+                    <label class="relative cursor-pointer">
+                      <input type="checkbox"
+                        [checked]="isSelected(product.id)"
+                        (change)="toggleSelection(product.id, $event)"
+                        class="peer sr-only">
+                      <div class="w-5 h-5 bg-white border-2 border-black peer-checked:bg-[#FFC60B] flex items-center justify-center transition-colors shadow-[2px_2px_0px_0px_#000]">
+                        @if (isSelected(product.id)) {
+                          <svg class="w-3 h-3 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        }
+                      </div>
+                    </label>
+                  </div>
+
+                  <a [routerLink]="currentTab() === 'active' ? ['/dashboard/products', product.id] : null" 
+                     [class.pointer-events-none]="currentTab() !== 'active'"
+                     class="block">
+                    <!-- Product Image -->
+                    <div class="relative h-44 sm:h-48 border-b-2 border-black overflow-hidden bg-[#F9F4EB]">
+                      @if (product.coverImageUrl) {
+                        <img [src]="product.coverImageUrl" [alt]="product.title" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                      } @else {
+                        <div class="w-full h-full flex items-center justify-center">
+                          <svg class="w-12 h-12 text-black/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                          </svg>
+                        </div>
+                      }
+                      
+                      <!-- Status Badge -->
+                      @if (currentTab() === 'active') {
+                        @if (product.status === 'PUBLISHED') {
+                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#68E079] text-[#111111] border-2 border-black">
+                            Live
+                          </span>
+                        } @else {
+                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FFC60B] text-[#111111] border-2 border-black">
+                            Draft
+                          </span>
+                        }
+                      } @else if (currentTab() === 'archived') {
+                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FFC60B] text-[#111111] border-2 border-black">
+                          Archived
+                        </span>
+                      } @else {
+                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FA4B28] text-white border-2 border-black">
+                          Deleted
+                        </span>
                       }
                     </div>
-                  </label>
+                    
+                    <!-- Content -->
+                    <div class="p-4 sm:p-5">
+                      <h3 class="text-base sm:text-lg font-bold text-[#111111] mb-1 truncate">{{ product.title }}</h3>
+                      <p class="text-sm text-[#111111]/60 font-medium mb-4">{{ product.store?.name || 'No store' }}</p>
+                      
+                      <div class="flex items-center justify-between">
+                        <span class="text-lg sm:text-xl font-black text-[#111111]">₹{{ product.price / 100 }}</span>
+                        
+                        @if (currentTab() === 'active') {
+                          <span class="inline-flex items-center gap-1 text-sm font-bold text-[#111111]/70 group-hover:text-[#2B57D6] transition-colors">
+                            Edit
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                              <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                          </span>
+                        }
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <!-- Action Buttons for Archived/Deleted -->
+                  @if (currentTab() !== 'active') {
+                    <div class="px-4 sm:px-5 pb-4 sm:pb-5 flex gap-2">
+                      @if (currentTab() === 'archived') {
+                        <button 
+                          (click)="unarchiveProduct(product)"
+                          class="flex-1 py-2 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black hover:bg-[#5bc96a] transition-colors">
+                          Unarchive
+                        </button>
+                        <button 
+                          (click)="deleteProduct(product)"
+                          class="flex-1 py-2 text-sm font-bold bg-white text-[#FA4B28] border-2 border-black hover:bg-[#FFF5F5] transition-colors">
+                          Delete
+                        </button>
+                      } @else {
+                        <button 
+                          (click)="restoreProduct(product)"
+                          class="flex-1 py-2 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black hover:bg-[#5bc96a] transition-colors">
+                          Restore
+                        </button>
+                      }
+                    </div>
+                  }
                 </div>
+              }
+              </div>
+            } @if (viewMode() === 'list') {
+              <div class="bg-white border-2 border-black">
+                @for (product of currentProducts(); track product.id) {
+                  <div class="flex items-center gap-4 px-3 py-3 border-b border-black last:border-b-0">
 
-                <a [routerLink]="currentTab() === 'active' ? ['/dashboard/products', product.id] : null" 
-                   [class.pointer-events-none]="currentTab() !== 'active'"
-                   class="block">
-                  <!-- Product Image -->
-                  <div class="relative h-44 sm:h-48 border-b-2 border-black overflow-hidden bg-[#F9F4EB]">
-                    @if (product.coverImageUrl) {
-                      <img [src]="product.coverImageUrl" [alt]="product.title" 
-                           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                    } @else {
-                      <div class="w-full h-full flex items-center justify-center">
-                        <svg class="w-12 h-12 text-black/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <!-- Selection Checkbox -->
+                    <div class="flex-shrink-0 ml-1">
+                      <label class="relative">
+                        <input type="checkbox"
+                          [checked]="isSelected(product.id)"
+                          (change)="toggleSelection(product.id, $event)"
+                          class="peer sr-only">
+                        <div class="w-5 h-5 bg-white border-2 border-black peer-checked:bg-[#FFC60B] flex items-center justify-center transition-colors">
+                          @if (isSelected(product.id)) {
+                            <svg class="w-3 h-3 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                          }
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Compact Thumbnail -->
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#F9F4EB] flex items-center justify-center overflow-hidden rounded-sm flex-shrink-0">
+                      @if (product.coverImageUrl) {
+                        <img [src]="product.coverImageUrl" [alt]="product.title" class="w-full h-full object-cover">
+                      } @else {
+                        <svg class="w-8 h-8 text-black/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                           <circle cx="8.5" cy="8.5" r="1.5"/>
                           <polyline points="21 15 16 10 5 21"/>
                         </svg>
-                      </div>
-                    }
-                    
-                    <!-- Status Badge -->
-                    @if (currentTab() === 'active') {
-                      @if (product.status === 'PUBLISHED') {
-                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#68E079] text-[#111111] border-2 border-black">
-                          Live
-                        </span>
-                      } @else {
-                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FFC60B] text-[#111111] border-2 border-black">
-                          Draft
-                        </span>
-                      }
-                    } @else if (currentTab() === 'archived') {
-                      <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FFC60B] text-[#111111] border-2 border-black">
-                        Archived
-                      </span>
-                    } @else {
-                      <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FA4B28] text-white border-2 border-black">
-                        Deleted
-                      </span>
-                    }
-                  </div>
-                  
-                  <!-- Content -->
-                  <div class="p-4 sm:p-5">
-                    <h3 class="text-base sm:text-lg font-bold text-[#111111] mb-1 truncate">{{ product.title }}</h3>
-                    <p class="text-sm text-[#111111]/60 font-medium mb-4">{{ product.store?.name || 'No store' }}</p>
-                    
-                    <div class="flex items-center justify-between">
-                      <span class="text-lg sm:text-xl font-black text-[#111111]">₹{{ product.price / 100 }}</span>
-                      
-                      @if (currentTab() === 'active') {
-                        <span class="inline-flex items-center gap-1 text-sm font-bold text-[#111111]/70 group-hover:text-[#2B57D6] transition-colors">
-                          Edit
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M9 18l6-6-6-6"/>
-                          </svg>
-                        </span>
                       }
                     </div>
-                  </div>
-                </a>
-                
-                <!-- Action Buttons for Archived/Deleted -->
-                @if (currentTab() !== 'active') {
-                  <div class="px-4 sm:px-5 pb-4 sm:pb-5 flex gap-2">
-                    @if (currentTab() === 'archived') {
-                      <button 
-                        (click)="unarchiveProduct(product)"
-                        class="flex-1 py-2 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black hover:bg-[#5bc96a] transition-colors">
-                        Unarchive
-                      </button>
-                      <button 
-                        (click)="deleteProduct(product)"
-                        class="flex-1 py-2 text-sm font-bold bg-white text-[#FA4B28] border-2 border-black hover:bg-[#FFF5F5] transition-colors">
-                        Delete
-                      </button>
-                    } @else {
-                      <button 
-                        (click)="restoreProduct(product)"
-                        class="flex-1 py-2 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black hover:bg-[#5bc96a] transition-colors">
-                        Restore
-                      </button>
-                    }
+
+                    <!-- Details -->
+                    <div class="flex-1 min-w-0 py-1">
+                      <h3 class="text-base sm:text-lg font-bold text-[#111111] truncate">{{ product.title }}</h3>
+                      <p class="text-sm text-[#111111]/60 font-medium">{{ product.store?.name || 'No store' }}</p>
+                    </div>
+
+                    <!-- Price & Actions -->
+                    <div class="flex items-center gap-4 ml-4">
+                      <div class="text-base sm:text-lg font-black text-[#111111]">₹{{ product.price / 100 }}</div>
+                      @if (currentTab() === 'active') {
+                        <a [routerLink]="['/dashboard/products', product.id]" class="text-sm font-bold text-[#111111]/70">Edit</a>
+                      }
+                    </div>
                   </div>
                 }
               </div>
             }
-          </div>
 
           <!-- Pagination -->
           @if (meta().totalPages > 1) {
@@ -699,6 +765,7 @@ export class ProductsListComponent implements OnInit {
   searchQuery = signal('');
   sortField = signal<string>('createdAt');
   sortOrder = signal<'asc' | 'desc'>('desc');
+  viewMode = signal<'gallery' | 'list'>('gallery');
   currentPage = signal(1);
   pageSize = signal(12);
   meta = signal<PaginationMeta>({
@@ -730,6 +797,14 @@ export class ProductsListComponent implements OnInit {
   });
 
   async ngOnInit() {
+    // Restore preferred view from localStorage if available
+    const saved = (() => {
+      try { return localStorage.getItem('dashboardProductsView'); } catch (e) { return null; }
+    })();
+    if (saved === 'list' || saved === 'gallery') {
+      this.viewMode.set(saved as any);
+    }
+
     await this.loadStats();
     await this.loadProducts();
   }
@@ -924,6 +999,11 @@ export class ProductsListComponent implements OnInit {
     this.sortOrder.set(this.sortOrder() === 'asc' ? 'desc' : 'asc');
     this.currentPage.set(1);
     this.loadProducts();
+  }
+
+  setViewMode(mode: 'gallery' | 'list') {
+    this.viewMode.set(mode);
+    try { localStorage.setItem('dashboardProductsView', mode); } catch (e) { /* ignore */ }
   }
 
   goToPage(page: number) {
