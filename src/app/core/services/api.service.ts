@@ -318,7 +318,7 @@ export class ApiService {
 
   // Helper for file upload URLs
   async getUploadUrl(filename: string, contentType: string, size: number) {
-    return this.post<{ fileId: string; uploadUrl: string; storageKey: string }>(
+    return this.post<{ fileId: string; uploadUrl: string }>(
       '/files/upload-url',
       { filename, contentType, size },
       { rateLimitConfig: DEFAULT_RATE_LIMITS.UPLOAD }

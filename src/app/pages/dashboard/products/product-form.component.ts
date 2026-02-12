@@ -8,13 +8,14 @@ import { ToasterService } from '../../../core/services/toaster.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { Store, Product } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components/rich-text-editor/rich-text-editor.component';
+import { ImageUploadComponent } from '../../../shared/components/image-upload/image-upload.component';
 import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 import { FileUploadService, UploadedFileRef } from '../../../core/services/file-upload.service';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RichTextEditorComponent, RouterLink, SkeletonComponent],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent, ImageUploadComponent, RouterLink, SkeletonComponent],
   template: `
     <!-- State Banner for Archived/Deleted Products -->
     @if (isEditing() && !isLoading()) {
@@ -225,6 +226,20 @@ import { FileUploadService, UploadedFileRef } from '../../../core/services/file-
             <app-rich-text-editor [(ngModel)]="form.description" name="description" placeholder="Describe your product..."></app-rich-text-editor>
           </div>
 
+          <!-- Cover Image / Thumbnail -->
+          <div class="form-group">
+            <app-image-upload
+              imageType="thumbnail"
+              label="Cover Image"
+              hint="Displayed on explore, storefront, and cards"
+              [imageUrl]="form.coverImageUrl"
+              placeholderText="Upload product thumbnail"
+              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 800px"
+              (imageUploaded)="onThumbnailUploaded($event)"
+              (imageRemoved)="onThumbnailRemoved()"
+            ></app-image-upload>
+          </div>
+
           <!-- Price and Status Row -->
           <div class="form-row">
             <div class="form-group">
@@ -325,6 +340,33 @@ import { FileUploadService, UploadedFileRef } from '../../../core/services/file-
                   </li>
                 }
               </ul>
+            }
+
+            @if (isEditing() && existingProductFiles().length > 0) {
+              <div class="mt-4">
+                <p class="form-hint">Already linked files</p>
+                <ul class="file-list">
+                  @for (f of existingProductFiles(); track f.id) {
+                    <li class="file-item">
+                      <div class="file-info">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <span class="file-name">{{ f.filename }}</span>
+                        <span class="file-size">{{ formatFileSize(f.size) }}</span>
+                        <span class="file-status">Linked</span>
+                      </div>
+                      <button type="button" (click)="removeExistingLinkedFile(f.fileId)" class="file-remove-btn" aria-label="Remove linked file">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </div>
             }
           </div>
 
@@ -1063,6 +1105,8 @@ export class ProductFormComponent implements OnInit {
       uploaded?: UploadedFileRef;
     }>
   >([]);
+  existingProductFiles = signal<Array<{ id: string; fileId: string; filename: string; size: number }>>([]);
+  pendingDetachedFileIds = signal<string[]>([]);
   uploadingFiles = signal(false);
   isDragOver = signal(false);
   productId: string | null = null;
@@ -1095,6 +1139,7 @@ export class ProductFormComponent implements OnInit {
     description: '',
     price: 0,
     status: 'DRAFT',
+    coverImageUrl: '' as string | undefined,
   };
 
   // Validation constants
@@ -1136,6 +1181,18 @@ export class ProductFormComponent implements OnInit {
         // Fetch product as owner (includes all states) and derive state client-side
         const product = await this.productService.getProductByIdForOwner(this.productId);
         if (product) {
+          this.existingProductFiles.set(
+            (product.files || [])
+              .filter((pf) => !!pf.file)
+              .map((pf) => ({
+                id: pf.id,
+                fileId: pf.fileId,
+                filename: pf.file.filename,
+                size: pf.file.size,
+              })),
+          );
+          this.pendingDetachedFileIds.set([]);
+
           this.form = {
             storeId: product.storeId,
             title: product.title,
@@ -1143,6 +1200,7 @@ export class ProductFormComponent implements OnInit {
             description: product.description || '',
             price: product.price / 100,
             status: product.status,
+            coverImageUrl: product.coverImageUrl || undefined,
           };
 
           // Derive state from returned product (owner context)
@@ -1206,10 +1264,38 @@ export class ProductFormComponent implements OnInit {
     }
   }
 
+  async removeExistingLinkedFile(fileId: string) {
+    if (this.pendingDetachedFileIds().includes(fileId)) {
+      return;
+    }
+
+    this.pendingDetachedFileIds.set([...this.pendingDetachedFileIds(), fileId]);
+    this.existingProductFiles.set(
+      this.existingProductFiles().filter((f) => f.fileId !== fileId),
+    );
+
+    this.toaster.info({
+      title: 'Removal Staged',
+      message: 'This file will be removed when you update the product.',
+    });
+  }
+
   onTitleChange() {
     if (!this.isEditing() && this.form.title && !this.slugManuallyEdited) {
       this.form.slug = this.generateSlug(this.form.title);
     }
+  }
+
+  onThumbnailUploaded(imageUrl: string) {
+    this.form.coverImageUrl = imageUrl;
+  }
+
+  onThumbnailRemoved() {
+    this.form.coverImageUrl = undefined;
+    this.toaster.info({
+      title: 'Removal Staged',
+      message: 'Cover image removal will apply when you update the product.',
+    });
   }
 
   onSlugChange() {
@@ -1431,6 +1517,7 @@ export class ProductFormComponent implements OnInit {
         ...this.form,
         slug: this.form.slug.toLowerCase(), // Ensure slug is lowercase
         price: Math.round(this.form.price * 100),
+        coverImageUrl: this.form.coverImageUrl || undefined,
       };
 
       let product: any;
@@ -1457,6 +1544,11 @@ export class ProductFormComponent implements OnInit {
 
         for (const fileId of uploadedFileIds) {
           await this.productService.attachUploadedFile(product.id, fileId);
+        }
+
+        const detachedFileIds = this.pendingDetachedFileIds();
+        for (const fileId of detachedFileIds) {
+          await this.fileUpload.detachFromProduct(fileId, product.id);
         }
       }
 

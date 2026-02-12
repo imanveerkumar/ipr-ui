@@ -82,7 +82,6 @@ export interface FileItem {
   id: string;
   userId: string;
   filename: string;
-  storageKey: string;
   mimeType: string;
   size: number;
   status: 'PENDING' | 'UPLOADED' | 'FAILED' | 'DELETED';

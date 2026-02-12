@@ -2,9 +2,9 @@ import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, signal, 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { QuillModule, QuillEditorComponent } from 'ngx-quill';
-import { ApiService } from '../../../core/services/api.service';
 import { ToasterService } from '../../../core/services/toaster.service';
 import { FileUploadService } from '../../../core/services/file-upload.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-rich-text-editor',
@@ -77,7 +77,7 @@ export class RichTextEditorComponent implements ControlValueAccessor {
   currentUploadType = signal<'image' | 'video' | 'file'>('image');
   
   private quillEditor: any;
-  private storageBaseUrl: string = '';
+  private readonly apiBaseUrl = environment.apiUrl.replace(/\/+$/, '');
   
   value: string = '';
   private onChange: (value: string) => void = () => {};
@@ -103,25 +103,12 @@ export class RichTextEditorComponent implements ControlValueAccessor {
     }
   };
 
-  constructor(private apiService: ApiService) {
-    this.loadStorageBaseUrl();
-  }
+  constructor() {}
 
   // Use functional inject to avoid Angular compiler static analysis issues
   private fileUpload = inject(FileUploadService);
 
   private toaster = inject(ToasterService);
-
-  private async loadStorageBaseUrl() {
-    try {
-      const response = await this.apiService.get<{ baseUrl: string }>('/files/storage-url');
-      if (response.success && response.data) {
-        this.storageBaseUrl = response.data.baseUrl;
-      }
-    } catch (error) {
-      console.error('Failed to load storage URL:', error);
-    }
-  }
 
   onEditorCreated(editor: any) {
     this.quillEditor = editor;
@@ -149,22 +136,21 @@ export class RichTextEditorComponent implements ControlValueAccessor {
     this.uploading.set(true);
     this.uploadProgress.set(0);
     try {
-      const uploaded = await this.fileUpload.upload(file, {
-        onProgress: (p) => this.uploadProgress.set(p),
-      });
-
-      // Try to get a public URL from the API (handles private buckets with presigned download URLs)
       let fileUrl: string;
-      try {
-        const res = await this.apiService.get<{ url: string }>(`/files/${uploaded.fileId}/public-url`);
-        if (res && res.success && res.data && res.data.url) {
-          fileUrl = res.data.url;
-        } else {
-          fileUrl = this.getPublicUrl(uploaded.storageKey);
-        }
-      } catch (err) {
-        // Fallback to storage URL
-        fileUrl = this.getPublicUrl(uploaded.storageKey);
+
+      if (file.type.startsWith('image/')) {
+        // Use server-side image processing which returns a stable proxy URL
+        const result = await this.fileUpload.uploadImage(file, 'thumbnail', {
+          onProgress: (p) => this.uploadProgress.set(p),
+        });
+        fileUrl = result.imageUrl;
+      } else {
+        // Non-image files: upload and get a public URL from the server
+        const uploaded = await this.fileUpload.upload(file, {
+          onProgress: (p) => this.uploadProgress.set(p),
+        });
+        // Use the file's public URL endpoint (owner-only, signed URL)
+        fileUrl = `${this.apiBaseUrl}/files/${uploaded.fileId}/public-url`;
       }
 
       // Insert into editor based on type
@@ -177,11 +163,6 @@ export class RichTextEditorComponent implements ControlValueAccessor {
       this.uploadProgress.set(null);
       input.value = ''; // Reset input
     }
-  }
-
-  private getPublicUrl(storageKey: string): string {
-    // Constructs the S3/MinIO public URL from the storage base URL
-    return `${this.storageBaseUrl}/${storageKey}`;
   }
 
   private insertMedia(url: string, filename: string, mimeType: string) {

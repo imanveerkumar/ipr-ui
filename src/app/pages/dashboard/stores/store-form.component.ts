@@ -8,12 +8,13 @@ import { ToasterService } from '../../../core/services/toaster.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { Store } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components';
+import { ImageUploadComponent } from '../../../shared/components/image-upload/image-upload.component';
 import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-store-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RichTextEditorComponent, RouterLink, SkeletonComponent],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent, ImageUploadComponent, RouterLink, SkeletonComponent],
   template: `
     <!-- State Banner for Archived/Deleted Stores -->
     @if (isEditing() && !isLoading()) {
@@ -231,6 +232,36 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               <p class="form-error">{{ taglineError() }}</p>
             }
             <p class="form-hint">{{ form.tagline.length }}/{{ MAX_TAGLINE_LENGTH }} characters (optional)</p>
+          </div>
+
+          <!-- Store Branding -->
+          <div class="form-section">
+            <h3 class="form-section-title">Store Branding</h3>
+            <p class="form-section-desc">Customize how your store looks to customers on the storefront and explore page.</p>
+
+            <!-- Banner Image -->
+            <app-image-upload
+              imageType="banner"
+              label="Banner Image"
+              hint="Displayed at the top of your storefront"
+              [imageUrl]="form.bannerUrl"
+              placeholderText="Upload store banner"
+              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 1920px wide"
+              (imageUploaded)="onBannerUploaded($event)"
+              (imageRemoved)="onBannerRemoved()"
+            ></app-image-upload>
+
+            <!-- Logo -->
+            <app-image-upload
+              imageType="logo"
+              label="Store Logo"
+              hint="Shown on cards and navigation"
+              [imageUrl]="form.logoUrl"
+              placeholderText="Upload logo"
+              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 400px"
+              (imageUploaded)="onLogoUploaded($event)"
+              (imageRemoved)="onLogoRemoved()"
+            ></app-image-upload>
           </div>
 
           <!-- Description -->
@@ -739,6 +770,28 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       margin-top: 0.5rem;
     }
 
+    /* Form Section */
+    .form-section {
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #111111;
+    }
+
+    .form-section-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #111111;
+      margin: 0 0 0.25rem;
+    }
+
+    .form-section-desc {
+      font-size: 0.8125rem;
+      color: #111111;
+      opacity: 0.6;
+      margin: 0 0 1.25rem;
+    }
+
     /* Slug Input */
     .slug-input-wrapper {
       display: flex;
@@ -987,7 +1040,9 @@ export class StoreFormComponent implements OnInit {
     name: '',
     slug: '',
     description: '',
-    tagline: ''
+    tagline: '',
+    logoUrl: '' as string | undefined,
+    bannerUrl: '' as string | undefined,
   };
 
   // Validation constants
@@ -1010,6 +1065,30 @@ export class StoreFormComponent implements OnInit {
     } else {
       this.nameError.set(null);
     }
+  }
+
+  onBannerUploaded(imageUrl: string) {
+    this.form.bannerUrl = imageUrl;
+  }
+
+  onBannerRemoved() {
+    this.form.bannerUrl = undefined;
+    this.toaster.info({
+      title: 'Removal Staged',
+      message: 'Banner removal will apply when you update the store.',
+    });
+  }
+
+  onLogoUploaded(imageUrl: string) {
+    this.form.logoUrl = imageUrl;
+  }
+
+  onLogoRemoved() {
+    this.form.logoUrl = undefined;
+    this.toaster.info({
+      title: 'Removal Staged',
+      message: 'Logo removal will apply when you update the store.',
+    });
   }
 
   validateTagline() {
@@ -1043,7 +1122,9 @@ export class StoreFormComponent implements OnInit {
             name: store.name,
             slug: store.slug,
             description: store.description || '',
-            tagline: store.tagline || ''
+            tagline: store.tagline || '',
+            logoUrl: store.logoUrl || undefined,
+            bannerUrl: store.bannerUrl || undefined,
           };
 
           const isDeleted = !!store.deletedAt;
@@ -1098,8 +1179,14 @@ export class StoreFormComponent implements OnInit {
     else this.saving.set(true);
 
     try {
+      const formData = {
+        ...this.form,
+        logoUrl: this.form.logoUrl || undefined,
+        bannerUrl: this.form.bannerUrl || undefined,
+      };
+
       if (this.isEditing() && this.storeId) {
-        const updated = await this.storeService.updateStore(this.storeId, this.form);
+        const updated = await this.storeService.updateStore(this.storeId, formData);
         if (updated) {
           this.store.set(updated);
           this.toaster.success({
@@ -1108,7 +1195,7 @@ export class StoreFormComponent implements OnInit {
           });
         }
       } else {
-        await this.storeService.createStore({ ...this.form, publish });
+        await this.storeService.createStore({ ...formData, publish });
         this.toaster.success({
           title: publish ? 'Store Published' : 'Store Created',
           message: publish ? 'Your store is now live and visible to customers.' : 'Your new store has been created successfully.',
