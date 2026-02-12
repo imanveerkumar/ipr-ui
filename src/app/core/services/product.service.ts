@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ApiService } from './api.service';
 import { Product } from '../models';
 import { PaginationMeta, PaginatedResponse } from './pagination.types';
+import { FileUploadService } from './file-upload.service';
 
 export interface ProductsQueryParams {
   page?: number;
@@ -18,6 +19,9 @@ export interface ProductsQueryParams {
 })
 export class ProductService {
   constructor(private api: ApiService) {}
+
+  // Use functional inject to avoid static analysis issues with tooling
+  private fileUpload = inject(FileUploadService);
 
   async getProductsByStore(storeId: string): Promise<Product[]> {
     const response = await this.api.get<Product[]>(`/products/store/${storeId}`);
@@ -178,8 +182,11 @@ export class ProductService {
   }
 
   async uploadProductFile(productId: string, file: File): Promise<void> {
-    const formData = new FormData();
-    formData.append('file', file);
-    await this.api.uploadFile(`/files/product/${productId}`, formData);
+    const uploaded = await this.fileUpload.upload(file);
+    await this.fileUpload.attachToProduct(uploaded.fileId, productId);
+  }
+
+  async attachUploadedFile(productId: string, fileId: string): Promise<void> {
+    await this.fileUpload.attachToProduct(fileId, productId);
   }
 }

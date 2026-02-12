@@ -326,19 +326,76 @@ export class ApiService {
   }
 
   // Helper for direct upload to S3
-  async uploadToS3(uploadUrl: string, file: File): Promise<boolean> {
+  async uploadToS3(
+    uploadUrl: string,
+    file: File,
+    options?: {
+      onProgress?: (percent: number | null) => void;
+      signal?: AbortSignal;
+    },
+  ): Promise<boolean> {
     // Rate limit uploads
     this.checkRateLimit('UPLOAD', 's3-upload', DEFAULT_RATE_LIMITS.UPLOAD);
     
     try {
-      const response = await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file,
-        headers: {
-          'Content-Type': file.type,
-        },
+      // Use XHR to get upload progress events
+      return await new Promise<boolean>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', uploadUrl, true);
+
+        const contentType = file.type || 'application/octet-stream';
+        xhr.setRequestHeader('Content-Type', contentType);
+
+        const onAbort = () => {
+          try {
+            xhr.abort();
+          } catch {
+            // ignore
+          }
+        };
+
+        if (options?.signal) {
+          if (options.signal.aborted) {
+            onAbort();
+            resolve(false);
+            return;
+          }
+          options.signal.addEventListener('abort', onAbort, { once: true });
+        }
+
+        xhr.upload.onprogress = (event) => {
+          if (!options?.onProgress) return;
+          if (event.lengthComputable && event.total > 0) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            options.onProgress(percent);
+          } else {
+            options.onProgress(null);
+          }
+        };
+
+        xhr.onload = () => {
+          if (options?.signal) {
+            options.signal.removeEventListener('abort', onAbort);
+          }
+          resolve(xhr.status >= 200 && xhr.status < 300);
+        };
+
+        xhr.onerror = () => {
+          if (options?.signal) {
+            options.signal.removeEventListener('abort', onAbort);
+          }
+          reject(new Error('Upload to S3 failed'));
+        };
+
+        xhr.onabort = () => {
+          if (options?.signal) {
+            options.signal.removeEventListener('abort', onAbort);
+          }
+          resolve(false);
+        };
+
+        xhr.send(file);
       });
-      return response.ok;
     } catch (error) {
       console.error('Upload to S3 failed:', error);
       return false;

@@ -7,8 +7,9 @@ import { StoreService } from '../../../core/services/store.service';
 import { ToasterService } from '../../../core/services/toaster.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { Store, Product } from '../../../core/models/index';
-import { RichTextEditorComponent } from '../../../shared/components';
+import { RichTextEditorComponent } from '../../../shared/components/rich-text-editor/rich-text-editor.component';
 import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
+import { FileUploadService, UploadedFileRef } from '../../../core/services/file-upload.service';
 
 @Component({
   selector: 'app-product-form',
@@ -280,19 +281,42 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               </div>
             </div>
 
-            @if (selectedFiles().length > 0) {
+            @if (uploadingFiles()) {
+              <p class="uploading-hint">Uploading files…</p>
+            }
+
+            @if (uploads().length > 0) {
               <ul class="file-list">
-                @for (file of selectedFiles(); track file.name) {
+                @for (u of uploads(); track u.localId) {
                   <li class="file-item">
                     <div class="file-info">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
                       </svg>
-                      <span class="file-name">{{ file.name }}</span>
-                      <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                      <span class="file-name">{{ u.file.name }}</span>
+                      <span class="file-size">{{ formatFileSize(u.file.size) }}</span>
+                      <span class="file-status">
+                        @if (u.status === 'uploading') {
+                          @if (u.progress !== null) { Uploading… {{ u.progress }}% }
+                          @else { Uploading… }
+                        }
+                        @else if (u.status === 'failed') { Upload failed }
+                        @else { Uploaded }
+                      </span>
                     </div>
-                    <button type="button" (click)="removeFile(file)" class="file-remove-btn">
+
+                    @if (u.status === 'uploading') {
+                      <div class="progress-row">
+                        <div class="progress-track">
+                          <div
+                            class="progress-fill"
+                            [style.width.%]="u.progress === null ? 10 : u.progress"
+                          ></div>
+                        </div>
+                      </div>
+                    }
+                    <button type="button" (click)="removeUpload(u.localId)" class="file-remove-btn">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -760,6 +784,13 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       margin: 0;
     }
 
+    .uploading-hint {
+      margin: 0.5rem 0 0;
+      font-size: 0.875rem;
+      color: #111111;
+      opacity: 0.6;
+    }
+
     /* File List */
     .file-list {
       list-style: none;
@@ -775,6 +806,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       background: #F9F4EB;
       border: 2px solid #111111;
       margin-bottom: 0.5rem;
+      gap: 0.75rem;
     }
 
     .file-info {
@@ -784,6 +816,27 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       color: #111111;
       min-width: 0;
       flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .progress-row {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: #ffffff;
+      border: 2px solid #111111;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #111111;
+      width: 0;
+      transition: width 0.15s linear;
     }
 
     .file-name {
@@ -796,6 +849,13 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     }
 
     .file-size {
+      font-size: 0.8125rem;
+      color: #111111;
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+
+    .file-status {
       font-size: 0.8125rem;
       color: #111111;
       opacity: 0.6;
@@ -994,7 +1054,16 @@ export class ProductFormComponent implements OnInit {
   isLoading = signal(false);
   saving = signal(false);
   stores = signal<Store[]>([]);
-  selectedFiles = signal<File[]>([]);
+  uploads = signal<
+    Array<{
+      localId: string;
+      file: File;
+      status: 'uploading' | 'uploaded' | 'failed';
+      progress: number | null;
+      uploaded?: UploadedFileRef;
+    }>
+  >([]);
+  uploadingFiles = signal(false);
   isDragOver = signal(false);
   productId: string | null = null;
   slugManuallyEdited = false;
@@ -1037,6 +1106,10 @@ export class ProductFormComponent implements OnInit {
 
   private toaster = inject(ToasterService);
   private confirmService = inject(ConfirmService);
+  private fileUpload = inject(FileUploadService);
+
+  private canceledUploads = new Set<string>();
+  private uploadControllers = new Map<string, AbortController>();
 
   constructor(
     private productService: ProductService,
@@ -1109,12 +1182,28 @@ export class ProductFormComponent implements OnInit {
   onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files) {
-      this.selectedFiles.set([...this.selectedFiles(), ...Array.from(input.files)]);
+      void this.addAndUploadFiles(Array.from(input.files));
+      input.value = '';
     }
   }
 
-  removeFile(file: File) {
-    this.selectedFiles.set(this.selectedFiles().filter(f => f !== file));
+  removeUpload(localId: string) {
+    const existing = this.uploads().find((u) => u.localId === localId);
+    this.canceledUploads.add(localId);
+
+    // Abort the in-flight upload immediately (if any)
+    const controller = this.uploadControllers.get(localId);
+    if (controller) {
+      controller.abort();
+      this.uploadControllers.delete(localId);
+    }
+
+    this.uploads.set(this.uploads().filter(u => u.localId !== localId));
+
+    const fileId = existing?.uploaded?.fileId;
+    if (fileId) {
+      void this.fileUpload.delete(fileId).catch(() => undefined);
+    }
   }
 
   onTitleChange() {
@@ -1215,7 +1304,69 @@ export class ProductFormComponent implements OnInit {
     event.stopPropagation();
     this.isDragOver.set(false);
     if (event.dataTransfer?.files) {
-      this.selectedFiles.set([...this.selectedFiles(), ...Array.from(event.dataTransfer.files)]);
+      void this.addAndUploadFiles(Array.from(event.dataTransfer.files));
+    }
+  }
+
+  private async addAndUploadFiles(files: File[]) {
+    if (!files.length) return;
+
+    const newItems = files.map((file) => ({
+      localId: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      file,
+      status: 'uploading' as const,
+      progress: 0 as number,
+    }));
+
+    this.uploads.set([...this.uploads(), ...newItems]);
+    this.uploadingFiles.set(true);
+
+    try {
+      for (const item of newItems) {
+        if (this.canceledUploads.has(item.localId)) continue;
+
+        try {
+          const controller = new AbortController();
+          this.uploadControllers.set(item.localId, controller);
+
+          const uploaded = await this.fileUpload.upload(item.file, {
+            signal: controller.signal,
+            onProgress: (p) => {
+              this.uploads.set(
+                this.uploads().map((u) =>
+                  u.localId === item.localId ? { ...u, progress: p } : u,
+                ),
+              );
+            },
+          });
+
+          this.uploadControllers.delete(item.localId);
+
+          if (this.canceledUploads.has(item.localId)) {
+            await this.fileUpload.delete(uploaded.fileId).catch(() => undefined);
+            continue;
+          }
+
+          this.uploads.set(
+            this.uploads().map((u) =>
+              u.localId === item.localId ? { ...u, status: 'uploaded', progress: 100, uploaded } : u,
+            ),
+          );
+        } catch (error) {
+          this.uploadControllers.delete(item.localId);
+          if (this.canceledUploads.has(item.localId)) continue;
+
+          this.uploads.set(
+            this.uploads().map((u) =>
+              u.localId === item.localId ? { ...u, status: 'failed', progress: null } : u,
+            ),
+          );
+
+          this.toaster.handleError(error, `Failed to upload ${item.file.name}`);
+        }
+      }
+    } finally {
+      this.uploadingFiles.set(this.uploads().some((u) => u.status === 'uploading'));
     }
   }
 
@@ -1266,6 +1417,16 @@ export class ProductFormComponent implements OnInit {
   async save() {
     this.saving.set(true);
     try {
+      if (this.uploads().some((u) => u.status === 'uploading')) {
+        this.toaster.error('Please wait for file uploads to finish');
+        return;
+      }
+
+      if (this.uploads().some((u) => u.status === 'failed')) {
+        this.toaster.error('Remove failed uploads and try again');
+        return;
+      }
+
       const data: any = {
         ...this.form,
         slug: this.form.slug.toLowerCase(), // Ensure slug is lowercase
@@ -1290,8 +1451,12 @@ export class ProductFormComponent implements OnInit {
       }
 
       if (product) {
-        for (const file of this.selectedFiles()) {
-          await this.productService.uploadProductFile(product.id, file);
+        const uploadedFileIds = this.uploads()
+          .filter((u) => u.status === 'uploaded' && !!u.uploaded?.fileId)
+          .map((u) => u.uploaded!.fileId);
+
+        for (const fileId of uploadedFileIds) {
+          await this.productService.attachUploadedFile(product.id, fileId);
         }
       }
 
