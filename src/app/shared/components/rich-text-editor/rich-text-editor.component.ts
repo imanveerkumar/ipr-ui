@@ -152,7 +152,20 @@ export class RichTextEditorComponent implements ControlValueAccessor {
       const uploaded = await this.fileUpload.upload(file, {
         onProgress: (p) => this.uploadProgress.set(p),
       });
-      const fileUrl = this.getPublicUrl(uploaded.storageKey);
+
+      // Try to get a public URL from the API (handles private buckets with presigned download URLs)
+      let fileUrl: string;
+      try {
+        const res = await this.apiService.get<{ url: string }>(`/files/${uploaded.fileId}/public-url`);
+        if (res && res.success && res.data && res.data.url) {
+          fileUrl = res.data.url;
+        } else {
+          fileUrl = this.getPublicUrl(uploaded.storageKey);
+        }
+      } catch (err) {
+        // Fallback to storage URL
+        fileUrl = this.getPublicUrl(uploaded.storageKey);
+      }
 
       // Insert into editor based on type
       this.insertMedia(fileUrl, file.name, file.type);
