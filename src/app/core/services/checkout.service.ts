@@ -4,6 +4,7 @@ import { Order, License } from '../models';
 import { environment } from '../../../environments/environment';
 
 declare var Razorpay: any;
+import { PaginationMeta } from './pagination.types';
 
 export interface PaymentInitResponse {
   razorpayOrderId: string;
@@ -91,7 +92,7 @@ export class CheckoutService {
     return response.data || null;
   }
 
-  async openRazorpayCheckout(paymentData: PaymentInitResponse, userEmail: string, userPhone?: string): Promise<boolean> {
+  async openRazorpayCheckout(paymentData: PaymentInitResponse, userEmail: string, userPhone?: string): Promise<{ success: boolean; cancelled?: boolean; error?: string }> {
     return new Promise((resolve) => {
       const options = {
         key: paymentData.razorpayKeyId,
@@ -105,19 +106,32 @@ export class CheckoutService {
           contact: userPhone || '',
         },
         handler: async (response: any) => {
-          const verified = await this.verifyPayment(
-            response.razorpay_order_id,
-            response.razorpay_payment_id,
-            response.razorpay_signature
-          );
-          resolve(verified);
+          try {
+            const verified = await this.verifyPayment(
+              response.razorpay_order_id,
+              response.razorpay_payment_id,
+              response.razorpay_signature
+            );
+            resolve({ success: verified, error: verified ? undefined : 'Payment verification failed' });
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            resolve({ success: false, error: 'Payment verification failed. Please contact support.' });
+          }
         },
         modal: {
-          ondismiss: () => resolve(false),
+          ondismiss: () => resolve({ success: false, cancelled: true }),
         },
       };
 
       const razorpay = new Razorpay(options);
+      
+      // Handle payment failure events
+      razorpay.on('payment.failed', (response: any) => {
+        console.error('Razorpay payment failed:', response.error);
+        const errorMessage = response.error?.description || 'Payment failed. Please try again.';
+        resolve({ success: false, error: errorMessage });
+      });
+      
       razorpay.open();
     });
   }
@@ -185,6 +199,48 @@ export class CheckoutService {
   async getMyLicenses(): Promise<License[]> {
     const response = await this.api.get<License[]>('/licenses');
     return response.data || [];
+  }
+
+  async getMyLicensesPaginated(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: 'ACTIVE' | 'EXHAUSTED';
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<{
+    data: License[];
+    meta: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+    };
+  }> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+    if (params.status) queryParams.append('status', params.status);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/licenses?${queryString}` : '/licenses';
+    
+    const response = await this.api.get<{
+      data: License[];
+      meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+      };
+    }>(url);
+    
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
   }
 
   async getGuestOrder(downloadToken: string): Promise<Order | null> {

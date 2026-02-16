@@ -3,14 +3,65 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { StoreService } from '../../../core/services/store.service';
+import { SubdomainService } from '../../../core/services/subdomain.service';
+import { ToasterService } from '../../../core/services/toaster.service';
+import { ConfirmService } from '../../../core/services/confirm.service';
 import { Store } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components';
+import { ImageUploadComponent } from '../../../shared/components/image-upload/image-upload.component';
+import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-store-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RichTextEditorComponent, RouterLink],
+  imports: [CommonModule, FormsModule, RichTextEditorComponent, ImageUploadComponent, RouterLink, SkeletonComponent],
   template: `
+    <!-- State Banner for Archived/Deleted Stores -->
+    @if (isEditing() && !isLoading()) {
+      @if (storeState().isDeleted) {
+        <section class="bg-[#FA4B28] border-b-2 border-black">
+          <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                <div>
+                  <p class="font-bold text-white">This store is in the Bin</p>
+                  <p class="text-sm text-white/80">It cannot be edited or accessed by customers. Restore it to make changes.</p>
+                </div>
+              </div>
+              <button type="button" (click)="restoreStore()" 
+                class="px-4 py-2 bg-white text-[#FA4B28] font-bold border-2 border-white hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                Restore Store
+              </button>
+            </div>
+          </div>
+        </section>
+      } @else if (storeState().isArchived) {
+        <section class="bg-[#FFC60B] border-b-2 border-black">
+          <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
+                </svg>
+                <div>
+                  <p class="font-bold text-[#111111]">This store is archived</p>
+                  <p class="text-sm text-[#111111]/80">It cannot be edited or accessed by customers. Unarchive to make changes.</p>
+                </div>
+              </div>
+              <button type="button" (click)="unarchiveStore()" 
+                class="px-4 py-2 bg-white text-[#111111] font-bold border-2 border-black hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                Unarchive Store
+              </button>
+            </div>
+          </div>
+        </section>
+      }
+    }
+
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="container">
@@ -26,7 +77,13 @@ import { RichTextEditorComponent } from '../../../shared/components';
             <h1 class="page-title">{{ isEditing() ? 'Edit Store' : 'Create Store' }}</h1>
             <p class="page-subtitle">{{ isEditing() ? 'Update your store details and settings' : 'Set up your new online storefront' }}</p>
           </div>
-          @if (isEditing() && store()) {
+          @if (isLoading()) {
+            <div class="hero-actions">
+              <app-skeleton variant="text-md" width="80px" height="32px"></app-skeleton>
+              <app-skeleton variant="text-md" width="100px" height="40px"></app-skeleton>
+              <app-skeleton variant="text-md" width="120px" height="40px"></app-skeleton>
+            </div>
+          } @else if (isEditing() && store()) {
             <div class="hero-actions">
               <span class="status-badge" [class.status-published]="store()?.status === 'PUBLISHED'" [class.status-draft]="store()?.status !== 'PUBLISHED'">{{ store()?.status }}</span>
               @if (store()?.status === 'PUBLISHED') {
@@ -70,8 +127,42 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
         }
 
+        <!-- Loading Skeleton -->
+        <div *ngIf="isLoading()" class="form-card">
+          <div class="mb-8">
+            <app-skeleton variant="text-lg" width="200px" class="mb-6"></app-skeleton>
+            
+            <div class="space-y-6">
+              <div>
+                <app-skeleton variant="text-sm" width="100px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="48px" class="w-full rounded-lg"></app-skeleton>
+                <app-skeleton variant="text-sm" width="150px" class="mt-1"></app-skeleton>
+              </div>
+              
+              <div>
+                <app-skeleton variant="text-sm" width="120px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="text-sm" width="180px" class="mb-2"></app-skeleton>
+                <div class="flex gap-2">
+                  <app-skeleton variant="full" height="48px" class="flex-1 rounded-lg"></app-skeleton>
+                  <app-skeleton variant="full" height="48px" width="120px" class="bg-transparent"></app-skeleton>
+                </div>
+              </div>
+
+              <div>
+                <app-skeleton variant="text-sm" width="80px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="80px" class="w-full rounded-lg"></app-skeleton>
+              </div>
+
+              <div>
+                <app-skeleton variant="text-sm" width="140px" class="mb-2"></app-skeleton>
+                <app-skeleton variant="full" height="200px" class="w-full rounded-lg"></app-skeleton>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Form Card -->
-        <form (ngSubmit)="save()" class="form-card">
+        <form *ngIf="!isLoading()" (ngSubmit)="save()" class="form-card" [class.opacity-60]="!canEdit()" [class.pointer-events-none]="!canEdit()">
           <h2 class="form-card-title">Store Details</h2>
 
           <!-- Store Name -->
@@ -83,7 +174,16 @@ import { RichTextEditorComponent } from '../../../shared/components';
                 <span class="tooltip-content">Choose a memorable name for your store. This will be displayed to customers.</span>
               </span>
             </label>
-            <input type="text" id="name" [(ngModel)]="form.name" name="name" required class="form-input" placeholder="My Awesome Store">
+            <input type="text" id="name" [(ngModel)]="form.name" name="name" required class="form-input" 
+              [class.input-error]="nameError() && formTouched().name"
+              placeholder="My Awesome Store" 
+              (blur)="validateName()" 
+              (input)="validateName()"
+              [attr.maxlength]="MAX_NAME_LENGTH">
+            @if (nameError() && formTouched().name) {
+              <p class="form-error">{{ nameError() }}</p>
+            }
+            <p class="form-hint">{{ form.name.length }}/{{ MAX_NAME_LENGTH }} characters</p>
           </div>
 
           <!-- Slug -->
@@ -97,7 +197,7 @@ import { RichTextEditorComponent } from '../../../shared/components';
             </label>
             <div class="slug-input-wrapper">
               <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input slug-input" placeholder="my-store" pattern="[a-z0-9-]+" (input)="validateSlug()">
-              <span class="slug-suffix">.yoursite.com</span>
+              <span class="slug-suffix">.{{ baseDomain() }}</span>
             </div>
             <p class="form-hint">Only lowercase letters, numbers, and hyphens allowed.</p>
             @if (slugError()) {
@@ -109,7 +209,7 @@ import { RichTextEditorComponent } from '../../../shared/components';
           @if (form.slug) {
             <div class="url-preview-card">
               <div class="url-preview-label">Live Preview URL</div>
-              <p class="url-preview-value">https://{{ form.slug }}.yoursite.com</p>
+              <p class="url-preview-value">https://{{ form.slug }}.{{ baseDomain() }}</p>
             </div>
           }
 
@@ -122,7 +222,46 @@ import { RichTextEditorComponent } from '../../../shared/components';
                 <span class="tooltip-content">A short phrase that describes your store. Displayed below the store name.</span>
               </span>
             </label>
-            <input type="text" id="tagline" [(ngModel)]="form.tagline" name="tagline" class="form-input" placeholder="A short catchy phrase">
+            <input type="text" id="tagline" [(ngModel)]="form.tagline" name="tagline" class="form-input" 
+              [class.input-error]="taglineError() && formTouched().tagline"
+              placeholder="A short catchy phrase"
+              (blur)="validateTagline()"
+              (input)="validateTagline()"
+              [attr.maxlength]="MAX_TAGLINE_LENGTH">
+            @if (taglineError() && formTouched().tagline) {
+              <p class="form-error">{{ taglineError() }}</p>
+            }
+            <p class="form-hint">{{ form.tagline.length }}/{{ MAX_TAGLINE_LENGTH }} characters (optional)</p>
+          </div>
+
+          <!-- Store Branding -->
+          <div class="form-section">
+            <h3 class="form-section-title">Store Branding</h3>
+            <p class="form-section-desc">Customize how your store looks to customers on the storefront and explore page.</p>
+
+            <!-- Banner Image -->
+            <app-image-upload
+              imageType="banner"
+              label="Banner Image"
+              hint="Displayed at the top of your storefront"
+              [imageUrl]="form.bannerUrl"
+              placeholderText="Upload store banner"
+              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 1920px wide"
+              (imageUploaded)="onBannerUploaded($event)"
+              (imageRemoved)="onBannerRemoved()"
+            ></app-image-upload>
+
+            <!-- Logo -->
+            <app-image-upload
+              imageType="logo"
+              label="Store Logo"
+              hint="Shown on cards and navigation"
+              [imageUrl]="form.logoUrl"
+              placeholderText="Upload logo"
+              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 400px"
+              (imageUploaded)="onLogoUploaded($event)"
+              (imageRemoved)="onLogoRemoved()"
+            ></app-image-upload>
           </div>
 
           <!-- Description -->
@@ -138,33 +277,73 @@ import { RichTextEditorComponent } from '../../../shared/components';
           </div>
 
           <!-- Form Actions -->
-          <div class="form-actions">
+          <div class="form-actions" [class.hidden]="!canEdit()">
             <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
-            <button type="submit" [disabled]="saving() || !!slugError()" class="btn btn-cta">
-              @if (saving()) {
-                Saving...
-              } @else {
-                {{ isEditing() ? 'Update Store' : 'Create Store' }}
-              }
-            </button>
+            @if (isEditing()) {
+              <button type="submit" [disabled]="saving() || !isFormValid()" class="btn btn-cta">
+                @if (saving()) { Saving... } @else { Update Store }
+              </button>
+            } @else {
+              <button type="button" (click)="save(false)" [disabled]="saving() || !isFormValid()" class="btn btn-cta">
+                @if (saving()) { Saving... } @else { Create and Draft }
+              </button>
+              <button type="button" (click)="save(true)" [disabled]="publishing() || !isFormValid()" class="btn btn-primary">
+                @if (publishing()) { Publishing... } @else { Create and Publish }
+              </button>
+            }
           </div>
         </form>
 
-        <!-- Danger Zone -->
-        @if (isEditing()) {
-          <div class="danger-zone">
-            <div class="danger-zone-header">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-              <h3 class="danger-zone-title">Danger Zone</h3>
+        <!-- Danger Zone Skeleton -->
+        @if (isEditing() && canEdit() && isLoading()) {
+          <div class="danger-zone-card">
+            <h2 class="danger-zone-title"><app-skeleton variant="text-lg" width="160px"></app-skeleton></h2>
+            <div class="danger-zone-content">
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <app-skeleton variant="text-sm" width="200px" class="mb-2"></app-skeleton>
+                  <app-skeleton variant="full" height="48px" class="w-1/3 rounded-lg"></app-skeleton>
+                </div>
+                <app-skeleton variant="full" height="40px" width="140px" class="rounded-lg"></app-skeleton>
+              </div>
+
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <app-skeleton variant="text-sm" width="200px" class="mb-2"></app-skeleton>
+                  <app-skeleton variant="full" height="48px" class="w-1/3 rounded-lg"></app-skeleton>
+                </div>
+                <app-skeleton variant="full" height="40px" width="140px" class="rounded-lg"></app-skeleton>
+              </div>
             </div>
-            <p class="danger-zone-text">Deleting your store will permanently remove all products and data. This action cannot be undone.</p>
-            <button (click)="deleteStore()" [disabled]="deleting()" class="btn btn-danger">
-              @if (deleting()) {
-                Deleting...
-              } @else {
-                Delete Store
-              }
-            </button>
+          </div>
+        }
+        <!-- Danger Zone -->
+        @if (isEditing() && canEdit() && !isLoading()) {
+          <div class="danger-zone-card">
+            <h2 class="danger-zone-title">Danger Zone</h2>
+            <div class="danger-zone-content">
+              <!-- Archive Section -->
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <h3 class="danger-zone-item-heading">Archive this store</h3>
+                  <p class="danger-zone-item-desc">Hide this store and all its products from customers. You can unarchive it later.</p>
+                </div>
+                <button type="button" (click)="archiveStore()" class="btn btn-secondary danger-btn">
+                  Archive
+                </button>
+              </div>
+              
+              <!-- Delete Section -->
+              <div class="danger-zone-item">
+                <div class="danger-zone-item-info">
+                  <h3 class="danger-zone-item-heading">Delete this store</h3>
+                  <p class="danger-zone-item-desc">Move to Bin. The store and its products can be restored within 30 days.</p>
+                </div>
+                <button type="button" (click)="softDeleteStore()" [disabled]="deleting()" class="btn btn-danger danger-btn">
+                  @if (deleting()) { Deleting... } @else { Delete }
+                </button>
+              </div>
+            </div>
           </div>
         }
       </div>
@@ -568,6 +747,15 @@ import { RichTextEditorComponent } from '../../../shared/components';
       opacity: 0.4;
     }
 
+    .form-input.input-error {
+      border-color: #FA4B28;
+      background-color: #FFF5F5;
+    }
+
+    .form-input.input-error:focus {
+      box-shadow: 0 0 0 3px rgba(250, 75, 40, 0.2);
+    }
+
     .form-hint {
       font-size: 0.8125rem;
       color: #111111;
@@ -580,6 +768,28 @@ import { RichTextEditorComponent } from '../../../shared/components';
       color: #FA4B28;
       font-weight: 600;
       margin-top: 0.5rem;
+    }
+
+    /* Form Section */
+    .form-section {
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #111111;
+    }
+
+    .form-section-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #111111;
+      margin: 0 0 0.25rem;
+    }
+
+    .form-section-desc {
+      font-size: 0.8125rem;
+      color: #111111;
+      opacity: 0.6;
+      margin: 0 0 1.25rem;
     }
 
     /* Slug Input */
@@ -683,74 +893,321 @@ import { RichTextEditorComponent } from '../../../shared/components';
       margin: 0 0 1.25rem;
       line-height: 1.5;
     }
+
+    /* Danger Zone Card */
+    .danger-zone-card {
+      background: #ffffff;
+      border: 2px solid #111111;
+      box-shadow: 4px 4px 0px 0px #111111;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .danger-zone-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #111111;
+      margin: 0;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 2px solid #111111;
+    }
+
+    .danger-zone-content {
+      padding: 0;
+    }
+
+    .danger-zone-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .danger-zone-item:last-child {
+      border-bottom: none;
+    }
+
+    @media (min-width: 640px) {
+      .danger-zone-item {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .danger-zone-item-info {
+      flex: 1;
+    }
+
+    .danger-zone-item-heading {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: #111111;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .danger-zone-item-desc {
+      font-size: 0.875rem;
+      color: #666666;
+      margin: 0;
+    }
+
+    .btn-danger {
+      background: #FA4B28;
+      color: white;
+      border: 2px solid #FA4B28;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 2px 2px 0px 0px #111111;
+    }
+
+    .btn-danger:hover {
+      background: #e53e1e;
+      border-color: #e53e1e;
+    }
+
+    .btn-danger:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-danger-outline {
+      background: white;
+      color: #FA4B28;
+      border: 2px solid #FA4B28;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-danger-outline:hover {
+      background: #FEF2F2;
+    }
+
+    /* Danger button shared size */
+    .danger-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 140px;
+      padding: 0.5rem 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .btn-danger, .btn-danger-outline, .danger-btn {
+        width: 100%;
+      }
+    }
   `]
 })
 export class StoreFormComponent implements OnInit {
   storeService = inject(StoreService);
+  subdomainService = inject(SubdomainService);
+  readonly baseDomain = this.subdomainService.baseDomain;
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toaster = inject(ToasterService);
+  private confirmService = inject(ConfirmService);
 
   isEditing = signal(false);
+  isLoading = signal(false);
   saving = signal(false);
   publishing = signal(false);
   deleting = signal(false);
   copied = signal(false);
   slugError = signal<string | null>(null);
+  nameError = signal<string | null>(null);
+  taglineError = signal<string | null>(null);
   store = signal<Store | null>(null);
   storeId: string | null = null;
   activeTooltip = signal<string | null>(null);
+  formTouched = signal({ name: false, slug: false, tagline: false });
+  storeState = signal<{ isOwner: boolean; isDeleted: boolean; isArchived: boolean; isPublished: boolean; canEdit: boolean; canPurchase: boolean }>({
+    isOwner: true,
+    isDeleted: false,
+    isArchived: false,
+    isPublished: false,
+    canEdit: true,
+    canPurchase: false
+  });
+
+  // Computed property for edit access
+  canEdit = () => this.storeState().canEdit;
 
   form = {
     name: '',
     slug: '',
     description: '',
-    tagline: ''
+    tagline: '',
+    logoUrl: '' as string | undefined,
+    bannerUrl: '' as string | undefined,
   };
+
+  // Validation constants
+  readonly MIN_NAME_LENGTH = 2;
+  readonly MAX_NAME_LENGTH = 50;
+  readonly MIN_SLUG_LENGTH = 3;
+  readonly MAX_SLUG_LENGTH = 30;
+  readonly MAX_TAGLINE_LENGTH = 100;
+
+  validateName() {
+    this.formTouched.update(t => ({ ...t, name: true }));
+    const name = this.form.name.trim();
+    
+    if (!name) {
+      this.nameError.set('Store name is required');
+    } else if (name.length < this.MIN_NAME_LENGTH) {
+      this.nameError.set(`Store name must be at least ${this.MIN_NAME_LENGTH} characters`);
+    } else if (name.length > this.MAX_NAME_LENGTH) {
+      this.nameError.set(`Store name must be less than ${this.MAX_NAME_LENGTH} characters`);
+    } else {
+      this.nameError.set(null);
+    }
+  }
+
+  onBannerUploaded(imageUrl: string) {
+    this.form.bannerUrl = imageUrl;
+  }
+
+  onBannerRemoved() {
+    this.form.bannerUrl = undefined;
+    this.toaster.info({
+      title: 'Removal Staged',
+      message: 'Banner removal will apply when you update the store.',
+    });
+  }
+
+  onLogoUploaded(imageUrl: string) {
+    this.form.logoUrl = imageUrl;
+  }
+
+  onLogoRemoved() {
+    this.form.logoUrl = undefined;
+    this.toaster.info({
+      title: 'Removal Staged',
+      message: 'Logo removal will apply when you update the store.',
+    });
+  }
+
+  validateTagline() {
+    this.formTouched.update(t => ({ ...t, tagline: true }));
+    const tagline = this.form.tagline.trim();
+    
+    if (tagline.length > this.MAX_TAGLINE_LENGTH) {
+      this.taglineError.set(`Tagline must be less than ${this.MAX_TAGLINE_LENGTH} characters`);
+    } else {
+      this.taglineError.set(null);
+    }
+  }
+
+  isFormValid(): boolean {
+    return !this.nameError() && !this.slugError() && !this.taglineError() 
+      && this.form.name.trim().length >= this.MIN_NAME_LENGTH 
+      && this.form.slug.trim().length >= this.MIN_SLUG_LENGTH;
+  }
 
   async ngOnInit() {
     this.storeId = this.route.snapshot.paramMap.get('id');
     if (this.storeId && this.storeId !== 'new') {
       this.isEditing.set(true);
-      const store = await this.storeService.getStore(this.storeId);
-      this.store.set(store);
-      this.form = {
-        name: store.name,
-        slug: store.slug,
-        description: store.description || '',
-        tagline: store.tagline || ''
-      };
+      this.isLoading.set(true);
+      try {
+        // Fetch store as owner (includes all states) and derive state client-side
+        const store = await this.storeService.getStoreByIdForOwner(this.storeId);
+        if (store) {
+          this.store.set(store);
+          this.form = {
+            name: store.name,
+            slug: store.slug,
+            description: store.description || '',
+            tagline: store.tagline || '',
+            logoUrl: store.logoUrl || undefined,
+            bannerUrl: store.bannerUrl || undefined,
+          };
+
+          const isDeleted = !!store.deletedAt;
+          const isArchived = !!store.isArchived;
+          const isPublished = store.status === 'PUBLISHED';
+
+          this.storeState.set({
+            isOwner: true,
+            isDeleted,
+            isArchived,
+            isPublished,
+            canEdit: !isDeleted && !isArchived,
+            canPurchase: isPublished && !isDeleted && !isArchived,
+          });
+        }
+      } catch (error) {
+        this.toaster.error('Error loading store details');
+        this.router.navigate(['/dashboard/stores']);
+      } finally {
+        this.isLoading.set(false);
+      }
     }
   }
 
   validateSlug() {
+    this.formTouched.update(t => ({ ...t, slug: true }));
     const slug = this.form.slug.toLowerCase();
-    if (!this.storeService.isValidSlug(slug)) {
-      if (!/^[a-z0-9-]*$/.test(slug)) {
-        this.slugError.set('Only lowercase letters, numbers, and hyphens allowed');
-      } else {
-        this.slugError.set('This subdomain is reserved');
-      }
+    
+    if (!slug) {
+      this.slugError.set('Store URL is required');
+    } else if (slug.length < this.MIN_SLUG_LENGTH) {
+      this.slugError.set(`Store URL must be at least ${this.MIN_SLUG_LENGTH} characters`);
+    } else if (slug.length > this.MAX_SLUG_LENGTH) {
+      this.slugError.set(`Store URL must be less than ${this.MAX_SLUG_LENGTH} characters`);
+    } else if (!/^[a-z0-9-]*$/.test(slug)) {
+      this.slugError.set('Only lowercase letters, numbers, and hyphens allowed');
+    } else if (slug.startsWith('-') || slug.endsWith('-')) {
+      this.slugError.set('URL cannot start or end with a hyphen');
+    } else if (slug.includes('--')) {
+      this.slugError.set('URL cannot contain consecutive hyphens');
+    } else if (!this.storeService.isValidSlug(slug)) {
+      this.slugError.set('This subdomain is reserved');
     } else {
       this.slugError.set(null);
     }
     this.form.slug = slug.replace(/[^a-z0-9-]/g, '');
   }
 
-  async save() {
-    this.saving.set(true);
+  async save(publish: boolean = false) {
+    // If creating+publishing, use publishing flag UI; otherwise use saving
+    if (!this.isEditing() && publish) this.publishing.set(true);
+    else this.saving.set(true);
+
     try {
+      const formData = {
+        ...this.form,
+        logoUrl: this.form.logoUrl || undefined,
+        bannerUrl: this.form.bannerUrl || undefined,
+      };
+
       if (this.isEditing() && this.storeId) {
-        const updated = await this.storeService.updateStore(this.storeId, this.form);
-        if (updated) this.store.set(updated);
+        const updated = await this.storeService.updateStore(this.storeId, formData);
+        if (updated) {
+          this.store.set(updated);
+          this.toaster.success({
+            title: 'Store Updated',
+            message: 'Your store has been updated successfully.',
+          });
+        }
       } else {
-        await this.storeService.createStore(this.form);
+        await this.storeService.createStore({ ...formData, publish });
+        this.toaster.success({
+          title: publish ? 'Store Published' : 'Store Created',
+          message: publish ? 'Your store is now live and visible to customers.' : 'Your new store has been created successfully.',
+        });
         this.router.navigate(['/dashboard/stores']);
       }
     } catch (error) {
       console.error('Failed to save store:', error);
-      alert('Failed to save store. Please try again.');
+      this.toaster.handleError(error, 'Failed to save store. Please try again.');
     } finally {
-      this.saving.set(false);
+      if (!this.isEditing() && publish) this.publishing.set(false);
+      else this.saving.set(false);
     }
   }
 
@@ -759,10 +1216,16 @@ export class StoreFormComponent implements OnInit {
     this.publishing.set(true);
     try {
       const updated = await this.storeService.publishStore(this.storeId);
-      if (updated) this.store.set(updated);
+      if (updated) {
+        this.store.set(updated);
+        this.toaster.success({
+          title: 'Store Published',
+          message: 'Your store is now live and visible to customers.',
+        });
+      }
     } catch (error) {
       console.error('Failed to publish store:', error);
-      alert('Failed to publish store. Please try again.');
+      this.toaster.handleError(error, 'Failed to publish store. Please try again.');
     } finally {
       this.publishing.set(false);
     }
@@ -773,10 +1236,16 @@ export class StoreFormComponent implements OnInit {
     this.publishing.set(true);
     try {
       const updated = await this.storeService.unpublishStore(this.storeId);
-      if (updated) this.store.set(updated);
+      if (updated) {
+        this.store.set(updated);
+        this.toaster.info({
+          title: 'Store Unpublished',
+          message: 'Your store is now hidden from customers.',
+        });
+      }
     } catch (error) {
       console.error('Failed to unpublish store:', error);
-      alert('Failed to unpublish store. Please try again.');
+      this.toaster.handleError(error, 'Failed to unpublish store. Please try again.');
     } finally {
       this.publishing.set(false);
     }
@@ -788,10 +1257,14 @@ export class StoreFormComponent implements OnInit {
     this.deleting.set(true);
     try {
       await this.storeService.deleteStore(this.storeId);
+      this.toaster.success({
+        title: 'Store Deleted',
+        message: 'Your store has been permanently deleted.',
+      });
       this.router.navigate(['/dashboard/stores']);
     } catch (error) {
       console.error('Failed to delete store:', error);
-      alert('Failed to delete store. Please try again.');
+      this.toaster.handleError(error, 'Failed to delete store. Please try again.');
     } finally {
       this.deleting.set(false);
     }
@@ -834,5 +1307,96 @@ export class StoreFormComponent implements OnInit {
 
   cancel() {
     this.router.navigate(['/dashboard/stores']);
+  }
+
+  async archiveStore() {
+    if (!this.storeId) return;
+    
+    const confirmed = await this.confirmService.confirm({
+      title: 'Archive Store',
+      message: `Are you sure you want to archive "${this.form.name}"? All products in this store will also be hidden from customers.`,
+      confirmText: 'Archive',
+      cancelText: 'Cancel',
+      accent: 'yellow',
+      waitForCompletion: true,
+    });
+
+    if (!confirmed) return;
+
+    try {
+      await this.storeService.archiveStore(this.storeId);
+      this.toaster.success({
+        title: 'Store Archived',
+        message: 'The store has been archived successfully.'
+      });
+      this.router.navigate(['/dashboard/stores'], { queryParams: { tab: 'archived' } });
+      this.confirmService.finish(true);
+    } catch (error) {
+      this.toaster.handleError(error, 'Failed to archive store');
+      this.confirmService.setPending(false);
+    }
+  }
+
+  async unarchiveStore() {
+    if (!this.storeId) return;
+
+    try {
+      await this.storeService.unarchiveStore(this.storeId);
+      this.toaster.success({
+        title: 'Store Unarchived',
+        message: 'The store has been restored to active status.'
+      });
+      // Reload to get fresh state
+      window.location.reload();
+    } catch (error) {
+      this.toaster.handleError(error, 'Failed to unarchive store');
+    }
+  }
+
+  async softDeleteStore() {
+    if (!this.storeId) return;
+    
+    const confirmed = await this.confirmService.confirm({
+      title: 'Delete Store',
+      message: `Are you sure you want to delete "${this.form.name}"? It will be moved to the Bin and can be restored within 30 days.`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      accent: 'danger',
+      waitForCompletion: true,
+    });
+
+    if (!confirmed) return;
+
+    this.deleting.set(true);
+    try {
+      await this.storeService.deleteStore(this.storeId);
+      this.toaster.success({
+        title: 'Store Deleted',
+        message: 'The store has been moved to the Bin.'
+      });
+      this.router.navigate(['/dashboard/stores'], { queryParams: { tab: 'deleted' } });
+      this.confirmService.finish(true);
+    } catch (error) {
+      this.toaster.handleError(error, 'Failed to delete store');
+      this.confirmService.setPending(false);
+    } finally {
+      this.deleting.set(false);
+    }
+  }
+
+  async restoreStore() {
+    if (!this.storeId) return;
+
+    try {
+      await this.storeService.restoreStore(this.storeId);
+      this.toaster.success({
+        title: 'Store Restored',
+        message: 'The store has been restored from the Bin.'
+      });
+      // Reload to get fresh state
+      window.location.reload();
+    } catch (error) {
+      this.toaster.handleError(error, 'Failed to restore store');
+    }
   }
 }

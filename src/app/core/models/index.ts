@@ -25,12 +25,21 @@ export interface Store {
   logoUrl?: string;
   bannerUrl?: string;
   status: 'DRAFT' | 'PUBLISHED' | 'SUSPENDED';
+  isArchived?: boolean;
+  deletedAt?: string | null;
   createdAt: string;
   updatedAt: string;
   user?: User;
   products?: Product[];
   _count?: {
     products: number;
+  };
+  _state?: {
+    isOwner: boolean;
+    isDeleted: boolean;
+    isArchived: boolean;
+    isPublished: boolean;
+    canEdit: boolean;
   };
 }
 
@@ -45,10 +54,21 @@ export interface Product {
   currency: string;
   coverImageUrl?: string;
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  isArchived?: boolean;
+  deletedAt?: string | null;
   createdAt: string;
   updatedAt: string;
   store?: Store;
   files?: ProductFile[];
+  _state?: {
+    isOwner: boolean;
+    isDeleted: boolean;
+    isArchived: boolean;
+    isPublished: boolean;
+    storeIsAccessible: boolean;
+    canEdit: boolean;
+    canPurchase: boolean;
+  };
 }
 
 export interface ProductFile {
@@ -62,7 +82,6 @@ export interface FileItem {
   id: string;
   userId: string;
   filename: string;
-  storageKey: string;
   mimeType: string;
   size: number;
   status: 'PENDING' | 'UPLOADED' | 'FAILED' | 'DELETED';

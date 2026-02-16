@@ -1,8 +1,9 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CheckoutService } from '../../core/services/checkout.service';
 import { DownloadService } from '../../core/services/download.service';
+import { ToasterService } from '../../core/services/toaster.service';
 
 interface GuestOrder {
   id: string;
@@ -193,6 +194,7 @@ export class GuestDownloadsComponent implements OnInit {
   downloading = signal<string | null>(null);
 
   private downloadToken: string = '';
+  private toaster = inject(ToasterService);
 
   constructor(
     private route: ActivatedRoute,
@@ -236,7 +238,7 @@ export class GuestDownloadsComponent implements OnInit {
       await this.downloadService.downloadGuestFile(this.downloadToken, productId, fileId);
     } catch (error) {
       console.error('Download failed:', error);
-      alert('Download failed. Please try again.');
+      this.toaster.handleError(error, 'Download failed. Please try again.');
     } finally {
       this.downloading.set(null);
     }

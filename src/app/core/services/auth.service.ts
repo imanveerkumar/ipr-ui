@@ -1,15 +1,18 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clerk } from '@clerk/clerk-js';
 import { environment } from '../../../environments/environment';
 import { User } from '../models';
 import { ApiService } from './api.service';
+import { GlobalLoaderService } from './global-loader.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private clerk: Clerk | null = null;
+  private postAuthRedirectUrl: string | null = null;
+  private readonly postAuthStorageKey = 'post_auth_redirect_url';
   
   // Signals for reactive state
   private _isLoaded = signal(false);
@@ -28,12 +31,16 @@ export class AuthService {
   });
   readonly isAdmin = computed(() => this._user()?.role === 'ADMIN');
 
+  private globalLoader = inject(GlobalLoaderService);
+
   constructor(private apiService: ApiService, private router: Router) {}
 
   init() {
     this.initClerk();
     // Set token getter for API service
     this.apiService.setTokenGetter(() => this.getToken());
+    // Set sign out handler for automatic logout on auth failures
+    this.apiService.setSignOutHandler(() => this.signOut());
   }
 
   private async initClerk() {
@@ -52,18 +59,22 @@ export class AuthService {
         },
       });
       
-      this._isLoaded.set(true);
+      // Removed early this._isLoaded.set(true); to wait for user data
       
       if (this.clerk.user) {
+        // User is already signed in on page load
         this._clerkUser.set(this.clerk.user);
         this._isSignedIn.set(true);
         await this.fetchCurrentUser();
+        this.handlePostAuthRedirect();
       }
+
+      this._isLoaded.set(true); // Now auth is fully loaded including user data
 
       // Listen for auth changes - only fetch user on actual auth state changes
       let previousUserId = this.clerk.user?.id;
       
-      this.clerk.addListener((event) => {
+      this.clerk.addListener(async (event) => {
         const currentUserId = event.user?.id;
         
         // Only update if user actually changed (sign in/out)
@@ -71,9 +82,18 @@ export class AuthService {
           previousUserId = currentUserId;
           
           if (event.user) {
+            // User just signed in - show loader
+            this.globalLoader.show('Signing in...');
+            
             this._clerkUser.set(event.user);
             this._isSignedIn.set(true);
-            this.fetchCurrentUser();
+            await this.fetchCurrentUser();
+            this.handlePostAuthRedirect();
+            
+            // Hide loader after a brief delay
+            setTimeout(() => {
+              this.globalLoader.hide();
+            }, 500);
           } else {
             this._clerkUser.set(null);
             this._isSignedIn.set(false);
@@ -96,6 +116,7 @@ export class AuthService {
 
   async getToken(): Promise<string | null> {
     if (!this.clerk?.session) {
+      console.warn('⚠️ No Clerk session available');
       return null;
     }
     try {
@@ -103,7 +124,15 @@ export class AuthService {
       const token = await this.clerk.session.getToken();
       return token;
     } catch (error) {
-      console.error('Failed to get token:', error);
+      console.error('❌ Failed to get token - session may have expired:', error);
+      // Session token retrieval failed - likely expired
+      // The session listener should handle this, but we can also check
+      if (!this.clerk?.user) {
+        console.warn('🚪 User session expired - clearing state');
+        this._clerkUser.set(null);
+        this._isSignedIn.set(false);
+        this._user.set(null);
+      }
       return null;
     }
   }
@@ -114,6 +143,11 @@ export class AuthService {
     await this.clerk.openSignIn();
   }
 
+  async openCreatorSignup() {
+    this.setPostAuthRedirect('/become-creator');
+    await this.signUp();
+  }
+
   async signUp() {
     if (!this.clerk) return;
     // Open sign-up modal - custom router prevents redirects
@@ -122,15 +156,26 @@ export class AuthService {
 
   async signOut() {
     if (!this.clerk) return;
-    await this.clerk.signOut();
-    this._user.set(null);
-    this._isSignedIn.set(false);
-
-    // Navigate to home to ensure protected routes are no longer accessible
+    
+    // Show loader during sign out
+    this.globalLoader.show('Signing out...');
+    
     try {
-      this.router.navigateByUrl('/', { replaceUrl: true });
-    } catch (err) {
-      // ignore navigation errors
+      await this.clerk.signOut();
+      this._user.set(null);
+      this._isSignedIn.set(false);
+
+      // Navigate to home to ensure protected routes are no longer accessible
+      try {
+        await this.router.navigateByUrl('/', { replaceUrl: true });
+      } catch (err) {
+        // ignore navigation errors
+      }
+    } finally {
+      // Hide loader after a brief delay to allow page refresh
+      setTimeout(() => {
+        this.globalLoader.hide();
+      }, 500);
     }
   }
 
@@ -166,5 +211,37 @@ export class AuthService {
 
   async refreshUser() {
     await this.fetchCurrentUser();
+  }
+
+  private setPostAuthRedirect(url: string) {
+    this.postAuthRedirectUrl = url;
+    try {
+      sessionStorage.setItem(this.postAuthStorageKey, url);
+    } catch (err) {
+      // ignore storage failures
+    }
+  }
+
+  private consumePostAuthRedirect(): string | null {
+    const url = this.postAuthRedirectUrl || sessionStorage.getItem(this.postAuthStorageKey);
+    if (url) {
+      this.postAuthRedirectUrl = null;
+      try {
+        sessionStorage.removeItem(this.postAuthStorageKey);
+      } catch (err) {
+        // ignore storage failures
+      }
+    }
+    return url;
+  }
+
+  private handlePostAuthRedirect() {
+    const url = this.consumePostAuthRedirect();
+    if (!url) return;
+    try {
+      this.router.navigateByUrl(url, { replaceUrl: true });
+    } catch (err) {
+      // ignore navigation errors
+    }
   }
 }

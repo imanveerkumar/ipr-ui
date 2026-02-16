@@ -26,28 +26,72 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
         <div class="bg-[#F9F4EB] border-b-2 border-black">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
-            <div class="text-center">
-              <!-- Badge -->
-              <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-[#2B57D6] border-2 border-black mb-4 transform -rotate-1">
-                <span class="text-xs font-bold text-white uppercase tracking-wider">Discover</span>
-              </div>
-              
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
+            <div class="text-left">
               <!-- Main Heading -->
-              <h1 class="font-dm-sans text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-2 md:mb-3 leading-tight">
-                Explore Amazing Creations
+              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-0 md:mb-1 leading-tight">
+                Explore
               </h1>
-              
-              <!-- Subtext -->
-              <p class="text-sm md:text-lg text-[#111111]/70 max-w-xl mx-auto mb-4 md:mb-6 font-medium">
-                Discover products, stores, and creators from our community
-              </p>
+
+              <!-- Stats (below heading) -->
+              <div class="mt-4 md:mt-6 grid grid-cols-3 gap-2 md:flex md:justify-start md:gap-8 max-w-2xl mx-auto md:mx-0">
+                <!-- Products stat -->
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    @if (stats()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalProducts }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
+                  </div>
+                </div>
+
+                <!-- Stores stat -->
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    @if (stats()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalStores }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Stores</div>
+                  </div>
+                </div>
+
+                <!-- Creators stat -->
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    @if (stats()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalCreators }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Creators</div>
+                  </div>
+                </div>
+              </div>
 
               <!-- Search Bar -->
-              <div class="max-w-2xl mx-auto">
+              <div class="mt-4 max-w-xl mx-auto md:mx-0 mb-8 md:mb-12">
                 <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg class="w-5 h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                   </div>
@@ -57,51 +101,14 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     (input)="onSearchInput()"
                     (keyup.enter)="performSearch()"
                     placeholder="Search products, stores, creators..."
-                    class="w-full pl-12 pr-24 py-3.5 md:py-4 bg-white border-2 border-black rounded-xl text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm sm:text-base"
+                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-white border-2 border-black rounded-none text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
                   />
                   <button
                     (click)="performSearch()"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-none font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
                   >
                     Search
                   </button>
-                </div>
-              </div>
-
-              <!-- Stats -->
-              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 mt-4 md:mt-6" *ngIf="stats()">
-                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalProducts }}</div>
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
-                  </div>
-                </div>
-                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalStores }}</div>
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Stores</div>
-                  </div>
-                </div>
-                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ stats()!.totalCreators }}</div>
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Creators</div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -235,11 +242,73 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </div>
           </div>
 
-          <!-- Loading State -->
-          <div *ngIf="isLoading()" class="py-16 flex flex-col items-center justify-center">
-            <div class="w-12 h-12 border-4 border-[#FFC60B] border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p class="text-[#111111]/60 font-medium">Loading...</p>
-          </div>
+          <!-- Loading Skeleton -->
+          <ng-container *ngIf="isLoading()">
+            <!-- Products Skeleton -->
+            <div *ngIf="activeTab() === 'products'" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+              <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden">
+                <div class="aspect-square bg-[#F9F4EB] animate-pulse"></div>
+                <div class="p-2 md:p-4">
+                  <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse mb-2 w-3/4"></div>
+                  <div class="flex items-center gap-1 md:gap-2 mb-1 md:mb-2">
+                    <div class="w-4 h-4 md:w-5 md:h-5 rounded-full bg-[#111111]/10 animate-pulse"></div>
+                    <div class="h-2 md:h-3 bg-[#111111]/5 rounded animate-pulse w-16"></div>
+                  </div>
+                  <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse w-1/3"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stores Skeleton -->
+            <div *ngIf="activeTab() === 'stores'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-white border-2 border-black rounded-2xl overflow-hidden">
+                <!-- Banner + Logo Skeleton -->
+                <div class="h-24 md:h-32 bg-[#F9F4EB] relative animate-pulse">
+                  <div class="absolute -bottom-6 left-4 w-14 h-14 md:w-16 md:h-16 bg-white border-2 border-black rounded-xl overflow-hidden flex items-center justify-center">
+                    <div class="w-full h-full bg-[#111111]/10"></div>
+                  </div>
+                </div>
+                <!-- Info Skeleton -->
+                <div class="p-4 pt-10">
+                  <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse mb-2 w-1/2"></div>
+                  <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-full mb-1"></div>
+                  <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-2/3 mb-4"></div>
+                  <!-- Stats Skeleton -->
+                  <div class="flex items-center gap-4">
+                    <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse w-20"></div>
+                    <div class="h-3 md:h-4 bg-[#111111]/10 rounded animate-pulse w-24"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Creators Skeleton -->
+            <div *ngIf="activeTab() === 'creators'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+              <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="bg-white border-2 border-black rounded-2xl p-4 md:p-5 text-center">
+                <!-- Avatar Skeleton -->
+                <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-4 rounded-full bg-[#111111]/10 animate-pulse border-2 border-transparent"></div>
+                <!-- Name Skeleton -->
+                <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse mb-2 w-2/3 mx-auto"></div>
+                <!-- Handle Skeleton -->
+                <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-1/3 mx-auto mb-4"></div>
+                <!-- Bio Skeleton -->
+                <div class="h-3 bg-[#111111]/5 rounded animate-pulse w-full mb-1"></div>
+                <div class="h-3 bg-[#111111]/5 rounded animate-pulse w-4/5 mx-auto mb-4"></div>
+                <!-- Stats Skeleton -->
+                <div class="flex justify-center gap-4">
+                  <div class="text-center">
+                    <div class="h-4 w-6 bg-[#111111]/10 rounded animate-pulse mx-auto mb-1"></div>
+                    <div class="h-2 w-8 bg-[#111111]/5 rounded animate-pulse mx-auto"></div>
+                  </div>
+                  <div class="w-px bg-black/10"></div>
+                  <div class="text-center">
+                    <div class="h-4 w-6 bg-[#111111]/10 rounded animate-pulse mx-auto mb-1"></div>
+                    <div class="h-2 w-8 bg-[#111111]/5 rounded animate-pulse mx-auto"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
 
           <!-- Products Grid -->
           <div *ngIf="!isLoading() && activeTab() === 'products'">
@@ -540,6 +609,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </p>
             <a 
               routerLink="/become-creator" 
+              (click)="handleCreatorCtaClick($event)"
               class="relative z-10 inline-flex items-center px-6 py-3 md:px-8 md:py-4 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-base md:text-lg hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
             >
               Start selling for free
@@ -586,6 +656,12 @@ export class ExploreComponent implements OnInit {
   cartService = inject(CartService);
   authService = inject(AuthService);
 
+  async handleCreatorCtaClick(event: Event) {
+    if (this.authService.isSignedIn()) return;
+    event.preventDefault();
+    await this.authService.openCreatorSignup();
+  }
+
   // State
   searchQuery = '';
   minPrice: number | null = null;
@@ -594,7 +670,7 @@ export class ExploreComponent implements OnInit {
 
   // Signals
   activeTab = signal<TabType>('products');
-  isLoading = signal(false);
+  isLoading = signal(true);
   showSortDropdown = signal(false);
   showPriceFilter = signal(false);
   currentPage = signal(1);
@@ -828,7 +904,7 @@ export class ExploreComponent implements OnInit {
 
   viewProduct(product: ExploreProduct) {
     // Navigate to store subdomain with product
-    const storeUrl = this.subdomainService.getStoreUrl(product.store.slug, `/product/${product.slug}`);
+    const storeUrl = this.subdomainService.getStoreUrl(product.store.slug, `/product/${product.id}`);
     window.location.href = storeUrl;
   }
 

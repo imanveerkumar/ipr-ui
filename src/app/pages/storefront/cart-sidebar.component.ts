@@ -6,6 +6,7 @@ import { CartService, STORE_COLORS } from '../../core/services/cart.service';
 import { CheckoutService, CartValidationResult } from '../../core/services/checkout.service';
 import { AuthService } from '../../core/services/auth.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
+import { ToasterService } from '../../core/services/toaster.service';
 import { CartValidationModalComponent } from './cart-validation-modal.component';
 
 type ViewState = 'cart' | 'checkout';
@@ -118,7 +119,7 @@ type ViewState = 'cart' | 'checkout';
                 <p class="text-gray-500 text-xs mb-6 max-w-[180px]">Discover amazing digital products and add them to your cart</p>
                 <button 
                   (click)="cartService.close()" 
-                  routerLink="/products"
+                  [routerLink]="authService.isSignedIn() ? '/explore' : '/products'"
                   class="w-full px-5 py-3 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-all min-h-[44px] shadow-lg shadow-gray-900/20"
                 >
                   Browse Products
@@ -432,6 +433,8 @@ type ViewState = 'cart' | 'checkout';
                         class="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-400 focus:bg-white text-xs transition-all"
                         [class.border-red-300]="guestEmailError()"
                         [class.bg-red-50]="guestEmailError()"
+                        (input)="validateGuestEmail()"
+                        (blur)="validateGuestEmail()"
                       >
                     </div>
                     @if (guestEmailError()) {
@@ -465,6 +468,8 @@ type ViewState = 'cart' | 'checkout';
                           class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-400 focus:bg-white text-xs transition-all"
                           [class.border-red-300]="guestPhoneError()"
                           [class.bg-red-50]="guestPhoneError()"
+                          (input)="validateGuestPhone()"
+                          (blur)="validateGuestPhone()"
                         >
                       </div>
                     </div>
@@ -632,6 +637,7 @@ export class CartSidebarComponent {
   authService = inject(AuthService);
   private subdomainService = inject(SubdomainService);
   private router = inject(Router);
+  private toaster = inject(ToasterService);
 
   isCheckingOut = false;
   isValidating = false;
@@ -731,6 +737,27 @@ export class CartSidebarComponent {
     const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
     const phoneRegex = /^[0-9]{6,15}$/;
     return phoneRegex.test(cleanPhone);
+  }
+
+  // Real-time validation methods for guest checkout
+  validateGuestEmail() {
+    if (!this.guestEmail) {
+      this.guestEmailError.set('Email address is required');
+    } else if (!this.validateEmail(this.guestEmail)) {
+      this.guestEmailError.set('Please enter a valid email address');
+    } else {
+      this.guestEmailError.set('');
+    }
+  }
+
+  validateGuestPhone() {
+    if (!this.guestPhoneNumber) {
+      this.guestPhoneError.set('Phone number is required');
+    } else if (!this.validatePhone(this.guestPhoneNumber)) {
+      this.guestPhoneError.set('Please enter a valid phone number (6-15 digits)');
+    } else {
+      this.guestPhoneError.set('');
+    }
   }
 
   // Cart validation methods
@@ -913,21 +940,34 @@ export class CartSidebarComponent {
       if (!paymentData) throw new Error('Failed to initiate payment');
       
       // Open Razorpay checkout
-      const success = await this.checkoutService.openRazorpayCheckout(
+      const result = await this.checkoutService.openRazorpayCheckout(
         paymentData,
         this.guestEmail,
         this.guestPhone || undefined
       );
       
-      if (success) {
+      if (result.success) {
         this.cartService.clear();
         this.cartService.close();
         this.resetView();
         this.guestEmail = '';
         this.guestPhoneNumber = '';
         
-        // Show success message - redirect to a success page
-        alert('Purchase successful! Check your email for the download link.');
+        // Show success message
+        this.toaster.success({
+          title: 'Purchase Successful!',
+          message: 'Check your email for the download link.',
+        });
+      } else if (result.cancelled) {
+        this.toaster.error({
+          title: 'Payment Cancelled',
+          message: 'You closed the payment window. Please try again when ready.',
+        });
+      } else {
+        this.toaster.error({
+          title: 'Payment Failed',
+          message: result.error || 'Something went wrong. Please try again.',
+        });
       }
     } catch (error: any) {
       console.error('Guest checkout failed:', error);
@@ -961,18 +1001,35 @@ export class CartSidebarComponent {
       if (!paymentData) throw new Error('Failed to initiate payment');
       
       const userEmail = this.authService.user()?.email || '';
-      const success = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
+      const result = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
       
-      if (success) {
+      if (result.success) {
         this.cartService.clear();
         this.cartService.close();
         this.resetView();
+        
+        // Show success message
+        this.toaster.success({
+          title: 'Purchase Successful!',
+          message: 'Redirecting to your library...',
+        });
+        
         // Use Router on main site for smooth navigation, window.location on storefront
         if (this.subdomainService.isStorefront()) {
           window.location.href = this.subdomainService.getMainSiteUrl('/library');
         } else {
           this.router.navigate(['/library']);
         }
+      } else if (result.cancelled) {
+        this.toaster.error({
+          title: 'Payment Cancelled',
+          message: 'You closed the payment window. Please try again when ready.',
+        });
+      } else {
+        this.toaster.error({
+          title: 'Payment Failed',
+          message: result.error || 'Something went wrong. Please try again.',
+        });
       }
     } catch (error: any) {
       console.error('Checkout failed:', error);

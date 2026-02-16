@@ -6,6 +6,7 @@ import { ProductService } from '../../core/services/product.service';
 import { CheckoutService } from '../../core/services/checkout.service';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
+import { ToasterService } from '../../core/services/toaster.service';
 
 @Component({
   selector: 'app-product',
@@ -169,6 +170,8 @@ export class ProductComponent implements OnInit {
     return product ? this.cartService.isInCart(product.id) : false;
   }
 
+  private toaster = inject(ToasterService);
+
   async purchase() {
     const product = this.product();
     if (!product) return;
@@ -179,27 +182,46 @@ export class ProductComponent implements OnInit {
       // Create order
       const order = await this.checkoutService.createOrder([product.id]);
       if (!order) {
-        alert('Failed to create order');
+        this.toaster.error({
+          title: 'Order Failed',
+          message: 'Failed to create order. Please try again.',
+        });
         return;
       }
 
       // Initiate payment
       const paymentData = await this.checkoutService.initiatePayment(order.id);
       if (!paymentData) {
-        alert('Failed to initiate payment');
+        this.toaster.error({
+          title: 'Payment Failed',
+          message: 'Failed to initiate payment. Please try again.',
+        });
         return;
       }
 
       // Open Razorpay checkout
       const userEmail = this.auth.user()?.email || '';
-      const success = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
+      const result = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
 
-      if (success) {
-        alert('Purchase successful! Check your library.');
+      if (result.success) {
+        this.toaster.success({
+          title: 'Purchase Successful!',
+          message: 'Check your library to access your files.',
+        });
+      } else if (result.cancelled) {
+        this.toaster.error({
+          title: 'Payment Cancelled',
+          message: 'You closed the payment window. Please try again when ready.',
+        });
+      } else {
+        this.toaster.error({
+          title: 'Payment Failed',
+          message: result.error || 'Something went wrong. Please try again.',
+        });
       }
     } catch (error) {
       console.error('Purchase failed:', error);
-      alert('Purchase failed. Please try again.');
+      this.toaster.handleError(error, 'Purchase failed. Please try again.');
     } finally {
       this.purchasing.set(false);
     }

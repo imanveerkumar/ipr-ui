@@ -17,25 +17,69 @@ type SortOrder = 'desc' | 'asc';
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
         <div class="bg-[#F9F4EB] border-b-2 border-black">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
-            <div class="text-center">
-              <!-- Badge -->
-              <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-[#7C3AED] border-2 border-black mb-4 transform -rotate-1">
-                <span class="text-xs font-bold text-white uppercase tracking-wider">Purchases</span>
-              </div>
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
+            <div class="text-left">
+
               
               <!-- Main Heading -->
-              <h1 class="font-dm-sans text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-2 md:mb-3 leading-tight">
+              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-0 md:mb-1 leading-tight">
                 Order History
               </h1>
-              
-              <!-- Subtext -->
-              <p class="text-sm md:text-lg text-[#111111]/70 max-w-xl mx-auto mb-6 md:mb-8 font-medium">
-                Track all your purchases and their status
-              </p>
 
-              <!-- Search Bar -->
-              <div class="max-w-xl mx-auto mb-8 md:mb-12">
+              <!-- Stats (below heading) -->
+              <div class="mt-4 md:mt-6 grid grid-cols-3 gap-2 md:flex md:justify-start md:gap-8 max-w-2xl mx-auto md:mx-0">
+                <!-- Total Orders stat -->
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ overallStats().totalOrders }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Total Orders</div>
+                  </div>
+                </div>
+                <!-- Completed stat -->
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getCompletedCount() }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Completed</div>
+                  </div>
+                </div>
+                <!-- Total Spent stat -->
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FFC60B] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalSpent() }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-10 md:w-16 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Total Spent</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Search Bar (below stats) -->
+              <div class="mt-4 max-w-xl mx-auto md:mx-0 mb-8 md:mb-12">
                 <div class="relative">
                   <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
                     <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,47 +96,10 @@ type SortOrder = 'desc' | 'asc';
                   />
                   <button
                     (click)="performSearch()"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
                   >
                     Search
                   </button>
-                </div>
-              </div>
-
-              <!-- Stats -->
-              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 max-w-2xl mx-auto" *ngIf="!loading()">
-                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ meta().total }}</div>
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Total Orders</div>
-                  </div>
-                </div>
-                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getCompletedCount() }}</div>
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Completed</div>
-                  </div>
-                </div>
-                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FFC60B] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalSpent() }}</div>
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Total Spent</div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -177,11 +184,30 @@ type SortOrder = 'desc' | 'asc';
             </div>
           </div>
 
-          <!-- Loading State (Initial Load Only) -->
+          <!-- Loading Skeleton -->
           @if (loading()) {
-            <div class="py-16 flex flex-col items-center justify-center">
-              <div class="w-12 h-12 border-4 border-[#FFC60B] border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p class="text-[#111111]/60 font-medium">Loading your orders...</p>
+            <div class="space-y-4">
+              @for (i of [1,2,3,4]; track i) {
+                <div class="bg-white border-2 border-black rounded-xl overflow-hidden">
+                  <div class="p-4 md:p-5">
+                    <div class="flex items-start gap-4">
+                      <div class="w-16 h-16 md:w-20 md:h-20 bg-[#F9F4EB] rounded-lg animate-pulse shrink-0"></div>
+                      <div class="flex-1 min-w-0">
+                        <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse w-3/4 mb-2"></div>
+                        <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-1/2 mb-3"></div>
+                        <div class="flex items-center gap-2">
+                          <div class="h-6 w-16 bg-[#FFC60B]/30 rounded animate-pulse"></div>
+                          <div class="h-3 w-24 bg-[#111111]/5 rounded animate-pulse"></div>
+                        </div>
+                      </div>
+                      <div class="text-right shrink-0">
+                        <div class="h-5 w-20 bg-[#111111]/10 rounded animate-pulse mb-2"></div>
+                        <div class="h-3 w-16 bg-[#111111]/5 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
             </div>
           } @else if (orders().length === 0 && !isFiltering()) {
             <!-- Empty State -->
@@ -401,6 +427,13 @@ export class OrdersComponent implements OnInit {
     hasPreviousPage: false,
   });
 
+  // Overall stats (not affected by pagination)
+  overallStats = signal({
+    totalOrders: 0,
+    completedOrders: 0,
+    totalSpent: 0,
+  });
+
   // Expose Math for template
   Math = Math;
 
@@ -415,7 +448,11 @@ export class OrdersComponent implements OnInit {
   constructor(private checkoutService: CheckoutService) {}
 
   async ngOnInit() {
-    await this.loadOrders();
+    // Load orders and stats in parallel
+    await Promise.all([
+      this.loadOrders(),
+      this.loadOverallStats(),
+    ]);
   }
 
   async loadOrders(showFullLoader = true) {
@@ -440,6 +477,28 @@ export class OrdersComponent implements OnInit {
     } finally {
       this.loading.set(false);
       this.isFiltering.set(false);
+    }
+  }
+
+  async loadOverallStats() {
+    try {
+      // Fetch all orders without pagination to calculate accurate stats
+      const allOrdersResult = await this.checkoutService.getMyOrdersPaginated({
+        page: 1,
+        limit: 1000, // Get a large number to cover all orders
+      });
+      
+      const allOrders = allOrdersResult.data;
+      const completedOrders = allOrders.filter(o => o.status === 'PAID' || o.status === 'FULFILLED');
+      const totalSpent = completedOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+      
+      this.overallStats.set({
+        totalOrders: allOrdersResult.meta.total,
+        completedOrders: completedOrders.length,
+        totalSpent: totalSpent,
+      });
+    } catch (error) {
+      console.error('Failed to load overall stats:', error);
     }
   }
 
@@ -512,14 +571,11 @@ export class OrdersComponent implements OnInit {
   }
 
   getCompletedCount(): number {
-    return this.orders().filter(o => o.status === 'PAID' || o.status === 'FULFILLED').length;
+    return this.overallStats().completedOrders;
   }
 
   getTotalSpent(): string {
-    const total = this.orders()
-      .filter(o => o.status === 'PAID' || o.status === 'FULFILLED')
-      .reduce((sum, order) => sum + order.totalAmount, 0);
-    return '₹' + (total / 100).toLocaleString('en-IN');
+    return '₹' + (this.overallStats().totalSpent / 100).toLocaleString('en-IN');
   }
 
   getStatusClass(status: string): string {

@@ -1,10 +1,11 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { License } from '../../core/models/index';
 import { CheckoutService } from '../../core/services/checkout.service';
 import { DownloadService } from '../../core/services/download.service';
+import { ToasterService } from '../../core/services/toaster.service';
 
 @Component({
   selector: 'app-library',
@@ -15,25 +16,70 @@ import { DownloadService } from '../../core/services/download.service';
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
         <div class="bg-[#F9F4EB] border-b-2 border-black">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
-            <div class="text-center">
-              <!-- Badge -->
-              <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-[#2B57D6] border-2 border-black mb-4 transform -rotate-1">
-                <span class="text-xs font-bold text-white uppercase tracking-wider">Collection</span>
-              </div>
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
+            <div class="text-left">
               
               <!-- Main Heading -->
-              <h1 class="font-dm-sans text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-2 md:mb-3 leading-tight">
+              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-0 md:mb-1 leading-tight">
                 My Library
               </h1>
               
-              <!-- Subtext -->
-              <p class="text-sm md:text-lg text-[#111111]/70 max-w-xl mx-auto mb-6 md:mb-8 font-medium">
-                Access your purchased digital assets, always available
-              </p>
 
-              <!-- Search Bar -->
-              <div class="max-w-xl mx-auto mb-8 md:mb-12">
+
+              <!-- Stats (below heading) -->
+              <div class="mt-4 md:mt-6 grid grid-cols-3 gap-2 md:flex md:justify-start md:gap-8 max-w-2xl mx-auto md:mx-0">
+                <!-- Products stat -->
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ licenses().length }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
+                  </div>
+                </div>
+                <!-- Active stat -->
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FFC60B] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getActiveCount() }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Active</div>
+                  </div>
+                </div>
+                <!-- Downloads stat -->
+                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                  </div>
+                  <div class="text-center md:text-left">
+                    @if (!loading()) {
+                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalDownloads() }}</div>
+                    } @else {
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                    }
+                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Downloads</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Search Bar (below stats) -->
+              <div class="mt-4 max-w-xl mx-auto md:mx-0 mb-8 md:mb-12">
                 <div class="relative">
                   <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
                     <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,45 +90,14 @@ import { DownloadService } from '../../core/services/download.service';
                     type="text"
                     [(ngModel)]="searchQuery"
                     placeholder="Search purchased products..."
-                    class="w-full pl-10 md:pl-12 pr-4 py-3 md:py-3.5 bg-white border-2 border-black rounded-xl text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-white border-2 border-black rounded-none text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
                   />
-                </div>
-              </div>
-
-              <!-- Stats -->
-              <div class="grid grid-cols-3 gap-2 md:flex md:justify-center md:gap-8 max-w-2xl mx-auto" *ngIf="!loading()">
-                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ licenses().length }}</div>
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
-                  </div>
-                </div>
-                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FFC60B] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getActiveCount() }}</div>
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Active</div>
-                  </div>
-                </div>
-                <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalDownloads() }}</div>
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Downloads</div>
-                  </div>
+                  <button
+                    (click)="performSearch()"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-none font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
+                  >
+                    Search
+                  </button>
                 </div>
               </div>
             </div>
@@ -94,9 +109,27 @@ import { DownloadService } from '../../core/services/download.service';
       <section class="py-6 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
           @if (loading()) {
-            <div class="py-16 flex flex-col items-center justify-center">
-              <div class="w-12 h-12 border-4 border-[#FFC60B] border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p class="text-[#111111]/60 font-medium">Loading your library...</p>
+            <!-- Loading Skeleton -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              @for (i of [1,2,3,4,5,6]; track i) {
+                <div class="bg-white border-2 border-black rounded-xl overflow-hidden">
+                  <div class="p-3 md:p-4 flex gap-4">
+                    <div class="w-20 h-20 md:w-24 md:h-24 shrink-0 bg-[#F9F4EB] border-2 border-black rounded-lg animate-pulse"></div>
+                    <div class="flex-1 min-w-0">
+                      <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse w-3/4 mb-2"></div>
+                      <div class="h-3 bg-[#111111]/5 rounded animate-pulse w-1/2 mb-3"></div>
+                      <div class="h-6 w-32 bg-[#F9F4EB] rounded border border-black/10 animate-pulse"></div>
+                    </div>
+                  </div>
+                  <div class="px-3 md:px-4 pb-3 md:pb-4 border-t-2 border-black/5 pt-3 md:pt-4">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="h-3 w-20 bg-[#111111]/10 rounded animate-pulse"></div>
+                      <div class="h-3 w-16 bg-[#68E079]/30 rounded animate-pulse"></div>
+                    </div>
+                    <div class="h-10 bg-[#F9F4EB] border border-black rounded-lg animate-pulse"></div>
+                  </div>
+                </div>
+              }
             </div>
           } @else if (filteredLicenses().length === 0) {
             <!-- Empty State -->
@@ -257,12 +290,15 @@ export class LibraryComponent implements OnInit {
     private downloadService: DownloadService,
   ) {}
 
+  private toaster = inject(ToasterService);
+
   async ngOnInit() {
     try {
       const licenses = await this.checkoutService.getMyLicenses();
       this.licenses.set(licenses);
     } catch (error) {
       console.error('Failed to load library:', error);
+      this.toaster.handleError(error, 'Failed to load your library.');
     } finally {
       this.loading.set(false);
     }
@@ -274,7 +310,7 @@ export class LibraryComponent implements OnInit {
       await this.downloadService.downloadFile(productId, fileId);
     } catch (error) {
       console.error('Download failed:', error);
-      alert('Download failed. Please try again.');
+      this.toaster.handleError(error, 'Download failed. Please try again.');
     } finally {
       this.downloading.set(null);
     }
@@ -292,5 +328,10 @@ export class LibraryComponent implements OnInit {
 
   getActiveCount(): number {
     return this.licenses().filter(license => license.downloadCount < license.maxDownloads).length;
+  }
+
+  performSearch() {
+    // Trim whitespace to make searches consistent and trigger computed filtering
+    this.searchQuery.set(this.searchQuery().trim());
   }
 }

@@ -113,8 +113,20 @@ interface UserCheckResult {
                       [(ngModel)]="email"
                       placeholder="you@example.com"
                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 outline-none transition-all text-gray-900"
+                      [class.border-red-300]="emailError() && inputTouched().email"
+                      [class.bg-red-50]="emailError() && inputTouched().email"
+                      (input)="validateEmailInput()"
+                      (blur)="validateEmailInput()"
                       (keydown.enter)="checkUser()"
                     >
+                    @if (emailError() && inputTouched().email) {
+                      <p class="mt-2 text-sm text-red-500 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        {{ emailError() }}
+                      </p>
+                    }
                   </div>
                 } @else {
                   <div class="mb-6">
@@ -150,8 +162,20 @@ interface UserCheckResult {
                       [(ngModel)]="phone"
                       placeholder="+91 9876543210"
                       class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 outline-none transition-all text-gray-900"
+                      [class.border-red-300]="phoneError() && inputTouched().phone"
+                      [class.bg-red-50]="phoneError() && inputTouched().phone"
+                      (input)="validatePhoneInput()"
+                      (blur)="validatePhoneInput()"
                       (keydown.enter)="checkUser()"
                     >
+                    @if (phoneError() && inputTouched().phone) {
+                      <p class="mt-2 text-sm text-red-500 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        {{ phoneError() }}
+                      </p>
+                    }
                   </div>
                 }
 
@@ -458,6 +482,9 @@ export class PurchasesAuthModalComponent implements OnInit {
   phone = '';
   activeTooltip = signal<string | null>(null);
   otpDigits: string[] = ['', '', '', '', '', ''];
+  emailError = signal<string | null>(null);
+  phoneError = signal<string | null>(null);
+  inputTouched = signal({ email: false, phone: false });
 
   private cooldownInterval: any = null;
 
@@ -482,6 +509,9 @@ export class PurchasesAuthModalComponent implements OnInit {
     this.otpDigits = ['', '', '', '', '', ''];
     this.resendCooldown.set(0);
     this.userCheckResult.set(null);
+    this.emailError.set(null);
+    this.phoneError.set(null);
+    this.inputTouched.set({ email: false, phone: false });
     if (this.cooldownInterval) {
       clearInterval(this.cooldownInterval);
     }
@@ -490,6 +520,8 @@ export class PurchasesAuthModalComponent implements OnInit {
   setMethod(method: AuthMethod) {
     this.method.set(method);
     this.error.set(null);
+    this.emailError.set(null);
+    this.phoneError.set(null);
   }
 
   isInputValid(): boolean {
@@ -502,6 +534,33 @@ export class PurchasesAuthModalComponent implements OnInit {
 
   isOtpComplete(): boolean {
     return this.otpDigits.every(d => d.length === 1);
+  }
+
+  // Real-time validation methods
+  validateEmailInput() {
+    this.inputTouched.update(t => ({ ...t, email: true }));
+    const email = this.email.trim();
+    
+    if (!email) {
+      this.emailError.set('Email address is required');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.emailError.set('Please enter a valid email address');
+    } else {
+      this.emailError.set(null);
+    }
+  }
+
+  validatePhoneInput() {
+    this.inputTouched.update(t => ({ ...t, phone: true }));
+    const phone = this.phone.replace(/[\s\-\(\)]/g, '');
+    
+    if (!phone) {
+      this.phoneError.set('Phone number is required');
+    } else if (!/^\+?[0-9]{10,15}$/.test(phone)) {
+      this.phoneError.set('Please enter a valid phone number with country code (e.g., +91)');
+    } else {
+      this.phoneError.set(null);
+    }
   }
 
   /**

@@ -12,6 +12,7 @@ import {
   SearchSuggestionCreator 
 } from '../../../core/services/explore.service';
 import { SubdomainService } from '../../../core/services/subdomain.service';
+import { ConfirmService } from '../../../core/services/confirm.service';
 
 @Component({
   selector: 'app-navbar',
@@ -137,7 +138,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       background-color: var(--bg-beige);
       border-bottom: 2px solid var(--text-black);
       position: relative;
-      margin-bottom: 20px;
+      margin-bottom: 0;
     }
 
     .header-container {
@@ -170,7 +171,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
         gap: 2rem;
       }
       .header {
-        margin-bottom: 25px;
+        margin-bottom: 0;
       }
     }
 
@@ -181,6 +182,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       gap: 6px;
       text-decoration: none;
       flex-shrink: 0;
+      cursor: pointer;
     }
 
     .logo-text {
@@ -752,33 +754,6 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
 
     .dropdown-item.danger:hover {
       background: #fecaca;
-    }
-
-    /* === WAVE BORDER === */
-    .wave-border-bottom {
-      position: absolute;
-      bottom: -20px;
-      left: 0;
-      width: 100%;
-      height: 20px;
-      background-color: transparent;
-      background-image: radial-gradient(circle at 15px 0, transparent 15px, var(--bg-beige) 16px);
-      background-size: 30px 20px;
-      background-repeat: repeat-x;
-      z-index: 5;
-    }
-
-    @media (min-width: 768px) {
-      .wave-border-bottom {
-        bottom: -25px;
-        height: 25px;
-        background-image: radial-gradient(circle at 20px 0, transparent 20px, var(--bg-beige) 21px);
-        background-size: 40px 25px;
-      }
-    }
-
-    .cart-open .wave-border-bottom {
-      display: none;
     }
 
     /* === MOBILE MENU === */
@@ -1665,7 +1640,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
         <div class="header-container">
           <div class="header-inner">
             <!-- Logo -->
-            <a routerLink="/" class="logo" (click)="closeAllMenus()">
+            <a class="logo" (click)="handleLogoClick()">
               <span class="logo-text">StoresCraft.     </span>
 
             </a>
@@ -1955,8 +1930,6 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
           </div>
         </div>
         
-        <!-- Wave Border Bottom -->
-        <div class="wave-border-bottom"></div>
       </header>
     </div>
     
@@ -1970,7 +1943,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     <!-- Mobile Menu -->
     <div class="mobile-menu" [class.active]="mobileMenuOpen()">
       <div class="mobile-menu-header">
-        <a routerLink="/" class="logo" (click)="closeMobileMenu()">
+        <a class="logo" (click)="handleLogoClick()">
           <span class="logo-text">StoresCraft</span>
           <div class="mascot">
             <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2315,6 +2288,7 @@ export class NavbarComponent implements OnDestroy {
   private subdomainService = inject(SubdomainService);
   private router = inject(Router);
   cartService = inject(CartService);
+  confirmService = inject(ConfirmService);
   
   profileMenuOpen = signal(false);
   mobileMenuOpen = signal(false);
@@ -2601,12 +2575,21 @@ export class NavbarComponent implements OnDestroy {
     this.closeMobileSearch();
   }
 
+  handleLogoClick() {
+    this.closeAllMenus();
+    if (this.auth.isSignedIn() && this.auth.isCreator()) {
+      this.router.navigate(['/explore']);
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
   async signIn() {
     await this.auth.signIn();
   }
 
   async signUp() {
-    await this.auth.signUp();
+    await this.auth.openCreatorSignup();
   }
 
   async signInMobile() {
@@ -2616,11 +2599,23 @@ export class NavbarComponent implements OnDestroy {
 
   async signUpMobile() {
     this.closeMobileMenu();
-    await this.auth.signUp();
+    await this.auth.openCreatorSignup();
   }
 
   async signOut() {
     this.closeAllMenus();
+
+    const confirmed = await this.confirmService.confirm({
+      title: 'Sign Out',
+      message: 'Are you sure you want to sign out?',
+      confirmText: 'Sign Out',
+      cancelText: 'Cancel',
+      accent: 'yellow', // modal background/header uses mustard
+      confirmColor: 'danger' // confirm button should be red for sign out
+    });
+
+    if (!confirmed) return;
+
     await this.auth.signOut();
   }
 
