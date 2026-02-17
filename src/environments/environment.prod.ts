@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://ipr-api.vercel.app/api/v1',
+  // apiUrl: 'https://ipr-api.vercel.app/api/v1', //vercel
+  apiUrl: 'https://fyybmxkyv0.execute-api.ap-south-1.amazonaws.com/api/v1', //aws
   clerkPublishableKey: 'pk_test_b3V0Z29pbmctZmxlYS0zMC5jbGVyay5hY2NvdW50cy5kZXYk',
   razorpayKeyId: 'rzp_live_your_key_here',
   // Toggle subdomain routing. When true storefronts will be accessible at storename.yoursite.com.
