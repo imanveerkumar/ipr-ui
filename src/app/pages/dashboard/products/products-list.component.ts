@@ -830,7 +830,7 @@ export class ProductsListComponent implements OnInit {
       this.viewMode.set(saved as any);
     }
 
-    await this.loadStats();
+    // Load products (loadProducts will refresh stats once) — avoid duplicate stats call
     await this.loadProducts();
   }
 
