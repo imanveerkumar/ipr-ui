@@ -200,6 +200,10 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               <span class="slug-suffix">.{{ baseDomain() }}</span>
             </div>
             <p class="form-hint">Only lowercase letters, numbers, and hyphens allowed.</p>
+            <div class="info-note mt-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>Note: Certain system keywords (like 'api', 'admin', 'app', etc.) are reserved and cannot be used as store URLs.</span>
+            </div>
             @if (slugError()) {
               <p class="form-error">{{ slugError() }}</p>
             }
@@ -814,6 +818,24 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       white-space: nowrap;
       display: flex;
       align-items: center;
+    }
+
+    .info-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background-color: #F9F4EB;
+      border: 1px solid #111111;
+      border-radius: 4px;
+      font-size: 0.8125rem;
+      color: #111111;
+      margin-top: 0.75rem;
+    }
+
+    .info-note svg {
+      flex-shrink: 0;
+      margin-top: 0.125rem;
     }
 
     /* URL Preview Card */
