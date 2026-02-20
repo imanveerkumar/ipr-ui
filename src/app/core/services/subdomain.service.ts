@@ -75,8 +75,8 @@ export class SubdomainService {
     if (host.endsWith(baseDomain) && host !== baseDomain) {
       const subdomain = host.replace(`.${baseDomain}`, '');
       
-      // Ignore www and other reserved subdomains
-      const reservedSubdomains = ['www', 'api', 'admin', 'app', 'dashboard', 'mail', 'ftp'];
+      // Use configured reserved list (with fallback)
+      const reservedSubdomains = this.getReservedSubdomains();
       
       if (subdomain && !reservedSubdomains.includes(subdomain.toLowerCase())) {
         result.isStorefront = true;
@@ -85,6 +85,18 @@ export class SubdomainService {
     }
 
     return result;
+  }
+
+  /**
+   * Return the list of reserved subdomains. Reads from environment or falls back to a small default.
+   */
+  private getReservedSubdomains(): string[] {
+    const envList = (environment as any).reservedSubdomains;
+    if (Array.isArray(envList)) {
+      return envList.map((s: string) => s.toLowerCase());
+    }
+    // fallback minimal set
+    return ['www', 'api', 'admin', 'app', 'dashboard', 'mail', 'ftp'];
   }
 
   /**
@@ -175,24 +187,13 @@ export class SubdomainService {
    * Check if a slug is available for use as subdomain
    */
   isValidSubdomain(slug: string): boolean {
-    // Must be lowercase alphanumeric with hyphens
-    const pattern = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/;
+    // Must be lowercase alphanumeric with hyphens or underscores
+    // also enforce start/end alphanumeric and maximum length 63
+    const pattern = /^[a-z0-9]([a-z0-9_-]{0,61}[a-z0-9])?$/;
     if (!pattern.test(slug)) return false;
 
     // Cannot be reserved
-    const reserved = [
-      'api', 'www', 'app', 'admin', 'auth', 'cdn', 'static', 'assets', 'media',
-      'files', 'upload', 'uploads', 'img', 'images', 'js', 'css', 'fonts',
-      'dev', 'test', 'staging', 'stage', 'prod', 'production', 'qa', 'uat',
-      'beta', 'alpha', 'sandbox', 'preview', 'mail', 'smtp', 'imap', 'pop',
-      'ftp', 'sftp', 'ssh', 'ns1', 'ns2', 'ns3', 'dns', 'mx', 'cpanel',
-      'webmail', 'autodiscover', 'autoconfig', 'dashboard', 'status', 'support',
-      'help', 'docs', 'documentation', 'blog', 'careers', 'jobs', 'legal',
-      'privacy', 'terms', 'billing', 'payments', 'checkout', 'account',
-      'accounts', 'settings', 'profile', 'profiles', 'system', 'internal',
-      'root', 'null', 'undefined', 'localhost', 'whatsapp', 'instagram',
-      'meta', 'mcp', 'ai', 'auto'
-    ];
+    const reserved = this.getReservedSubdomains();
     return !reserved.includes(slug.toLowerCase());
   }
 }
