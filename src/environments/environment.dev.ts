@@ -9,7 +9,7 @@ export const environment = {
   subdomain: true,
   // Base domain for subdomain routing (e.g., 'yoursite.com')
   // Stores will be accessible at storename.yoursite.com
-  baseDomain: 'imanveer.com',
+  baseDomain: 'dev.imanveer.com',
   // list of subdomains that cannot be used for stores
   reservedSubdomains: [
     'api', 'www', 'app', 'admin', 'auth', 'cdn', 'static', 'assets', 'media',
