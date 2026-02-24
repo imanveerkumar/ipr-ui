@@ -387,8 +387,17 @@ export class ProductComponent implements OnInit {
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      const product = await this.productService.getProductById(id);
-      this.product.set(product);
+      try {
+        const product = await this.productService.getProductById(id);
+        this.product.set(product);
+      } catch (err: any) {
+        // if there's an unexpected error we still want to hide the loader
+        // and let Angular's global error handler take care of it.
+        if (err && err.status !== 404) {
+          throw err;
+        }
+        this.product.set(null);
+      }
     }
     this.loading.set(false);
   }
