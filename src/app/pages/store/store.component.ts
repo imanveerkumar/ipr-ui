@@ -265,19 +265,19 @@ export class StoreComponent implements OnInit {
   async ngOnInit() {
     const slug = this.route.snapshot.paramMap.get('slug');
     if (slug) {
-      await this.loadStore(slug);
+      // attempt load by slug first; if not found treat value as an ID
+      let store = await this.storeService.getStoreBySlug(slug);
+      if (!store) {
+        store = await this.storeService.getStoreById(slug);
+      }
+      this.store.set(store);
+
+      if (store) {
+        const products = await this.productService.getProductsByStore(store.id);
+        this.products.set(products);
+      }
     }
     this.loading.set(false);
-  }
-
-  async loadStore(slug: string) {
-    const store = await this.storeService.getStoreBySlug(slug);
-    this.store.set(store);
-
-    if (store) {
-      const products = await this.productService.getProductsByStore(store.id);
-      this.products.set(products);
-    }
   }
 
   getStorefrontUrl(): string {

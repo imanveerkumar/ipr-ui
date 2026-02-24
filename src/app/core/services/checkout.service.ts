@@ -79,16 +79,27 @@ export class CheckoutService {
     return response.data || null;
   }
 
-  async initiatePayment(orderId: string): Promise<PaymentInitResponse | null> {
-    const response = await this.api.post<PaymentInitResponse>('/payments/initiate', { orderId });
+  async initiatePayment(orderId: string, customAmount?: number): Promise<PaymentInitResponse | null> {
+    const body: any = { orderId };
+    if (customAmount !== undefined) body.customAmount = customAmount;
+    const response = await this.api.post<PaymentInitResponse>('/payments/initiate', body);
     return response.data || null;
   }
 
-  async initiateGuestPayment(orderId: string, guestEmail: string): Promise<PaymentInitResponse | null> {
-    const response = await this.api.post<PaymentInitResponse>('/payments/initiate/guest', { 
-      orderId, 
-      guestEmail 
-    });
+  async initiateGuestPayment(orderId: string, guestEmail: string, customAmount?: number): Promise<PaymentInitResponse | null> {
+    const body: any = { orderId, guestEmail };
+    if (customAmount !== undefined) body.customAmount = customAmount;
+    const response = await this.api.post<PaymentInitResponse>('/payments/initiate/guest', body);
+    return response.data || null;
+  }
+
+  async completeFreeOrder(orderId: string): Promise<{ success: boolean; orderId: string } | null> {
+    const response = await this.api.post<{ success: boolean; orderId: string }>('/payments/free', { orderId });
+    return response.data || null;
+  }
+
+  async completeGuestFreeOrder(orderId: string, guestEmail: string): Promise<{ success: boolean; orderId: string; downloadToken?: string } | null> {
+    const response = await this.api.post<{ success: boolean; orderId: string; downloadToken?: string }>('/payments/free/guest', { orderId, guestEmail });
     return response.data || null;
   }
 

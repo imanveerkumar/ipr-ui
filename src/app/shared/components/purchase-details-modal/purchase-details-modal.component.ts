@@ -62,7 +62,7 @@ import { RouterLink } from '@angular/router';
                     }
                   </div>
                   <div class="flex-1 min-w-0">
-                    <a [routerLink]="['/product', purchase()?.product?.slug || purchase()?.product?.id]" class="font-bold text-lg text-[#111111] hover:underline line-clamp-2 mb-1">
+                    <a [routerLink]="['/product', purchase()?.product?.id]" class="font-bold text-lg text-[#111111] hover:underline line-clamp-2 mb-1">
                       {{ purchase()?.product?.title }}
                     </a>
                     <div class="flex items-center gap-1.5 mb-2">

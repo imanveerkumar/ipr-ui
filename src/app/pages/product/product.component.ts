@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product } from '../../core/models/index';
 import { ProductService } from '../../core/services/product.service';
 import { CheckoutService } from '../../core/services/checkout.service';
@@ -12,7 +13,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   template: `
     <div class="min-h-screen bg-[#F9F4EB] font-sans antialiased">
       @if (loading()) {
@@ -126,33 +127,114 @@ import { SubdomainService } from '../../core/services/subdomain.service';
 
                 <!-- CTA Buttons -->
                 <div class="mt-6 space-y-3">
-                  <button
-                    (click)="purchase()"
-                    [disabled]="purchasing()"
-                    class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-xl font-bold text-base shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    @if (purchasing()) {
-                      <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                      Processing...
-                    } @else {
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                      Buy Now — ₹{{ (product()?.price || 0) / 100 }}
-                    }
-                  </button>
-                  <button
-                    (click)="addToCart()"
-                    class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#111111] border-2 border-black rounded-xl font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
-                    [class.bg-[#68E079]]="isInCart()"
-                  >
-                    @if (isInCart()) {
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                      In Cart
-                    } @else {
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
-                      Add to Cart
-                    }
-                  </button>
-                  @if (!auth.isSignedIn()) {
+                  @if ((product()?.price || 0) === 0) {
+                    <!-- Free product: choose free download or support creator -->
+                    <div class="bg-[#F9F4EB] border-2 border-black rounded-xl p-4 space-y-3">
+                      <p class="text-sm font-bold text-[#111111]">This product is free! Choose how to get it:</p>
+
+                      <!-- Free download button -->
+                      <button
+                        (click)="downloadForFree()"
+                        [disabled]="purchasing()"
+                        class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#68E079] text-[#111111] border-2 border-black rounded-xl font-bold text-base shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        @if (purchasing() && selectedFreeOption() === 'free') {
+                          <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                          Processing...
+                        } @else {
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                          Download for Free
+                        }
+                      </button>
+
+                      <!-- Divider -->
+                      <div class="flex items-center gap-2 text-xs text-[#111111]/40">
+                        <div class="flex-1 h-px bg-[#111111]/15"></div>
+                        <span class="font-medium">or support the creator</span>
+                        <div class="flex-1 h-px bg-[#111111]/15"></div>
+                      </div>
+
+                      <!-- Custom amount input -->
+                      <div class="flex gap-2">
+                        <div class="relative flex-1">
+                          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#111111]/50 font-bold text-sm">₹</span>
+                          <input
+                            type="number"
+                            [(ngModel)]="customAmount"
+                            min="1"
+                            placeholder="Enter amount"
+                            class="w-full pl-7 pr-3 py-2.5 border-2 border-black rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
+                          />
+                        </div>
+                        <button
+                          (click)="payCustomAmount()"
+                          [disabled]="purchasing() || !customAmount || customAmount < 1"
+                          class="px-4 py-2.5 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        >
+                          @if (purchasing() && selectedFreeOption() === 'custom') {
+                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                          } @else {
+                            Pay ₹{{ customAmount || 0 }}
+                          }
+                        </button>
+                      </div>
+
+                      <!-- Guest email for free download -->
+                      @if (!auth.isSignedIn() && showGuestEmailInput()) {
+                        <div class="space-y-2 pt-1">
+                          <p class="text-xs text-[#111111]/60">Enter your email to receive the download link:</p>
+                          <input
+                            type="email"
+                            [(ngModel)]="guestEmail"
+                            placeholder="your@email.com"
+                            class="w-full px-3 py-2.5 border-2 border-black rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
+                          />
+                          <button
+                            (click)="confirmGuestFreeDownload()"
+                            [disabled]="purchasing() || !guestEmail"
+                            class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#68E079] text-[#111111] border-2 border-black rounded-xl font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            @if (purchasing()) {
+                              <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                              Processing...
+                            } @else {
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                              Get Free Download
+                            }
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <!-- Paid product: standard buy/cart flow -->
+                    <button
+                      (click)="purchase()"
+                      [disabled]="purchasing()"
+                      class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-xl font-bold text-base shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      @if (purchasing()) {
+                        <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        Processing...
+                      } @else {
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        Buy Now — ₹{{ (product()?.price || 0) / 100 }}
+                      }
+                    </button>
+                    <button
+                      (click)="addToCart()"
+                      class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#111111] border-2 border-black rounded-xl font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
+                      [class.bg-[#68E079]]="isInCart()"
+                    >
+                      @if (isInCart()) {
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        In Cart
+                      } @else {
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                        Add to Cart
+                      }
+                    </button>
+                  }
+                  @if (!auth.isSignedIn() && (product()?.price || 0) > 0) {
                     <p class="text-center text-xs text-[#111111]/50 mt-1">
                       No account needed &mdash; guest checkout available
                     </p>
@@ -284,12 +366,19 @@ export class ProductComponent implements OnInit {
   purchasing = signal(false);
   copied = signal(false);
 
+  // Free / pay-what-you-want state
+  customAmount = 0;
+  guestEmail = '';
+  showGuestEmailInput = signal(false);
+  selectedFreeOption = signal<'free' | 'custom' | null>(null);
+
   cartService = inject(CartService);
   private toaster = inject(ToasterService);
   private subdomainService = inject(SubdomainService);
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private productService: ProductService,
     private checkoutService: CheckoutService,
     public auth: AuthService,
@@ -418,4 +507,120 @@ export class ProductComponent implements OnInit {
       this.purchasing.set(false);
     }
   }
-}
+
+  /** Handle "Download for Free" click on a ₹0 product */
+  async downloadForFree() {
+    const product = this.product();
+    if (!product) return;
+
+    // Guest: show email input first
+    if (!this.auth.isSignedIn()) {
+      this.showGuestEmailInput.set(true);
+      this.selectedFreeOption.set('free');
+      return;
+    }
+
+    this.selectedFreeOption.set('free');
+    this.purchasing.set(true);
+
+    try {
+      const order = await this.checkoutService.createOrder([product.id]);
+      if (!order) {
+        this.toaster.error({ title: 'Error', message: 'Failed to create order. Please try again.' });
+        return;
+      }
+
+      const result = await this.checkoutService.completeFreeOrder(order.id);
+      if (result?.success) {
+        this.toaster.success({ title: 'Download Ready!', message: 'The product has been added to your library.' });
+        this.router.navigate(['/library']);
+      } else {
+        this.toaster.error({ title: 'Error', message: 'Failed to process free download. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Free download failed:', error);
+      this.toaster.handleError(error, 'Failed to process free download. Please try again.');
+    } finally {
+      this.purchasing.set(false);
+    }
+  }
+
+  /** Handle guest free download after email is entered */
+  async confirmGuestFreeDownload() {
+    const product = this.product();
+    if (!product || !this.guestEmail) return;
+
+    this.purchasing.set(true);
+
+    try {
+      const order = await this.checkoutService.createGuestOrder([product.id], this.guestEmail);
+      if (!order) {
+        this.toaster.error({ title: 'Error', message: 'Failed to create order. Please try again.' });
+        return;
+      }
+
+      const result = await this.checkoutService.completeGuestFreeOrder(order.id, this.guestEmail);
+      if (result?.success) {
+        this.toaster.success({ title: 'Download Ready!', message: 'A download link has been sent to your email.' });
+        if (result.downloadToken) {
+          this.router.navigate(['/guest/downloads', result.downloadToken]);
+        }
+      } else {
+        this.toaster.error({ title: 'Error', message: 'Failed to process free download. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Guest free download failed:', error);
+      this.toaster.handleError(error, 'Failed to process free download. Please try again.');
+    } finally {
+      this.purchasing.set(false);
+    }
+  }
+
+  /** Handle "Pay custom amount" on a ₹0 product */
+  async payCustomAmount() {
+    const product = this.product();
+    if (!product || !this.customAmount || this.customAmount < 1) return;
+
+    // Amount in paise
+    const amountInPaise = Math.round(this.customAmount * 100);
+
+    // Guest: add to cart and open sidebar (handles guest email collection)
+    if (!this.auth.isSignedIn()) {
+      this.cartService.addItem(product);
+      this.cartService.open();
+      return;
+    }
+
+    this.selectedFreeOption.set('custom');
+    this.purchasing.set(true);
+
+    try {
+      const order = await this.checkoutService.createOrder([product.id]);
+      if (!order) {
+        this.toaster.error({ title: 'Order Failed', message: 'Failed to create order. Please try again.' });
+        return;
+      }
+
+      const paymentData = await this.checkoutService.initiatePayment(order.id, amountInPaise);
+      if (!paymentData) {
+        this.toaster.error({ title: 'Payment Failed', message: 'Failed to initiate payment. Please try again.' });
+        return;
+      }
+
+      const userEmail = this.auth.user()?.email || '';
+      const result = await this.checkoutService.openRazorpayCheckout(paymentData, userEmail);
+
+      if (result.success) {
+        this.toaster.success({ title: 'Thank you for your support!', message: 'Check your library to access your files.' });
+      } else if (result.cancelled) {
+        this.toaster.error({ title: 'Payment Cancelled', message: 'You closed the payment window. Please try again when ready.' });
+      } else {
+        this.toaster.error({ title: 'Payment Failed', message: result.error || 'Something went wrong. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Custom amount payment failed:', error);
+      this.toaster.handleError(error, 'Payment failed. Please try again.');
+    } finally {
+      this.purchasing.set(false);
+    }
+  }}
