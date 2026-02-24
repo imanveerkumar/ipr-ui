@@ -7,6 +7,7 @@ import { CheckoutService } from '../../core/services/checkout.service';
 import { AuthService } from '../../core/services/auth.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
 import { CartService } from '../../core/services/cart.service';
+import { ToasterService } from '../../core/services/toaster.service';
 import { Product } from '../../core/models';
 
 @Component({
@@ -176,6 +177,29 @@ import { Product } from '../../core/models';
                   </div>
                 </div>
               </div>
+
+              <!-- Copy & Share -->
+              <div class="flex gap-2 mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-gray-100">
+                <button
+                  (click)="copyUrl()"
+                  class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-200 active:bg-gray-300 transition-colors min-h-[44px]"
+                >
+                  @if (copied()) {
+                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Copied!
+                  } @else {
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                    Copy Link
+                  }
+                </button>
+                <button
+                  (click)="shareUrl()"
+                  class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-800 hover:text-white active:bg-gray-900 transition-colors min-h-[44px]"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                  Share
+                </button>
+              </div>
             </div>
           </div>
 
@@ -273,11 +297,13 @@ export class StorefrontProductComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
   subdomainService = inject(SubdomainService);
   cartService = inject(CartService);
+  private toaster = inject(ToasterService);
 
   product = signal<Product | null>(null);
   relatedProducts = signal<Product[]>([]);
   loading = signal(true);
   purchasing = signal(false);
+  copied = signal(false);
   
   private routeSub?: Subscription;
 
@@ -362,5 +388,31 @@ export class StorefrontProductComponent implements OnInit, OnDestroy {
     // This allows both guest and authenticated checkout flows
     this.cartService.addItem(product);
     this.cartService.open();
+  }
+
+  async copyUrl() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      this.copied.set(true);
+      this.toaster.success({ title: 'Link Copied', message: 'URL copied to clipboard' });
+      setTimeout(() => this.copied.set(false), 2000);
+    } catch {
+      this.toaster.error({ title: 'Copy Failed', message: 'Could not copy URL' });
+    }
+  }
+
+  async shareUrl() {
+    const product = this.product();
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product?.title || 'Product',
+          text: `Check out ${product?.title || 'this product'}`,
+          url: window.location.href,
+        });
+      } catch { /* user cancelled */ }
+    } else {
+      await this.copyUrl();
+    }
   }
 }

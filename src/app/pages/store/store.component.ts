@@ -298,7 +298,7 @@ export class StoreComponent implements OnInit {
       this.cartService.removeItem(product.id);
     } else {
       this.cartService.addItem(product);
-      this.cartService.open();
+      // don't auto-open sidebar here; only open when user explicitly chooses "Buy Now"
     }
   }
 

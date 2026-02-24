@@ -88,6 +88,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               >
                 <svg
                   class="w-4 h-4 text-[#111111] transition-transform"
+                  [class.rotate-180]="!sidebarCollapsed()"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -237,7 +238,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               >
                 <svg
                   class="w-4 h-4 text-[#111111] transition-transform"
-                  [class.rotate-180]="sidebarCollapsed()"
+                  [class.rotate-180]="!sidebarCollapsed()"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
