@@ -118,6 +118,30 @@ export interface ExploreQueryParams {
   storeId?: string;
 }
 
+export interface FeedItem {
+  type: 'product' | 'store' | 'creator';
+  data: ExploreProduct | ExploreStore | ExploreCreator;
+}
+
+export interface CursorPaginatedFeed {
+  items: FeedItem[];
+  nextCursor: string | null;
+  hasMore: boolean;
+  total: number;
+}
+
+export interface FeedQueryParams {
+  cursor?: string;
+  limit?: number;
+  q?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  minPrice?: number;
+  maxPrice?: number;
+  storeId?: string;
+  type?: 'all' | 'products' | 'stores' | 'creators';
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -140,6 +164,18 @@ export class ExploreService {
     const query = this.buildQueryString(params);
     const response = await this.api.get<ExplorePaginatedResponse<ExploreProduct>>(`/explore/products${query}`);
     return response.data || { items: [], total: 0, page: 1, limit: 12, totalPages: 0, hasMore: false };
+  }
+
+  async getFeed(params: FeedQueryParams = {}): Promise<CursorPaginatedFeed> {
+    const queryParts: string[] = [];
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        queryParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+      }
+    });
+    const query = queryParts.length > 0 ? `?${queryParts.join('&')}` : '';
+    const response = await this.api.get<CursorPaginatedFeed>(`/explore/feed${query}`);
+    return response.data || { items: [], nextCursor: null, hasMore: false, total: 0 };
   }
 
   async getStores(params: ExploreQueryParams = {}): Promise<ExplorePaginatedResponse<ExploreStore>> {

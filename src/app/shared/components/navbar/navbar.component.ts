@@ -2504,15 +2504,23 @@ export class NavbarComponent implements OnDestroy {
   navigateToProduct(product: SearchSuggestionProduct) {
     this.closeSearchDropdown();
     this.closeMobileSearch();
-    const storeUrl = this.subdomainService.getStoreUrl(product.storeSlug, `/product/${product.slug}`);
-    window.location.href = storeUrl;
+    // Previously we redirected to the store's subdomain so that users would
+    // view the product inside the storefront.  That behaviour caused the
+    // navbar search component to leave the main site and land on a separate
+    // subdomain.  The UX request is to remain on the primary application
+    // when selecting a suggestion, so we now use the router to navigate to
+    // the main site's product page instead.
+    // The route is defined as `/product/:id` so we use the product ID here.
+    this.router.navigate(['/product', product.id]);
   }
   
   navigateToStore(store: SearchSuggestionStore) {
     this.closeSearchDropdown();
     this.closeMobileSearch();
-    const storeUrl = this.subdomainService.getStoreUrl(store.slug);
-    window.location.href = storeUrl;
+    // Instead of jumping to the subdomain we stay on the primary app and
+    // navigate to the store page handled by the router.  This keeps the user
+    // on the main domain even after selecting a suggestion from the navbar.
+    this.router.navigate(['/store', store.slug]);
   }
   
   navigateToCreator(creator: SearchSuggestionCreator) {
