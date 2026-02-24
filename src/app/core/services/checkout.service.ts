@@ -80,6 +80,10 @@ export class CheckoutService {
   }
 
   async initiatePayment(orderId: string, customAmount?: number): Promise<PaymentInitResponse | null> {
+    // front-end guard: don't send zero/negative amounts to the API
+    if (customAmount !== undefined && customAmount <= 0) {
+      throw new Error('Payment amount must be greater than ₹0');
+    }
     const body: any = { orderId };
     if (customAmount !== undefined) body.customAmount = customAmount;
     const response = await this.api.post<PaymentInitResponse>('/payments/initiate', body);
@@ -87,6 +91,9 @@ export class CheckoutService {
   }
 
   async initiateGuestPayment(orderId: string, guestEmail: string, customAmount?: number): Promise<PaymentInitResponse | null> {
+    if (customAmount !== undefined && customAmount <= 0) {
+      throw new Error('Payment amount must be greater than ₹0');
+    }
     const body: any = { orderId, guestEmail };
     if (customAmount !== undefined) body.customAmount = customAmount;
     const response = await this.api.post<PaymentInitResponse>('/payments/initiate/guest', body);

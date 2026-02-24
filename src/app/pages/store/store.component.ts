@@ -171,35 +171,60 @@ import { SubdomainService } from '../../core/services/subdomain.service';
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
               @for (product of products(); track product.id) {
                 <a [routerLink]="['/product', product.id]"
-                  class="group bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                  class="group bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
                 >
-                  <div class="aspect-square bg-[#F9F4EB] relative overflow-hidden">
+                  <div class="relative overflow-hidden bg-[#F9F4EB] aspect-square">
                     @if (product.coverImageUrl) {
-                      <img [src]="product.coverImageUrl" [alt]="product.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                      <div class="aspect-square overflow-hidden">
+                        <img [src]="product.coverImageUrl" [alt]="product.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      </div>
                     } @else {
                       <div class="w-full h-full flex items-center justify-center">
                         <svg class="w-12 h-12 text-[#111111]/15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                       </div>
                     }
+
                     <!-- Discount Badge -->
                     @if (product.compareAtPrice && product.compareAtPrice > product.price) {
                       <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-[#FA4B28] border border-black rounded text-[10px] md:text-xs font-bold text-white">
                         -{{ getProductDiscount(product) }}%
                       </div>
                     }
-                    <!-- Quick Add to Cart -->
-                      <button
-                        (click)="toggleCart(product, $event)"
-                        class="absolute bottom-2 right-2 p-2 rounded-lg border-2 border-black transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
-                        [class.bg-[#68E079]]="cartService.isInCart(product.id)"
-                        [class.bg-[#FFC60B]]="!cartService.isInCart(product.id)"
-                      >
-                        @if (cartService.isInCart(product.id)) {
-                          <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        } @else {
-                          <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                        }
-                      </button>
+
+                    <!-- Desktop hover overlay -->
+                    <div *ngIf="product.price > 0" class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 hidden md:flex items-end justify-center opacity-0 group-hover:opacity-100 p-3">
+                      <div class="flex gap-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-200">
+                        <button *ngIf="product.price > 0"
+                          (click)="cartService.isInCart(product.id) ? removeFromCart(product, $event) : addToCart(product, $event); $event.stopPropagation()"
+                          class="px-3 py-2 border-2 border-black rounded-lg text-xs font-bold text-[#111111] shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                          [class.bg-[#68E079]]="cartService.isInCart(product.id)"
+                          [class.bg-[#FFC60B]]="!cartService.isInCart(product.id)"
+                        >
+                          {{ cartService.isInCart(product.id) ? '&#10003; In Cart' : '+ Add to Cart' }}
+                        </button>
+                        <button *ngIf="product.price > 0"
+                          (click)="buyNow(product, $event)"
+                          class="px-3 py-2 bg-[#111111] text-white border-2 border-black rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_#FFC60B] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                        >
+                          Buy Now
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Mobile cart button -->
+                    <button *ngIf="product.price > 0"
+                      (click)="cartService.isInCart(product.id) ? removeFromCart(product, $event) : addToCart(product, $event); $event.stopPropagation()"
+                      class="md:hidden absolute bottom-2 right-2 p-2 rounded-lg border-2 border-black transition-all duration-200 shadow-[2px_2px_0px_0px_#000]"
+                      [class.bg-[#68E079]]="cartService.isInCart(product.id)"
+                      [class.bg-[#FFC60B]]="!cartService.isInCart(product.id)"
+                    >
+                      <svg *ngIf="!cartService.isInCart(product.id)" class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                      </svg>
+                      <svg *ngIf="cartService.isInCart(product.id)" class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    </button>
                   </div>
                   <div class="p-2.5 md:p-4 flex-1 flex flex-col">
                     <h3 class="font-bold text-[#111111] text-xs md:text-sm line-clamp-2 mb-auto group-hover:text-[#2B57D6] transition-colors leading-tight">
@@ -294,12 +319,35 @@ export class StoreComponent implements OnInit {
   toggleCart(product: Product, event: Event) {
     event.preventDefault();
     event.stopPropagation();
+    if (product.price === 0) {
+      // free items shouldn't be toggled from listing cards
+      return;
+    }
     if (this.cartService.isInCart(product.id)) {
       this.cartService.removeItem(product.id);
     } else {
       this.cartService.addItem(product);
       // don't auto-open sidebar here; only open when user explicitly chooses "Buy Now"
     }
+  }
+
+  addToCart(product: Product, event: Event) {
+    event.stopPropagation();
+    if (product.price === 0) return;
+    this.cartService.addItem(product);
+  }
+
+  removeFromCart(product: Product, event: Event) {
+    event.stopPropagation();
+    if (product.price === 0) return;
+    this.cartService.removeItem(product.id);
+  }
+
+  buyNow(product: Product, event: Event) {
+    event.stopPropagation();
+    if (product.price === 0) return;
+    this.cartService.addItem(product);
+    this.cartService.open();
   }
 
   async copyUrl() {

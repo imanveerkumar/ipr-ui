@@ -140,8 +140,8 @@ import { Product } from '../../core/models';
                     </div>
                   }
 
-                  <!-- Quick Add/Remove - Visible on hover/tap -->
-                  <button 
+                  <!-- Quick Add/Remove - Visible on hover/tap (only for paid products) -->
+                  <button *ngIf="product.price > 0"
                     (click)="cartService.isInCart(product.id) ? removeFromCart(product) : addToCart(product); $event.stopPropagation()"
                     class="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 p-2.5 sm:p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 active:bg-gray-100 transition-all opacity-0 group-hover:opacity-100 min-h-[40px] min-w-[40px]"
                     [class.opacity-100]="cartService.isInCart(product.id)"
@@ -180,7 +180,7 @@ import { Product } from '../../core/models';
                   </div>
                   
                   <!-- Buy Button - Full width -->
-                  <button 
+                  <button *ngIf="product.price > 0"
                     (click)="handleBuyNow(product)"
                     class="w-full py-2.5 sm:py-3 bg-gray-900 text-white text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-colors min-h-[44px]"
                   >
@@ -271,14 +271,24 @@ export class StorefrontProductsComponent implements OnInit {
   }
 
   addToCart(product: Product) {
+    if (product.price === 0) {
+      // free products should not be added via cards
+      return;
+    }
     this.cartService.addItem(product);
   }
 
   removeFromCart(product: Product) {
+    if (product.price === 0) {
+      return;
+    }
     this.cartService.removeItem(product.id);
   }
 
   handleBuyNow(product: Product) {
+    if (product.price === 0) {
+      return;
+    }
     // Add product to cart and open cart sidebar for checkout
     // This allows both guest and authenticated checkout flows
     this.cartService.addItem(product);

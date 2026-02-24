@@ -581,7 +581,7 @@ type ViewState = 'cart' | 'checkout';
             <!-- Checkout View Footer -->
             <button 
               (click)="authService.isSignedIn() ? handleCheckout() : handleGuestCheckout()"
-              [disabled]="isCheckingOut || isValidating || (!authService.isSignedIn() && (!guestEmail || !guestPhoneNumber))"
+              [disabled]="isCheckingOut || isValidating || cartService.totalPrice() === 0 || (!authService.isSignedIn() && (!guestEmail || !guestPhoneNumber))"
               class="w-full py-3 text-sm font-semibold bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-xl hover:from-gray-800 hover:to-gray-700 active:from-gray-950 active:to-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[48px] shadow-lg shadow-gray-900/20 flex items-center justify-center gap-2"
             >
               @if (isCheckingOut || isValidating) {

@@ -434,9 +434,9 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                         -{{ exploreService.getDiscountPercentage(asProduct(item.data).price, asProduct(item.data).compareAtPrice!) }}%
                       </div>
                       <!-- Desktop hover overlay -->
-                      <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 hidden md:flex items-end justify-center opacity-0 group-hover:opacity-100 p-3">
+                      <div *ngIf="asProduct(item.data).price > 0" class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 hidden md:flex items-end justify-center opacity-0 group-hover:opacity-100 p-3">
                         <div class="flex gap-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-200">
-                          <button
+                          <button *ngIf="asProduct(item.data).price > 0"
                             (click)="isInCart(asProduct(item.data).id) ? removeFromCart(asProduct(item.data).id, $event) : addToCart(asProduct(item.data), $event)"
                             class="px-3 py-2 border-2 border-black rounded-lg text-xs font-bold text-[#111111] shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                             [class.bg-[#68E079]]="isInCart(asProduct(item.data).id)"
@@ -444,7 +444,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                           >
                             {{ isInCart(asProduct(item.data).id) ? '&#10003; In Cart' : '+ Add to Cart' }}
                           </button>
-                          <button
+                          <button *ngIf="asProduct(item.data).price > 0"
                             (click)="buyNow(asProduct(item.data), $event)"
                             class="px-3 py-2 bg-[#111111] text-white border-2 border-black rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_#FFC60B] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                           >
@@ -453,7 +453,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                         </div>
                       </div>
                       <!-- Mobile cart button -->
-                      <button
+                      <button *ngIf="asProduct(item.data).price > 0"
                         (click)="isInCart(asProduct(item.data).id) ? removeFromCart(asProduct(item.data).id, $event) : addToCart(asProduct(item.data), $event)"
                         class="md:hidden absolute bottom-2 right-2 p-2 rounded-lg border-2 border-black transition-all duration-200 shadow-[2px_2px_0px_0px_#000]"
                         [class.bg-[#68E079]]="isInCart(asProduct(item.data).id)"

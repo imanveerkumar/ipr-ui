@@ -142,7 +142,7 @@ import { Product } from '../../core/models';
                     </div>
                     
                     <!-- Action Buttons - Touch optimized (min 44px height) -->
-                    <div class="flex gap-2">
+                    <div class="flex gap-2" *ngIf="product.price > 0">
                       <button 
                         (click)="handleBuyNow(product)"
                         class="flex-1 py-2.5 sm:py-3 px-2 sm:px-4 bg-gray-900 text-white text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-colors min-h-[44px]"
@@ -288,14 +288,23 @@ export class StorefrontHomeComponent {
   }
 
   addToCart(product: Product) {
+    if (product.price === 0) {
+      return;
+    }
     this.cartService.addItem(product);
   }
 
   removeFromCart(product: Product) {
+    if (product.price === 0) {
+      return;
+    }
     this.cartService.removeItem(product.id);
   }
 
   handleBuyNow(product: Product) {
+    if (product.price === 0) {
+      return;
+    }
     // Add product to cart and open cart sidebar for checkout
     // This allows both guest and authenticated checkout flows
     this.cartService.addItem(product);
