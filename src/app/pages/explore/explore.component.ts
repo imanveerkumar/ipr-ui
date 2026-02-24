@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { 
   ExploreService, 
   ExploreProduct, 
@@ -350,8 +350,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     -{{ exploreService.getDiscountPercentage(product.price, product.compareAtPrice) }}%
                   </div>
 
-                  <!-- Action Buttons (for logged-in users) -->
-                  <div *ngIf="authService.isSignedIn()" class="absolute bottom-2 right-2 md:bottom-3 md:right-3 flex gap-1 md:gap-2 z-10">
+                  <!-- Action Buttons -->
+                  <div class="absolute bottom-2 right-2 md:bottom-3 md:right-3 flex gap-1 md:gap-2 z-10">
                     <!-- Add to Cart Button -->
                     <button
                       (click)="isInCart(product.id) ? removeFromCart(product.id, $event) : addToCart(product, $event)"
@@ -653,6 +653,7 @@ export class ExploreComponent implements OnInit {
   exploreService = inject(ExploreService);
   private subdomainService = inject(SubdomainService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   cartService = inject(CartService);
   authService = inject(AuthService);
 
@@ -903,20 +904,15 @@ export class ExploreComponent implements OnInit {
   }
 
   viewProduct(product: ExploreProduct) {
-    // Navigate to store subdomain with product
-    const storeUrl = this.subdomainService.getStoreUrl(product.store.slug, `/product/${product.id}`);
-    window.location.href = storeUrl;
+    this.router.navigate(['/product', product.id]);
   }
 
   viewStore(store: ExploreStore) {
-    const storeUrl = this.subdomainService.getStoreUrl(store.slug);
-    window.location.href = storeUrl;
+    this.router.navigate(['/store', store.slug]);
   }
 
   viewCreator(creator: ExploreCreator) {
-    // For now, we'll navigate to explore filtered by this creator
-    // In future, this could be a dedicated creator profile page
-    console.log('View creator:', creator.username);
+    this.router.navigate(['/creator', creator.id]);
   }
 
   addToCart(product: ExploreProduct, event: Event) {

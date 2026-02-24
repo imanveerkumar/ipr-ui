@@ -210,4 +210,20 @@ export class ExploreService {
     if (!compareAtPrice || compareAtPrice <= price) return 0;
     return Math.round(((compareAtPrice - price) / compareAtPrice) * 100);
   }
+
+  async getCreatorById(id: string): Promise<ExploreCreator | null> {
+    const response = await this.api.get<ExploreCreator>(`/explore/creators/${id}`);
+    return response.data || null;
+  }
+
+  async getCreatorStores(creatorId: string): Promise<ExploreStore[]> {
+    const response = await this.api.get<ExploreStore[]>(`/explore/creators/${creatorId}/stores`);
+    return response.data || [];
+  }
+
+  async getCreatorProducts(creatorId: string, params: { page?: number; limit?: number } = {}): Promise<ExplorePaginatedResponse<ExploreProduct>> {
+    const query = this.buildQueryString(params as ExploreQueryParams);
+    const response = await this.api.get<ExplorePaginatedResponse<ExploreProduct>>(`/explore/creators/${creatorId}/products${query}`);
+    return response.data || { items: [], total: 0, page: 1, limit: 12, totalPages: 0, hasMore: false };
+  }
 }
