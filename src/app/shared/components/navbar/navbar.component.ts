@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, signal, inject, OnDestroy } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
@@ -1663,41 +1663,42 @@ import { ConfirmService } from '../../../core/services/confirm.service';
             </nav>
             
             <!-- Search Section -->
-            <div class="search-section">
-              <div class="search-dropdown-wrapper">
-                <div class="search-container">
-                  <input 
-                    type="text" 
-                    class="search-input" 
-                    placeholder="Search products, stores, creators..."
-                    [(ngModel)]="searchQuery"
-                    (input)="onSearchInput()"
-                    (focus)="onSearchFocus()"
-                    (keydown)="onSearchKeydown($event)"
-                    #desktopSearchInput
-                  >
-                  <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                  </svg>
-                </div>
-                
-                <!-- Search Dropdown -->
-                @if (showSearchDropdown()) {
-                  <div class="search-dropdown">
-                    @if (isSearching()) {
-                      <div class="search-loading">
-                        <div class="search-loading-spinner"></div>
-                        <p class="search-loading-text">Searching...</p>
-                      </div>
-                    } @else if (!searchQuery || searchQuery.trim().length === 0) {
-                      <div class="search-empty">
-                        <div class="search-empty-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                          </svg>
+            @if (showSearchBar()) {
+              <div class="search-section">
+                <div class="search-dropdown-wrapper">
+                  <div class="search-container">
+                    <input 
+                      type="text" 
+                      class="search-input" 
+                      placeholder="Search products, stores, creators..."
+                      [(ngModel)]="searchQuery"
+                      (input)="onSearchInput()"
+                      (focus)="onSearchFocus()"
+                      (keydown)="onSearchKeydown($event)"
+                      #desktopSearchInput
+                    >
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                  </div>
+                  
+                  <!-- Search Dropdown -->
+                  @if (showSearchDropdown()) {
+                    <div class="search-dropdown">
+                      @if (isSearching()) {
+                        <div class="search-loading">
+                          <div class="search-loading-spinner"></div>
+                          <p class="search-loading-text">Searching...</p>
                         </div>
-                        <p class="search-empty-text">Start typing to search</p>
-                        <p class="search-empty-hint">Search for products, stores, or creators</p>
+                      } @else if (!searchQuery || searchQuery.trim().length === 0) {
+                        <div class="search-empty">
+                          <div class="search-empty-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                            </svg>
+                          </div>
+                          <p class="search-empty-text">Start typing to search</p>
+                          <p class="search-empty-hint">Search for products, stores, or creators</p>
                       </div>
                     } @else if (hasNoResults()) {
                       <div class="search-empty">
@@ -1818,14 +1819,19 @@ import { ConfirmService } from '../../../core/services/confirm.service';
               (click)="closeSearchDropdown()">
             </div>
             
+            <!-- end of showSearchBar conditional -->
+            }
+            
             <!-- Actions Section -->
             <div class="actions-section">
               <!-- Mobile Search Button -->
-              <button class="icon-btn mobile-search-btn" (click)="openMobileSearch()">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-              </button>
+              @if (showSearchBar()) {
+                <button class="icon-btn mobile-search-btn" (click)="openMobileSearch()">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                </button>
+              }
               
               @if (auth.isLoaded()) {
                 <!-- Cart - visible on all pages except home, for all users -->
@@ -2317,7 +2323,15 @@ export class NavbarComponent implements OnDestroy {
   constructor(
     public auth: AuthService,
     private elementRef: ElementRef
-  ) {}
+  ) {
+    // when the user navigates, make sure any open search UI is closed
+    this.router.events.subscribe(e => {
+      if (e instanceof NavigationEnd) {
+        this.closeSearchDropdown();
+        this.closeMobileSearch();
+      }
+    });
+  }
   
   ngOnDestroy() {
     if (this.searchTimeout) {
@@ -2631,5 +2645,20 @@ export class NavbarComponent implements OnDestroy {
   isHomePage(): boolean {
     const url = this.router.url.split('?')[0];
     return url === '/';
+  }
+
+  /**
+   * Determine whether the search bar should be visible based on current route.
+   * Only show on explore, product, store, creator, and wishlist pages.
+   */
+  showSearchBar(): boolean {
+    const url = this.router.url.split('?')[0];
+    return (
+      url === '/explore' ||
+      url.startsWith('/product/') ||
+      url.startsWith('/store/') ||
+      url.startsWith('/creator/') ||
+      url === '/wishlist'
+    );
   }
 }
