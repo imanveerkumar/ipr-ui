@@ -92,8 +92,8 @@ export class ProductService {
   }
 
   async getMyProducts(): Promise<Product[]> {
-    const response = await this.api.get<Product[]>('/products/my');
-    return response.data || [];
+    const response = await this.api.get<PaginatedResponse<Product>>('/products/my');
+    return response.data?.data || [];
   }
 
   async getMyProductsPaginated(params: ProductsQueryParams): Promise<PaginatedResponse<Product>> {
