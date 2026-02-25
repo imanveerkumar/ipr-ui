@@ -79,23 +79,27 @@ export class CheckoutService {
     return response.data || null;
   }
 
-  async initiatePayment(orderId: string, customAmount?: number): Promise<PaymentInitResponse | null> {
+  async initiatePayment(orderId: string, customAmountRupees?: number): Promise<PaymentInitResponse | null> {
     // front-end guard: don't send zero/negative amounts to the API
-    if (customAmount !== undefined && customAmount <= 0) {
-      throw new Error('Payment amount must be greater than ₹0');
+    if (customAmountRupees !== undefined && customAmountRupees <= 0) {
+      throw new Error('customAmountRupees must be a positive number (in rupees)');
     }
     const body: any = { orderId };
-    if (customAmount !== undefined) body.customAmount = customAmount;
+    if (customAmountRupees !== undefined) {
+      body.customAmount = Math.round(customAmountRupees * 100); // convert rupees → paise for API
+    }
     const response = await this.api.post<PaymentInitResponse>('/payments/initiate', body);
     return response.data || null;
   }
 
-  async initiateGuestPayment(orderId: string, guestEmail: string, customAmount?: number): Promise<PaymentInitResponse | null> {
-    if (customAmount !== undefined && customAmount <= 0) {
-      throw new Error('Payment amount must be greater than ₹0');
+  async initiateGuestPayment(orderId: string, guestEmail: string, customAmountRupees?: number): Promise<PaymentInitResponse | null> {
+    if (customAmountRupees !== undefined && customAmountRupees <= 0) {
+      throw new Error('customAmountRupees must be a positive number (in rupees)');
     }
     const body: any = { orderId, guestEmail };
-    if (customAmount !== undefined) body.customAmount = customAmount;
+    if (customAmountRupees !== undefined) {
+      body.customAmount = Math.round(customAmountRupees * 100); // convert rupees → paise for API
+    }
     const response = await this.api.post<PaymentInitResponse>('/payments/initiate/guest', body);
     return response.data || null;
   }
@@ -114,7 +118,7 @@ export class CheckoutService {
     return new Promise((resolve) => {
       const options = {
         key: paymentData.razorpayKeyId,
-        amount: paymentData.amount * 100, // Razorpay expects paise
+        amount: paymentData.amount, // amount is already in paise from the API
         currency: paymentData.currency,
         order_id: paymentData.razorpayOrderId,
         name: 'StoresCraft',

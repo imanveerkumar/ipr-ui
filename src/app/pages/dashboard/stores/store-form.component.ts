@@ -199,14 +199,14 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               Store URL (Subdomain) <span class="required-mark">*</span>
               <span class="tooltip-trigger" tabindex="0">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                <span class="tooltip-content">This creates your unique store URL. Use lowercase letters, numbers, hyphens or underscores; avoid special characters or patterns that could affect routing.</span>
+                <span class="tooltip-content">This creates your unique store URL. Use lowercase letters, numbers, and hyphens only — underscores are not valid in subdomains.</span>
               </span>
             </label>
             <div class="slug-input-wrapper">
-              <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input slug-input" placeholder="my_store" pattern="[a-z0-9_-]+" (input)="validateSlug()">
+              <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input slug-input" placeholder="my-store" pattern="[a-z0-9-]+" (input)="validateSlug()">
               <span class="slug-suffix">.{{ baseDomain() }}</span>
             </div>
-            <p class="form-hint">Only lowercase letters, numbers, hyphens, and underscores allowed.</p>
+            <p class="form-hint">Only lowercase letters, numbers, and hyphens allowed.</p>
             <div class="info-note mt-2">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
               <span>Note: Certain system keywords (like 'api', 'admin', 'app', etc.) are reserved and cannot be used as store URLs.</span>
@@ -1188,18 +1188,18 @@ export class StoreFormComponent implements OnInit {
       this.slugError.set(`Store URL must be at least ${this.MIN_SLUG_LENGTH} characters`);
     } else if (slug.length > this.MAX_SLUG_LENGTH) {
       this.slugError.set(`Store URL must be less than ${this.MAX_SLUG_LENGTH} characters`);
-    } else if (!/^[a-z0-9_-]*$/.test(slug)) {
-      this.slugError.set('Only lowercase letters, numbers, hyphens, and underscores allowed');
-    } else if (slug.startsWith('-') || slug.startsWith('_') || slug.endsWith('-') || slug.endsWith('_')) {
-      this.slugError.set('URL cannot start or end with a hyphen or underscore');
-    } else if (/(--|__|-_|_-)/.test(slug)) {
-      this.slugError.set('URL cannot contain consecutive hyphens or underscores');
+    } else if (!/^[a-z0-9-]*$/.test(slug)) {
+      this.slugError.set('Only lowercase letters, numbers, and hyphens allowed');
+    } else if (slug.startsWith('-') || slug.endsWith('-')) {
+      this.slugError.set('URL cannot start or end with a hyphen');
+    } else if (/--/.test(slug)) {
+      this.slugError.set('URL cannot contain consecutive hyphens');
     } else if (!this.storeService.isValidSlug(slug)) {
       this.slugError.set('This subdomain is reserved');
     } else {
       this.slugError.set(null);
     }
-    this.form.slug = slug.replace(/[^a-z0-9_-]/g, '');
+    this.form.slug = slug.replace(/[^a-z0-9-]/g, '');
   }
 
   async save(publish: boolean = false) {

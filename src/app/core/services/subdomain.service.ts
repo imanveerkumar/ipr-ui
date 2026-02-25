@@ -187,9 +187,9 @@ export class SubdomainService {
    * Check if a slug is available for use as subdomain
    */
   isValidSubdomain(slug: string): boolean {
-    // Must be lowercase alphanumeric with hyphens or underscores
+    // Must be lowercase alphanumeric with hyphens only (RFC-compliant subdomain)
     // also enforce start/end alphanumeric and maximum length 63
-    const pattern = /^[a-z0-9]([a-z0-9_-]{0,61}[a-z0-9])?$/;
+    const pattern = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/;
     if (!pattern.test(slug)) return false;
 
     // Cannot be reserved

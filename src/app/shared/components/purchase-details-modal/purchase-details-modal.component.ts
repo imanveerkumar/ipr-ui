@@ -1,4 +1,4 @@
-import { Component, signal, Input, Output, EventEmitter } from '@angular/core';
+import { Component, signal, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -156,12 +156,18 @@ import { RouterLink } from '@angular/router';
     }
   `
 })
-export class PurchaseDetailsModalComponent {
+export class PurchaseDetailsModalComponent implements OnDestroy {
   isOpen = signal(false);
   purchase = signal<any>(null);
   downloading = signal<string | null>(null);
 
   @Output() download = new EventEmitter<{purchase: any, fileId: string}>();
+
+  ngOnDestroy() {
+    if (this.isOpen()) {
+      document.body.style.overflow = '';
+    }
+  }
 
   open(purchaseData: any) {
     this.purchase.set(purchaseData);

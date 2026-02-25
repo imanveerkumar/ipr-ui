@@ -1,4 +1,5 @@
 import { Component, ElementRef, HostListener, signal, inject, OnDestroy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -2325,7 +2326,7 @@ export class NavbarComponent implements OnDestroy {
     private elementRef: ElementRef
   ) {
     // when the user navigates, make sure any open search UI is closed
-    this.router.events.subscribe(e => {
+    this.router.events.pipe(takeUntilDestroyed()).subscribe(e => {
       if (e instanceof NavigationEnd) {
         this.closeSearchDropdown();
         this.closeMobileSearch();

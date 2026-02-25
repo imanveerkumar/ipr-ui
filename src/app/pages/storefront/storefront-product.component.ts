@@ -547,8 +547,6 @@ export class StorefrontProductComponent implements OnInit, OnDestroy {
     const product = this.product();
     if (!product || !this.customAmount || this.customAmount < 1) return;
 
-    const amountInPaise = Math.round(this.customAmount * 100);
-
     // Guests: add to cart and open sidebar
     if (!this.authService.isSignedIn()) {
       this.cartService.addItem(product);
@@ -566,7 +564,7 @@ export class StorefrontProductComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const paymentData = await this.checkoutService.initiatePayment(order.id, amountInPaise);
+      const paymentData = await this.checkoutService.initiatePayment(order.id, this.customAmount);
       if (!paymentData) {
         this.toaster.error({ title: 'Payment Failed', message: 'Failed to initiate payment. Please try again.' });
         return;

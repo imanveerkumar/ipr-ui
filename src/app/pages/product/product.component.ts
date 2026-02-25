@@ -590,9 +590,6 @@ export class ProductComponent implements OnInit {
     const product = this.product();
     if (!product || !this.customAmount || this.customAmount < 1) return;
 
-    // Amount in paise
-    const amountInPaise = Math.round(this.customAmount * 100);
-
     // Guest: add to cart and open sidebar (handles guest email collection)
     if (!this.auth.isSignedIn()) {
       this.cartService.addItem(product);
@@ -610,7 +607,7 @@ export class ProductComponent implements OnInit {
         return;
       }
 
-      const paymentData = await this.checkoutService.initiatePayment(order.id, amountInPaise);
+      const paymentData = await this.checkoutService.initiatePayment(order.id, this.customAmount);
       if (!paymentData) {
         this.toaster.error({ title: 'Payment Failed', message: 'Failed to initiate payment. Please try again.' });
         return;
