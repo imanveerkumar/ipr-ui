@@ -258,7 +258,7 @@ type SortOrder = 'desc' | 'asc';
                           </div>
                         <div>
                           <p class="text-xs md:text-sm text-[#111111]/60 font-medium">Order ID</p>
-                          <p class="font-bold text-sm md:text-base text-[#111111] font-mono">{{ order.id.slice(0, 8).toUpperCase() }}</p>
+                          <p class="font-bold text-sm md:text-base text-[#111111] font-mono">{{ formatId(order.id) }}</p>
                         </div>
                       </div>
                       
@@ -433,6 +433,11 @@ export class OrdersComponent implements OnInit {
     completedOrders: 0,
     totalSpent: 0,
   });
+
+  // helper to keep the short identifier consistent with backend emails
+  formatId(id: string) {
+    return id.slice(0, 8).toUpperCase();
+  }
 
   // Expose Math for template
   Math = Math;

@@ -21,8 +21,12 @@ export class StoreService {
   private subdomainService = inject(SubdomainService);
 
   async getMyStores(): Promise<Store[]> {
-    const response = await this.api.get<Store[]>('/stores/my-stores');
-    return response.data || [];
+    const response = await this.api.get<{ data: Store[]; meta: unknown }>('/stores/my-stores?limit=100');
+    const result = response.data as any;
+    if (result && Array.isArray(result.data)) {
+      return result.data;
+    }
+    return Array.isArray(result) ? result : [];
   }
 
   async getMyStoresPaginated(params: StoresQueryParams): Promise<PaginatedResponse<Store>> {

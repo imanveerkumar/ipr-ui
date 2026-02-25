@@ -11,6 +11,7 @@ import { RichTextEditorComponent } from '../../../shared/components/rich-text-ed
 import { ImageUploadComponent } from '../../../shared/components/image-upload/image-upload.component';
 import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 import { FileUploadService, UploadedFileRef } from '../../../core/services/file-upload.service';
+import { SubdomainService } from '../../../core/services/subdomain.service';
 
 @Component({
   selector: 'app-product-form',
@@ -143,6 +144,36 @@ import { FileUploadService, UploadedFileRef } from '../../../core/services/file-
             </div>
           </div>
         </div>
+
+        <!-- Live Product Card -->
+        @if (isEditing() && productState().isPublished && !isLoading() && getProductStorefrontUrl()) {
+          <div class="live-store-card">
+            <div class="live-store-content">
+              <div class="live-store-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              </div>
+              <div class="live-store-info">
+                <p class="live-store-label">Your product is live!</p>
+                <a [href]="getProductStorefrontUrl()" target="_blank" rel="noopener noreferrer" class="live-store-url">View on storefront</a>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button type="button" (click)="copyProductUrl()" class="btn btn-secondary btn-sm">
+                @if (copied()) {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Copied!
+                } @else {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                  Copy URL
+                }
+              </button>
+              <button type="button" (click)="shareProductUrl()" class="btn btn-secondary btn-sm">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                Share
+              </button>
+            </div>
+          </div>
+        }
 
         <form *ngIf="!isLoading()" (ngSubmit)="save()" class="form-card" [class.opacity-60]="!canEdit()" [class.pointer-events-none]="!canEdit()">
           <h2 class="form-card-title">Product Details</h2>
@@ -1089,6 +1120,70 @@ import { FileUploadService, UploadedFileRef } from '../../../core/services/file-
         width: 100%;
       }
     }
+
+    /* Live Product Card */
+    .live-store-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem;
+      background: #68E079;
+      border: 2px solid #111111;
+      box-shadow: 4px 4px 0px 0px #111111;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 640px) {
+      .live-store-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .live-store-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .live-store-icon {
+      width: 44px;
+      height: 44px;
+      background: #ffffff;
+      border: 2px solid #111111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .live-store-info {
+      min-width: 0;
+    }
+
+    .live-store-label {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #111111;
+      margin: 0 0 0.25rem;
+    }
+
+    .live-store-url {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #111111;
+      text-decoration: underline;
+    }
+
+    .live-store-url:hover {
+      color: #2B57D6;
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.8125rem;
+    }
   `]
 })
 export class ProductFormComponent implements OnInit {
@@ -1152,6 +1247,9 @@ export class ProductFormComponent implements OnInit {
   private toaster = inject(ToasterService);
   private confirmService = inject(ConfirmService);
   private fileUpload = inject(FileUploadService);
+  private subdomainService = inject(SubdomainService);
+
+  copied = signal(false);
 
   private canceledUploads = new Set<string>();
   private uploadControllers = new Map<string, AbortController>();
@@ -1650,6 +1748,42 @@ export class ProductFormComponent implements OnInit {
       window.location.reload();
     } catch (error) {
       this.toaster.handleError(error, 'Failed to restore product');
+    }
+  }
+
+  getProductStorefrontUrl(): string {
+    if (!this.productId || this.productId === 'new') return '';
+    const store = this.stores().find(s => s.id === this.form.storeId);
+    if (!store?.slug) return '';
+    return this.subdomainService.getStoreUrl(store.slug, `/product/${this.productId}`);
+  }
+
+  async copyProductUrl() {
+    const url = this.getProductStorefrontUrl();
+    if (!url) return;
+    try {
+      await navigator.clipboard.writeText(url);
+      this.copied.set(true);
+      this.toaster.success({ title: 'Link Copied', message: 'Storefront URL copied to clipboard' });
+      setTimeout(() => this.copied.set(false), 2000);
+    } catch {
+      this.toaster.error({ title: 'Copy Failed', message: 'Could not copy URL' });
+    }
+  }
+
+  async shareProductUrl() {
+    const url = this.getProductStorefrontUrl();
+    if (!url) return;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: this.form.title || 'Product',
+          text: `Check out ${this.form.title || 'this product'} on StoresCraft`,
+          url,
+        });
+      } catch { /* user cancelled */ }
+    } else {
+      await this.copyProductUrl();
     }
   }
 }

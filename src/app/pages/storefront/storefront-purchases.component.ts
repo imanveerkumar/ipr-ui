@@ -271,9 +271,11 @@ export class StorefrontPurchasesComponent implements OnInit {
 
   constructor() {
     // Watch for auth state changes
+    // Reload purchases when authentication state and store context become available.
     effect(() => {
-      if (this.authService.isSignedIn() && this.storeContext.hasStore()) {
-        this.loadClerkPurchases();
+      if (this.isAuthenticated() && this.storeContext.hasStore()) {
+        // loadPurchases handles both guest and signed-in (clerk) users
+        this.loadPurchases();
       }
     });
   }

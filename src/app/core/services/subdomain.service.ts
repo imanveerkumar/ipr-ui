@@ -75,8 +75,8 @@ export class SubdomainService {
     if (host.endsWith(baseDomain) && host !== baseDomain) {
       const subdomain = host.replace(`.${baseDomain}`, '');
       
-      // Ignore www and other reserved subdomains
-      const reservedSubdomains = ['www', 'api', 'admin', 'app', 'dashboard', 'mail', 'ftp'];
+      // Use configured reserved list (with fallback)
+      const reservedSubdomains = this.getReservedSubdomains();
       
       if (subdomain && !reservedSubdomains.includes(subdomain.toLowerCase())) {
         result.isStorefront = true;
@@ -85,6 +85,18 @@ export class SubdomainService {
     }
 
     return result;
+  }
+
+  /**
+   * Return the list of reserved subdomains. Reads from environment or falls back to a small default.
+   */
+  private getReservedSubdomains(): string[] {
+    const envList = (environment as any).reservedSubdomains;
+    if (Array.isArray(envList)) {
+      return envList.map((s: string) => s.toLowerCase());
+    }
+    // fallback minimal set
+    return ['www', 'api', 'admin', 'app', 'dashboard', 'mail', 'ftp'];
   }
 
   /**
@@ -175,12 +187,13 @@ export class SubdomainService {
    * Check if a slug is available for use as subdomain
    */
   isValidSubdomain(slug: string): boolean {
-    // Must be lowercase alphanumeric with hyphens
+    // Must be lowercase alphanumeric with hyphens only (RFC-compliant subdomain)
+    // also enforce start/end alphanumeric and maximum length 63
     const pattern = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/;
     if (!pattern.test(slug)) return false;
 
     // Cannot be reserved
-    const reserved = ['www', 'api', 'admin', 'app', 'dashboard', 'mail', 'ftp', 'cdn', 'static', 'assets', 'media'];
+    const reserved = this.getReservedSubdomains();
     return !reserved.includes(slug.toLowerCase());
   }
 }

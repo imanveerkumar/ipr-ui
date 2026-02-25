@@ -116,14 +116,21 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
                 <a [href]="storeService.getStoreUrl(store()!)" target="_blank" class="live-store-url">{{ store()?.slug }}.yoursite.com</a>
               </div>
             </div>
-            <button (click)="copyStoreUrl()" class="btn btn-secondary btn-sm">
-              @if (copied()) {
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Copied!
-              } @else {
-                Copy URL
-              }
-            </button>
+            <div class="flex gap-2">
+              <button (click)="copyStoreUrl()" class="btn btn-secondary btn-sm">
+                @if (copied()) {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Copied!
+                } @else {
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                  Copy URL
+                }
+              </button>
+              <button (click)="shareStoreUrl()" class="btn btn-secondary btn-sm">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                Share
+              </button>
+            </div>
           </div>
         }
 
@@ -192,7 +199,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               Store URL (Subdomain) <span class="required-mark">*</span>
               <span class="tooltip-trigger" tabindex="0">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                <span class="tooltip-content">This creates your unique store URL. Use lowercase letters, numbers, and hyphens only.</span>
+                <span class="tooltip-content">This creates your unique store URL. Use lowercase letters, numbers, and hyphens only — underscores are not valid in subdomains.</span>
               </span>
             </label>
             <div class="slug-input-wrapper">
@@ -200,6 +207,10 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               <span class="slug-suffix">.{{ baseDomain() }}</span>
             </div>
             <p class="form-hint">Only lowercase letters, numbers, and hyphens allowed.</p>
+            <div class="info-note mt-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>Note: Certain system keywords (like 'api', 'admin', 'app', etc.) are reserved and cannot be used as store URLs.</span>
+            </div>
             @if (slugError()) {
               <p class="form-error">{{ slugError() }}</p>
             }
@@ -816,6 +827,24 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       align-items: center;
     }
 
+    .info-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background-color: #F9F4EB;
+      border: 1px solid #111111;
+      border-radius: 4px;
+      font-size: 0.8125rem;
+      color: #111111;
+      margin-top: 0.75rem;
+    }
+
+    .info-note svg {
+      flex-shrink: 0;
+      margin-top: 0.125rem;
+    }
+
     /* URL Preview Card */
     .url-preview-card {
       background: #2B57D6;
@@ -1163,7 +1192,7 @@ export class StoreFormComponent implements OnInit {
       this.slugError.set('Only lowercase letters, numbers, and hyphens allowed');
     } else if (slug.startsWith('-') || slug.endsWith('-')) {
       this.slugError.set('URL cannot start or end with a hyphen');
-    } else if (slug.includes('--')) {
+    } else if (/--/.test(slug)) {
       this.slugError.set('URL cannot contain consecutive hyphens');
     } else if (!this.storeService.isValidSlug(slug)) {
       this.slugError.set('This subdomain is reserved');
@@ -1277,6 +1306,23 @@ export class StoreFormComponent implements OnInit {
     navigator.clipboard.writeText(url);
     this.copied.set(true);
     setTimeout(() => this.copied.set(false), 2000);
+  }
+
+  async shareStoreUrl() {
+    const store = this.store();
+    if (!store) return;
+    const url = this.storeService.getStoreUrl(store);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: store.name || 'Store',
+          text: `Check out ${store.name || 'this store'} on StoresCraft`,
+          url,
+        });
+      } catch { /* user cancelled */ }
+    } else {
+      this.copyStoreUrl();
+    }
   }
 
   @HostListener('document:click', ['$event'])

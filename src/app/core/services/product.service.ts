@@ -29,8 +29,16 @@ export class ProductService {
   }
 
   async getProductById(id: string): Promise<Product | null> {
-    const response = await this.api.get<Product>(`/products/${id}`);
-    return response.data || null;
+    try {
+      const response = await this.api.get<Product>(`/products/${id}`);
+      return response.data || null;
+    } catch (err: any) {
+      // return null for not found so callers can display a friendly UI
+      if (err && err.status === 404) {
+        return null;
+      }
+      throw err;
+    }
   }
 
   async getProductByIdForOwner(id: string): Promise<Product | null> {
@@ -84,8 +92,8 @@ export class ProductService {
   }
 
   async getMyProducts(): Promise<Product[]> {
-    const response = await this.api.get<Product[]>('/products/my');
-    return response.data || [];
+    const response = await this.api.get<PaginatedResponse<Product>>('/products/my');
+    return response.data?.data || [];
   }
 
   async getMyProductsPaginated(params: ProductsQueryParams): Promise<PaginatedResponse<Product>> {

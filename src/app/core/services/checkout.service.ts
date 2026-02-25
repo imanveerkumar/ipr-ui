@@ -79,16 +79,38 @@ export class CheckoutService {
     return response.data || null;
   }
 
-  async initiatePayment(orderId: string): Promise<PaymentInitResponse | null> {
-    const response = await this.api.post<PaymentInitResponse>('/payments/initiate', { orderId });
+  async initiatePayment(orderId: string, customAmountRupees?: number): Promise<PaymentInitResponse | null> {
+    // front-end guard: don't send zero/negative amounts to the API
+    if (customAmountRupees !== undefined && customAmountRupees <= 0) {
+      throw new Error('customAmountRupees must be a positive number (in rupees)');
+    }
+    const body: any = { orderId };
+    if (customAmountRupees !== undefined) {
+      body.customAmount = Math.round(customAmountRupees * 100); // convert rupees → paise for API
+    }
+    const response = await this.api.post<PaymentInitResponse>('/payments/initiate', body);
     return response.data || null;
   }
 
-  async initiateGuestPayment(orderId: string, guestEmail: string): Promise<PaymentInitResponse | null> {
-    const response = await this.api.post<PaymentInitResponse>('/payments/initiate/guest', { 
-      orderId, 
-      guestEmail 
-    });
+  async initiateGuestPayment(orderId: string, guestEmail: string, customAmountRupees?: number): Promise<PaymentInitResponse | null> {
+    if (customAmountRupees !== undefined && customAmountRupees <= 0) {
+      throw new Error('customAmountRupees must be a positive number (in rupees)');
+    }
+    const body: any = { orderId, guestEmail };
+    if (customAmountRupees !== undefined) {
+      body.customAmount = Math.round(customAmountRupees * 100); // convert rupees → paise for API
+    }
+    const response = await this.api.post<PaymentInitResponse>('/payments/initiate/guest', body);
+    return response.data || null;
+  }
+
+  async completeFreeOrder(orderId: string): Promise<{ success: boolean; orderId: string } | null> {
+    const response = await this.api.post<{ success: boolean; orderId: string }>('/payments/free', { orderId });
+    return response.data || null;
+  }
+
+  async completeGuestFreeOrder(orderId: string, guestEmail: string): Promise<{ success: boolean; orderId: string; downloadToken?: string } | null> {
+    const response = await this.api.post<{ success: boolean; orderId: string; downloadToken?: string }>('/payments/free/guest', { orderId, guestEmail });
     return response.data || null;
   }
 
@@ -96,7 +118,7 @@ export class CheckoutService {
     return new Promise((resolve) => {
       const options = {
         key: paymentData.razorpayKeyId,
-        amount: paymentData.amount * 100, // Razorpay expects paise
+        amount: paymentData.amount, // amount is already in paise from the API
         currency: paymentData.currency,
         order_id: paymentData.razorpayOrderId,
         name: 'StoresCraft',

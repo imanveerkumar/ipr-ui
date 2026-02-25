@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, signal, inject, OnDestroy } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
@@ -1663,41 +1664,42 @@ import { ConfirmService } from '../../../core/services/confirm.service';
             </nav>
             
             <!-- Search Section -->
-            <div class="search-section">
-              <div class="search-dropdown-wrapper">
-                <div class="search-container">
-                  <input 
-                    type="text" 
-                    class="search-input" 
-                    placeholder="Search products, stores, creators..."
-                    [(ngModel)]="searchQuery"
-                    (input)="onSearchInput()"
-                    (focus)="onSearchFocus()"
-                    (keydown)="onSearchKeydown($event)"
-                    #desktopSearchInput
-                  >
-                  <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                  </svg>
-                </div>
-                
-                <!-- Search Dropdown -->
-                @if (showSearchDropdown()) {
-                  <div class="search-dropdown">
-                    @if (isSearching()) {
-                      <div class="search-loading">
-                        <div class="search-loading-spinner"></div>
-                        <p class="search-loading-text">Searching...</p>
-                      </div>
-                    } @else if (!searchQuery || searchQuery.trim().length === 0) {
-                      <div class="search-empty">
-                        <div class="search-empty-icon">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                          </svg>
+            @if (showSearchBar()) {
+              <div class="search-section">
+                <div class="search-dropdown-wrapper">
+                  <div class="search-container">
+                    <input 
+                      type="text" 
+                      class="search-input" 
+                      placeholder="Search products, stores, creators..."
+                      [(ngModel)]="searchQuery"
+                      (input)="onSearchInput()"
+                      (focus)="onSearchFocus()"
+                      (keydown)="onSearchKeydown($event)"
+                      #desktopSearchInput
+                    >
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                  </div>
+                  
+                  <!-- Search Dropdown -->
+                  @if (showSearchDropdown()) {
+                    <div class="search-dropdown">
+                      @if (isSearching()) {
+                        <div class="search-loading">
+                          <div class="search-loading-spinner"></div>
+                          <p class="search-loading-text">Searching...</p>
                         </div>
-                        <p class="search-empty-text">Start typing to search</p>
-                        <p class="search-empty-hint">Search for products, stores, or creators</p>
+                      } @else if (!searchQuery || searchQuery.trim().length === 0) {
+                        <div class="search-empty">
+                          <div class="search-empty-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                            </svg>
+                          </div>
+                          <p class="search-empty-text">Start typing to search</p>
+                          <p class="search-empty-hint">Search for products, stores, or creators</p>
                       </div>
                     } @else if (hasNoResults()) {
                       <div class="search-empty">
@@ -1818,25 +1820,23 @@ import { ConfirmService } from '../../../core/services/confirm.service';
               (click)="closeSearchDropdown()">
             </div>
             
+            <!-- end of showSearchBar conditional -->
+            }
+            
             <!-- Actions Section -->
             <div class="actions-section">
               <!-- Mobile Search Button -->
-              <button class="icon-btn mobile-search-btn" (click)="openMobileSearch()">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-              </button>
+              @if (showSearchBar()) {
+                <button class="icon-btn mobile-search-btn" (click)="openMobileSearch()">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                </button>
+              }
               
               @if (auth.isLoaded()) {
-                @if (auth.isSignedIn()) {
-                  <!-- Favorites -->
-                  <a class="icon-btn" routerLink="/wishlist" routerLinkActive="active">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                    </svg>
-                  </a>
-                  
-                  <!-- Cart -->
+                <!-- Cart - visible on all pages except home, for all users -->
+                @if (!isHomePage()) {
                   <button class="icon-btn" (click)="openCart()">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
@@ -1845,6 +1845,15 @@ import { ConfirmService } from '../../../core/services/confirm.service';
                       <span class="icon-btn-badge">{{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}</span>
                     }
                   </button>
+                }
+
+                @if (auth.isSignedIn()) {
+                  <!-- Favorites -->
+                  <a class="icon-btn" routerLink="/wishlist" routerLinkActive="active">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                    </svg>
+                  </a>
                   
                   <!-- Profile -->
                   <div class="profile-container">
@@ -2005,6 +2014,17 @@ import { ConfirmService } from '../../../core/services/confirm.service';
             </svg>
             Explore
           </a>
+          @if (!isHomePage()) {
+            <button class="mobile-nav-link" (click)="openCart(); closeMobileMenu()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+              </svg>
+              Cart
+              @if (cartService.itemCount() > 0) {
+                <span class="mobile-nav-badge">{{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}</span>
+              }
+            </button>
+          }
           @if (auth.isSignedIn()) {
             <a routerLink="/library" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -2018,15 +2038,6 @@ import { ConfirmService } from '../../../core/services/confirm.service';
               </svg>
               Wishlist
             </a>
-            <button class="mobile-nav-link" (click)="openCart(); closeMobileMenu()">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-              </svg>
-              Cart
-              @if (cartService.itemCount() > 0) {
-                <span class="mobile-nav-badge">{{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}</span>
-              }
-            </button>
             @if (auth.isCreator()) {
               <a routerLink="/dashboard" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -2313,7 +2324,15 @@ export class NavbarComponent implements OnDestroy {
   constructor(
     public auth: AuthService,
     private elementRef: ElementRef
-  ) {}
+  ) {
+    // when the user navigates, make sure any open search UI is closed
+    this.router.events.pipe(takeUntilDestroyed()).subscribe(e => {
+      if (e instanceof NavigationEnd) {
+        this.closeSearchDropdown();
+        this.closeMobileSearch();
+      }
+    });
+  }
   
   ngOnDestroy() {
     if (this.searchTimeout) {
@@ -2486,15 +2505,23 @@ export class NavbarComponent implements OnDestroy {
   navigateToProduct(product: SearchSuggestionProduct) {
     this.closeSearchDropdown();
     this.closeMobileSearch();
-    const storeUrl = this.subdomainService.getStoreUrl(product.storeSlug, `/product/${product.slug}`);
-    window.location.href = storeUrl;
+    // Previously we redirected to the store's subdomain so that users would
+    // view the product inside the storefront.  That behaviour caused the
+    // navbar search component to leave the main site and land on a separate
+    // subdomain.  The UX request is to remain on the primary application
+    // when selecting a suggestion, so we now use the router to navigate to
+    // the main site's product page instead.
+    // The route is defined as `/product/:id` so we use the product ID here.
+    this.router.navigate(['/product', product.id]);
   }
   
   navigateToStore(store: SearchSuggestionStore) {
     this.closeSearchDropdown();
     this.closeMobileSearch();
-    const storeUrl = this.subdomainService.getStoreUrl(store.slug);
-    window.location.href = storeUrl;
+    // Instead of jumping to the subdomain we stay on the primary app and
+    // navigate to the store page handled by the router.  This keeps the user
+    // on the main domain even after selecting a suggestion from the navbar.
+    this.router.navigate(['/store', store.slug]);
   }
   
   navigateToCreator(creator: SearchSuggestionCreator) {
@@ -2622,5 +2649,25 @@ export class NavbarComponent implements OnDestroy {
   openCart() {
     this.closeAllMenus();
     this.cartService.open();
+  }
+
+  isHomePage(): boolean {
+    const url = this.router.url.split('?')[0];
+    return url === '/';
+  }
+
+  /**
+   * Determine whether the search bar should be visible based on current route.
+   * Only show on explore, product, store, creator, and wishlist pages.
+   */
+  showSearchBar(): boolean {
+    const url = this.router.url.split('?')[0];
+    return (
+      url === '/explore' ||
+      url.startsWith('/product/') ||
+      url.startsWith('/store/') ||
+      url.startsWith('/creator/') ||
+      url === '/wishlist'
+    );
   }
 }

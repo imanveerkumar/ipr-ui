@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,11 +6,12 @@ import { License } from '../../core/models/index';
 import { CheckoutService } from '../../core/services/checkout.service';
 import { DownloadService } from '../../core/services/download.service';
 import { ToasterService } from '../../core/services/toaster.service';
+import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-details-modal/purchase-details-modal.component';
 
 @Component({
   selector: 'app-library',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, PurchaseDetailsModalComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Hero Section -->
@@ -155,7 +156,10 @@ import { ToasterService } from '../../core/services/toaster.service';
             <!-- Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               @for (license of filteredLicenses(); track license.id) {
-                <div class="group bg-white border-2 border-black rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300">
+                <div 
+                  (click)="openPurchaseDetails(license)"
+                  class="group bg-white border-2 border-black rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                >
                   <!-- Card Header (Image + Info) -->
                   <div class="p-3 md:p-4 flex gap-4">
                     <!-- Image -->
@@ -213,7 +217,7 @@ import { ToasterService } from '../../core/services/toaster.service';
                       <div class="space-y-2">
                         @for (pf of license.product.files; track pf.id) {
                           <button 
-                            (click)="download(license.productId, pf.fileId)"
+                            (click)="download(license.productId, pf.fileId); $event.stopPropagation()"
                             [disabled]="downloading() === pf.fileId || license.downloadCount >= license.maxDownloads"
                             class="w-full flex items-center justify-between px-3 py-2 bg-white border border-black rounded-lg hover:bg-[#F9F4EB] active:bg-[#F0EBE0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed group/btn"
                           >
@@ -252,6 +256,11 @@ import { ToasterService } from '../../core/services/toaster.service';
         </div>
       </section>
     </div>
+
+    <app-purchase-details-modal 
+      #purchaseDetailsModal
+      (download)="onModalDownload($event)"
+    ></app-purchase-details-modal>
   `,
   styles: [`
     :host {
@@ -270,6 +279,8 @@ import { ToasterService } from '../../core/services/toaster.service';
   `]
 })
 export class LibraryComponent implements OnInit {
+  @ViewChild('purchaseDetailsModal') purchaseDetailsModal!: PurchaseDetailsModalComponent;
+
   licenses = signal<License[]>([]);
   loading = signal(true);
   downloading = signal<string | null>(null);
@@ -333,5 +344,36 @@ export class LibraryComponent implements OnInit {
   performSearch() {
     // Trim whitespace to make searches consistent and trigger computed filtering
     this.searchQuery.set(this.searchQuery().trim());
+  }
+
+  openPurchaseDetails(license: License) {
+    this.purchaseDetailsModal.open(license);
+  }
+
+  async onModalDownload(event: { purchase: any, fileId: string }) {
+    this.purchaseDetailsModal.setDownloading(event.fileId);
+    try {
+      await this.downloadService.downloadFile(event.purchase.productId, event.fileId);
+      
+      // Update local state to reflect the new download count
+      this.licenses.update(licenses => 
+        licenses.map(l => 
+          l.id === event.purchase.id 
+            ? { ...l, downloadCount: l.downloadCount + 1 }
+            : l
+        )
+      );
+      
+      // Update the modal's purchase object to reflect the new count
+      const updatedLicense = this.licenses().find(l => l.id === event.purchase.id);
+      if (updatedLicense) {
+        this.purchaseDetailsModal.purchase.set(updatedLicense);
+      }
+    } catch (error) {
+      console.error('Download failed:', error);
+      this.toaster.handleError(error, 'Download failed. Please try again.');
+    } finally {
+      this.purchaseDetailsModal.setDownloading(null);
+    }
   }
 }

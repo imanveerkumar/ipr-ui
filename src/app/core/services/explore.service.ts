@@ -118,6 +118,30 @@ export interface ExploreQueryParams {
   storeId?: string;
 }
 
+export interface FeedItem {
+  type: 'product' | 'store' | 'creator';
+  data: ExploreProduct | ExploreStore | ExploreCreator;
+}
+
+export interface CursorPaginatedFeed {
+  items: FeedItem[];
+  nextCursor: string | null;
+  hasMore: boolean;
+  total: number;
+}
+
+export interface FeedQueryParams {
+  cursor?: string;
+  limit?: number;
+  q?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  minPrice?: number;
+  maxPrice?: number;
+  storeId?: string;
+  type?: 'all' | 'products' | 'stores' | 'creators';
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -140,6 +164,18 @@ export class ExploreService {
     const query = this.buildQueryString(params);
     const response = await this.api.get<ExplorePaginatedResponse<ExploreProduct>>(`/explore/products${query}`);
     return response.data || { items: [], total: 0, page: 1, limit: 12, totalPages: 0, hasMore: false };
+  }
+
+  async getFeed(params: FeedQueryParams = {}): Promise<CursorPaginatedFeed> {
+    const queryParts: string[] = [];
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        queryParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+      }
+    });
+    const query = queryParts.length > 0 ? `?${queryParts.join('&')}` : '';
+    const response = await this.api.get<CursorPaginatedFeed>(`/explore/feed${query}`);
+    return response.data || { items: [], nextCursor: null, hasMore: false, total: 0 };
   }
 
   async getStores(params: ExploreQueryParams = {}): Promise<ExplorePaginatedResponse<ExploreStore>> {
@@ -209,5 +245,21 @@ export class ExploreService {
   getDiscountPercentage(price: number, compareAtPrice: number): number {
     if (!compareAtPrice || compareAtPrice <= price) return 0;
     return Math.round(((compareAtPrice - price) / compareAtPrice) * 100);
+  }
+
+  async getCreatorById(id: string): Promise<ExploreCreator | null> {
+    const response = await this.api.get<ExploreCreator>(`/explore/creators/${id}`);
+    return response.data || null;
+  }
+
+  async getCreatorStores(creatorId: string): Promise<ExploreStore[]> {
+    const response = await this.api.get<ExploreStore[]>(`/explore/creators/${creatorId}/stores`);
+    return response.data || [];
+  }
+
+  async getCreatorProducts(creatorId: string, params: { page?: number; limit?: number } = {}): Promise<ExplorePaginatedResponse<ExploreProduct>> {
+    const query = this.buildQueryString(params as ExploreQueryParams);
+    const response = await this.api.get<ExplorePaginatedResponse<ExploreProduct>>(`/explore/creators/${creatorId}/products${query}`);
+    return response.data || { items: [], total: 0, page: 1, limit: 12, totalPages: 0, hasMore: false };
   }
 }

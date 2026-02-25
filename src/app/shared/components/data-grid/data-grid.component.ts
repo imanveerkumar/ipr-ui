@@ -26,6 +26,11 @@ import {
   DateFilterModule,
   PaginationModule,
   RowSelectionModule,
+  // additional modules required by our configuration
+  CellStyleModule,
+  ColumnAutoSizeModule,
+  ColumnApiModule,
+  ValidationModule,
 } from 'ag-grid-community';
 
 // Register AG Grid modules
@@ -36,6 +41,14 @@ ModuleRegistry.registerModules([
   DateFilterModule,
   PaginationModule,
   RowSelectionModule,
+  // enable cell styling support (cellClass etc.)
+  CellStyleModule,
+  // methods like sizeColumnsToFit rely on column auto-size plugin
+  ColumnAutoSizeModule,
+  // column API features (getColumnState, etc.)
+  ColumnApiModule,
+  // registering validation module gives more verbose error output in console
+  ValidationModule,
 ]);
 
 export interface GridPagination {
@@ -680,7 +693,14 @@ export class DataGridComponent<T = any> implements OnInit, OnDestroy {
   }
 
   onSortChanged(event: SortChangedEvent) {
-    const sortModel = event.api.getColumnState().filter(col => col.sort);
+    // guard against missing api or unexpected state
+    const columnState = event.api?.getColumnState();
+    if (!columnState) {
+      // nothing to sort
+      return;
+    }
+
+    const sortModel = columnState.filter(col => col.sort);
     
     if (sortModel.length > 0) {
       this.currentSort = {
