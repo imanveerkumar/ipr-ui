@@ -1228,7 +1228,7 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async loadFilters() {
     try {
-      const filtersResponse = await this.exploreService.getFilters(this.activeFilter());
+      const filtersResponse = await this.exploreService.getFilters(this.activeFilter(), this.activePricing());
       this.filterSections.set(filtersResponse.sections);
 
       // Derive sortOptions from the 'sort' section
@@ -1347,7 +1347,16 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   setPricing(value: string) {
     if (this.activePricing() !== value) {
       this.activePricing.set(value);
-      this.loadFeed(true);
+      // When pricing changes (e.g. selecting "Free"), reload filters to
+      // remove/add price-related sort options and price range dynamically.
+      // Also clear price-range if switching to free (all items are ₹0).
+      if (value === 'free') {
+        this.minPrice = null;
+        this.maxPrice = null;
+        this.appliedMinPrice = null;
+        this.appliedMaxPrice = null;
+      }
+      this.loadFilters().then(() => this.loadFeed(true));
     }
   }
 

@@ -189,8 +189,12 @@ export class ExploreService {
   // Dynamic Filters
   // =========================================================================
 
-  async getFilters(category: string = 'all'): Promise<ExploreFiltersResponse> {
-    const response = await this.api.get<ExploreFiltersResponse>(`/explore/filters?category=${encodeURIComponent(category)}`);
+  async getFilters(category: string = 'all', pricing: string = 'all'): Promise<ExploreFiltersResponse> {
+    let url = `/explore/filters?category=${encodeURIComponent(category)}`;
+    if (pricing && pricing !== 'all') {
+      url += `&pricing=${encodeURIComponent(pricing)}`;
+    }
+    const response = await this.api.get<ExploreFiltersResponse>(url);
     return response.data || { category, sections: [] };
   }
 
