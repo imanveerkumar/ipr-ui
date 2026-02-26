@@ -10,6 +10,9 @@ import {
   ExploreStats,
   FeedItem,
   FeedQueryParams,
+  FilterSection,
+  ExploreFiltersResponse,
+  FilterOption,
 } from '../../core/services/explore.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
 import { CartService } from '../../core/services/cart.service';
@@ -26,40 +29,39 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     <div class="min-h-screen bg-white font-sans antialiased">
 
       <!-- TOP BAR (Filters summary) -->
-      <div class="sticky top-14 sm:top-16 z-40 bg-white border-b-2 border-black" [class.lg:hidden]="!hasActiveFilters()">
+      <div class="sticky top-14 sm:top-16 z-40 bg-[#F9F4EB]/95 backdrop-blur-sm border-b-2 border-black/10" [class.lg:hidden]="!hasActiveFilters()">
         <div class="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <div class="flex items-center gap-2 sm:gap-3 h-14 sm:h-16">
+          <div class="flex items-center gap-2 sm:gap-3 h-12 sm:h-14">
             <!-- Mobile filter toggle -->
             <button
               (click)="toggleMobileFilters()"
-              class="lg:hidden flex items-center justify-center w-10 h-10 bg-[#F9F4EB] border-2 border-black rounded-lg hover:bg-[#FFC60B] transition-colors flex-shrink-0"
-              [class.bg-[#FFC60B]]="showMobileFilters()"
+              class="lg:hidden flex items-center justify-center gap-1.5 h-9 px-3.5 bg-[#F9F4EB] border-2 border-black/20 rounded-lg text-[#111111]/60 hover:border-black hover:bg-[#FFC60B]/10 active:scale-95 transition-all duration-200 flex-shrink-0 font-dm-sans min-w-[44px]"
+              [class.border-black]="showMobileFilters()"
+              [class.bg-[#111111]]="showMobileFilters()"
+              [class.text-white]="showMobileFilters()"
             >
-              <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
               </svg>
+              <span class="text-xs font-semibold">Filters</span>
+              <span *ngIf="hasActiveFilters()" class="w-1.5 h-1.5 rounded-full bg-[#FA4B28] flex-shrink-0"></span>
             </button>
 
             <!-- Active filters summary -->
-            <div class="flex-1 flex items-center gap-2 min-w-0 overflow-hidden">
+            <div class="flex-1 flex items-center gap-1.5 min-w-0 overflow-hidden">
               <ng-container *ngIf="hasActiveFilters()">
-                <ng-container *ngFor="let chip of getActiveFilterChips().slice(0, 2)">
-                  <span class="inline-flex items-center gap-1 px-2 py-1 border rounded-lg text-xs font-medium text-[#111111] flex-shrink-0"
-                    [class.bg-[#FFC60B]/20]="chip.color === 'yellow'"
-                    [class.border-[#FFC60B]]="chip.color === 'yellow'"
-                    [class.bg-[#68E079]/20]="chip.color === 'green'"
-                    [class.border-[#68E079]]="chip.color === 'green'"
-                    [class.bg-[#2B57D6]/10]="chip.color === 'blue'"
-                    [class.border-[#2B57D6]/30]="chip.color === 'blue'"
-                  >
+                <ng-container *ngFor="let chip of getActiveFilterChips().slice(0, 3)">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFC60B]/20 border border-[#111111]/15 rounded-lg text-[11px] font-bold text-[#111111] flex-shrink-0 hover:bg-[#FFC60B]/30 transition-colors font-dm-sans">
                     {{ chip.label }}
-                    <button (click)="chip.remove()" class="hover:text-[#FA4B28] leading-none">&times;</button>
+                    <button (click)="chip.remove()" class="ml-0.5 text-[#111111]/40 hover:text-[#FA4B28] transition-colors leading-none">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
                   </span>
                 </ng-container>
-                <span *ngIf="getActiveFilterChips().length > 2" class="inline-flex items-center px-2 py-1 bg-[#111111]/10 border border-[#111111]/20 rounded-lg text-xs font-medium text-[#111111] flex-shrink-0">
-                  +{{ getActiveFilterChips().length - 2 }} more
+                <span *ngIf="getActiveFilterChips().length > 3" class="inline-flex items-center px-2 py-1 bg-[#FFC60B]/10 border border-[#111111]/10 rounded-lg text-[11px] font-bold text-[#111111]/60 flex-shrink-0">
+                  +{{ getActiveFilterChips().length - 3 }}
                 </span>
-                <button (click)="clearAllFilters()" class="ml-auto flex-shrink-0 px-3 py-1 bg-[#FA4B28]/20 text-[#FA4B28] rounded-lg text-xs font-bold hover:bg-[#FA4B28]/10 whitespace-nowrap">Clear filters</button>
+                <button (click)="clearAllFilters()" class="ml-auto flex-shrink-0 text-[11px] font-bold text-[#FA4B28] hover:text-[#d63a1a] transition-colors whitespace-nowrap font-dm-sans">Clear all</button>
               </ng-container>
             </div>
 
@@ -72,205 +74,231 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 
         <!-- ==================== LEFT SIDEBAR (Desktop) ==================== -->
         <aside
-          class="hidden lg:block flex-shrink-0 border-r-2 border-black/10 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] overflow-y-auto scrollbar-hide transition-all duration-200"
-          [class.w-16]="sidebarCollapsed()"
-          [class.overflow-hidden]="sidebarCollapsed()"
-          [class.w-64]="!sidebarCollapsed()"
+          class="sidebar-container hidden lg:block flex-shrink-0 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden scrollbar-hide bg-[#F9F4EB] border-r-2 border-black/10"
+          [class.sidebar-collapsed]="sidebarCollapsed()"
+          [class.sidebar-expanded]="!sidebarCollapsed()"
         >
-          <div class="relative">
-            <!-- content shown only when sidebar expanded -->
-            <div *ngIf="!sidebarCollapsed()">
-            <!-- collapse/expand button row -->
-            <div class="flex justify-end px-3 pt-3 pb-1">
-              <button
-                (click)="toggleSidebar()"
-                class="w-8 h-8 flex items-center justify-center bg-[#F9F4EB] border-2 border-black rounded-full hover:bg-[#FFC60B] transition-colors"
+          <!-- Collapse / Expand toggle -->
+          <div class="flex items-center px-4 h-14 border-b-2 border-black/10">
+            <button
+              (click)="toggleSidebar()"
+              class="sidebar-toggle group relative w-8 h-8 flex items-center justify-center rounded-lg text-[#111111]/50 hover:text-[#111111] hover:bg-[#111111]/5 transition-all duration-200"
+              [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+            >
+              <svg
+                class="w-[18px] h-[18px] transition-transform duration-300"
+                [class.rotate-180]="sidebarCollapsed()"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
               >
-                <svg
-                  class="w-4 h-4 text-[#111111] transition-transform"
-                  [class.rotate-180]="!sidebarCollapsed()"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-            <div class="p-4 xl:p-5 pt-2">
-  
-            <!-- Sort -->
-            <div class="mb-5">
-              <button (click)="toggleSection('sort')" class="w-full flex items-center justify-between py-2">
-                <span class="text-sm font-bold text-[#111111]">Sort By</span>
-                <svg class="w-4 h-4 text-[#111111]/50 transition-transform" [class.rotate-180]="expandedSections().has('sort')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div *ngIf="expandedSections().has('sort')" class="space-y-1 mt-1">
-                <button
-                  *ngFor="let option of sortOptions"
-                  (click)="selectSort(option)"
-                  class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150"
-                  [class.bg-[#111111]]="currentSort().value === option.value && currentSort().order === option.order"
-                  [class.text-white]="currentSort().value === option.value && currentSort().order === option.order"
-                  [class.font-bold]="currentSort().value === option.value && currentSort().order === option.order"
-                  [class.text-[#111111]]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                  [class.font-medium]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                  [class.hover:bg-[#F9F4EB]]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                >
-                  <span class="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0"
-                    [class.border-white]="currentSort().value === option.value && currentSort().order === option.order"
-                    [class.border-black/30]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                  >
-                    <span
-                      *ngIf="currentSort().value === option.value && currentSort().order === option.order"
-                      class="w-2 h-2 rounded-full bg-[#FFC60B]"
-                    ></span>
-                  </span>
-                  {{ option.label }}
-                </button>
-              </div>
-            </div>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <span *ngIf="!sidebarCollapsed()" class="ml-3 text-[13px] font-bold text-[#111111] tracking-tight sidebar-label font-dm-sans">Filters</span>
+            <button *ngIf="!sidebarCollapsed() && hasActiveFilters()" (click)="clearAllFilters()" class="ml-auto text-[11px] font-semibold text-[#FA4B28] hover:text-[#d63a1a] transition-colors sidebar-label">Reset all</button>
+          </div>
 
-<!-- Content Type -->
-            <div class="mb-5">
-              <button (click)="toggleSection('type')" class="w-full flex items-center justify-between py-2">
-                <span class="text-sm font-bold text-[#111111]">Content Type</span>
-                <svg class="w-4 h-4 text-[#111111]/50 transition-transform" [class.rotate-180]="expandedSections().has('type')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div *ngIf="expandedSections().has('type')" class="space-y-1 mt-1">
-                <button
-                  *ngFor="let filter of contentFilters"
-                  (click)="setContentFilter(filter.value)"
-                  class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150"
-                  [class.bg-[#111111]]="activeFilter() === filter.value"
-                  [class.text-white]="activeFilter() === filter.value"
-                  [class.font-bold]="activeFilter() === filter.value"
-                  [class.text-[#111111]]="activeFilter() !== filter.value"
-                  [class.font-medium]="activeFilter() !== filter.value"
-                  [class.hover:bg-[#F9F4EB]]="activeFilter() !== filter.value"
-                >
-                  <span class="w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0"
-                    [class.bg-[#FFC60B]]="activeFilter() === filter.value"
-                    [class.border-white]="activeFilter() === filter.value"
-                    [class.border-black/30]="activeFilter() !== filter.value"
-                  >
-                    <svg *ngIf="activeFilter() === filter.value" class="w-3 h-3 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+          <!-- EXPANDED STATE -->
+          <div *ngIf="!sidebarCollapsed()" class="sidebar-content">
+            <div class="px-4 py-4 space-y-1">
+
+              <!-- Content Type Section -->
+              <div class="sidebar-section">
+                <button (click)="toggleSection('type')" class="sidebar-section-header">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#111111]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                     </svg>
-                  </span>
-                  {{ filter.label }}
-                  <span class="ml-auto text-xs opacity-60">{{ getFilterCount(filter.value) }}</span>
-                </button>
-              </div>
-            </div>
-
-
-
-            <!-- Price Range -->
-            <div *ngIf="activeFilter() === 'all' || activeFilter() === 'products'" class="mb-5">
-              <button (click)="toggleSection('price')" class="w-full flex items-center justify-between py-2">
-                <span class="text-sm font-bold text-[#111111]">Price Range</span>
-                <svg class="w-4 h-4 text-[#111111]/50 transition-transform" [class.rotate-180]="expandedSections().has('price')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-              </button>
-              <div *ngIf="expandedSections().has('price')" class="mt-2 space-y-3">
-                <div class="flex items-center gap-2">
-                  <div class="flex-1">
-                    <label class="text-[10px] font-medium text-[#111111]/50 uppercase tracking-wider">Min</label>
-                    <input
-                      type="number"
-                      [(ngModel)]="minPrice"
-                      placeholder="0"
-                      class="w-full mt-1 px-3 py-2 bg-[#F9F4EB] border-2 border-black/20 rounded-lg text-sm font-medium text-[#111111] placeholder-[#111111]/30 focus:outline-none focus:border-black transition-colors"
-                    />
+                    <span>Browse</span>
                   </div>
-                  <span class="text-[#111111]/30 mt-5">&ndash;</span>
-                  <div class="flex-1">
-                    <label class="text-[10px] font-medium text-[#111111]/50 uppercase tracking-wider">Max</label>
-                    <input
-                      type="number"
-                      [(ngModel)]="maxPrice"
-                      placeholder="Any"
-                      class="w-full mt-1 px-3 py-2 bg-[#F9F4EB] border-2 border-black/20 rounded-lg text-sm font-medium text-[#111111] placeholder-[#111111]/30 focus:outline-none focus:border-black transition-colors"
-                    />
-                  </div>
-                </div>
-                <button
-                  (click)="applyPriceFilter()"
-                  class="w-full py-2 bg-[#111111] text-white border-2 border-black rounded-lg text-sm font-bold hover:bg-[#333] transition-colors"
-                >
-                  Apply Price
+                  <svg class="sidebar-chevron" [class.rotate-180]="expandedSections().has('type')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
                 </button>
+                <div *ngIf="expandedSections().has('type')" class="sidebar-section-body">
+                  <button
+                    *ngFor="let filter of contentFilters"
+                    (click)="setContentFilter(filter.value)"
+                    class="sidebar-option"
+                    [class.sidebar-option-active]="activeFilter() === filter.value"
+                  >
+                    <ng-container [ngSwitch]="filter.value">
+                      <svg *ngSwitchCase="'all'" class="sidebar-option-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                      <svg *ngSwitchCase="'products'" class="sidebar-option-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                      <svg *ngSwitchCase="'stores'" class="sidebar-option-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h18v4H3V3zm0 4l2 13h14l2-13M8 10v4m4-4v4m4-4v4"/></svg>
+                      <svg *ngSwitchCase="'creators'" class="sidebar-option-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    </ng-container>
+                    <span class="flex-1 text-left">{{ filter.label }}</span>
+                    <span class="sidebar-option-count">{{ getFilterCount(filter.value) }}</span>
+                  </button>
+                </div>
               </div>
+
+              <!-- Sort Section -->
+              <div class="sidebar-section">
+                <button (click)="toggleSection('sort')" class="sidebar-section-header">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#111111]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 4h13M3 8h9m-9 4h6m4 0l4 4m0 0l4-4m-4 4V4"/>
+                    </svg>
+                    <span>Sort By</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span *ngIf="currentSort().value !== 'createdAt' || currentSort().order !== 'desc'" class="text-[10px] font-bold text-[#111111] bg-[#FFC60B]/20 px-1.5 py-0.5 rounded">{{ currentSort().label }}</span>
+                    <svg class="sidebar-chevron" [class.rotate-180]="expandedSections().has('sort')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </div>
+                </button>
+                <div *ngIf="expandedSections().has('sort')" class="sidebar-section-body">
+                  <button
+                    *ngFor="let option of sortOptions"
+                    (click)="selectSort(option)"
+                    class="sidebar-sort-option"
+                    [class.sidebar-sort-active]="currentSort().value === option.value && currentSort().order === option.order"
+                  >
+                    <span class="sidebar-radio">
+                      <span *ngIf="currentSort().value === option.value && currentSort().order === option.order" class="sidebar-radio-dot"></span>
+                    </span>
+                    {{ option.label }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Pricing Filter Section (dynamic from API) -->
+              <div *ngIf="showPricingFilter && pricingOptions.length > 0" class="sidebar-section">
+                <button (click)="toggleSection('pricing')" class="sidebar-section-header">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#111111]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                    <span>Pricing</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span *ngIf="activePricing() !== 'all'" class="text-[10px] font-bold text-[#111111] bg-[#FFC60B]/20 px-1.5 py-0.5 rounded">{{ activePricing() | titlecase }}</span>
+                    <svg class="sidebar-chevron" [class.rotate-180]="expandedSections().has('pricing')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </div>
+                </button>
+                <div *ngIf="expandedSections().has('pricing')" class="sidebar-section-body">
+                  <button
+                    *ngFor="let option of pricingOptions"
+                    (click)="setPricing(option.value)"
+                    class="sidebar-sort-option"
+                    [class.sidebar-sort-active]="activePricing() === option.value"
+                  >
+                    <span class="sidebar-radio">
+                      <span *ngIf="activePricing() === option.value" class="sidebar-radio-dot"></span>
+                    </span>
+                    {{ option.label }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Price Range Section -->
+              <div *ngIf="showPriceRange" class="sidebar-section">
+                <button (click)="toggleSection('price')" class="sidebar-section-header">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#111111]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Price</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span *ngIf="appliedMinPrice !== null || appliedMaxPrice !== null" class="text-[10px] font-bold text-[#111111] bg-[#68E079]/15 px-1.5 py-0.5 rounded">
+                      {{ appliedMinPrice !== null ? '\u20B9' + appliedMinPrice : '' }}{{ appliedMinPrice !== null && appliedMaxPrice !== null ? ' – ' : '' }}{{ appliedMaxPrice !== null ? '\u20B9' + appliedMaxPrice : '' }}
+                    </span>
+                    <svg class="sidebar-chevron" [class.rotate-180]="expandedSections().has('price')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </div>
+                </button>
+                <div *ngIf="expandedSections().has('price')" class="sidebar-section-body">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 relative">
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#111111]/40 text-xs pointer-events-none">\u20B9</span>
+                      <input
+                        type="number"
+                        [(ngModel)]="minPrice"
+                        placeholder="Min"
+                        class="sidebar-price-input pl-7"
+                      />
+                    </div>
+                    <span class="text-[#111111]/20 text-sm font-medium select-none">–</span>
+                    <div class="flex-1 relative">
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#111111]/40 text-xs pointer-events-none">\u20B9</span>
+                      <input
+                        type="number"
+                        [(ngModel)]="maxPrice"
+                        placeholder="Max"
+                        class="sidebar-price-input pl-7"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    (click)="applyPriceFilter()"
+                    class="sidebar-apply-btn mt-2"
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+
             </div>
 
-            <!-- Stats -->
-            <div *ngIf="stats()" class="pt-4 border-t border-black/10">
-              <div class="text-xs font-bold text-[#111111]/40 uppercase tracking-wider mb-3">Explore Stats</div>
-              <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm text-[#111111]/60 font-medium">Products</span>
-                  <span class="text-sm font-bold text-[#111111]">{{ stats()!.totalProducts }}</span>
+            <!-- Stats Panel -->
+            <div *ngIf="stats()" class="mx-4 mb-4 p-3.5 bg-white border-2 border-black/10 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)]">
+              <div class="text-[10px] font-bold text-[#111111]/40 uppercase tracking-[0.08em] mb-3 font-dm-sans">Marketplace</div>
+              <div class="grid grid-cols-3 gap-2">
+                <div class="text-center">
+                  <div class="text-base font-bold text-[#111111]">{{ stats()!.totalProducts }}</div>
+                  <div class="text-[10px] text-[#111111]/40 font-medium mt-0.5">Products</div>
                 </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-sm text-[#111111]/60 font-medium">Stores</span>
-                  <span class="text-sm font-bold text-[#111111]">{{ stats()!.totalStores }}</span>
+                <div class="text-center border-x border-black/10">
+                  <div class="text-base font-bold text-[#111111]">{{ stats()!.totalStores }}</div>
+                  <div class="text-[10px] text-[#111111]/40 font-medium mt-0.5">Stores</div>
                 </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-sm text-[#111111]/60 font-medium">Creators</span>
-                  <span class="text-sm font-bold text-[#111111]">{{ stats()!.totalCreators }}</span>
+                <div class="text-center">
+                  <div class="text-base font-bold text-[#111111]">{{ stats()!.totalCreators }}</div>
+                  <div class="text-[10px] text-[#111111]/40 font-medium mt-0.5">Creators</div>
                 </div>
               </div>
             </div>
-            <!-- end expanded-only containers -->
-            </div>
-            </div>
-            <!-- collapsed state: toggle button on top then icons -->
-            <div *ngIf="sidebarCollapsed()" class="flex flex-col items-center gap-4 py-4">
-              <button
-                (click)="toggleSidebar()"
-                class="w-8 h-8 flex items-center justify-center bg-[#F9F4EB] border-2 border-black rounded-full hover:bg-[#FFC60B] transition-colors mb-2"
-              >
-                <svg
-                  class="w-4 h-4 text-[#111111] transition-transform"
-                  [class.rotate-180]="!sidebarCollapsed()"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-              <button
-                *ngFor="let filter of contentFilters"
-                (click)="setContentFilter(filter.value)"
-                [title]="filter.label"
-                class="w-10 h-10 flex items-center justify-center text-[#111111] hover:bg-[#F9F4EB] rounded-lg transition-colors"
-                [class.bg-[#FFC60B]]="activeFilter() === filter.value"
-              >
-                <ng-container [ngSwitch]="filter.value">
-                  <svg *ngSwitchCase="'all'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                  <svg *ngSwitchCase="'products'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <!-- shopping bag icon -->
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14l-1 10H6L5 8zm5-3h4a2 2 0 10-4 0z" />
-                  </svg>
-                  <svg *ngSwitchCase="'stores'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 20h18M5 20V10h14v10M3 10l2-4h14l2 4" />
-                  </svg>
-                  <svg *ngSwitchCase="'creators'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 20v-2c0-2.21 3.58-4 6-4s6 1.79 6 4v2" />
-                  </svg>
-                </ng-container>
-              </button>
-            </div>
+          </div>
+
+          <!-- COLLAPSED STATE -->
+          <div *ngIf="sidebarCollapsed()" class="flex flex-col items-center pt-2 pb-4 gap-1 sidebar-collapsed-content">
+            <button
+              *ngFor="let filter of contentFilters"
+              (click)="setContentFilter(filter.value)"
+              class="sidebar-collapsed-btn group relative"
+              [class.sidebar-collapsed-btn-active]="activeFilter() === filter.value"
+            >
+              <ng-container [ngSwitch]="filter.value">
+                <svg *ngSwitchCase="'all'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <svg *ngSwitchCase="'products'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <svg *ngSwitchCase="'stores'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h18v4H3V3zm0 4l2 13h14l2-13M8 10v4m4-4v4m4-4v4"/></svg>
+                <svg *ngSwitchCase="'creators'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              </ng-container>
+              <!-- Tooltip -->
+              <span class="sidebar-tooltip">{{ filter.label }}</span>
+            </button>
+
+            <div class="w-6 h-px bg-black/10 my-2"></div>
+
+            <!-- Sort icon -->
+            <button (click)="toggleSidebar()" class="sidebar-collapsed-btn group relative">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 4h13M3 8h9m-9 4h6m4 0l4 4m0 0l4-4m-4 4V4"/></svg>
+              <span *ngIf="currentSort().value !== 'createdAt' || currentSort().order !== 'desc'" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#FFC60B] border border-black rounded-full"></span>
+              <span class="sidebar-tooltip">Sort</span>
+            </button>
+
+            <!-- Price icon -->
+            <button *ngIf="showPriceRange" (click)="toggleSidebar()" class="sidebar-collapsed-btn group relative">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span *ngIf="appliedMinPrice !== null || appliedMaxPrice !== null" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#68E079] rounded-full"></span>
+              <span class="sidebar-tooltip">Price</span>
+            </button>
           </div>
         </aside>
 
@@ -279,70 +307,112 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
           *ngIf="showMobileFilters()"
           class="fixed inset-0 z-50 lg:hidden"
         >
-          <div (click)="showMobileFilters.set(false)" class="absolute inset-0 bg-black/50"></div>
-          <div class="absolute bottom-0 left-0 right-0 bg-white border-t-2 border-black rounded-t-2xl max-h-[80vh] overflow-y-auto animate-slide-up">
-            <div class="sticky top-0 bg-white border-b border-black/10 p-4 flex items-center justify-between z-10">
-              <span class="text-base font-bold text-[#111111]">Filters</span>
+          <div (click)="showMobileFilters.set(false)" class="absolute inset-0 bg-black/40 backdrop-blur-[2px] mobile-overlay-enter"></div>
+          <div class="absolute bottom-0 left-0 right-0 bg-[#F9F4EB] rounded-t-2xl max-h-[85vh] flex flex-col mobile-drawer-enter shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
+            <!-- Handle bar -->
+            <div class="flex justify-center pt-3 pb-1 flex-shrink-0">
+              <div class="w-10 h-1 bg-black/15 rounded-full"></div>
+            </div>
+            <div class="flex-shrink-0 bg-[#F9F4EB] border-b-2 border-black/10 px-5 py-3.5 flex items-center justify-between">
+              <span class="text-[15px] font-bold text-[#111111] font-dm-sans">Filters</span>
               <div class="flex items-center gap-3">
-                <button *ngIf="hasActiveFilters()" (click)="clearAllFilters()" class="text-sm text-[#FA4B28] font-bold">Clear all</button>
-                <button (click)="showMobileFilters.set(false)" class="w-8 h-8 flex items-center justify-center bg-[#F9F4EB] border-2 border-black rounded-lg">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button *ngIf="hasActiveFilters()" (click)="clearAllFilters()" class="text-xs text-[#FA4B28] font-bold font-dm-sans">Reset</button>
+                <button (click)="showMobileFilters.set(false)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-[#111111]/5 hover:bg-[#111111]/10 active:bg-[#111111]/15 transition-colors border border-black/10">
+                  <svg class="w-4 h-4 text-[#111111]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                   </svg>
                 </button>
               </div>
             </div>
-            <div class="p-4 space-y-5">
+            <div class="flex-1 overflow-y-auto overscroll-contain px-5 py-4 space-y-5">
+              <!-- Content Type -->
               <div>
-                <span class="text-sm font-bold text-[#111111] mb-2 block">Content Type</span>
+                <span class="text-xs font-bold text-[#111111]/50 uppercase tracking-wider mb-2.5 block font-dm-sans">Browse</span>
                 <div class="flex flex-wrap gap-2">
                   <button
                     *ngFor="let filter of contentFilters"
                     (click)="setContentFilter(filter.value)"
-                    class="px-4 py-2 rounded-lg text-sm font-bold transition-all border-2"
+                    class="px-4 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-200 border-2 font-dm-sans min-h-[44px] active:scale-95"
                     [class.bg-[#111111]]="activeFilter() === filter.value"
                     [class.text-white]="activeFilter() === filter.value"
                     [class.border-black]="activeFilter() === filter.value"
+                    [class.shadow-[2px_2px_0px_0px_#000]]="activeFilter() === filter.value"
                     [class.bg-white]="activeFilter() !== filter.value"
-                    [class.text-[#111111]]="activeFilter() !== filter.value"
-                    [class.border-black/20]="activeFilter() !== filter.value"
+                    [class.text-[#111111]/60]="activeFilter() !== filter.value"
+                    [class.border-black/15]="activeFilter() !== filter.value"
+                    [class.hover:border-black/30]="activeFilter() !== filter.value"
+                    [class.hover:bg-white]="activeFilter() !== filter.value"
                   >
                     {{ filter.label }}
                   </button>
                 </div>
               </div>
+              <!-- Sort -->
               <div>
-                <span class="text-sm font-bold text-[#111111] mb-2 block">Sort By</span>
+                <span class="text-xs font-bold text-[#111111]/50 uppercase tracking-wider mb-2.5 block font-dm-sans">Sort By</span>
                 <div class="grid grid-cols-2 gap-2">
                   <button
                     *ngFor="let option of sortOptions"
                     (click)="selectSort(option)"
-                    class="px-3 py-2 rounded-lg text-sm font-medium transition-all border-2"
+                    class="px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 border-2 min-h-[44px] active:scale-95"
                     [class.bg-[#111111]]="currentSort().value === option.value && currentSort().order === option.order"
                     [class.text-white]="currentSort().value === option.value && currentSort().order === option.order"
                     [class.border-black]="currentSort().value === option.value && currentSort().order === option.order"
+                    [class.shadow-[2px_2px_0px_0px_#000]]="currentSort().value === option.value && currentSort().order === option.order"
                     [class.bg-white]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                    [class.text-[#111111]]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                    [class.border-black/20]="!(currentSort().value === option.value && currentSort().order === option.order)"
+                    [class.text-[#111111]/60]="!(currentSort().value === option.value && currentSort().order === option.order)"
+                    [class.border-black/15]="!(currentSort().value === option.value && currentSort().order === option.order)"
+                    [class.hover:bg-white]="!(currentSort().value === option.value && currentSort().order === option.order)"
                   >
                     {{ option.label }}
                   </button>
                 </div>
               </div>
-              <div *ngIf="activeFilter() === 'all' || activeFilter() === 'products'">
-                <span class="text-sm font-bold text-[#111111] mb-2 block">Price Range</span>
-                <div class="flex items-center gap-2">
-                  <input type="number" [(ngModel)]="minPrice" placeholder="Min" class="flex-1 px-3 py-2.5 bg-[#F9F4EB] border-2 border-black/20 rounded-lg text-sm font-medium text-[#111111] placeholder-[#111111]/30 focus:outline-none focus:border-black" />
-                  <span class="text-[#111111]/30">&ndash;</span>
-                  <input type="number" [(ngModel)]="maxPrice" placeholder="Max" class="flex-1 px-3 py-2.5 bg-[#F9F4EB] border-2 border-black/20 rounded-lg text-sm font-medium text-[#111111] placeholder-[#111111]/30 focus:outline-none focus:border-black" />
+              <!-- Pricing (mobile) -->
+              <div *ngIf="showPricingFilter && pricingOptions.length > 0">
+                <span class="text-xs font-bold text-[#111111]/50 uppercase tracking-wider mb-2.5 block font-dm-sans">Pricing</span>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    *ngFor="let option of pricingOptions"
+                    (click)="setPricing(option.value)"
+                    class="px-4 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-200 border-2 font-dm-sans min-h-[44px] active:scale-95"
+                    [class.bg-[#111111]]="activePricing() === option.value"
+                    [class.text-white]="activePricing() === option.value"
+                    [class.border-black]="activePricing() === option.value"
+                    [class.shadow-[2px_2px_0px_0px_#000]]="activePricing() === option.value"
+                    [class.bg-white]="activePricing() !== option.value"
+                    [class.text-[#111111]/60]="activePricing() !== option.value"
+                    [class.border-black/15]="activePricing() !== option.value"
+                  >
+                    {{ option.label }}
+                  </button>
                 </div>
               </div>
+              <!-- Price -->
+              <div *ngIf="showPriceRange">>
+                <span class="text-xs font-bold text-[#111111]/50 uppercase tracking-wider mb-2.5 block font-dm-sans">Price Range</span>
+                <div class="flex items-center gap-2">
+                  <div class="flex-1 relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#111111]/40 text-sm">\u20B9</span>
+                    <input type="number" [(ngModel)]="minPrice" placeholder="Min" class="w-full pl-7 pr-3 py-3 bg-white border-2 border-black/15 rounded-lg text-sm text-[#111111] placeholder-[#111111]/35 focus:outline-none focus:ring-2 focus:ring-[#111111]/10 focus:border-[#111111] transition-all min-h-[48px]" />
+                  </div>
+                  <span class="text-[#111111]/20 text-sm select-none">–</span>
+                  <div class="flex-1 relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#111111]/40 text-sm">\u20B9</span>
+                    <input type="number" [(ngModel)]="maxPrice" placeholder="Max" class="w-full pl-7 pr-3 py-3 bg-white border-2 border-black/15 rounded-lg text-sm text-[#111111] placeholder-[#111111]/35 focus:outline-none focus:ring-2 focus:ring-[#111111]/10 focus:border-[#111111] transition-all min-h-[48px]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Sticky footer -->
+            <div class="flex-shrink-0 border-t border-black/10 px-5 pt-3 pb-4 bg-[#F9F4EB]">
               <button
                 (click)="applyMobileFilters()"
-                class="w-full py-3 bg-[#FFC60B] border-2 border-black rounded-xl text-base font-bold text-[#111111] shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+                class="w-full py-3.5 bg-[#FFC60B] border-2 border-black rounded-lg text-[15px] font-bold text-[#111111] hover:bg-[#ffdb4d] active:scale-[0.98] transition-all duration-200 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] font-dm-sans min-h-[52px]"
               >
-                Apply Filters
+                Show Results
               </button>
+              <div class="h-safe"></div>
             </div>
           </div>
         </div>
@@ -350,18 +420,18 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
         <!-- ==================== MASONRY GRID ==================== -->
         <main class="flex-1 min-w-0">
           <!-- Mobile content type pills -->
-          <div class="sm:hidden overflow-x-auto scrollbar-hide border-b border-black/10">
-            <div class="flex gap-1.5 p-3">
+          <div class="lg:hidden overflow-x-auto scrollbar-hide border-b border-black/10 bg-[#F9F4EB]">
+            <div class="flex gap-2 px-3 py-2.5">
               <button
                 *ngFor="let filter of contentFilters"
                 (click)="setContentFilter(filter.value)"
-                class="px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all border-2"
+                class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 border-2 font-dm-sans min-h-[36px] active:scale-95"
                 [class.bg-[#111111]]="activeFilter() === filter.value"
                 [class.text-white]="activeFilter() === filter.value"
                 [class.border-black]="activeFilter() === filter.value"
                 [class.bg-white]="activeFilter() !== filter.value"
-                [class.text-[#111111]]="activeFilter() !== filter.value"
-                [class.border-black/20]="activeFilter() !== filter.value"
+                [class.text-[#111111]/50]="activeFilter() !== filter.value"
+                [class.border-black/15]="activeFilter() !== filter.value"
               >
                 {{ filter.label }}
               </button>
@@ -411,7 +481,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   <!-- PRODUCT CARD -->
                   <div
                     *ngIf="item.type === 'product'"
-                    class="group bg-white border-2 border-black rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200 cursor-pointer"
+                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer relative"
                     (click)="navigateToProduct(asProduct(item.data).id)"
                   >
                     <div class="relative overflow-hidden bg-[#F9F4EB]" [style.aspect-ratio]="getProductAspectRatio(asProduct(item.data))">
@@ -420,7 +490,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                         [src]="asProduct(item.data).coverImageUrl"
                         [alt]="asProduct(item.data).title"
                         loading="lazy"
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div *ngIf="!asProduct(item.data).coverImageUrl" class="w-full h-full flex items-center justify-center aspect-square">
                         <svg class="w-10 h-10 text-[#111111]/15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,66 +499,98 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                       </div>
                       <div
                         *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
-                        class="absolute top-2 left-2 px-1.5 py-0.5 bg-[#FA4B28] border border-black rounded text-[10px] font-bold text-white"
+                        class="absolute top-2 left-2 px-1.5 py-0.5 bg-[#FA4B28] rounded-full text-[10px] font-bold text-white"
                       >
                         -{{ exploreService.getDiscountPercentage(asProduct(item.data).price, asProduct(item.data).compareAtPrice!) }}%
                       </div>
-                      <!-- Desktop hover overlay -->
-                      <div *ngIf="asProduct(item.data).price > 0" class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 hidden md:flex items-end justify-center opacity-0 group-hover:opacity-100 p-3">
-                        <div class="flex gap-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-200">
-                          <button *ngIf="asProduct(item.data).price > 0"
-                            (click)="isInCart(asProduct(item.data).id) ? removeFromCart(asProduct(item.data).id, $event) : addToCart(asProduct(item.data), $event)"
-                            class="px-3 py-2 border-2 border-black rounded-lg text-xs font-bold text-[#111111] shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
-                            [class.bg-[#68E079]]="isInCart(asProduct(item.data).id)"
-                            [class.bg-[#FFC60B]]="!isInCart(asProduct(item.data).id)"
+                    </div>
+                    <!-- Mobile Product Info -->
+                    <div class="md:hidden px-2.5 pt-2 pb-2.5">
+                      <h3 class="font-semibold text-[#111111] text-[13px] leading-snug line-clamp-2 mb-1">
+                        {{ asProduct(item.data).title }}
+                      </h3>
+                      <div class="flex items-center gap-1.5 mb-1.5">
+                        <div class="w-4 h-4 rounded-full bg-[#F9F4EB] border border-black/10 overflow-hidden flex-shrink-0">
+                          <img *ngIf="asProduct(item.data).creator.avatarUrl" [src]="asProduct(item.data).creator.avatarUrl" class="w-full h-full object-cover" />
+                        </div>
+                        <span class="text-[11px] text-[#111111]/50 font-medium truncate">
+                          {{ asProduct(item.data).creator.displayName || asProduct(item.data).creator.username }}
+                        </span>
+                      </div>
+                      <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                          <span class="font-bold text-[#111111] text-[13px] whitespace-nowrap">
+                            {{ exploreService.formatPrice(asProduct(item.data).price, asProduct(item.data).currency) }}
+                          </span>
+                          <span
+                            *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
+                            class="text-[10px] text-[#111111]/35 line-through whitespace-nowrap"
                           >
-                            {{ isInCart(asProduct(item.data).id) ? '&#10003; In Cart' : '+ Add to Cart' }}
+                            {{ exploreService.formatPrice(asProduct(item.data).compareAtPrice!, asProduct(item.data).currency) }}
+                          </span>
+                        </div>
+                        <button *ngIf="asProduct(item.data).price > 0"
+                          (click)="isInCart(asProduct(item.data).id) ? removeFromCart(asProduct(item.data).id, $event) : addToCart(asProduct(item.data), $event)"
+                          class="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold transition-all active:scale-95 flex-shrink-0"
+                          [class.bg-[#68E079]/15]="isInCart(asProduct(item.data).id)"
+                          [class.text-[#111111]]="isInCart(asProduct(item.data).id)"
+                          [class.bg-[#111111]/5]="!isInCart(asProduct(item.data).id)"
+                          [class.text-[#111111]/70]="!isInCart(asProduct(item.data).id)"
+                        >
+                          <svg *ngIf="!isInCart(asProduct(item.data).id)" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v12m6-6H6"/>
+                          </svg>
+                          <svg *ngIf="isInCart(asProduct(item.data).id)" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                          </svg>
+                          {{ isInCart(asProduct(item.data).id) ? 'Added' : 'Cart' }}
+                        </button>
+                      </div>
+                    </div>
+                    <!-- Hover Detail Panel (Desktop) -->
+                    <div class="explore-hover-panel absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-3 pt-10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out pointer-events-none group-hover:pointer-events-auto hidden md:block">
+                      <h3 class="font-bold text-white text-xs sm:text-sm line-clamp-2 mb-1 leading-tight">
+                        {{ asProduct(item.data).title }}
+                      </h3>
+                      <div class="flex items-center gap-1.5 mb-2">
+                        <div class="w-4 h-4 rounded-full bg-white/20 border border-white/30 overflow-hidden flex-shrink-0">
+                          <img *ngIf="asProduct(item.data).creator.avatarUrl" [src]="asProduct(item.data).creator.avatarUrl" class="w-full h-full object-cover" />
+                        </div>
+                        <span class="text-[10px] sm:text-xs text-white/70 font-medium truncate">
+                          {{ asProduct(item.data).creator.displayName || asProduct(item.data).creator.username }}
+                        </span>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                          <span class="font-bold text-white text-xs sm:text-sm">
+                            {{ exploreService.formatPrice(asProduct(item.data).price, asProduct(item.data).currency) }}
+                          </span>
+                          <span
+                            *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
+                            class="text-[10px] text-white/50 line-through"
+                          >
+                            {{ exploreService.formatPrice(asProduct(item.data).compareAtPrice!, asProduct(item.data).currency) }}
+                          </span>
+                        </div>
+                        <div *ngIf="asProduct(item.data).price > 0" class="flex gap-1.5">
+                          <button
+                            (click)="isInCart(asProduct(item.data).id) ? removeFromCart(asProduct(item.data).id, $event) : addToCart(asProduct(item.data), $event)"
+                            class="px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+                            [class.bg-[#68E079]]="isInCart(asProduct(item.data).id)"
+                            [class.text-[#111111]]="isInCart(asProduct(item.data).id)"
+                            [class.bg-white/20]="!isInCart(asProduct(item.data).id)"
+                            [class.text-white]="!isInCart(asProduct(item.data).id)"
+                            [class.hover:bg-white/30]="!isInCart(asProduct(item.data).id)"
+                          >
+                            {{ isInCart(asProduct(item.data).id) ? '&#10003; Added' : '+ Cart' }}
                           </button>
-                          <button *ngIf="asProduct(item.data).price > 0"
+                          <button
                             (click)="buyNow(asProduct(item.data), $event)"
-                            class="px-3 py-2 bg-[#111111] text-white border-2 border-black rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_#FFC60B] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                            class="px-2.5 py-1.5 bg-white text-[#111111] rounded-lg text-[10px] font-bold hover:bg-white/90 transition-all"
                           >
                             Buy Now
                           </button>
                         </div>
-                      </div>
-                      <!-- Mobile cart button -->
-                      <button *ngIf="asProduct(item.data).price > 0"
-                        (click)="isInCart(asProduct(item.data).id) ? removeFromCart(asProduct(item.data).id, $event) : addToCart(asProduct(item.data), $event)"
-                        class="md:hidden absolute bottom-2 right-2 p-2 rounded-lg border-2 border-black transition-all duration-200 shadow-[2px_2px_0px_0px_#000]"
-                        [class.bg-[#68E079]]="isInCart(asProduct(item.data).id)"
-                        [class.bg-[#FFC60B]]="!isInCart(asProduct(item.data).id)"
-                      >
-                        <svg *ngIf="!isInCart(asProduct(item.data).id)" class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                        </svg>
-                        <svg *ngIf="isInCart(asProduct(item.data).id)" class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="p-2.5 sm:p-3">
-                      <h3 class="font-bold text-[#111111] text-xs sm:text-sm line-clamp-2 mb-1 group-hover:text-[#2B57D6] transition-colors leading-tight">
-                        {{ asProduct(item.data).title }}
-                      </h3>
-                      <div class="flex items-center gap-1.5 mb-1.5">
-                        <div class="w-4 h-4 rounded-full bg-[#2B57D6] border border-black overflow-hidden flex-shrink-0">
-                          <img *ngIf="asProduct(item.data).creator.avatarUrl" [src]="asProduct(item.data).creator.avatarUrl" class="w-full h-full object-cover" />
-                        </div>
-                        <span class="text-[10px] sm:text-xs text-[#111111]/50 font-medium truncate">
-                          {{ asProduct(item.data).creator.displayName || asProduct(item.data).creator.username }}
-                        </span>
-                      </div>
-                      <div class="flex items-center gap-1.5">
-                        <span class="font-bold text-[#111111] text-xs sm:text-sm">
-                          {{ exploreService.formatPrice(asProduct(item.data).price, asProduct(item.data).currency) }}
-                        </span>
-                        <span
-                          *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
-                          class="text-[10px] text-[#111111]/40 line-through"
-                        >
-                          {{ exploreService.formatPrice(asProduct(item.data).compareAtPrice!, asProduct(item.data).currency) }}
-                        </span>
                       </div>
                     </div>
                   </div>
@@ -496,7 +598,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   <!-- STORE CARD -->
                   <div
                     *ngIf="item.type === 'store'"
-                    class="group bg-white border-2 border-[#2B57D6] rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#2B57D6] hover:-translate-y-1 transition-all duration-200 cursor-pointer"
+                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
                     (click)="navigateToStore(asStore(item.data).slug)"
                   >
                     <div class="bg-gradient-to-br from-[#2B57D6] to-[#7C3AED] relative" [style.aspect-ratio]="getStoreBannerAspectRatio(asStore(item.data))" style="min-height: 80px; max-height: 160px;">
@@ -534,7 +636,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   <!-- CREATOR CARD -->
                   <div
                     *ngIf="item.type === 'creator'"
-                    class="group bg-white border-2 border-[#FFC60B] rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#FFC60B] hover:-translate-y-1 transition-all duration-200 cursor-pointer p-4 text-center"
+                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer p-4 text-center"
                     (click)="navigateToCreator(asCreator(item.data).id)"
                   >
                     <span class="inline-block px-2 py-0.5 bg-[#FFC60B]/20 border border-[#FFC60B] rounded text-[9px] font-bold text-[#111111] uppercase tracking-wider mb-3">Creator</span>
@@ -635,7 +737,283 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
       overflow: hidden;
     }
 
-    /* Masonry Grid */
+    /* ========= SIDEBAR ========= */
+    .sidebar-container {
+      transition: width 280ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: width;
+    }
+    .sidebar-expanded { width: 260px; }
+    .sidebar-collapsed { width: 56px; }
+
+    .sidebar-content {
+      animation: sidebarFadeIn 200ms ease-out;
+    }
+    @keyframes sidebarFadeIn {
+      from { opacity: 0; transform: translateX(-6px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .sidebar-label {
+      animation: sidebarFadeIn 180ms ease-out;
+    }
+
+    .sidebar-toggle:hover {
+      background: rgba(0,0,0,0.04);
+    }
+
+    /* Section header */
+    .sidebar-section {
+      margin-bottom: 2px;
+    }
+    .sidebar-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #111111;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 150ms ease, color 150ms ease;
+    }
+    .sidebar-section-header:hover {
+      background: rgba(17,17,17,0.04);
+      color: #111111;
+    }
+    .sidebar-chevron {
+      width: 14px;
+      height: 14px;
+      color: rgba(17,17,17,0.35);
+      transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+    .sidebar-section-body {
+      padding: 4px 0 8px;
+      animation: sectionExpand 200ms ease-out;
+    }
+    @keyframes sectionExpand {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Content type options */
+    .sidebar-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(17,17,17,0.55);
+      transition: all 150ms ease;
+    }
+    .sidebar-option:hover {
+      background: rgba(17,17,17,0.04);
+      color: #111111;
+    }
+    .sidebar-option-active {
+      background: rgba(255,198,11,0.15) !important;
+      color: #111111 !important;
+      font-weight: 600;
+    }
+    .sidebar-option-active .sidebar-option-icon {
+      color: #111111 !important;
+    }
+    .sidebar-option-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: rgba(17,17,17,0.35);
+      transition: color 150ms ease;
+    }
+    .sidebar-option:hover .sidebar-option-icon {
+      color: rgba(17,17,17,0.6);
+    }
+    .sidebar-option-count {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(17,17,17,0.2);
+      background: transparent;
+      padding: 1px 6px;
+      border-radius: 6px;
+      transition: all 150ms ease;
+    }
+    .sidebar-option:hover .sidebar-option-count {
+      color: rgba(17,17,17,0.4);
+      background: white;
+    }
+    .sidebar-option-active .sidebar-option-count {
+      color: rgba(17,17,17,0.4) !important;
+      background: transparent !important;
+    }
+
+    /* Sort options */
+    .sidebar-sort-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(17,17,17,0.55);
+      transition: all 150ms ease;
+    }
+    .sidebar-sort-option:hover {
+      background: rgba(17,17,17,0.04);
+      color: #111111;
+    }
+    .sidebar-sort-active {
+      color: #111111 !important;
+      font-weight: 600;
+    }
+    .sidebar-radio {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(17,17,17,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 200ms ease;
+    }
+    .sidebar-sort-active .sidebar-radio {
+      border-color: #111111;
+    }
+    .sidebar-radio-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #111111;
+      animation: radioDotIn 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes radioDotIn {
+      from { transform: scale(0); }
+      to   { transform: scale(1); }
+    }
+
+    /* Price inputs */
+    .sidebar-price-input {
+      width: 100%;
+      padding: 7px 10px;
+      background: white;
+      border: 2px solid rgba(17,17,17,0.15);
+      border-radius: 8px;
+      font-size: 13px;
+      color: #111111;
+      transition: all 200ms ease;
+    }
+    .sidebar-price-input::placeholder {
+      color: rgba(17,17,17,0.35);
+    }
+    .sidebar-price-input:focus {
+      outline: none;
+      border-color: #111111;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(17,17,17,0.06);
+    }
+
+    /* Apply button */
+    .sidebar-apply-btn {
+      width: 100%;
+      padding: 7px 0;
+      background: #FFC60B;
+      color: #111111;
+      border: 2px solid #111111;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 200ms ease;
+      box-shadow: 2px 2px 0px 0px #111111;
+    }
+    .sidebar-apply-btn:hover {
+      background: #ffdb4d;
+      box-shadow: none;
+      transform: translate(2px, 2px);
+    }
+    .sidebar-apply-btn:active {
+      transform: translate(2px, 2px) scale(0.98);
+    }
+
+    /* Collapsed items */
+    .sidebar-collapsed-content {
+      animation: sidebarFadeIn 200ms ease-out;
+    }
+    .sidebar-collapsed-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      color: rgba(17,17,17,0.4);
+      transition: all 200ms ease;
+    }
+    .sidebar-collapsed-btn:hover {
+      background: rgba(17,17,17,0.04);
+      color: #111111;
+    }
+    .sidebar-collapsed-btn-active {
+      background: rgba(255,198,11,0.15) !important;
+      color: #111111 !important;
+    }
+    .sidebar-tooltip {
+      position: absolute;
+      left: calc(100% + 8px);
+      top: 50%;
+      transform: translateY(-50%) scale(0.9);
+      background: #111111;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 150ms ease;
+      z-index: 50;
+    }
+    .sidebar-tooltip::before {
+      content: '';
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 4px solid transparent;
+      border-right-color: #111111;
+    }
+    .sidebar-collapsed-btn:hover .sidebar-tooltip {
+      opacity: 1;
+      transform: translateY(-50%) scale(1);
+    }
+
+    /* ========= MOBILE DRAWER ========= */
+    .mobile-drawer-enter {
+      animation: mobileDrawerSlide 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    @keyframes mobileDrawerSlide {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    .mobile-overlay-enter {
+      animation: overlayFadeIn 200ms ease-out;
+    }
+    @keyframes overlayFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ========= MASONRY GRID ========= */
     .masonry-grid {
       columns: 2;
       column-gap: 0.75rem;
@@ -704,6 +1082,23 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
         transform: translateY(0);
       }
     }
+
+    /* Touch improvements */
+    .masonry-item > div {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Safe area bottom */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      .feed-item-enter { animation: none !important; }
+      .mobile-drawer-enter { animation: none !important; }
+      .mobile-overlay-enter { animation: none !important; }
+    }
   `]
 })
 export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -748,21 +1143,19 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   stats = signal<ExploreStats | null>(null);
 
   currentSort = signal<SortOption>({ label: 'Newest', value: 'createdAt', order: 'desc' });
-  expandedSections = signal<Set<string>>(new Set(['sort', 'type', 'price']));
+  expandedSections = signal<Set<string>>(new Set(['sort', 'type', 'price', 'pricing']));
+  activePricing = signal<string>('all');
 
+  // Dynamic filter sections from API
+  filterSections = signal<FilterSection[]>([]);
+
+  // Derived from filterSections — kept in sync via loadFilters()
   contentFilters: { label: string; value: ContentFilter }[] = [
     { label: 'All', value: 'all' },
     { label: 'Products', value: 'products' },
     { label: 'Stores', value: 'stores' },
     { label: 'Creators', value: 'creators' },
   ];
-
-  // sidebar state for desktop collapse
-  sidebarCollapsed = signal(false);
-
-  toggleSidebar() {
-    this.sidebarCollapsed.set(!this.sidebarCollapsed());
-  }
 
   sortOptions: SortOption[] = [
     { label: 'Newest', value: 'createdAt', order: 'desc' },
@@ -773,6 +1166,17 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     { label: 'Price: High to Low', value: 'price', order: 'desc' },
   ];
 
+  pricingOptions: FilterOption[] = [];
+  showPriceRange = true;
+  showPricingFilter = true;
+
+  // sidebar state for desktop collapse
+  sidebarCollapsed = signal(false);
+
+  toggleSidebar() {
+    this.sidebarCollapsed.set(!this.sidebarCollapsed());
+  }
+
   // Lifecycle
   async ngOnInit() {
     this.route.queryParams.subscribe(async params => {
@@ -780,7 +1184,7 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
       if (type && ['all', 'products', 'stores', 'creators'].includes(type)) {
         this.activeFilter.set(type);
       }
-      await Promise.all([this.loadStats(), this.loadFeed(true)]);
+      await Promise.all([this.loadFilters(), this.loadStats(), this.loadFeed(true)]);
     });
   }
 
@@ -822,6 +1226,60 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  async loadFilters() {
+    try {
+      const filtersResponse = await this.exploreService.getFilters(this.activeFilter());
+      this.filterSections.set(filtersResponse.sections);
+
+      // Derive sortOptions from the 'sort' section
+      const sortSection = filtersResponse.sections.find(s => s.key === 'sort');
+      if (sortSection?.options) {
+        this.sortOptions = sortSection.options.map(opt => {
+          const [value, order] = opt.value.split(':');
+          return { label: opt.label, value, order: (order || 'desc') as 'asc' | 'desc' };
+        });
+        // If current sort is no longer in the new options, reset to default
+        const currentSortStr = `${this.currentSort().value}:${this.currentSort().order}`;
+        const validValues = sortSection.options.map(o => o.value);
+        if (!validValues.includes(currentSortStr)) {
+          const defaultVal = sortSection.defaultValue || 'createdAt:desc';
+          const [dv, dorder] = defaultVal.split(':');
+          const defaultOpt = sortSection.options.find(o => o.value === defaultVal);
+          this.currentSort.set({ label: defaultOpt?.label || 'Newest', value: dv, order: (dorder || 'desc') as 'asc' | 'desc' });
+        }
+      }
+
+      // Derive pricing options
+      const pricingSection = filtersResponse.sections.find(s => s.key === 'pricing');
+      this.showPricingFilter = !!pricingSection;
+      this.pricingOptions = pricingSection?.options || [];
+      // If the current pricing value is no longer valid, reset
+      if (pricingSection?.options) {
+        const validPricing = pricingSection.options.map(o => o.value);
+        if (!validPricing.includes(this.activePricing())) {
+          this.activePricing.set(pricingSection.defaultValue || 'all');
+        }
+      } else {
+        this.activePricing.set('all');
+      }
+
+      // Derive whether price range is available
+      const priceRangeSection = filtersResponse.sections.find(s => s.key === 'priceRange');
+      this.showPriceRange = !!priceRangeSection;
+
+      // Derive content type filters
+      const typeSection = filtersResponse.sections.find(s => s.key === 'type');
+      if (typeSection?.options) {
+        this.contentFilters = typeSection.options.map(opt => ({
+          label: opt.label,
+          value: opt.value as ContentFilter,
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to load filters:', error);
+    }
+  }
+
   async loadFeed(reset = false) {
     if (this.isLoadingFeed) return;
     this.isLoadingFeed = true;
@@ -843,6 +1301,7 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
 
       if (this.appliedMinPrice !== null) params.minPrice = this.appliedMinPrice * 100;
       if (this.appliedMaxPrice !== null) params.maxPrice = this.appliedMaxPrice * 100;
+      if (this.activePricing() !== 'all') params.pricing = this.activePricing() as 'free' | 'premium';
       if (!reset && this.nextCursor()) params.cursor = this.nextCursor()!;
 
       const result = await this.exploreService.getFeed(params);
@@ -880,6 +1339,14 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   setContentFilter(filter: ContentFilter) {
     if (this.activeFilter() !== filter) {
       this.activeFilter.set(filter);
+      // Reload context-aware filters from API, then reload feed
+      this.loadFilters().then(() => this.loadFeed(true));
+    }
+  }
+
+  setPricing(value: string) {
+    if (this.activePricing() !== value) {
+      this.activePricing.set(value);
       this.loadFeed(true);
     }
   }
@@ -915,6 +1382,7 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.activeFilter() !== 'all' ||
       this.appliedMinPrice !== null ||
       this.appliedMaxPrice !== null ||
+      this.activePricing() !== 'all' ||
       this.currentSort().value !== 'createdAt' ||
       this.currentSort().order !== 'desc';
   }
@@ -925,8 +1393,9 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     this.maxPrice = null;
     this.appliedMinPrice = null;
     this.appliedMaxPrice = null;
+    this.activePricing.set('all');
     this.currentSort.set({ label: 'Newest', value: 'createdAt', order: 'desc' });
-    this.loadFeed(true);
+    this.loadFilters().then(() => this.loadFeed(true));
   }
 
   toggleSection(section: string) {
@@ -1083,6 +1552,14 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
         label: this.currentSort().label,
         color: 'blue',
         remove: () => this.resetSort(),
+      });
+    }
+    if (this.activePricing() !== 'all') {
+      const pLabel = this.activePricing().charAt(0).toUpperCase() + this.activePricing().slice(1);
+      chips.push({
+        label: pLabel,
+        color: 'yellow',
+        remove: () => this.setPricing('all'),
       });
     }
     return chips;

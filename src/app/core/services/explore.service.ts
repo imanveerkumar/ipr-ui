@@ -144,6 +144,39 @@ export interface FeedQueryParams {
   maxPrice?: number;
   storeId?: string;
   type?: 'all' | 'products' | 'stores' | 'creators';
+  pricing?: 'all' | 'free' | 'premium';
+}
+
+// =========================================================================
+// Dynamic filter types
+// =========================================================================
+
+export interface FilterOption {
+  value: string;
+  label: string;
+}
+
+export interface FilterRangeConfig {
+  min: number;
+  max: number | null;
+  unit: string;
+  unitPosition: 'prefix' | 'suffix';
+  step: number;
+}
+
+export interface FilterSection {
+  key: string;
+  label: string;
+  type: 'single-select' | 'multi-select' | 'range';
+  icon: string;
+  options?: FilterOption[];
+  defaultValue?: string;
+  rangeConfig?: FilterRangeConfig;
+}
+
+export interface ExploreFiltersResponse {
+  category: string;
+  sections: FilterSection[];
 }
 
 @Injectable({
@@ -151,6 +184,15 @@ export interface FeedQueryParams {
 })
 export class ExploreService {
   private api = inject(ApiService);
+
+  // =========================================================================
+  // Dynamic Filters
+  // =========================================================================
+
+  async getFilters(category: string = 'all'): Promise<ExploreFiltersResponse> {
+    const response = await this.api.get<ExploreFiltersResponse>(`/explore/filters?category=${encodeURIComponent(category)}`);
+    return response.data || { category, sections: [] };
+  }
 
   private buildQueryString(params: ExploreQueryParams): string {
     const queryParts: string[] = [];
