@@ -406,7 +406,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <!-- Feed Grid -->
             <div *ngIf="feedItems().length > 0" class="masonry-grid">
               <ng-container *ngFor="let item of feedItems(); let i = index; trackBy: trackFeedItem">
-                <div class="masonry-item mb-3 sm:mb-4 feed-item-enter" [style.animation-delay.ms]="getAnimationDelay(i)">
+                <div class="masonry-item mb-3 sm:mb-4" [class.feed-item-enter]="shouldAnimate(i)" [style.animation-delay.ms]="shouldAnimate(i) ? getAnimationDelay(i) : null">
 
                   <!-- PRODUCT CARD -->
                   <div
@@ -414,7 +414,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     class="group bg-white border-2 border-black rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200 cursor-pointer"
                     (click)="navigateToProduct(asProduct(item.data).id)"
                   >
-                    <div class="relative overflow-hidden bg-[#F9F4EB]" [style.aspect-ratio]="getProductAspectRatio(i)">
+                    <div class="relative overflow-hidden bg-[#F9F4EB]" [style.aspect-ratio]="getProductAspectRatio(asProduct(item.data))">
                       <img
                         *ngIf="asProduct(item.data).coverImageUrl"
                         [src]="asProduct(item.data).coverImageUrl"
@@ -499,7 +499,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     class="group bg-white border-2 border-[#2B57D6] rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#2B57D6] hover:-translate-y-1 transition-all duration-200 cursor-pointer"
                     (click)="navigateToStore(asStore(item.data).slug)"
                   >
-                    <div class="h-20 sm:h-24 bg-gradient-to-br from-[#2B57D6] to-[#7C3AED] relative">
+                    <div class="bg-gradient-to-br from-[#2B57D6] to-[#7C3AED] relative" [style.aspect-ratio]="getStoreBannerAspectRatio(asStore(item.data))" style="min-height: 80px; max-height: 160px;">
                       <img *ngIf="asStore(item.data).bannerUrl" [src]="asStore(item.data).bannerUrl" [alt]="asStore(item.data).name" loading="lazy" class="w-full h-full object-cover" />
                       <span class="absolute top-2 right-2 px-2 py-0.5 bg-[#2B57D6] border border-white/30 rounded text-[9px] font-bold text-white uppercase tracking-wider">Store</span>
                       <div class="absolute -bottom-5 left-3 w-12 h-12 bg-white border-2 border-black rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000]">
@@ -727,7 +727,13 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
 
   skeletonArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   private skeletonHeights = this.skeletonArray.map(() => 120 + Math.floor(Math.random() * 120));
-  private productAspectRatios = ['3/4', '4/5', '1/1', '3/4', '4/3', '3/4', '1/1', '4/5'];
+  /** Default aspect ratios used when product has no pre-computed dimensions */
+  private fallbackAspectRatios = ['3/4', '4/5', '1/1', '3/4', '4/3', '3/4', '1/1', '4/5'];
+  private fallbackIndex = 0;
+  /** Cache of aspect ratios keyed by item id to prevent side-effectful recalculation on each CD cycle */
+  private aspectRatioCache = new Map<string, string>();
+  /** Index from which newly loaded items start (only they get the entry animation) */
+  newItemsStartIndex = 0;
 
   // Signals
   activeFilter = signal<ContentFilter>('all');
@@ -796,7 +802,7 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
             this.ngZone.run(() => this.loadMore());
           }
         },
-        { rootMargin: '400px' }
+        { rootMargin: '200px' }
       );
       setTimeout(() => {
         if (this.scrollSentinelRef?.nativeElement) {
@@ -842,8 +848,12 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
       const result = await this.exploreService.getFeed(params);
 
       if (reset) {
+        this.aspectRatioCache.clear();
+        this.fallbackIndex = 0;
+        this.newItemsStartIndex = 0;
         this.feedItems.set(result.items);
       } else {
+        this.newItemsStartIndex = this.feedItems().length;
         this.feedItems.update(items => [...items, ...result.items]);
       }
 
@@ -957,13 +967,37 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.skeletonHeights[i - 1] || 160;
   }
 
-  getProductAspectRatio(index: number): string {
-    return this.productAspectRatios[index % this.productAspectRatios.length];
+  getProductAspectRatio(product: ExploreProduct): string {
+    const cached = this.aspectRatioCache.get(product.id);
+    if (cached) return cached;
+    let ratio: string;
+    if (product.coverImageWidth && product.coverImageHeight && product.coverImageWidth > 0 && product.coverImageHeight > 0) {
+      ratio = `${product.coverImageWidth} / ${product.coverImageHeight}`;
+    } else {
+      // Compute once and cache — never mutate fallbackIndex again after this point
+      ratio = this.fallbackAspectRatios[this.fallbackIndex++ % this.fallbackAspectRatios.length];
+    }
+    this.aspectRatioCache.set(product.id, ratio);
+    return ratio;
+  }
+
+  getStoreBannerAspectRatio(store: ExploreStore): string {
+    if (store.bannerWidth && store.bannerHeight && store.bannerWidth > 0 && store.bannerHeight > 0) {
+      return `${store.bannerWidth} / ${store.bannerHeight}`;
+    }
+    return '16 / 5';
   }
 
   getAnimationDelay(index: number): number {
-    if (index < 24) return (index % 8) * 40;
+    if (index >= this.newItemsStartIndex) {
+      const relativeIndex = index - this.newItemsStartIndex;
+      return (relativeIndex % 8) * 40;
+    }
     return 0;
+  }
+
+  shouldAnimate(index: number): boolean {
+    return index >= this.newItemsStartIndex;
   }
 
   // Navigation

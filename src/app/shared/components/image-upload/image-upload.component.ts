@@ -5,6 +5,13 @@ import { ToasterService } from '../../../core/services/toaster.service';
 
 export type ImageType = 'thumbnail' | 'banner' | 'logo';
 
+/** Result emitted when an image is uploaded and processed */
+export interface ImageUploadResult {
+  imageUrl: string;
+  width: number;
+  height: number;
+}
+
 @Component({
   selector: 'app-image-upload',
   standalone: true,
@@ -418,8 +425,8 @@ export class ImageUploadComponent {
   /** Accept hint text */
   @Input() acceptHint = 'JPG, PNG, WebP, GIF — max 15MB';
 
-  /** Emitted when image is uploaded and processed, with the URL */
-  @Output() imageUploaded = new EventEmitter<string>();
+  /** Emitted when image is uploaded and processed, with the URL and dimensions */
+  @Output() imageUploaded = new EventEmitter<ImageUploadResult>();
   /** Emitted when image is removed */
   @Output() imageRemoved = new EventEmitter<void>();
 
@@ -514,7 +521,11 @@ export class ImageUploadComponent {
       );
 
       this.currentImageUrl.set(result.imageUrl);
-      this.imageUploaded.emit(result.imageUrl);
+      this.imageUploaded.emit({
+        imageUrl: result.imageUrl,
+        width: result.width,
+        height: result.height,
+      });
     } catch (error: any) {
       if (error?.name === 'AbortError' || this.uploadController?.signal.aborted) {
         return; // User cancelled, don't show error

@@ -10,6 +10,8 @@ export interface ExploreProduct {
   compareAtPrice?: number;
   currency: string;
   coverImageUrl?: string;
+  coverImageWidth?: number | null;
+  coverImageHeight?: number | null;
   createdAt: string;
   store: {
     id: string;
@@ -33,6 +35,8 @@ export interface ExploreStore {
   tagline?: string;
   logoUrl?: string;
   bannerUrl?: string;
+  bannerWidth?: number | null;
+  bannerHeight?: number | null;
   createdAt: string;
   productCount: number;
   creator: {

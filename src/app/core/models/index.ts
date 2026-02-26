@@ -24,6 +24,10 @@ export interface Store {
   tagline?: string;
   logoUrl?: string;
   bannerUrl?: string;
+  bannerWidth?: number | null;
+  bannerHeight?: number | null;
+  logoWidth?: number | null;
+  logoHeight?: number | null;
   status: 'DRAFT' | 'PUBLISHED' | 'SUSPENDED';
   isArchived?: boolean;
   deletedAt?: string | null;
@@ -53,6 +57,8 @@ export interface Product {
   compareAtPrice?: number;
   currency: string;
   coverImageUrl?: string;
+  coverImageWidth?: number | null;
+  coverImageHeight?: number | null;
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   isArchived?: boolean;
   deletedAt?: string | null;

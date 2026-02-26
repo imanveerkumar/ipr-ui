@@ -26,7 +26,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
           <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10">
             <div class="lg:col-span-3">
-              <div class="aspect-[4/3] bg-white border-2 border-black rounded-2xl animate-pulse"></div>
+              <div class="bg-white border-2 border-black rounded-2xl animate-pulse" [style.aspect-ratio]="'4/3'"></div>
             </div>
             <div class="lg:col-span-2 space-y-4">
               <div class="h-8 bg-[#111111]/10 rounded w-3/4 animate-pulse"></div>
@@ -58,7 +58,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
             <div class="lg:col-span-3">
               <div class="bg-white border-2 border-black rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_#000]">
                 @if (product()?.coverImageUrl) {
-                  <img [src]="product()?.coverImageUrl" [alt]="product()?.title" class="w-full aspect-[4/3] object-cover">
+                  <img [src]="product()?.coverImageUrl" [alt]="product()?.title" class="w-full object-cover" [style.aspect-ratio]="getCoverAspectRatio()">
                 } @else {
                   <div class="w-full aspect-[4/3] bg-gradient-to-br from-[#2B57D6]/10 to-[#FA4B28]/10 flex items-center justify-center">
                     <svg class="w-20 h-20 text-[#111111]/15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -428,6 +428,14 @@ export class ProductComponent implements OnInit {
     const p = this.product();
     if (!p || !p.compareAtPrice || p.compareAtPrice <= p.price) return 0;
     return Math.round(((p.compareAtPrice - p.price) / p.compareAtPrice) * 100);
+  }
+
+  getCoverAspectRatio(): string {
+    const p = this.product();
+    if (p?.coverImageWidth && p?.coverImageHeight && p.coverImageWidth > 0 && p.coverImageHeight > 0) {
+      return `${p.coverImageWidth} / ${p.coverImageHeight}`;
+    }
+    return '4 / 3';
   }
 
   addToCart() {

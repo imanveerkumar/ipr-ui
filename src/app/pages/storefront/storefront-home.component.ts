@@ -88,14 +88,14 @@ import { Product } from '../../core/models';
               <p class="text-gray-600 text-sm sm:text-base">Check back soon for amazing digital products!</p>
             </div>
           } @else {
-            <!-- Products Grid - 2 columns on mobile, scales up -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
+            <!-- Products Grid - Masonry layout -->
+            <div class="masonry-grid">
               @for (product of storeContext.products().slice(0, 8); track product.id) {
-                <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg active:shadow-md transition-all duration-200 group">
+                <div class="masonry-item mb-3 sm:mb-4 md:mb-5 bg-white rounded-xl sm:rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg active:shadow-md transition-all duration-200 group">
                   <!-- Product Image - Touch friendly -->
                   <div (click)="navigateTo('/product/' + product.id)" class="relative overflow-hidden cursor-pointer active:opacity-90">
                     @if (product.coverImageUrl) {
-                      <div class="aspect-square overflow-hidden">
+                      <div class="overflow-hidden" [style.aspect-ratio]="getProductAspectRatio(product)">
                         <img 
                           [src]="product.coverImageUrl" 
                           [alt]="product.title"
@@ -259,6 +259,27 @@ import { Product } from '../../core/models';
     .scrollbar-hide::-webkit-scrollbar {
       display: none;
     }
+    .masonry-grid {
+      columns: 2;
+      column-gap: 0.75rem;
+    }
+    @media (min-width: 768px) {
+      .masonry-grid {
+        columns: 3;
+        column-gap: 1.25rem;
+      }
+    }
+    @media (min-width: 1024px) {
+      .masonry-grid {
+        columns: 4;
+        column-gap: 1.5rem;
+      }
+    }
+    .masonry-item {
+      break-inside: avoid;
+      display: inline-block;
+      width: 100%;
+    }
   `]
 })
 export class StorefrontHomeComponent {
@@ -279,6 +300,13 @@ export class StorefrontHomeComponent {
   getDiscount(product: Product): number {
     if (!product.compareAtPrice || product.compareAtPrice <= product.price) return 0;
     return Math.round((1 - product.price / product.compareAtPrice) * 100);
+  }
+
+  getProductAspectRatio(product: Product): string {
+    if (product.coverImageWidth && product.coverImageHeight && product.coverImageWidth > 0 && product.coverImageHeight > 0) {
+      return `${product.coverImageWidth} / ${product.coverImageHeight}`;
+    }
+    return '1 / 1';
   }
 
   stripHtml(html: string): string {

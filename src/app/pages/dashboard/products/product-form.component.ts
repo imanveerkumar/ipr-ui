@@ -8,7 +8,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { Store, Product } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components/rich-text-editor/rich-text-editor.component';
-import { ImageUploadComponent } from '../../../shared/components/image-upload/image-upload.component';
+import { ImageUploadComponent, ImageUploadResult } from '../../../shared/components/image-upload/image-upload.component';
 import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 import { FileUploadService, UploadedFileRef } from '../../../core/services/file-upload.service';
 import { SubdomainService } from '../../../core/services/subdomain.service';
@@ -1235,6 +1235,8 @@ export class ProductFormComponent implements OnInit {
     price: 0,
     status: 'DRAFT',
     coverImageUrl: '' as string | undefined,
+    coverImageWidth: undefined as number | undefined,
+    coverImageHeight: undefined as number | undefined,
   };
 
   // Validation constants
@@ -1299,6 +1301,8 @@ export class ProductFormComponent implements OnInit {
             price: product.price / 100,
             status: product.status,
             coverImageUrl: product.coverImageUrl || undefined,
+            coverImageWidth: product.coverImageWidth ?? undefined,
+            coverImageHeight: product.coverImageHeight ?? undefined,
           };
 
           // Derive state from returned product (owner context)
@@ -1384,12 +1388,16 @@ export class ProductFormComponent implements OnInit {
     }
   }
 
-  onThumbnailUploaded(imageUrl: string) {
-    this.form.coverImageUrl = imageUrl;
+  onThumbnailUploaded(result: ImageUploadResult) {
+    this.form.coverImageUrl = result.imageUrl;
+    this.form.coverImageWidth = result.width;
+    this.form.coverImageHeight = result.height;
   }
 
   onThumbnailRemoved() {
     this.form.coverImageUrl = undefined;
+    this.form.coverImageWidth = undefined;
+    this.form.coverImageHeight = undefined;
     this.toaster.info({
       title: 'Removal Staged',
       message: 'Cover image removal will apply when you update the product.',
@@ -1616,6 +1624,8 @@ export class ProductFormComponent implements OnInit {
         slug: this.form.slug.toLowerCase(), // Ensure slug is lowercase
         price: Math.round(this.form.price * 100),
         coverImageUrl: this.form.coverImageUrl || undefined,
+        coverImageWidth: this.form.coverImageWidth || undefined,
+        coverImageHeight: this.form.coverImageHeight || undefined,
       };
 
       let product: any;
