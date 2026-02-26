@@ -68,18 +68,6 @@ import { SubdomainService } from '../../core/services/subdomain.service';
                 }
               </div>
 
-              <!-- Description (desktop) -->
-              <div class="hidden lg:block mt-8">
-                @if (product()?.description) {
-                  <div class="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_#000]">
-                    <h2 class="font-display text-lg font-bold text-[#111111] mb-4 flex items-center gap-2">
-                      <svg class="w-5 h-5 text-[#2B57D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                      Description
-                    </h2>
-                    <div class="prose prose-sm max-w-none text-[#111111]/80 prose-headings:text-[#111111] prose-a:text-[#2B57D6]" [innerHTML]="product()?.description"></div>
-                  </div>
-                }
-              </div>
             </div>
 
             <!-- Right Column: Details -->
@@ -325,18 +313,18 @@ import { SubdomainService } from '../../core/services/subdomain.service';
             </div>
           </div>
 
-          <!-- Description (mobile) -->
-          <div class="lg:hidden mt-6">
-            @if (product()?.description) {
-              <div class="bg-white border-2 border-black rounded-2xl p-5 shadow-[4px_4px_0px_0px_#000]">
+          <!-- Description (full width) -->
+          @if (product()?.description) {
+            <div class="mt-8">
+              <div class="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_#000]">
                 <h2 class="font-display text-lg font-bold text-[#111111] mb-4 flex items-center gap-2">
                   <svg class="w-5 h-5 text-[#2B57D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   Description
                 </h2>
-                <div class="prose prose-sm max-w-none text-[#111111]/80 prose-headings:text-[#111111] prose-a:text-[#2B57D6]" [innerHTML]="product()?.description"></div>
+                <div class="prose prose-base max-w-none text-[#111111]/80 prose-headings:text-[#111111] prose-a:text-[#2B57D6] break-words overflow-hidden [&_*]:max-w-full [&_img]:max-w-full [&_table]:w-full [&_table]:table-fixed [&_pre]:overflow-x-auto" [innerHTML]="product()?.description"></div>
               </div>
-            }
-          </div>
+            </div>
+          }
         </div>
       } @else {
         <!-- Not Found -->

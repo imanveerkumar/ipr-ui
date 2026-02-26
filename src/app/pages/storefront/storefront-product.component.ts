@@ -102,11 +102,6 @@ import { Product } from '../../core/models';
                 </div>
               </div>
 
-              <!-- Description - Collapsible on mobile -->
-              @if (product()?.description) {
-                <div class="prose prose-sm sm:prose-base prose-gray max-w-none mb-6 text-gray-600" [innerHTML]="product()?.description"></div>
-              }
-
               <!-- Action Buttons - Sticky on mobile -->
               <div class="space-y-3 mt-auto">
                 @if ((product()?.price || 0) === 0) {
@@ -280,6 +275,19 @@ import { Product } from '../../core/models';
               </div>
             </div>
           </div>
+
+          <!-- Description (full width) -->
+          @if (product()?.description) {
+            <div class="mt-8 sm:mt-10">
+              <div class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  Description
+                </h2>
+                <div class="prose prose-base prose-gray max-w-none text-gray-600 break-words overflow-hidden [&_*]:max-w-full [&_img]:max-w-full [&_table]:w-full [&_table]:table-fixed [&_pre]:overflow-x-auto" [innerHTML]="product()?.description"></div>
+              </div>
+            </div>
+          }
 
           <!-- Related Products - Horizontal scroll on mobile -->
           @if (relatedProducts().length > 0) {
