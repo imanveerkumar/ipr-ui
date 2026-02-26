@@ -257,7 +257,6 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               hint="Displayed at the top of your storefront"
               [imageUrl]="form.bannerUrl"
               placeholderText="Upload store banner"
-              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 1920px wide"
               (imageUploaded)="onBannerUploaded($event)"
               (imageRemoved)="onBannerRemoved()"
             ></app-image-upload>
@@ -269,7 +268,6 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               hint="Shown on cards and navigation"
               [imageUrl]="form.logoUrl"
               placeholderText="Upload logo"
-              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 400px"
               (imageUploaded)="onLogoUploaded($event)"
               (imageRemoved)="onLogoRemoved()"
             ></app-image-upload>

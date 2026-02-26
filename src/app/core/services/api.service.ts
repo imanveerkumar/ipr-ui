@@ -316,11 +316,11 @@ export class ApiService {
     );
   }
 
-  // Helper for file upload URLs
-  async getUploadUrl(filename: string, contentType: string, size: number) {
+  // Helper for file upload URLs — sends optional upload context for server-side validation
+  async getUploadUrl(filename: string, contentType: string, size: number, context?: string) {
     return this.post<{ fileId: string; uploadUrl: string }>(
       '/files/upload-url',
-      { filename, contentType, size },
+      { filename, contentType, size, ...(context ? { context } : {}) },
       { rateLimitConfig: DEFAULT_RATE_LIMITS.UPLOAD }
     );
   }

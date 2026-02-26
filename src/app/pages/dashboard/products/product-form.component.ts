@@ -11,6 +11,7 @@ import { RichTextEditorComponent } from '../../../shared/components/rich-text-ed
 import { ImageUploadComponent, ImageUploadResult } from '../../../shared/components/image-upload/image-upload.component';
 import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 import { FileUploadService, UploadedFileRef } from '../../../core/services/file-upload.service';
+import { UploadConfigService } from '../../../core/services/upload-config.service';
 import { SubdomainService } from '../../../core/services/subdomain.service';
 
 @Component({
@@ -265,7 +266,6 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
               hint="Displayed on explore, storefront, and cards"
               [imageUrl]="form.coverImageUrl"
               placeholderText="Upload product thumbnail"
-              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 800px"
               (imageUploaded)="onThumbnailUploaded($event)"
               (imageRemoved)="onThumbnailRemoved()"
             ></app-image-upload>
@@ -323,7 +323,8 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
                   </svg>
                 </div>
                 <p class="file-upload-text">Drop files here or click to upload</p>
-                <p class="file-upload-hint">ZIP, PDF, PSD, AI, and more</p>
+                <p class="file-upload-hint">{{ productFileHint() }}</p>
+                <p class="file-upload-hint" style="margin-top: 2px; font-size: 0.7rem; opacity: 0.7;">Max {{ maxProductFiles() }} files · {{ maxProductTotalSizeLabel() }} total</p>
               </div>
             </div>
 
@@ -1249,7 +1250,12 @@ export class ProductFormComponent implements OnInit {
   private toaster = inject(ToasterService);
   private confirmService = inject(ConfirmService);
   private fileUpload = inject(FileUploadService);
+  private uploadConfigService = inject(UploadConfigService);
   private subdomainService = inject(SubdomainService);
+
+  productFileHint = signal('ZIP, PDF, PSD, AI, and more');
+  maxProductFiles = signal(10);
+  maxProductTotalSizeLabel = signal('1 GB');
 
   copied = signal(false);
 
@@ -1265,6 +1271,13 @@ export class ProductFormComponent implements OnInit {
 
   async ngOnInit() {
     this.isLoading.set(true);
+
+    // Load upload config for dynamic limits
+    this.uploadConfigService.ensureLoaded().then(() => {
+      this.productFileHint.set(this.uploadConfigService.getProductFileAcceptHint());
+      this.maxProductFiles.set(this.uploadConfigService.maxProductFiles);
+      this.maxProductTotalSizeLabel.set(this.uploadConfigService.formatBytes(this.uploadConfigService.maxProductTotalSize));
+    });
 
     // Set edit mode immediately so the header shows 'Edit Product' without waiting for stores
     this.productId = this.route.snapshot.paramMap.get('id');
@@ -1503,7 +1516,44 @@ export class ProductFormComponent implements OnInit {
   private async addAndUploadFiles(files: File[]) {
     if (!files.length) return;
 
-    const newItems = files.map((file) => ({
+    // Ensure upload config is loaded for validation
+    await this.uploadConfigService.ensureLoaded();
+
+    // Calculate current product file aggregates
+    const existingCount = this.existingProductFiles().length;
+    const existingTotalBytes = this.existingProductFiles().reduce((s, f) => s + (f.size || 0), 0);
+    const pendingUploaded = this.uploads().filter(u => u.status === 'uploaded');
+    const currentCount = existingCount + pendingUploaded.length;
+    const currentTotalBytes = existingTotalBytes + pendingUploaded.reduce((s, u) => s + (u.file.size || 0), 0);
+
+    // Pre-validate all files before starting any uploads
+    const validFiles: File[] = [];
+    let runningCount = currentCount;
+    let runningBytes = currentTotalBytes;
+
+    for (const file of files) {
+      // Validate individual file
+      const fileValidation = this.uploadConfigService.validateProductFile(file);
+      if (!fileValidation.valid) {
+        this.toaster.error({ title: 'File Rejected', message: fileValidation.error || `"${file.name}" is not allowed.` });
+        continue;
+      }
+
+      // Validate aggregate limits
+      const aggValidation = this.uploadConfigService.validateProductFileLimits(runningCount, runningBytes, file.size);
+      if (!aggValidation.valid) {
+        this.toaster.error({ title: 'Limit Reached', message: aggValidation.error || 'Product file limit exceeded.' });
+        continue;
+      }
+
+      validFiles.push(file);
+      runningCount++;
+      runningBytes += file.size;
+    }
+
+    if (!validFiles.length) return;
+
+    const newItems = validFiles.map((file) => ({
       localId: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
       file,
       status: 'uploading' as const,
@@ -1521,7 +1571,7 @@ export class ProductFormComponent implements OnInit {
           const controller = new AbortController();
           this.uploadControllers.set(item.localId, controller);
 
-          const uploaded = await this.fileUpload.upload(item.file, {
+          const uploaded = await this.fileUpload.uploadProductFile(item.file, {
             signal: controller.signal,
             onProgress: (p) => {
               this.uploads.set(

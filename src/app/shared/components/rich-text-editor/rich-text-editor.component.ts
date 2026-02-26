@@ -4,6 +4,7 @@ import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/f
 import { QuillModule, QuillEditorComponent } from 'ngx-quill';
 import { ToasterService } from '../../../core/services/toaster.service';
 import { FileUploadService } from '../../../core/services/file-upload.service';
+import { UploadConfigService } from '../../../core/services/upload-config.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -109,6 +110,7 @@ export class RichTextEditorComponent implements ControlValueAccessor {
   private fileUpload = inject(FileUploadService);
 
   private toaster = inject(ToasterService);
+  private uploadConfigService = inject(UploadConfigService);
 
   onEditorCreated(editor: any) {
     this.quillEditor = editor;
@@ -133,6 +135,15 @@ export class RichTextEditorComponent implements ControlValueAccessor {
     const file = input.files?.[0];
     if (!file) return;
 
+    // Client-side validation using backend-driven config
+    await this.uploadConfigService.ensureLoaded();
+    const validation = this.uploadConfigService.validateEditorFile(file);
+    if (!validation.valid) {
+      this.toaster.handleError(validation.error, validation.error || 'File not allowed');
+      input.value = '';
+      return;
+    }
+
     this.uploading.set(true);
     this.uploadProgress.set(0);
     try {
@@ -145,8 +156,8 @@ export class RichTextEditorComponent implements ControlValueAccessor {
         });
         fileUrl = result.imageUrl;
       } else {
-        // Non-image files: upload and get a public URL from the server
-        const uploaded = await this.fileUpload.upload(file, {
+        // Non-image files: upload with editor context
+        const uploaded = await this.fileUpload.uploadEditorFile(file, {
           onProgress: (p) => this.uploadProgress.set(p),
         });
         // Use the file's public URL endpoint (owner-only, signed URL)
