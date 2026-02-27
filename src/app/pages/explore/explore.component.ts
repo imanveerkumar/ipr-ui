@@ -481,7 +481,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   <!-- PRODUCT CARD -->
                   <div
                     *ngIf="item.type === 'product'"
-                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer relative"
+                    class="group card-dyn bg-white rounded-xl overflow-hidden transition-all duration-300 cursor-pointer relative"
+                    [style]="getCardCssVarsStyle(item)"
                     (click)="navigateToProduct(asProduct(item.data).id)"
                   >
                     <div class="relative overflow-hidden bg-[#F9F4EB]" [style.aspect-ratio]="getProductAspectRatio(asProduct(item.data))">
@@ -497,14 +498,24 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
                       </div>
+                      <!-- Discount badge (mobile only — desktop shows in overlay) -->
                       <div
                         *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
-                        class="absolute top-2 left-2 px-1.5 py-0.5 bg-[#FA4B28] rounded-full text-[10px] font-bold text-white"
+                        class="md:hidden absolute top-2 left-2 px-1.5 py-0.5 bg-[#FA4B28] rounded-full text-[10px] font-bold text-white"
                       >
                         -{{ exploreService.getDiscountPercentage(asProduct(item.data).price, asProduct(item.data).compareAtPrice!) }}%
                       </div>
                     </div>
-                    <!-- Mobile Product Info -->
+                    <!-- Desktop: minimal — title + price only -->
+                    <div class="hidden md:block px-2.5 pt-2 pb-2.5">
+                      <h3 class="font-semibold text-[#111111] text-[13px] leading-snug line-clamp-1">
+                        {{ asProduct(item.data).title }}
+                      </h3>
+                      <span class="font-bold text-[#111111] text-[13px]">
+                        {{ exploreService.formatPrice(asProduct(item.data).price, asProduct(item.data).currency) }}
+                      </span>
+                    </div>
+                    <!-- Mobile: full info (no hover on touch) -->
                     <div class="md:hidden px-2.5 pt-2 pb-2.5">
                       <h3 class="font-semibold text-[#111111] text-[13px] leading-snug line-clamp-2 mb-1">
                         {{ asProduct(item.data).title }}
@@ -548,48 +559,64 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                       </div>
                     </div>
                     <!-- Hover Detail Panel (Desktop) -->
-                    <div class="explore-hover-panel absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-3 pt-10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out pointer-events-none group-hover:pointer-events-auto hidden md:block">
-                      <h3 class="font-bold text-white text-xs sm:text-sm line-clamp-2 mb-1 leading-tight">
-                        {{ asProduct(item.data).title }}
-                      </h3>
-                      <div class="flex items-center gap-1.5 mb-2">
-                        <div class="w-4 h-4 rounded-full bg-white/20 border border-white/30 overflow-hidden flex-shrink-0">
-                          <img *ngIf="asProduct(item.data).creator.avatarUrl" [src]="asProduct(item.data).creator.avatarUrl" class="w-full h-full object-cover" />
-                        </div>
-                        <span class="text-[10px] sm:text-xs text-white/70 font-medium truncate">
-                          {{ asProduct(item.data).creator.displayName || asProduct(item.data).creator.username }}
-                        </span>
-                      </div>
-                      <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-1.5">
-                          <span class="font-bold text-white text-xs sm:text-sm">
-                            {{ exploreService.formatPrice(asProduct(item.data).price, asProduct(item.data).currency) }}
-                          </span>
-                          <span
-                            *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
-                            class="text-[10px] text-white/50 line-through"
-                          >
-                            {{ exploreService.formatPrice(asProduct(item.data).compareAtPrice!, asProduct(item.data).currency) }}
+                    <div class="hover-overlay product-hover-overlay hidden md:flex" aria-hidden="true">
+                      <div class="hover-overlay-content">
+                        <h3 class="font-bold text-white text-sm leading-tight line-clamp-2 mb-1.5">
+                          {{ asProduct(item.data).title }}
+                        </h3>
+                        <p *ngIf="asProduct(item.data).description" class="text-[11px] text-white/60 line-clamp-2 mb-2 leading-relaxed">
+                          {{ asProduct(item.data).description }}
+                        </p>
+                        <div class="flex items-center gap-2 mb-2.5">
+                          <div class="w-5 h-5 rounded-full bg-white/20 border border-white/30 overflow-hidden flex-shrink-0">
+                            <img *ngIf="asProduct(item.data).creator.avatarUrl" [src]="asProduct(item.data).creator.avatarUrl" class="w-full h-full object-cover" />
+                          </div>
+                          <span class="text-[11px] text-white/70 font-medium truncate">
+                            {{ asProduct(item.data).creator.displayName || asProduct(item.data).creator.username }}
                           </span>
                         </div>
-                        <div *ngIf="asProduct(item.data).price > 0" class="flex gap-1.5">
-                          <button
-                            (click)="isInCart(asProduct(item.data).id) ? removeFromCart(asProduct(item.data).id, $event) : addToCart(asProduct(item.data), $event)"
-                            class="px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all"
-                            [class.bg-[#68E079]]="isInCart(asProduct(item.data).id)"
-                            [class.text-[#111111]]="isInCart(asProduct(item.data).id)"
-                            [class.bg-white/20]="!isInCart(asProduct(item.data).id)"
-                            [class.text-white]="!isInCart(asProduct(item.data).id)"
-                            [class.hover:bg-white/30]="!isInCart(asProduct(item.data).id)"
-                          >
-                            {{ isInCart(asProduct(item.data).id) ? '&#10003; Added' : '+ Cart' }}
-                          </button>
-                          <button
-                            (click)="buyNow(asProduct(item.data), $event)"
-                            class="px-2.5 py-1.5 bg-white text-[#111111] rounded-lg text-[10px] font-bold hover:bg-white/90 transition-all"
-                          >
-                            Buy Now
-                          </button>
+                        <div class="flex items-center gap-1.5 mb-2" *ngIf="asProduct(item.data).store">
+                          <div class="w-4 h-4 rounded bg-white/20 border border-white/20 overflow-hidden flex-shrink-0">
+                            <img *ngIf="asProduct(item.data).store.logoUrl" [src]="asProduct(item.data).store.logoUrl" class="w-full h-full object-cover" />
+                            <div *ngIf="!asProduct(item.data).store.logoUrl" class="w-full h-full flex items-center justify-center text-[8px] font-bold text-white/70">{{ asProduct(item.data).store.name.charAt(0) }}</div>
+                          </div>
+                          <span class="text-[10px] text-white/50 font-medium truncate">{{ asProduct(item.data).store.name }}</span>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-white/10">
+                          <div class="flex items-center gap-1.5">
+                            <span class="font-bold text-white text-sm">
+                              {{ exploreService.formatPrice(asProduct(item.data).price, asProduct(item.data).currency) }}
+                            </span>
+                            <span
+                              *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
+                              class="text-[10px] text-white/40 line-through"
+                            >
+                              {{ exploreService.formatPrice(asProduct(item.data).compareAtPrice!, asProduct(item.data).currency) }}
+                            </span>
+                            <span
+                              *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
+                              class="text-[9px] font-bold text-[#68E079] bg-[#68E079]/15 px-1.5 py-0.5 rounded-full"
+                            >
+                              -{{ exploreService.getDiscountPercentage(asProduct(item.data).price, asProduct(item.data).compareAtPrice!) }}%
+                            </span>
+                          </div>
+                          <div *ngIf="asProduct(item.data).price > 0" class="flex gap-1.5">
+                            <button
+                              (click)="isInCart(asProduct(item.data).id) ? removeFromCart(asProduct(item.data).id, $event) : addToCart(asProduct(item.data), $event)"
+                              class="hover-btn px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+                              [class.hover-btn-cart-dyn]="!isInCart(asProduct(item.data).id)"
+                              [style.background-color]="isInCart(asProduct(item.data).id) ? '#68E079' : null"
+                              [style.color]="isInCart(asProduct(item.data).id) ? '#111111' : null"
+                            >
+                              {{ isInCart(asProduct(item.data).id) ? '&#10003; Added' : '+ Cart' }}
+                            </button>
+                            <button
+                              (click)="buyNow(asProduct(item.data), $event)"
+                              class="hover-btn hover-btn-buy-dyn px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all"
+                            >
+                              Buy Now
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -598,21 +625,30 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   <!-- STORE CARD -->
                   <div
                     *ngIf="item.type === 'store'"
-                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+                    class="group card-dyn bg-white rounded-xl overflow-hidden transition-all duration-300 cursor-pointer relative"
+                    [style]="getCardCssVarsStyle(item)"
                     (click)="navigateToStore(asStore(item.data).slug)"
                   >
+                    <!-- Store badge — direct child of card so overflow-hidden clips it correctly -->
+                    <span class="absolute top-2 right-2 px-2 py-0.5 bg-[#2B57D6] border border-white/30 rounded text-[9px] font-bold text-white uppercase tracking-wider z-[4] group-hover:opacity-0 transition-opacity duration-200">Store</span>
                     <div class="bg-gradient-to-br from-[#2B57D6] to-[#7C3AED] relative" [style.aspect-ratio]="getStoreBannerAspectRatio(asStore(item.data))" style="min-height: 80px; max-height: 160px;">
                       <img *ngIf="asStore(item.data).bannerUrl" [src]="asStore(item.data).bannerUrl" [alt]="asStore(item.data).name" loading="lazy" class="w-full h-full object-cover" />
-                      <span class="absolute top-2 right-2 px-2 py-0.5 bg-[#2B57D6] border border-white/30 rounded text-[9px] font-bold text-white uppercase tracking-wider">Store</span>
-                      <div class="absolute -bottom-5 left-3 w-12 h-12 bg-white border-2 border-black rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000]">
+                      <div class="absolute -bottom-5 left-3 w-12 h-12 bg-white border-2 border-black rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000] z-10 group-hover:opacity-0 transition-opacity duration-200">
                         <img *ngIf="asStore(item.data).logoUrl" [src]="asStore(item.data).logoUrl" [alt]="asStore(item.data).name" class="w-full h-full object-cover" />
                         <div *ngIf="!asStore(item.data).logoUrl" class="w-full h-full bg-[#F9F4EB] flex items-center justify-center">
                           <span class="text-base font-bold text-[#111111]">{{ asStore(item.data).name.charAt(0) }}</span>
                         </div>
                       </div>
                     </div>
-                    <div class="p-3 pt-8">
-                      <h3 class="font-bold text-[#111111] text-sm sm:text-base mb-0.5 group-hover:text-[#2B57D6] transition-colors">
+                    <!-- Desktop: minimal — name only -->
+                    <div class="hidden md:block p-3 pt-8">
+                      <h3 class="card-dyn-title font-bold text-[#111111] text-sm sm:text-base transition-colors truncate">
+                        {{ asStore(item.data).name }}
+                      </h3>
+                    </div>
+                    <!-- Mobile: full info (no hover on touch) -->
+                    <div class="md:hidden p-3 pt-8">
+                      <h3 class="card-dyn-title font-bold text-[#111111] text-sm sm:text-base mb-0.5 transition-colors">
                         {{ asStore(item.data).name }}
                       </h3>
                       <p *ngIf="asStore(item.data).tagline" class="text-xs text-[#111111]/50 font-medium line-clamp-2 mb-3">
@@ -631,12 +667,48 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                         </span>
                       </div>
                     </div>
+                    <!-- Store Hover Overlay (Desktop) -->
+                    <div class="hover-overlay store-hover-overlay hidden md:flex" aria-hidden="true">
+                      <div class="hover-overlay-content">
+                        <div class="flex items-center gap-2.5 mb-3">
+                          <div class="w-10 h-10 rounded-xl bg-white/20 border border-white/30 overflow-hidden flex-shrink-0">
+                            <img *ngIf="asStore(item.data).logoUrl" [src]="asStore(item.data).logoUrl" class="w-full h-full object-cover" />
+                            <div *ngIf="!asStore(item.data).logoUrl" class="w-full h-full flex items-center justify-center">
+                              <span class="text-sm font-bold text-white">{{ asStore(item.data).name.charAt(0) }}</span>
+                            </div>
+                          </div>
+                          <div class="min-w-0">
+                            <h3 class="font-bold text-white text-sm leading-tight truncate">{{ asStore(item.data).name }}</h3>
+                            <span class="text-[10px] text-white/50 font-medium">by {{ asStore(item.data).creator.displayName || asStore(item.data).creator.username }}</span>
+                          </div>
+                        </div>
+                        <p *ngIf="asStore(item.data).tagline" class="text-[11px] text-white/60 line-clamp-2 mb-3 leading-relaxed">
+                          {{ asStore(item.data).tagline }}
+                        </p>
+                        <p *ngIf="asStore(item.data).description && !asStore(item.data).tagline" class="text-[11px] text-white/60 line-clamp-2 mb-3 leading-relaxed">
+                          {{ asStore(item.data).description }}
+                        </p>
+                        <div class="flex items-center gap-4 pt-2 border-t border-white/10">
+                          <div class="flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                            <span class="text-[11px] text-white/70 font-semibold">{{ asStore(item.data).productCount }} products</span>
+                          </div>
+                          <div class="ml-auto">
+                            <span class="hover-btn hover-btn-acc inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all">
+                              Visit Store
+                              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <!-- CREATOR CARD -->
                   <div
                     *ngIf="item.type === 'creator'"
-                    class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer p-4 text-center"
+                    class="group card-dyn bg-white rounded-xl overflow-hidden transition-all duration-300 cursor-pointer p-4 text-center relative"
+                    [style]="getCardCssVarsStyle(item)"
                     (click)="navigateToCreator(asCreator(item.data).id)"
                   >
                     <span class="inline-block px-2 py-0.5 bg-[#FFC60B]/20 border border-[#FFC60B] rounded text-[9px] font-bold text-[#111111] uppercase tracking-wider mb-3">Creator</span>
@@ -646,12 +718,14 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                         <span class="text-xl sm:text-2xl font-bold text-white">{{ (asCreator(item.data).displayName || asCreator(item.data).username).charAt(0).toUpperCase() }}</span>
                       </div>
                     </div>
-                    <h3 class="font-bold text-[#111111] text-sm sm:text-base mb-0.5 group-hover:text-[#2B57D6] transition-colors">
+                    <h3 class="card-dyn-title font-bold text-[#111111] text-sm sm:text-base mb-0.5 transition-colors">
                       {{ asCreator(item.data).displayName || asCreator(item.data).username }}
                     </h3>
-                    <p class="text-xs text-[#111111]/50 font-medium mb-2">&#64;{{ asCreator(item.data).username }}</p>
-                    <p *ngIf="asCreator(item.data).bio" class="text-xs text-[#111111]/60 line-clamp-2 mb-3">{{ asCreator(item.data).bio }}</p>
-                    <div class="flex justify-center gap-4">
+                    <!-- Desktop: minimal — avatar + name only, rest on hover -->
+                    <!-- Mobile: full info (no hover on touch) -->
+                    <p class="md:hidden text-xs text-[#111111]/50 font-medium mb-2">&#64;{{ asCreator(item.data).username }}</p>
+                    <p *ngIf="asCreator(item.data).bio" class="md:hidden text-xs text-[#111111]/60 line-clamp-2 mb-3">{{ asCreator(item.data).bio }}</p>
+                    <div class="md:hidden flex justify-center gap-4">
                       <div class="text-center">
                         <div class="text-base font-bold text-[#111111]">{{ asCreator(item.data).storeCount }}</div>
                         <div class="text-[10px] text-[#111111]/40 font-medium">Stores</div>
@@ -660,6 +734,37 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                       <div class="text-center">
                         <div class="text-base font-bold text-[#111111]">{{ asCreator(item.data).productCount }}</div>
                         <div class="text-[10px] text-[#111111]/40 font-medium">Products</div>
+                      </div>
+                    </div>
+                    <!-- Creator Hover Overlay (Desktop) -->
+                    <div class="hover-overlay creator-hover-overlay hidden md:flex" aria-hidden="true">
+                      <div class="hover-overlay-content text-center">
+                        <div class="w-14 h-14 mx-auto mb-2.5 rounded-full bg-gradient-to-br from-[#FFC60B] to-[#FA4B28] border-2 border-white/30 overflow-hidden shadow-lg">
+                          <img *ngIf="asCreator(item.data).avatarUrl" [src]="asCreator(item.data).avatarUrl" class="w-full h-full object-cover" />
+                          <div *ngIf="!asCreator(item.data).avatarUrl" class="w-full h-full flex items-center justify-center">
+                            <span class="text-lg font-bold text-white">{{ (asCreator(item.data).displayName || asCreator(item.data).username).charAt(0).toUpperCase() }}</span>
+                          </div>
+                        </div>
+                        <h3 class="font-bold text-white text-sm leading-tight mb-0.5">
+                          {{ asCreator(item.data).displayName || asCreator(item.data).username }}
+                        </h3>
+                        <p class="text-[10px] text-white/50 font-medium mb-2">&#64;{{ asCreator(item.data).username }}</p>
+                        <p *ngIf="asCreator(item.data).bio" class="text-[11px] text-white/60 line-clamp-3 mb-3 leading-relaxed px-2">{{ asCreator(item.data).bio }}</p>
+                        <div class="flex justify-center gap-5 mb-3 pt-2 border-t border-white/10">
+                          <div class="text-center">
+                            <div class="text-lg font-bold text-white">{{ asCreator(item.data).storeCount }}</div>
+                            <div class="text-[9px] text-white/40 font-semibold uppercase tracking-wider">Stores</div>
+                          </div>
+                          <div class="w-px bg-white/15"></div>
+                          <div class="text-center">
+                            <div class="text-lg font-bold text-white">{{ asCreator(item.data).productCount }}</div>
+                            <div class="text-[9px] text-white/40 font-semibold uppercase tracking-wider">Products</div>
+                          </div>
+                        </div>
+                        <span class="hover-btn hover-btn-acc inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg text-[10px] font-bold transition-all">
+                          View Profile
+                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -1093,11 +1198,166 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
       .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
     }
 
+    /* ========= HOVER OVERLAY (Products, Stores, Creators) ========= */
+    .hover-overlay {
+      position: absolute;
+      inset: 0;
+      flex-direction: column;
+      justify-content: flex-end;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 20;
+      transition: opacity 320ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .group:hover .hover-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ---- Card: colored hover shadow + ring ---- */
+    .card-dyn {
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .card-dyn:hover {
+      box-shadow:
+        0 0 0 2px rgba(var(--card-r), var(--card-g), var(--card-b), 0.28),
+        0 8px 30px rgba(var(--card-r), var(--card-g), var(--card-b), 0.38);
+      transform: translateY(-2px);
+    }
+
+    /* ---- Title hover: uses accent var ---- */
+    .card-dyn-title {
+      transition: color 250ms ease;
+    }
+    .group:hover .card-dyn-title {
+      color: rgb(var(--card-ar), var(--card-ag), var(--card-ab));
+    }
+
+    /* Product overlay — bottom gradient sourced from CSS vars */
+    .product-hover-overlay {
+      background: linear-gradient(
+        to top,
+        rgba(var(--card-dr), var(--card-dg), var(--card-db), 0.94) 0%,
+        rgba(var(--card-dr), var(--card-dg), var(--card-db), 0.60) 55%,
+        transparent 100%
+      );
+    }
+
+    /* Store overlay — frosted, sourced from CSS vars */
+    .store-hover-overlay {
+      background: linear-gradient(
+        to top,
+        rgba(var(--card-dr), var(--card-dg), var(--card-db), 0.97) 0%,
+        rgba(var(--card-dr), var(--card-dg), var(--card-db), 0.68) 50%,
+        rgba(var(--card-dr), var(--card-dg), var(--card-db), 0.35) 100%
+      );
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    /* Creator overlay — diagonal gradient sourced from CSS vars */
+    .creator-hover-overlay {
+      background: linear-gradient(
+        135deg,
+        rgba(var(--card-dr), var(--card-dg), var(--card-db), 0.96) 0%,
+        rgba(var(--card-r),  var(--card-g),  var(--card-b),  0.72) 100%
+      );
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* ---- Accent button (Visit Store / View Profile) ---- */
+    .hover-btn-acc {
+      background-color: rgb(var(--card-ar), var(--card-ag), var(--card-ab));
+      color: var(--card-at);
+    }
+    .hover-btn-acc:hover {
+      filter: brightness(1.12);
+    }
+
+    /* ---- Cart button ---- */
+    .hover-btn-cart-dyn {
+      background-color: rgba(var(--card-ctr), var(--card-ctg), var(--card-ctb), 0.85);
+      color: var(--card-ctt);
+    }
+
+    /* ---- Buy Now button ---- */
+    .hover-btn-buy-dyn {
+      background-color: var(--card-buy-bg);
+      color: var(--card-buy-t);
+    }
+    .hover-btn-buy-dyn:hover {
+      filter: brightness(1.10);
+    }
+
+    .hover-overlay-content {
+      padding: 14px;
+      transform: translateY(10px);
+      opacity: 0;
+      transition: transform 320ms cubic-bezier(0.4, 0, 0.2, 1) 60ms, opacity 280ms ease 60ms;
+    }
+    .group:hover .hover-overlay-content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Stagger children in overlay for a polished cascade */
+    .hover-overlay-content > *:nth-child(1) { transition-delay: 60ms; }
+    .hover-overlay-content > *:nth-child(2) { transition-delay: 90ms; }
+    .hover-overlay-content > *:nth-child(3) { transition-delay: 120ms; }
+    .hover-overlay-content > *:nth-child(4) { transition-delay: 150ms; }
+    .hover-overlay-content > *:nth-child(5) { transition-delay: 180ms; }
+
+    /* Interactive buttons inside overlays */
+    .hover-btn {
+      transform: translateY(4px);
+      opacity: 0;
+      transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1) 180ms,
+                  opacity 250ms ease 180ms,
+                  background 150ms ease,
+                  color 150ms ease;
+    }
+    .group:hover .hover-btn {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .hover-btn:active {
+      transform: scale(0.95) !important;
+    }
+
+    /* Subtle image zoom on product hover */
+    .group:hover img.object-cover {
+      transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
     /* Reduced motion support */
     @media (prefers-reduced-motion: reduce) {
       .feed-item-enter { animation: none !important; }
       .mobile-drawer-enter { animation: none !important; }
       .mobile-overlay-enter { animation: none !important; }
+      .hover-overlay,
+      .hover-overlay-content,
+      .hover-btn {
+        transition: none !important;
+      }
+      .hover-overlay { opacity: 0; }
+      .group:hover .hover-overlay { opacity: 1; }
+      .group:hover .hover-overlay-content { transform: none; opacity: 1; }
+      .group:hover .hover-btn { transform: none; opacity: 1; }
+    }
+
+    /* Touch devices — disable hover overlay to avoid stuck states */
+    @media (hover: none) {
+      .hover-overlay {
+        display: none !important;
+      }
     }
   `]
 })
@@ -1524,6 +1784,140 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   removeFromCart(productId: string, event: Event) {
     event.stopPropagation();
     this.cartService.removeItem(productId);
+  }
+
+  // ─── Dynamic Card Color (Canvas extraction) ───────────────────────────────
+
+  /** Signal version counter so template re-evaluates after color extraction */
+  colorCacheVersion = signal(0);
+  private colorCache = new Map<string, { r: number; g: number; b: number }>();
+  private pendingExtractions = new Set<string>();
+
+  private getItemImageUrl(item: FeedItem): string | undefined {
+    if (item.type === 'product') return this.asProduct(item.data).coverImageUrl || undefined;
+    if (item.type === 'store')   return this.asStore(item.data).bannerUrl || undefined;
+    if (item.type === 'creator') return this.asCreator(item.data).avatarUrl || undefined;
+    return undefined;
+  }
+
+  private getDefaultItemColor(item: FeedItem): { r: number; g: number; b: number } {
+    if (item.type === 'store')   return { r: 43,  g: 87,  b: 214 }; // #2B57D6 blue
+    if (item.type === 'creator') return { r: 250, g: 75,  b: 40  }; // #FA4B28 orange-red
+    return { r: 20, g: 15, b: 50 };                                  // deep indigo for products
+  }
+
+  /** Lazy-extract dominant color from a card's image via Canvas. */
+  extractItemColor(item: FeedItem): void {
+    const id = (item.data as any).id as string;
+    if (this.colorCache.has(id) || this.pendingExtractions.has(id)) return;
+    const imageUrl = this.getItemImageUrl(item);
+    if (!imageUrl) {
+      this.colorCache.set(id, this.getDefaultItemColor(item));
+      return;
+    }
+    this.pendingExtractions.add(id);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const SIZE = 64;
+        const canvas = document.createElement('canvas');
+        canvas.width = SIZE;
+        canvas.height = SIZE;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('no ctx');
+        ctx.drawImage(img, 0, 0, SIZE, SIZE);
+        const data = ctx.getImageData(0, 0, SIZE, SIZE).data;
+        // Sample the bottom 55% of the image — richest colour area for gradients
+        let r = 0, g = 0, b = 0, count = 0;
+        const startY = Math.floor(SIZE * 0.45);
+        for (let y = startY; y < SIZE; y++) {
+          for (let x = 0; x < SIZE; x++) {
+            const i = (y * SIZE + x) * 4;
+            if (data[i + 3] < 100) continue; // skip near-transparent
+            r += data[i]; g += data[i + 1]; b += data[i + 2]; count++;
+          }
+        }
+        // If bottom area is very bland (near-white), try full image
+        if (count === 0) {
+          for (let i = 0; i < data.length; i += 4) {
+            if (data[i + 3] < 100) continue;
+            r += data[i]; g += data[i + 1]; b += data[i + 2]; count++;
+          }
+        }
+        const color = count > 0
+          ? { r: Math.round(r / count), g: Math.round(g / count), b: Math.round(b / count) }
+          : this.getDefaultItemColor(item);
+        this.ngZone.run(() => {
+          this.colorCache.set(id, color);
+          this.colorCacheVersion.update(v => v + 1);
+        });
+      } catch {
+        this.ngZone.run(() => {
+          this.colorCache.set(id, this.getDefaultItemColor(item));
+          this.colorCacheVersion.update(v => v + 1);
+        });
+      }
+    };
+    img.onerror = () => {
+      this.colorCache.set(id, this.getDefaultItemColor(item));
+    };
+    img.src = imageUrl;
+  }
+
+  /** Return cached color (and kick off extraction if not yet computed). */
+  getCardColor(item: FeedItem): { r: number; g: number; b: number } {
+    // Reading this signal makes the template reactive when the cache updates
+    this.colorCacheVersion();
+    const id = (item.data as any).id as string;
+    if (!this.colorCache.has(id)) this.extractItemColor(item);
+    return this.colorCache.get(id) ?? this.getDefaultItemColor(item);
+  }
+
+  private darken(c: { r: number; g: number; b: number }, f: number) {
+    return { r: Math.round(c.r * f), g: Math.round(c.g * f), b: Math.round(c.b * f) };
+  }
+  private lighten(c: { r: number; g: number; b: number }, f: number, add = 0) {
+    return {
+      r: Math.min(255, Math.round(c.r * f + add)),
+      g: Math.min(255, Math.round(c.g * f + add)),
+      b: Math.min(255, Math.round(c.b * f + add)),
+    };
+  }
+  private textOn(c: { r: number; g: number; b: number }): string {
+    return (c.r * 0.299 + c.g * 0.587 + c.b * 0.114) > 145 ? '#111111' : '#ffffff';
+  }
+  private rgb(c: { r: number; g: number; b: number }) {
+    return `${c.r},${c.g},${c.b}`;
+  }
+
+  // Single method — inject all CSS vars onto the card wrapper element.
+  // CSS then references these vars for shadow, ring, overlay gradients, title colour, and button colours.
+  getCardCssVarsStyle(item: FeedItem): { [k: string]: string } {
+    const c    = this.getCardColor(item);
+    const dark = this.darken(c, 0.50);           // overlay gradient
+    const acc  = this.lighten(c, 1.30, 25);      // title hover + accent btn
+    const cart = this.lighten(c, 1.25, 30);      // cart btn
+    const lum  = c.r * 0.299 + c.g * 0.587 + c.b * 0.114;
+    const buyMid = lum >= 130 ? this.lighten(c, 0.80, 60) : null;
+    return {
+      '--card-r':    String(c.r),
+      '--card-g':    String(c.g),
+      '--card-b':    String(c.b),
+      '--card-dr':   String(dark.r),
+      '--card-dg':   String(dark.g),
+      '--card-db':   String(dark.b),
+      '--card-ar':   String(acc.r),
+      '--card-ag':   String(acc.g),
+      '--card-ab':   String(acc.b),
+      '--card-at':   this.textOn(acc),
+      '--card-ctr':  String(cart.r),
+      '--card-ctg':  String(cart.g),
+      '--card-ctb':  String(cart.b),
+      '--card-ctt':  this.textOn(cart),
+      '--card-buy-bg': buyMid ? `rgba(${this.rgb(buyMid)},0.90)` : 'rgba(255,255,255,0.18)',
+      '--card-buy-t':  buyMid ? this.textOn(buyMid) : '#ffffff',
+    };
   }
 
   async handleCreatorCtaClick(event: Event) {
