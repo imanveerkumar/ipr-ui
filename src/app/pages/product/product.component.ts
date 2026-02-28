@@ -26,7 +26,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
           <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10">
             <div class="lg:col-span-3">
-              <div class="aspect-[4/3] bg-white border-2 border-black rounded-2xl animate-pulse"></div>
+              <div class="bg-white border-2 border-black rounded-2xl animate-pulse" [style.aspect-ratio]="'4/3'"></div>
             </div>
             <div class="lg:col-span-2 space-y-4">
               <div class="h-8 bg-[#111111]/10 rounded w-3/4 animate-pulse"></div>
@@ -58,7 +58,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
             <div class="lg:col-span-3">
               <div class="bg-white border-2 border-black rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_#000]">
                 @if (product()?.coverImageUrl) {
-                  <img [src]="product()?.coverImageUrl" [alt]="product()?.title" class="w-full aspect-[4/3] object-cover">
+                  <img [src]="product()?.coverImageUrl" [alt]="product()?.title" class="w-full object-cover" [style.aspect-ratio]="getCoverAspectRatio()">
                 } @else {
                   <div class="w-full aspect-[4/3] bg-gradient-to-br from-[#2B57D6]/10 to-[#FA4B28]/10 flex items-center justify-center">
                     <svg class="w-20 h-20 text-[#111111]/15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,18 +68,6 @@ import { SubdomainService } from '../../core/services/subdomain.service';
                 }
               </div>
 
-              <!-- Description (desktop) -->
-              <div class="hidden lg:block mt-8">
-                @if (product()?.description) {
-                  <div class="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_#000]">
-                    <h2 class="font-display text-lg font-bold text-[#111111] mb-4 flex items-center gap-2">
-                      <svg class="w-5 h-5 text-[#2B57D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                      Description
-                    </h2>
-                    <div class="prose prose-sm max-w-none text-[#111111]/80 prose-headings:text-[#111111] prose-a:text-[#2B57D6]" [innerHTML]="product()?.description"></div>
-                  </div>
-                }
-              </div>
             </div>
 
             <!-- Right Column: Details -->
@@ -325,18 +313,18 @@ import { SubdomainService } from '../../core/services/subdomain.service';
             </div>
           </div>
 
-          <!-- Description (mobile) -->
-          <div class="lg:hidden mt-6">
-            @if (product()?.description) {
-              <div class="bg-white border-2 border-black rounded-2xl p-5 shadow-[4px_4px_0px_0px_#000]">
+          <!-- Description (full width) -->
+          @if (product()?.description) {
+            <div class="mt-8">
+              <div class="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_#000]">
                 <h2 class="font-display text-lg font-bold text-[#111111] mb-4 flex items-center gap-2">
                   <svg class="w-5 h-5 text-[#2B57D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   Description
                 </h2>
-                <div class="prose prose-sm max-w-none text-[#111111]/80 prose-headings:text-[#111111] prose-a:text-[#2B57D6]" [innerHTML]="product()?.description"></div>
+                <div class="prose prose-base max-w-none text-[#111111]/80 prose-headings:text-[#111111] prose-a:text-[#2B57D6] break-words overflow-hidden [&_*]:max-w-full [&_img]:max-w-full [&_table]:w-full [&_table]:table-fixed [&_pre]:overflow-x-auto" [innerHTML]="product()?.description"></div>
               </div>
-            }
-          </div>
+            </div>
+          }
         </div>
       } @else {
         <!-- Not Found -->
@@ -428,6 +416,14 @@ export class ProductComponent implements OnInit {
     const p = this.product();
     if (!p || !p.compareAtPrice || p.compareAtPrice <= p.price) return 0;
     return Math.round(((p.compareAtPrice - p.price) / p.compareAtPrice) * 100);
+  }
+
+  getCoverAspectRatio(): string {
+    const p = this.product();
+    if (p?.coverImageWidth && p?.coverImageHeight && p.coverImageWidth > 0 && p.coverImageHeight > 0) {
+      return `${p.coverImageWidth} / ${p.coverImageHeight}`;
+    }
+    return '4 / 3';
   }
 
   addToCart() {

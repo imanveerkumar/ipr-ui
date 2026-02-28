@@ -10,6 +10,8 @@ export interface ExploreProduct {
   compareAtPrice?: number;
   currency: string;
   coverImageUrl?: string;
+  coverImageWidth?: number | null;
+  coverImageHeight?: number | null;
   createdAt: string;
   store: {
     id: string;
@@ -33,6 +35,8 @@ export interface ExploreStore {
   tagline?: string;
   logoUrl?: string;
   bannerUrl?: string;
+  bannerWidth?: number | null;
+  bannerHeight?: number | null;
   createdAt: string;
   productCount: number;
   creator: {
@@ -140,6 +144,39 @@ export interface FeedQueryParams {
   maxPrice?: number;
   storeId?: string;
   type?: 'all' | 'products' | 'stores' | 'creators';
+  pricing?: 'all' | 'free' | 'premium';
+}
+
+// =========================================================================
+// Dynamic filter types
+// =========================================================================
+
+export interface FilterOption {
+  value: string;
+  label: string;
+}
+
+export interface FilterRangeConfig {
+  min: number;
+  max: number | null;
+  unit: string;
+  unitPosition: 'prefix' | 'suffix';
+  step: number;
+}
+
+export interface FilterSection {
+  key: string;
+  label: string;
+  type: 'single-select' | 'multi-select' | 'range';
+  icon: string;
+  options?: FilterOption[];
+  defaultValue?: string;
+  rangeConfig?: FilterRangeConfig;
+}
+
+export interface ExploreFiltersResponse {
+  category: string;
+  sections: FilterSection[];
 }
 
 @Injectable({
@@ -147,6 +184,19 @@ export interface FeedQueryParams {
 })
 export class ExploreService {
   private api = inject(ApiService);
+
+  // =========================================================================
+  // Dynamic Filters
+  // =========================================================================
+
+  async getFilters(category: string = 'all', pricing: string = 'all'): Promise<ExploreFiltersResponse> {
+    let url = `/explore/filters?category=${encodeURIComponent(category)}`;
+    if (pricing && pricing !== 'all') {
+      url += `&pricing=${encodeURIComponent(pricing)}`;
+    }
+    const response = await this.api.get<ExploreFiltersResponse>(url);
+    return response.data || { category, sections: [] };
+  }
 
   private buildQueryString(params: ExploreQueryParams): string {
     const queryParts: string[] = [];

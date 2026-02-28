@@ -8,11 +8,12 @@ import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
+import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
 
 @Component({
   selector: 'app-store',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MasonryGridComponent],
   template: `
     <div class="min-h-screen bg-[#F9F4EB] font-sans antialiased">
       @if (loading()) {
@@ -53,7 +54,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="relative rounded-b-2xl overflow-hidden border-2 border-t-0 border-black">
             @if (store()?.bannerUrl) {
-              <div class="h-40 md:h-56 bg-cover bg-center" [style.background-image]="'url(' + store()?.bannerUrl + ')'"></div>
+              <div class="bg-cover bg-center" [style.aspect-ratio]="getBannerAspectRatio()" style="min-height: 120px; max-height: 320px;" [style.background-image]="'url(' + store()?.bannerUrl + ')'"></div>
             } @else {
               <div class="h-40 md:h-56 bg-gradient-to-br from-[#2B57D6] to-[#FA4B28]"></div>
             }
@@ -168,15 +169,22 @@ import { SubdomainService } from '../../core/services/subdomain.service';
               <p class="text-[#111111]/60 font-medium">No products available yet.</p>
             </div>
           } @else {
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
-              @for (product of products(); track product.id) {
+            <app-masonry-grid
+              [items]="products()"
+              [gap]="12"
+              [colsMobile]="2"
+              [colsTablet]="3"
+              [colsDesktop]="4"
+              [getItemRatio]="getItemRatio"
+            >
+              <ng-template let-product>
                 <a [routerLink]="['/product', product.id]"
                   class="group bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
                 >
-                  <div class="relative overflow-hidden bg-[#F9F4EB] aspect-square">
+                  <div class="relative overflow-hidden bg-[#F9F4EB]" [style.aspect-ratio]="getProductAspectRatio(product)">
                     @if (product.coverImageUrl) {
-                      <div class="aspect-square overflow-hidden">
-                        <img [src]="product.coverImageUrl" [alt]="product.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <div class="overflow-hidden w-full h-full">
+                        <img [src]="product.coverImageUrl" [alt]="product.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
                       </div>
                     } @else {
                       <div class="w-full h-full flex items-center justify-center">
@@ -238,8 +246,8 @@ import { SubdomainService } from '../../core/services/subdomain.service';
                     </div>
                   </div>
                 </a>
-              }
-            </div>
+              </ng-template>
+            </app-masonry-grid>
           }
         </div>
       } @else {
@@ -275,6 +283,13 @@ export class StoreComponent implements OnInit {
   products = signal<Product[]>([]);
   loading = signal(true);
   copied = signal(false);
+
+  getItemRatio = (product: Product): number => {
+    if (product.coverImageWidth && product.coverImageHeight && product.coverImageWidth > 0 && product.coverImageHeight > 0) {
+      return product.coverImageWidth / product.coverImageHeight;
+    }
+    return 1;
+  };
 
   cartService = inject(CartService);
   auth = inject(AuthService);
@@ -314,6 +329,21 @@ export class StoreComponent implements OnInit {
   getProductDiscount(product: Product): number {
     if (!product.compareAtPrice || product.compareAtPrice <= product.price) return 0;
     return Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100);
+  }
+
+  getBannerAspectRatio(): string {
+    const s = this.store();
+    if (s?.bannerWidth && s?.bannerHeight && s.bannerWidth > 0 && s.bannerHeight > 0) {
+      return `${s.bannerWidth} / ${s.bannerHeight}`;
+    }
+    return '16 / 5';
+  }
+
+  getProductAspectRatio(product: Product): string {
+    if (product.coverImageWidth && product.coverImageHeight && product.coverImageWidth > 0 && product.coverImageHeight > 0) {
+      return `${product.coverImageWidth} / ${product.coverImageHeight}`;
+    }
+    return '1 / 1';
   }
 
   toggleCart(product: Product, event: Event) {

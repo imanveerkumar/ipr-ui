@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ApiService } from './api.service';
+import { UploadConfigService, ImageContext } from './upload-config.service';
 
 export interface UploadedFileRef {
   fileId: string;
@@ -15,31 +16,46 @@ export interface ProcessedImageResult {
   size: number;
 }
 
+/** Upload context sent to the API for context-aware validation */
+export type UploadContext =
+  | 'image:cover'
+  | 'image:banner'
+  | 'image:logo'
+  | 'editor'
+  | 'product-file'
+  | 'general';
+
 @Injectable({
   providedIn: 'root',
 })
 export class FileUploadService {
-  constructor(private api: ApiService) {}
+  private api = inject(ApiService);
+  private uploadConfig = inject(UploadConfigService);
 
   /**
    * Upload a file immediately using the presigned flow:
    * 1) request presigned URL (creates PENDING file record)
    * 2) PUT file to storage
    * 3) confirm upload (marks file UPLOADED)
+   *
+   * @param context — optional upload context for server-side validation
    */
   async upload(
     file: File,
     options?: {
       onProgress?: (percent: number | null) => void;
       signal?: AbortSignal;
+      context?: UploadContext;
     },
   ): Promise<UploadedFileRef> {
     const contentType = file.type || 'application/octet-stream';
+    const context = options?.context || 'general';
 
     const { data: uploadInfo, success } = await this.api.getUploadUrl(
       file.name,
       contentType,
       file.size,
+      context,
     );
 
     if (!success || !uploadInfo) {
@@ -68,13 +84,9 @@ export class FileUploadService {
 
   /**
    * Upload an image with server-side processing (resize, compress, WebP conversion).
-   * 
-   * Flow:
-   * 1) Upload raw image via presigned URL
-   * 2) Confirm upload
-   * 3) Call server to process image (resize/compress/convert)
-   * 4) Server returns optimized image URL
-   * 
+   *
+   * Validates client-side using UploadConfigService before uploading.
+   *
    * @param type - 'thumbnail' for product images, 'banner' for store banners, 'logo' for store logos
    */
   async uploadImage(
@@ -85,24 +97,24 @@ export class FileUploadService {
       signal?: AbortSignal;
     },
   ): Promise<ProcessedImageResult> {
-    // Validate image type client-side
-    if (!file.type.startsWith('image/')) {
-      throw new Error('File is not an image');
-    }
+    // Map type to ImageContext for config lookup
+    const imageContext: ImageContext = type === 'thumbnail' ? 'cover' : type;
+    const uploadContext: UploadContext =
+      type === 'thumbnail' ? 'image:cover' : type === 'banner' ? 'image:banner' : 'image:logo';
 
-    // Max 15MB for images
-    const maxSize = 15 * 1024 * 1024;
-    if (file.size > maxSize) {
-      throw new Error('Image is too large (max 15MB)');
+    // Client-side validation using backend-driven config
+    await this.uploadConfig.ensureLoaded();
+    const validation = this.uploadConfig.validateImageFile(file, imageContext);
+    if (!validation.valid) {
+      throw new Error(validation.error);
     }
 
     // Step 1 & 2: Upload raw image using standard flow
-    // Report progress as 0-80% for the upload phase
     const uploadedFile = await this.upload(file, {
       signal: options?.signal,
+      context: uploadContext,
       onProgress: (p) => {
         if (options?.onProgress && p !== null) {
-          // Scale: 0-80% for upload
           options.onProgress(Math.round(p * 0.8));
         }
       },
@@ -123,6 +135,71 @@ export class FileUploadService {
     }
 
     return response.data;
+  }
+
+  /**
+   * Upload a file intended for the rich-text description editor.
+   * Validates client-side before uploading.
+   */
+  async uploadEditorFile(
+    file: File,
+    options?: {
+      onProgress?: (percent: number | null) => void;
+      signal?: AbortSignal;
+    },
+  ): Promise<UploadedFileRef> {
+    await this.uploadConfig.ensureLoaded();
+    const validation = this.uploadConfig.validateEditorFile(file);
+    if (!validation.valid) {
+      throw new Error(validation.error);
+    }
+
+    return this.upload(file, {
+      ...options,
+      context: 'editor',
+    });
+  }
+
+  /**
+   * Upload a downloadable product file.
+   * Validates client-side before uploading.
+   */
+  async uploadProductFile(
+    file: File,
+    options?: {
+      onProgress?: (percent: number | null) => void;
+      signal?: AbortSignal;
+      /** Current count of files already attached to the product */
+      currentFileCount?: number;
+      /** Current total bytes of files already attached to the product */
+      currentTotalBytes?: number;
+    },
+  ): Promise<UploadedFileRef> {
+    await this.uploadConfig.ensureLoaded();
+
+    // Validate individual file
+    const fileValidation = this.uploadConfig.validateProductFile(file);
+    if (!fileValidation.valid) {
+      throw new Error(fileValidation.error);
+    }
+
+    // Validate product-level aggregates if provided
+    if (options?.currentFileCount != null && options?.currentTotalBytes != null) {
+      const aggValidation = this.uploadConfig.validateProductFileLimits(
+        options.currentFileCount,
+        options.currentTotalBytes,
+        file.size,
+      );
+      if (!aggValidation.valid) {
+        throw new Error(aggValidation.error);
+      }
+    }
+
+    return this.upload(file, {
+      onProgress: options?.onProgress,
+      signal: options?.signal,
+      context: 'product-file',
+    });
   }
 
   async delete(fileId: string): Promise<void> {
