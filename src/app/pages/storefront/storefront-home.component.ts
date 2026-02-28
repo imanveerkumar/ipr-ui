@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
 import { StoreContextService, CartService, CheckoutService, AuthService, SubdomainService } from '../../core/services';
 import { ToasterService } from '../../core/services/toaster.service';
 import { Product } from '../../core/models';
@@ -8,7 +9,7 @@ import { Product } from '../../core/models';
 @Component({
   selector: 'app-storefront-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MasonryGridComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Clean Hero Section -->
@@ -68,9 +69,16 @@ import { Product } from '../../core/models';
             </div>
           } @else {
             <!-- Products Grid -->
-            <div class="masonry-grid">
-              @for (product of storeContext.products().slice(0, 8); track product.id) {
-                <div class="masonry-item mb-4 sm:mb-5 bg-white rounded-xl overflow-hidden group relative cursor-pointer border border-gray-100 hover:border-gray-200 transition-all duration-300" (click)="navigateTo('/product/' + product.id)">
+            <app-masonry-grid
+              [items]="storeContext.products().slice(0, 8)"
+              [gap]="16"
+              [colsMobile]="2"
+              [colsTablet]="3"
+              [colsDesktop]="4"
+              [getItemRatio]="getItemRatio"
+            >
+              <ng-template let-product>
+                <div class="bg-white rounded-xl overflow-hidden group relative cursor-pointer border border-gray-100 hover:border-gray-200 transition-all duration-300" (click)="navigateTo('/product/' + product.id)">
                   <!-- Product Image -->
                   <div class="relative overflow-hidden">
                     @if (product.coverImageUrl) {
@@ -183,8 +191,8 @@ import { Product } from '../../core/models';
                     </div>
                   </div>
                 </div>
-              }
-            </div>
+              </ng-template>
+            </app-masonry-grid>
 
             @if (storeContext.products().length > 8) {
               <div class="mt-8 sm:mt-10 text-center">
@@ -248,30 +256,6 @@ import { Product } from '../../core/models';
     </div>
   `,
   styles: [`
-    .masonry-grid {
-      columns: 2;
-      column-gap: 1rem;
-    }
-    @media (min-width: 768px) {
-      .masonry-grid {
-        columns: 3;
-        column-gap: 1.25rem;
-      }
-    }
-    @media (min-width: 1024px) {
-      .masonry-grid {
-        columns: 4;
-        column-gap: 1.5rem;
-      }
-    }
-    .masonry-item {
-      break-inside: avoid;
-      display: inline-block;
-      width: 100%;
-    }
-    .masonry-item > div {
-      -webkit-tap-highlight-color: transparent;
-    }
     .line-clamp-2 {
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -290,6 +274,13 @@ export class StorefrontHomeComponent {
   private router = inject(Router);
 
   copied = signal(false);
+
+  getItemRatio = (product: Product): number => {
+    if (product.coverImageWidth && product.coverImageHeight && product.coverImageWidth > 0 && product.coverImageHeight > 0) {
+      return product.coverImageWidth / product.coverImageHeight;
+    }
+    return 1;
+  };
 
   navigateTo(path: string): void {
     this.router.navigate([path], { queryParamsHandling: 'merge' });

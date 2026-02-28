@@ -17,6 +17,7 @@ import {
 import { SubdomainService } from '../../core/services/subdomain.service';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
+import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
 
 type ContentFilter = 'all' | 'products' | 'stores' | 'creators';
 type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
@@ -24,7 +25,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, MasonryGridComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
 
@@ -440,8 +441,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 
           <div class="p-3 sm:p-4 md:p-6">
             <!-- Skeleton Loader -->
-            <div *ngIf="isLoading() && feedItems().length === 0" class="masonry-grid">
-              <div *ngFor="let i of skeletonArray" class="masonry-item mb-3 sm:mb-4">
+            <app-masonry-grid *ngIf="isLoading() && feedItems().length === 0" [items]="skeletonArray" [gap]="12" [colsMobile]="2" [colsTablet]="3" [colsDesktop]="3" [colsLargeDesktop]="4">
+              <ng-template let-i>
                 <div class="bg-white border-2 border-black/10 rounded-xl overflow-hidden">
                   <div class="bg-[#F9F4EB] animate-pulse" [style.height.px]="getSkeletonHeight(i)"></div>
                   <div class="p-3">
@@ -453,8 +454,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     <div class="h-4 bg-[#111111]/10 rounded animate-pulse w-1/3"></div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </ng-template>
+            </app-masonry-grid>
 
             <!-- Empty State -->
             <div *ngIf="!isLoading() && feedItems().length === 0" class="py-20 text-center">
@@ -474,9 +475,9 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </div>
 
             <!-- Feed Grid -->
-            <div *ngIf="feedItems().length > 0" class="masonry-grid">
-              <ng-container *ngFor="let item of feedItems(); let i = index; trackBy: trackFeedItem">
-                <div class="masonry-item mb-3 sm:mb-4" [class.feed-item-enter]="shouldAnimate(i)" [style.animation-delay.ms]="shouldAnimate(i) ? getAnimationDelay(i) : null">
+            <app-masonry-grid *ngIf="feedItems().length > 0" [items]="feedItems()" [gap]="12" [colsMobile]="2" [colsTablet]="3" [colsDesktop]="3" [colsLargeDesktop]="4" [trackBy]="trackFeedItemFn">
+              <ng-template let-item let-i="index">
+                <div [class.feed-item-enter]="shouldAnimate(i)" [style.animation-delay.ms]="shouldAnimate(i) ? getAnimationDelay(i) : null">
 
                   <!-- PRODUCT CARD -->
                   <div
@@ -770,8 +771,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   </div>
 
                 </div>
-              </ng-container>
-            </div>
+              </ng-template>
+            </app-masonry-grid>
 
             <!-- Infinite scroll sentinel -->
             <div #scrollSentinel class="h-4"></div>
@@ -1116,47 +1117,6 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     @keyframes overlayFadeIn {
       from { opacity: 0; }
       to   { opacity: 1; }
-    }
-
-    /* ========= MASONRY GRID ========= */
-    .masonry-grid {
-      columns: 2;
-      column-gap: 0.75rem;
-    }
-
-    @media (min-width: 640px) {
-      .masonry-grid {
-        columns: 2;
-        column-gap: 1rem;
-      }
-    }
-
-    @media (min-width: 768px) {
-      .masonry-grid {
-        columns: 3;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .masonry-grid {
-        columns: 3;
-      }
-    }
-
-    @media (min-width: 1280px) {
-      .masonry-grid {
-        columns: 4;
-      }
-    }
-
-    @media (min-width: 1536px) {
-      .masonry-grid {
-        columns: 5;
-      }
-    }
-
-    .masonry-item {
-      break-inside: avoid;
     }
 
     /* Fade in animation */
@@ -1696,6 +1656,8 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   asStore(data: any): ExploreStore { return data as ExploreStore; }
   asCreator(data: any): ExploreCreator { return data as ExploreCreator; }
 
+  trackFeedItemFn = (item: FeedItem): string => item.type + '-' + (item.data as any).id;
+
   trackFeedItem(index: number, item: FeedItem): string {
     return item.type + '-' + (item.data as any).id;
   }
@@ -1860,7 +1822,11 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     };
     img.onerror = () => {
-      this.colorCache.set(id, this.getDefaultItemColor(item));
+      this.pendingExtractions.delete(id);
+      this.ngZone.run(() => {
+        this.colorCache.set(id, this.getDefaultItemColor(item));
+        this.colorCacheVersion.update(v => v + 1);
+      });
     };
     img.src = imageUrl;
   }

@@ -95,6 +95,10 @@ export class UploadConfigService {
       };
     }
 
+    if (file.size === 0) {
+      return { valid: false, error: 'File is empty.' };
+    }
+
     // Size check
     const maxSize = this.getMaxImageSize(context);
     if (file.size > maxSize) {
@@ -102,10 +106,6 @@ export class UploadConfigService {
         valid: false,
         error: `Image exceeds maximum size of ${this.formatBytes(maxSize)}.`,
       };
-    }
-
-    if (file.size === 0) {
-      return { valid: false, error: 'File is empty.' };
     }
 
     return { valid: true };
@@ -123,15 +123,15 @@ export class UploadConfigService {
       };
     }
 
+    if (file.size === 0) {
+      return { valid: false, error: 'File is empty.' };
+    }
+
     if (file.size > this.config.maxEditorFileSize) {
       return {
         valid: false,
         error: `File exceeds maximum size of ${this.formatBytes(this.config.maxEditorFileSize)}.`,
       };
-    }
-
-    if (file.size === 0) {
-      return { valid: false, error: 'File is empty.' };
     }
 
     return { valid: true };
@@ -149,15 +149,15 @@ export class UploadConfigService {
       };
     }
 
+    if (file.size === 0) {
+      return { valid: false, error: 'File is empty.' };
+    }
+
     if (file.size > this.config.maxProductFileSize) {
       return {
         valid: false,
         error: `File exceeds maximum size of ${this.formatBytes(this.config.maxProductFileSize)}.`,
       };
-    }
-
-    if (file.size === 0) {
-      return { valid: false, error: 'File is empty.' };
     }
 
     return { valid: true };

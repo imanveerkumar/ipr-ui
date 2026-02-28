@@ -8,11 +8,12 @@ import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
+import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
 
 @Component({
   selector: 'app-store',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MasonryGridComponent],
   template: `
     <div class="min-h-screen bg-[#F9F4EB] font-sans antialiased">
       @if (loading()) {
@@ -168,10 +169,17 @@ import { SubdomainService } from '../../core/services/subdomain.service';
               <p class="text-[#111111]/60 font-medium">No products available yet.</p>
             </div>
           } @else {
-            <div class="masonry-grid">
-              @for (product of products(); track product.id) {
+            <app-masonry-grid
+              [items]="products()"
+              [gap]="12"
+              [colsMobile]="2"
+              [colsTablet]="3"
+              [colsDesktop]="4"
+              [getItemRatio]="getItemRatio"
+            >
+              <ng-template let-product>
                 <a [routerLink]="['/product', product.id]"
-                  class="masonry-item mb-3 md:mb-4 group bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
+                  class="group bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer"
                 >
                   <div class="relative overflow-hidden bg-[#F9F4EB]" [style.aspect-ratio]="getProductAspectRatio(product)">
                     @if (product.coverImageUrl) {
@@ -238,8 +246,8 @@ import { SubdomainService } from '../../core/services/subdomain.service';
                     </div>
                   </div>
                 </a>
-              }
-            </div>
+              </ng-template>
+            </app-masonry-grid>
           }
         </div>
       } @else {
@@ -268,26 +276,6 @@ import { SubdomainService } from '../../core/services/subdomain.service';
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    .masonry-grid {
-      columns: 2;
-      column-gap: 0.75rem;
-    }
-    @media (min-width: 768px) {
-      .masonry-grid {
-        columns: 3;
-        column-gap: 1.25rem;
-      }
-    }
-    @media (min-width: 1024px) {
-      .masonry-grid {
-        columns: 4;
-      }
-    }
-    .masonry-item {
-      break-inside: avoid;
-      display: inline-block;
-      width: 100%;
-    }
   `]
 })
 export class StoreComponent implements OnInit {
@@ -295,6 +283,13 @@ export class StoreComponent implements OnInit {
   products = signal<Product[]>([]);
   loading = signal(true);
   copied = signal(false);
+
+  getItemRatio = (product: Product): number => {
+    if (product.coverImageWidth && product.coverImageHeight && product.coverImageWidth > 0 && product.coverImageHeight > 0) {
+      return product.coverImageWidth / product.coverImageHeight;
+    }
+    return 1;
+  };
 
   cartService = inject(CartService);
   auth = inject(AuthService);

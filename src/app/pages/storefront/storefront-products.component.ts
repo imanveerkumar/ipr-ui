@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
 import { StoreContextService } from '../../core/services/store-context.service';
 import { CartService } from '../../core/services/cart.service';
 import { CheckoutService } from '../../core/services/checkout.service';
@@ -12,7 +13,7 @@ import { Product } from '../../core/models';
 @Component({
   selector: 'app-storefront-products',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MasonryGridComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Mobile-First Page Header -->
@@ -109,9 +110,16 @@ import { Product } from '../../core/models';
           </div>
         } @else {
           <!-- Products Grid - Masonry layout -->
-          <div class="masonry-grid">
-            @for (product of filteredProducts(); track product.id) {
-              <div class="masonry-item mb-3 sm:mb-4 md:mb-5 bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group relative cursor-pointer border border-gray-100" (click)="navigateTo('/product/' + product.id)">
+          <app-masonry-grid
+            [items]="filteredProducts()"
+            [gap]="12"
+            [colsMobile]="2"
+            [colsTablet]="3"
+            [colsDesktop]="4"
+            [getItemRatio]="getItemRatio"
+          >
+            <ng-template let-product>
+              <div class="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group relative cursor-pointer border border-gray-100" (click)="navigateTo('/product/' + product.id)">
                 <!-- Product Image -->
                 <div class="relative overflow-hidden">
                   @if (product.coverImageUrl) {
@@ -227,8 +235,8 @@ import { Product } from '../../core/models';
                   </div>
                 </div>
               </div>
-            }
-          </div>
+            </ng-template>
+          </app-masonry-grid>
         }
 
         <!-- Back to Home -->
@@ -247,30 +255,6 @@ import { Product } from '../../core/models';
     </div>
   `,
   styles: [`
-    .masonry-grid {
-      columns: 2;
-      column-gap: 0.75rem;
-    }
-    @media (min-width: 768px) {
-      .masonry-grid {
-        columns: 3;
-        column-gap: 1.25rem;
-      }
-    }
-    @media (min-width: 1024px) {
-      .masonry-grid {
-        columns: 4;
-        column-gap: 1.5rem;
-      }
-    }
-    .masonry-item {
-      break-inside: avoid;
-      display: inline-block;
-      width: 100%;
-    }
-    .masonry-item > div {
-      -webkit-tap-highlight-color: transparent;
-    }
     .line-clamp-2 {
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -290,6 +274,13 @@ export class StorefrontProductsComponent implements OnInit {
   searchQuery = '';
   sortBy = 'newest';
   filteredProducts = signal<Product[]>([]);
+
+  getItemRatio = (product: Product): number => {
+    if (product.coverImageWidth && product.coverImageHeight && product.coverImageWidth > 0 && product.coverImageHeight > 0) {
+      return product.coverImageWidth / product.coverImageHeight;
+    }
+    return 1;
+  };
 
   ngOnInit() {
     this.filterProducts();
