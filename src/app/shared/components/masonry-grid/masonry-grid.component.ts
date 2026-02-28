@@ -35,7 +35,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="masonry-grid" [ngClass]="gridClass">
+    <div class="masonry-grid" [ngClass]="gridClass" [style.gap]="gap + 'px'">
       <div
         *ngFor="let column of columns; let colIdx = index"
         class="masonry-column flex flex-col"

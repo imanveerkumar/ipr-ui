@@ -390,7 +390,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                 </div>
               </div>
               <!-- Price -->
-              <div *ngIf="showPriceRange">>
+              <div *ngIf="showPriceRange">
                 <span class="text-xs font-bold text-[#111111]/50 uppercase tracking-wider mb-2.5 block font-dm-sans">Price Range</span>
                 <div class="flex items-center gap-2">
                   <div class="flex-1 relative">
@@ -439,9 +439,9 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </div>
           </div>
 
-          <div class="p-3 sm:p-4 md:p-6">
+          <div class="p-4 sm:p-5 md:p-6 lg:p-8">
             <!-- Skeleton Loader -->
-            <app-masonry-grid *ngIf="isLoading() && feedItems().length === 0" [items]="skeletonArray" [gap]="12" [colsMobile]="2" [colsTablet]="3" [colsDesktop]="3" [colsLargeDesktop]="4">
+            <app-masonry-grid *ngIf="isLoading() && feedItems().length === 0" [items]="skeletonArray" [gap]="16" [colsMobile]="2" [colsTablet]="3" [colsDesktop]="3" [colsLargeDesktop]="4">
               <ng-template let-i>
                 <div class="bg-white border-2 border-black/10 rounded-xl overflow-hidden">
                   <div class="bg-[#F9F4EB] animate-pulse" [style.height.px]="getSkeletonHeight(i)"></div>
@@ -475,7 +475,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </div>
 
             <!-- Feed Grid -->
-            <app-masonry-grid *ngIf="feedItems().length > 0" [items]="feedItems()" [gap]="12" [colsMobile]="2" [colsTablet]="3" [colsDesktop]="3" [colsLargeDesktop]="4" [trackBy]="trackFeedItemFn">
+            <app-masonry-grid *ngIf="feedItems().length > 0" [items]="feedItems()" [gap]="16" [colsMobile]="2" [colsTablet]="3" [colsDesktop]="3" [colsLargeDesktop]="4" [trackBy]="trackFeedItemFn">
               <ng-template let-item let-i="index">
                 <div [class.feed-item-enter]="shouldAnimate(i)" [style.animation-delay.ms]="shouldAnimate(i) ? getAnimationDelay(i) : null">
 
@@ -1560,6 +1560,14 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   setContentFilter(filter: ContentFilter) {
     if (this.activeFilter() !== filter) {
       this.activeFilter.set(filter);
+      // Clear price-related state when switching to non-product types
+      if (filter === 'stores' || filter === 'creators') {
+        this.minPrice = null;
+        this.maxPrice = null;
+        this.appliedMinPrice = null;
+        this.appliedMaxPrice = null;
+        this.activePricing.set('all');
+      }
       // Reload context-aware filters from API, then reload feed
       this.loadFilters().then(() => this.loadFeed(true));
     }
