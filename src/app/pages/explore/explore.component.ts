@@ -1156,6 +1156,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     /* Safe area bottom */
     @supports (padding-bottom: env(safe-area-inset-bottom)) {
       .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+      .h-safe { height: env(safe-area-inset-bottom); }
     }
 
     /* ========= HOVER OVERLAY (Products, Stores, Creators) ========= */
@@ -1753,6 +1754,7 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   /** Signal version counter so template re-evaluates after color extraction */
   colorCacheVersion = signal(0);
   private colorCache = new Map<string, { r: number; g: number; b: number }>();
+  private cardStyleCache = new Map<string, { r: number; g: number; b: number; style: { [k: string]: string } }>();
   private pendingExtractions = new Set<string>();
 
   private getItemImageUrl(item: FeedItem): string | undefined {
@@ -1859,14 +1861,23 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Single method — inject all CSS vars onto the card wrapper element.
   // CSS then references these vars for shadow, ring, overlay gradients, title colour, and button colours.
+  // Memoized: returns the same object reference until the underlying color actually changes.
   getCardCssVarsStyle(item: FeedItem): { [k: string]: string } {
-    const c    = this.getCardColor(item);
+    const c  = this.getCardColor(item);
+    const id = (item.data as any).id as string;
+
+    // Return cached style object if the color hasn't changed (same RGB values)
+    const cached = this.cardStyleCache.get(id);
+    if (cached && cached.r === c.r && cached.g === c.g && cached.b === c.b) {
+      return cached.style;
+    }
+
     const dark = this.darken(c, 0.50);           // overlay gradient
     const acc  = this.lighten(c, 1.30, 25);      // title hover + accent btn
     const cart = this.lighten(c, 1.25, 30);      // cart btn
     const lum  = c.r * 0.299 + c.g * 0.587 + c.b * 0.114;
     const buyMid = lum >= 130 ? this.lighten(c, 0.80, 60) : null;
-    return {
+    const style: { [k: string]: string } = {
       '--card-r':    String(c.r),
       '--card-g':    String(c.g),
       '--card-b':    String(c.b),
@@ -1884,6 +1895,8 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
       '--card-buy-bg': buyMid ? `rgba(${this.rgb(buyMid)},0.90)` : 'rgba(255,255,255,0.18)',
       '--card-buy-t':  buyMid ? this.textOn(buyMid) : '#ffffff',
     };
+    this.cardStyleCache.set(id, { r: c.r, g: c.g, b: c.b, style });
+    return style;
   }
 
   async handleCreatorCtaClick(event: Event) {

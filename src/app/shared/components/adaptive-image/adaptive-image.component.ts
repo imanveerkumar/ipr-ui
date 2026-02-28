@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ElementRef, ViewChild, AfterViewInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -27,14 +27,14 @@ import { CommonModule } from '@angular/common';
     >
       <!-- Skeleton placeholder -->
       <div
-        *ngIf="!loaded && !hasError"
+        *ngIf="!loaded() && !hasError()"
         class="absolute inset-0 animate-pulse bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]"
         [class.rounded-lg]="rounded"
       ></div>
 
       <!-- Fallback placeholder when no image -->
       <div
-        *ngIf="!src || hasError"
+        *ngIf="!src || hasError()"
         class="absolute inset-0 flex items-center justify-center bg-[#F9F4EB]"
         [class.rounded-lg]="rounded"
       >
@@ -46,13 +46,13 @@ import { CommonModule } from '@angular/common';
 
       <!-- Actual image -->
       <img
-        *ngIf="src && !hasError"
+        *ngIf="src && !hasError()"
         #imageEl
-        [src]="shouldLoad ? src : ''"
+        [src]="shouldLoad() ? src : ''"
         [alt]="alt"
         [class]="'absolute inset-0 w-full h-full transition-opacity duration-300 ' + (objectFit === 'cover' ? 'object-cover' : 'object-contain')"
-        [class.opacity-0]="!loaded"
-        [class.opacity-100]="loaded"
+        [class.opacity-0]="!loaded()"
+        [class.opacity-100]="loaded()"
         [class.rounded-lg]="rounded"
         (load)="onImageLoad()"
         (error)="onImageError()"
@@ -118,9 +118,9 @@ export class AdaptiveImageComponent implements OnChanges, AfterViewInit, OnDestr
 
   @ViewChild('imageEl') imageEl?: ElementRef<HTMLImageElement>;
 
-  loaded = false;
-  hasError = false;
-  shouldLoad = false;
+  loaded = signal(false);
+  hasError = signal(false);
+  shouldLoad = signal(false);
 
   private observer?: IntersectionObserver;
   private hostEl?: Element;
@@ -135,12 +135,15 @@ export class AdaptiveImageComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['src']) {
-      this.loaded = false;
-      this.hasError = false;
-      // If observer already set up and src changed, reload
-      if (this.shouldLoad && changes['src'].currentValue !== changes['src'].previousValue) {
-        this.shouldLoad = true;
+    if (changes['src'] && changes['src'].currentValue !== changes['src'].previousValue) {
+      this.loaded.set(false);
+      this.hasError.set(false);
+      // If observer already fired, force a reload cycle by toggling shouldLoad
+      if (this.shouldLoad()) {
+        this.shouldLoad.set(false);
+        // Microtask ensures the template sees false before setting back to true,
+        // so the [src] binding re-evaluates and the browser fetches the new URL.
+        queueMicrotask(() => this.shouldLoad.set(true));
       }
     }
   }
@@ -155,20 +158,20 @@ export class AdaptiveImageComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   onImageLoad(): void {
-    this.loaded = true;
+    this.loaded.set(true);
     this.imageLoaded.emit();
   }
 
   onImageError(): void {
-    this.hasError = true;
-    this.loaded = false;
+    this.hasError.set(true);
+    this.loaded.set(false);
     this.imageError.emit();
   }
 
   private setupIntersectionObserver(): void {
     if (typeof IntersectionObserver === 'undefined' || !this.hostEl) {
       // Fallback: load immediately if IntersectionObserver not available
-      this.shouldLoad = true;
+      this.shouldLoad.set(true);
       return;
     }
 
@@ -176,7 +179,7 @@ export class AdaptiveImageComponent implements OnChanges, AfterViewInit, OnDestr
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            this.shouldLoad = true;
+            this.shouldLoad.set(true);
             this.observer?.disconnect();
           }
         });

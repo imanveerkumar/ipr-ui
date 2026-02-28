@@ -9,6 +9,8 @@ import {
   OnDestroy,
   HostListener,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -105,6 +107,7 @@ export class MasonryGridComponent<T = any> implements OnInit, OnChanges, OnDestr
   columns: T[][] = [];
   private currentCols = 0;
   private resizeTimeout?: any;
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.currentCols = this.getColumnCount();
@@ -196,5 +199,6 @@ export class MasonryGridComponent<T = any> implements OnInit, OnChanges, OnDestr
     }
 
     this.columns = columns;
+    this.cdr.markForCheck();
   }
 }
