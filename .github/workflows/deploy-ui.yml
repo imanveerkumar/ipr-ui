@@ -1,0 +1,83 @@
+name: Deploy UI to S3 and CloudFront
+
+on:
+  push:
+    branches:
+      - development
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ---------------------------
+      # BUILD DEV
+      # ---------------------------
+      - name: Build Development
+        if: github.ref == 'refs/heads/development'
+        run: npx ng build --configuration development
+
+      # ---------------------------
+      # BUILD PROD
+      # ---------------------------
+      - name: Build Production
+        if: github.ref == 'refs/heads/main'
+        run: npx ng build --configuration production
+
+      # ---------------------------
+      # DEPLOY DEV
+      # ---------------------------
+      - name: Deploy to Dev S3
+        if: github.ref == 'refs/heads/development'
+        run: |
+          aws s3 sync dist/storescraft/browser s3://mustard-spc-dev-ui-bucket --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-south-1
+
+      - name: Invalidate Dev CloudFront
+        if: github.ref == 'refs/heads/development'
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id E2XJ44M2SBBELX \
+            --paths "/*"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-south-1
+
+      # ---------------------------
+      # DEPLOY PROD
+      # ---------------------------
+      - name: Deploy to Prod S3
+        if: github.ref == 'refs/heads/main'
+        run: |
+          aws s3 sync dist/storescraft/browser s3://mustard-spc-prod-ui-bucket --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-south-1
+
+      - name: Invalidate Prod CloudFront
+        if: github.ref == 'refs/heads/main'
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id E2P3NOR27KLR8D \
+            --paths "/*"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-south-1
