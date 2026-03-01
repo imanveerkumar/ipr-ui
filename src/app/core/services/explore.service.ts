@@ -190,7 +190,7 @@ export class ExploreService {
   // =========================================================================
 
   async getFilters(category: string = 'all', pricing: string = 'all'): Promise<ExploreFiltersResponse> {
-    let url = `/explore/filters?category=${encodeURIComponent(category)}`;
+    let url = `/explore/filters?type=${encodeURIComponent(category)}`;
     if (pricing && pricing !== 'all') {
       url += `&pricing=${encodeURIComponent(pricing)}`;
     }
