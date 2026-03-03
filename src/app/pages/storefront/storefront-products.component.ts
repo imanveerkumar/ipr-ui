@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
 import { StoreContextService } from '../../core/services/store-context.service';
 import { CartService } from '../../core/services/cart.service';
 import { CheckoutService } from '../../core/services/checkout.service';
@@ -12,7 +13,7 @@ import { Product } from '../../core/models';
 @Component({
   selector: 'app-storefront-products',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MasonryGridComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Mobile-First Page Header -->
@@ -108,14 +109,21 @@ import { Product } from '../../core/models';
             }
           </div>
         } @else {
-          <!-- Products Grid - 2 columns on mobile -->
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-            @for (product of filteredProducts(); track product.id) {
-              <div class="bg-white rounded-xl sm:rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg active:shadow-md transition-all duration-200 group flex flex-col">
+          <!-- Products Grid - Masonry layout -->
+          <app-masonry-grid
+            [items]="filteredProducts()"
+            [gap]="12"
+            [colsMobile]="2"
+            [colsTablet]="3"
+            [colsDesktop]="4"
+            [getItemRatio]="getItemRatio"
+          >
+            <ng-template let-product>
+              <div class="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group relative cursor-pointer border border-gray-100" (click)="navigateTo('/product/' + product.id)">
                 <!-- Product Image -->
-                <div (click)="navigateTo('/product/' + product.id)" class="relative overflow-hidden cursor-pointer active:opacity-90">
+                <div class="relative overflow-hidden">
                   @if (product.coverImageUrl) {
-                    <div class="aspect-square overflow-hidden">
+                    <div class="overflow-hidden" [style.aspect-ratio]="getProductAspectRatio(product)">
                       <img 
                         [src]="product.coverImageUrl" 
                         [alt]="product.title"
@@ -140,56 +148,95 @@ import { Product } from '../../core/models';
                     </div>
                   }
 
-                  <!-- Quick Add/Remove - Visible on hover/tap (only for paid products) -->
-                  <button *ngIf="product.price > 0"
-                    (click)="cartService.isInCart(product.id) ? removeFromCart(product) : addToCart(product); $event.stopPropagation()"
-                    class="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 p-2.5 sm:p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 active:bg-gray-100 transition-all opacity-0 group-hover:opacity-100 min-h-[40px] min-w-[40px]"
-                    [class.opacity-100]="cartService.isInCart(product.id)"
-                    [class.bg-emerald-100]="cartService.isInCart(product.id)"
-                  >
-                    @if (cartService.isInCart(product.id)) {
-                      <svg class="w-4 h-4 sm:w-5 sm:h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
-                      </svg>
-                    } @else {
-                      <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                      </svg>
-                    }
-                  </button>
                 </div>
-                
-                <!-- Product Info -->
-                <div class="p-3 sm:p-4 flex-1 flex flex-col">
-                  <button (click)="navigateTo('/product/' + product.id)" class="text-left flex-1">
-                    <h3 class="font-semibold text-gray-900 text-sm sm:text-base line-clamp-2 leading-tight mb-2">
-                      {{ product.title }}
-                    </h3>
-                  </button>
-                  
-                  <!-- Price -->
-                  <div class="flex items-baseline gap-1.5 sm:gap-2 mb-3">
-                    <span class="text-base sm:text-lg font-bold text-gray-900">
-                      ₹{{ product.price / 100 }}
-                    </span>
-                    @if (product.compareAtPrice && product.compareAtPrice > product.price) {
-                      <span class="text-xs sm:text-sm text-gray-400 line-through">
-                        ₹{{ product.compareAtPrice / 100 }}
+
+                <!-- Mobile Product Info -->
+                <div class="md:hidden px-2.5 pt-2 pb-2.5">
+                  <h3 class="font-semibold text-gray-900 text-[13px] leading-snug line-clamp-2 mb-1.5">
+                    {{ product.title }}
+                  </h3>
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                      <span class="font-bold text-gray-900 text-[13px] whitespace-nowrap">
+                        ₹{{ product.price / 100 }}
                       </span>
+                      @if (product.compareAtPrice && product.compareAtPrice > product.price) {
+                        <span class="text-[10px] text-gray-400 line-through whitespace-nowrap">
+                          ₹{{ product.compareAtPrice / 100 }}
+                        </span>
+                      }
+                    </div>
+                    @if (product.price > 0) {
+                      <button
+                        (click)="cartService.isInCart(product.id) ? removeFromCart(product) : addToCart(product); $event.stopPropagation()"
+                        class="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold transition-all active:scale-95 flex-shrink-0"
+                        [class]="cartService.isInCart(product.id) ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-600'"
+                      >
+                        @if (cartService.isInCart(product.id)) {
+                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                          </svg>
+                          Added
+                        } @else {
+                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v12m6-6H6"/>
+                          </svg>
+                          Cart
+                        }
+                      </button>
                     }
                   </div>
-                  
-                  <!-- Buy Button - Full width -->
-                  <button *ngIf="product.price > 0"
-                    (click)="handleBuyNow(product)"
-                    class="w-full py-2.5 sm:py-3 bg-gray-900 text-white text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-colors min-h-[44px]"
-                  >
-                    Buy Now
-                  </button>
+                </div>
+
+                <!-- Hover Detail Panel (Desktop) -->
+                <div class="storefront-hover-panel absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-3 sm:p-4 pt-10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out pointer-events-none group-hover:pointer-events-auto hidden md:block">
+                  <h3 class="font-semibold text-white text-sm sm:text-base line-clamp-2 leading-tight mb-2">
+                    {{ product.title }}
+                  </h3>
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-baseline gap-1.5">
+                      <span class="text-base sm:text-lg font-bold text-white">
+                        ₹{{ product.price / 100 }}
+                      </span>
+                      @if (product.compareAtPrice && product.compareAtPrice > product.price) {
+                        <span class="text-xs text-white/50 line-through">
+                          ₹{{ product.compareAtPrice / 100 }}
+                        </span>
+                      }
+                    </div>
+                    @if (product.price > 0) {
+                      <div class="flex items-center gap-1.5">
+                        <button
+                          (click)="cartService.isInCart(product.id) ? removeFromCart(product) : addToCart(product); $event.stopPropagation()"
+                          class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all"
+                          [class]="cartService.isInCart(product.id) ? 'bg-emerald-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'"
+                          [title]="cartService.isInCart(product.id) ? 'Remove from cart' : 'Add to cart'"
+                        >
+                          @if (cartService.isInCart(product.id)) {
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Added
+                          } @else {
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v12m6-6H6"/>
+                            </svg>
+                            Cart
+                          }
+                        </button>
+                        <button
+                          (click)="handleBuyNow(product); $event.stopPropagation()"
+                          class="px-3 py-1.5 bg-white text-gray-900 text-xs font-bold rounded-lg hover:bg-white/90 transition-all"
+                        >
+                          Buy Now
+                        </button>
+                      </div>
+                    }
+                  </div>
                 </div>
               </div>
-            }
-          </div>
+            </ng-template>
+          </app-masonry-grid>
         }
 
         <!-- Back to Home -->
@@ -207,6 +254,14 @@ import { Product } from '../../core/models';
       </div>
     </div>
   `,
+  styles: [`
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  `]
 })
 export class StorefrontProductsComponent implements OnInit {
   storeContext = inject(StoreContextService);
@@ -219,6 +274,13 @@ export class StorefrontProductsComponent implements OnInit {
   searchQuery = '';
   sortBy = 'newest';
   filteredProducts = signal<Product[]>([]);
+
+  getItemRatio = (product: Product): number => {
+    if (product.coverImageWidth && product.coverImageHeight && product.coverImageWidth > 0 && product.coverImageHeight > 0) {
+      return product.coverImageWidth / product.coverImageHeight;
+    }
+    return 1;
+  };
 
   ngOnInit() {
     this.filterProducts();
@@ -268,6 +330,13 @@ export class StorefrontProductsComponent implements OnInit {
   getDiscount(product: Product): number {
     if (!product.compareAtPrice || product.compareAtPrice <= product.price) return 0;
     return Math.round((1 - product.price / product.compareAtPrice) * 100);
+  }
+
+  getProductAspectRatio(product: Product): string {
+    if (product.coverImageWidth && product.coverImageHeight && product.coverImageWidth > 0 && product.coverImageHeight > 0) {
+      return `${product.coverImageWidth} / ${product.coverImageHeight}`;
+    }
+    return '1 / 1';
   }
 
   addToCart(product: Product) {

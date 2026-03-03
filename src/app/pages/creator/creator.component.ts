@@ -169,9 +169,9 @@ import { ToasterService } from '../../core/services/toaster.service';
                   class="group bg-white border-2 border-black rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300"
                 >
                   <!-- Banner -->
-                  <div class="h-24 md:h-32 bg-gradient-to-br from-[#2B57D6] to-[#FA4B28] relative">
+                  <div class="bg-gradient-to-br from-[#2B57D6] to-[#FA4B28] relative" [style.aspect-ratio]="getStoreBannerRatio(store)" style="min-height: 80px; max-height: 160px;">
                     @if (store.bannerUrl) {
-                      <img [src]="store.bannerUrl" [alt]="store.name" class="w-full h-full object-cover" />
+                      <img [src]="store.bannerUrl" [alt]="store.name" class="w-full h-full object-cover" loading="lazy" />
                     }
                     <!-- Logo -->
                     <div class="absolute -bottom-6 left-4 w-14 h-14 md:w-16 md:h-16 bg-white border-2 border-black rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000]">
@@ -271,5 +271,12 @@ export class CreatorComponent implements OnInit {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  }
+
+  getStoreBannerRatio(store: ExploreStore): string {
+    if (store.bannerWidth && store.bannerHeight && store.bannerWidth > 0 && store.bannerHeight > 0) {
+      return `${store.bannerWidth} / ${store.bannerHeight}`;
+    }
+    return '16 / 5';
   }
 }

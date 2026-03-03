@@ -8,7 +8,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { Store } from '../../../core/models/index';
 import { RichTextEditorComponent } from '../../../shared/components';
-import { ImageUploadComponent } from '../../../shared/components/image-upload/image-upload.component';
+import { ImageUploadComponent, ImageUploadResult } from '../../../shared/components/image-upload/image-upload.component';
 import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.component';
 
 @Component({
@@ -257,7 +257,6 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               hint="Displayed at the top of your storefront"
               [imageUrl]="form.bannerUrl"
               placeholderText="Upload store banner"
-              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 1920px wide"
               (imageUploaded)="onBannerUploaded($event)"
               (imageRemoved)="onBannerRemoved()"
             ></app-image-upload>
@@ -269,7 +268,6 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               hint="Shown on cards and navigation"
               [imageUrl]="form.logoUrl"
               placeholderText="Upload logo"
-              acceptHint="JPG, PNG, WebP — max 15MB, optimized to 400px"
               (imageUploaded)="onLogoUploaded($event)"
               (imageRemoved)="onLogoRemoved()"
             ></app-image-upload>
@@ -1072,6 +1070,10 @@ export class StoreFormComponent implements OnInit {
     tagline: '',
     logoUrl: '' as string | undefined,
     bannerUrl: '' as string | undefined,
+    bannerWidth: undefined as number | undefined,
+    bannerHeight: undefined as number | undefined,
+    logoWidth: undefined as number | undefined,
+    logoHeight: undefined as number | undefined,
   };
 
   // Validation constants
@@ -1096,24 +1098,32 @@ export class StoreFormComponent implements OnInit {
     }
   }
 
-  onBannerUploaded(imageUrl: string) {
-    this.form.bannerUrl = imageUrl;
+  onBannerUploaded(result: ImageUploadResult) {
+    this.form.bannerUrl = result.imageUrl;
+    this.form.bannerWidth = result.width;
+    this.form.bannerHeight = result.height;
   }
 
   onBannerRemoved() {
     this.form.bannerUrl = undefined;
+    this.form.bannerWidth = undefined;
+    this.form.bannerHeight = undefined;
     this.toaster.info({
       title: 'Removal Staged',
       message: 'Banner removal will apply when you update the store.',
     });
   }
 
-  onLogoUploaded(imageUrl: string) {
-    this.form.logoUrl = imageUrl;
+  onLogoUploaded(result: ImageUploadResult) {
+    this.form.logoUrl = result.imageUrl;
+    this.form.logoWidth = result.width;
+    this.form.logoHeight = result.height;
   }
 
   onLogoRemoved() {
     this.form.logoUrl = undefined;
+    this.form.logoWidth = undefined;
+    this.form.logoHeight = undefined;
     this.toaster.info({
       title: 'Removal Staged',
       message: 'Logo removal will apply when you update the store.',
@@ -1154,6 +1164,10 @@ export class StoreFormComponent implements OnInit {
             tagline: store.tagline || '',
             logoUrl: store.logoUrl || undefined,
             bannerUrl: store.bannerUrl || undefined,
+            bannerWidth: store.bannerWidth ?? undefined,
+            bannerHeight: store.bannerHeight ?? undefined,
+            logoWidth: store.logoWidth ?? undefined,
+            logoHeight: store.logoHeight ?? undefined,
           };
 
           const isDeleted = !!store.deletedAt;
@@ -1212,6 +1226,10 @@ export class StoreFormComponent implements OnInit {
         ...this.form,
         logoUrl: this.form.logoUrl || undefined,
         bannerUrl: this.form.bannerUrl || undefined,
+        bannerWidth: this.form.bannerWidth || undefined,
+        bannerHeight: this.form.bannerHeight || undefined,
+        logoWidth: this.form.logoWidth || undefined,
+        logoHeight: this.form.logoHeight || undefined,
       };
 
       if (this.isEditing() && this.storeId) {

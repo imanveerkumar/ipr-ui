@@ -1,9 +1,17 @@
-import { Component, Input, Output, EventEmitter, signal, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FileUploadService, ProcessedImageResult } from '../../../core/services/file-upload.service';
 import { ToasterService } from '../../../core/services/toaster.service';
+import { UploadConfigService, ImageContext } from '../../../core/services/upload-config.service';
 
 export type ImageType = 'thumbnail' | 'banner' | 'logo';
+
+/** Result emitted when an image is uploaded and processed */
+export interface ImageUploadResult {
+  imageUrl: string;
+  width: number;
+  height: number;
+}
 
 @Component({
   selector: 'app-image-upload',
@@ -33,7 +41,7 @@ export type ImageType = 'thumbnail' | 'banner' | 'logo';
           type="file"
           #fileInput
           (change)="onFileSelected($event)"
-          accept="image/jpeg,image/png,image/webp,image/gif"
+          [accept]="computedAccept()"
           class="hidden-input"
         />
 
@@ -103,7 +111,7 @@ export type ImageType = 'thumbnail' | 'banner' | 'logo';
             </div>
             <p class="empty-text">{{ placeholderText }}</p>
             <p class="empty-hint">
-              {{ acceptHint }}
+              {{ computedAcceptHint() }}
             </p>
           </div>
         }
@@ -400,7 +408,7 @@ export type ImageType = 'thumbnail' | 'banner' | 'logo';
     }
   `]
 })
-export class ImageUploadComponent {
+export class ImageUploadComponent implements OnInit {
   /** Image type: determines processing preset and aspect ratio */
   @Input() imageType: ImageType = 'thumbnail';
   /** Label text above the upload zone */
@@ -415,11 +423,11 @@ export class ImageUploadComponent {
   }
   /** Placeholder text */
   @Input() placeholderText = 'Click or drop image here';
-  /** Accept hint text */
-  @Input() acceptHint = 'JPG, PNG, WebP, GIF — max 15MB';
+  /** Accept hint text (falls back to dynamic config hint) */
+  @Input() acceptHint = '';
 
-  /** Emitted when image is uploaded and processed, with the URL */
-  @Output() imageUploaded = new EventEmitter<string>();
+  /** Emitted when image is uploaded and processed, with the URL and dimensions */
+  @Output() imageUploaded = new EventEmitter<ImageUploadResult>();
   /** Emitted when image is removed */
   @Output() imageRemoved = new EventEmitter<void>();
 
@@ -428,10 +436,29 @@ export class ImageUploadComponent {
   uploadProgress = signal(0);
   isDragOver = signal(false);
   errorMessage = signal<string | null>(null);
+  computedAccept = signal<string>('image/*');
+  computedAcceptHint = signal<string>('JPG, PNG, WebP, GIF — max 5MB');
 
   private uploadController: AbortController | null = null;
   private fileUpload = inject(FileUploadService);
   private toaster = inject(ToasterService);
+  private uploadConfigService = inject(UploadConfigService);
+
+  async ngOnInit() {
+    await this.uploadConfigService.ensureLoaded();
+    const imageContext = this.getImageContext();
+    this.computedAccept.set(this.uploadConfigService.getAcceptAttribute('image'));
+    this.computedAcceptHint.set(this.acceptHint || this.uploadConfigService.getAcceptHint(imageContext));
+  }
+
+  private getImageContext(): ImageContext {
+    switch (this.imageType) {
+      case 'thumbnail': return 'cover';
+      case 'banner': return 'banner';
+      case 'logo': return 'logo';
+      default: return 'cover';
+    }
+  }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -477,15 +504,11 @@ export class ImageUploadComponent {
   }
 
   private async processFile(file: File) {
-    // Validate client-side
-    if (!file.type.startsWith('image/')) {
-      this.errorMessage.set('Please select an image file (JPG, PNG, WebP, or GIF)');
-      return;
-    }
-
-    const maxSize = 15 * 1024 * 1024;
-    if (file.size > maxSize) {
-      this.errorMessage.set('Image is too large. Maximum size is 15MB.');
+    // Client-side validation using backend-driven config
+    const imageContext = this.getImageContext();
+    const validation = this.uploadConfigService.validateImageFile(file, imageContext);
+    if (!validation.valid) {
+      this.errorMessage.set(validation.error || 'Invalid file.');
       return;
     }
 
@@ -514,7 +537,11 @@ export class ImageUploadComponent {
       );
 
       this.currentImageUrl.set(result.imageUrl);
-      this.imageUploaded.emit(result.imageUrl);
+      this.imageUploaded.emit({
+        imageUrl: result.imageUrl,
+        width: result.width,
+        height: result.height,
+      });
     } catch (error: any) {
       if (error?.name === 'AbortError' || this.uploadController?.signal.aborted) {
         return; // User cancelled, don't show error

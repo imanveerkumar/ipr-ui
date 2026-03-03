@@ -1,0 +1,186 @@
+name: Deploy UI to S3 and CloudFront
+
+on:
+  push:
+    branches:
+      - development
+      - main
+
+env:
+  AWS_REGION: ap-south-1
+
+jobs:
+  # ─────────────────────────────────────────────
+  # JOB 1 — Build (always runs)
+  # ─────────────────────────────────────────────
+  build:
+    name: Build & Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pipeline overview
+        run: |
+          echo "============================================================"
+          echo "  UI DEPLOYMENT PIPELINE"
+          echo "============================================================"
+          echo "  Branch   : ${GITHUB_REF_NAME}"
+          echo "  Commit   : ${GITHUB_SHA:0:7}"
+          echo "  Actor    : ${GITHUB_ACTOR}"
+          echo "  Run ID   : ${GITHUB_RUN_ID}"
+          echo "  Region   : ${{ env.AWS_REGION }}"
+          echo "  Triggered: ${{ github.event_name }}"
+          echo "============================================================"
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            echo "  Target   : ✅ PRODUCTION   |   ⏭️  Development (skipped)"
+          else
+            echo "  Target   : ✅ DEVELOPMENT  |   ⏭️  Production  (skipped)"
+          fi
+          echo "============================================================"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: "[1/2] Install dependencies"
+        run: |
+          echo "Installing npm dependencies..."
+          npm ci
+          echo "[OK] Dependencies installed."
+
+      - name: "[2/2] Build — Development"
+        if: github.ref_name == 'development'
+        run: |
+          echo "Building Angular app for DEVELOPMENT..."
+          npx ng build --configuration development
+          echo "[OK] Development build complete."
+
+      - name: "[2/2] Build — Production"
+        if: github.ref_name == 'main'
+        run: |
+          echo "Building Angular app for PRODUCTION..."
+          npx ng build --configuration production
+          echo "[OK] Production build complete."
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-dist
+          path: dist/storescraft/browser
+          retention-days: 1
+
+  # ─────────────────────────────────────────────
+  # JOB 2 — Deploy to DEVELOPMENT (development branch only)
+  # ─────────────────────────────────────────────
+  deploy-development:
+    name: "Deploy » Development"
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'development'
+
+    environment: development
+
+    env:
+      S3_BUCKET: mustard-spc-dev-ui-bucket
+      CF_DISTRIBUTION_ID: E2XJ44M2SBBELX
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-dist
+          path: dist/storescraft/browser
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync to S3 — Development
+        run: |
+          echo "============================================================"
+          echo "  DEPLOYING → DEVELOPMENT"
+          echo "  S3 Bucket      : $S3_BUCKET"
+          echo "  CF Distribution: $CF_DISTRIBUTION_ID"
+          echo "  Region         : ${{ env.AWS_REGION }}"
+          echo "  Commit         : ${GITHUB_SHA:0:7}"
+          echo "  Actor          : ${GITHUB_ACTOR}"
+          echo "============================================================"
+          echo "  Syncing build to S3..."
+          aws s3 sync dist/storescraft/browser s3://$S3_BUCKET --delete
+          echo "[OK] S3 sync complete."
+
+      - name: Invalidate CloudFront — Development
+        run: |
+          echo "  Creating CloudFront invalidation..."
+          aws cloudfront create-invalidation \
+            --distribution-id "$CF_DISTRIBUTION_ID" \
+            --paths "/*"
+          echo "============================================================"
+          echo "  ✅ DEVELOPMENT DEPLOYMENT SUCCESSFUL"
+          echo "  S3 Bucket      : $S3_BUCKET"
+          echo "  CF Distribution: $CF_DISTRIBUTION_ID"
+          echo "  Commit         : ${GITHUB_SHA:0:7}"
+          echo "============================================================"
+
+  # ─────────────────────────────────────────────
+  # JOB 3 — Deploy to PRODUCTION (main branch only)
+  # ─────────────────────────────────────────────
+  deploy-production:
+    name: "Deploy » Production"
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'main'
+
+    environment: production
+
+    env:
+      S3_BUCKET: mustard-spc-prod-ui-bucket
+      CF_DISTRIBUTION_ID: E2P3NOR27KLR8D
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-dist
+          path: dist/storescraft/browser
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync to S3 — Production
+        run: |
+          echo "============================================================"
+          echo "  DEPLOYING → PRODUCTION"
+          echo "  S3 Bucket      : $S3_BUCKET"
+          echo "  CF Distribution: $CF_DISTRIBUTION_ID"
+          echo "  Region         : ${{ env.AWS_REGION }}"
+          echo "  Commit         : ${GITHUB_SHA:0:7}"
+          echo "  Actor          : ${GITHUB_ACTOR}"
+          echo "============================================================"
+          echo "  Syncing build to S3..."
+          aws s3 sync dist/storescraft/browser s3://$S3_BUCKET --delete
+          echo "[OK] S3 sync complete."
+
+      - name: Invalidate CloudFront — Production
+        run: |
+          echo "  Creating CloudFront invalidation..."
+          aws cloudfront create-invalidation \
+            --distribution-id "$CF_DISTRIBUTION_ID" \
+            --paths "/*"
+          echo "============================================================"
+          echo "  ✅ PRODUCTION DEPLOYMENT SUCCESSFUL"
+          echo "  S3 Bucket      : $S3_BUCKET"
+          echo "  CF Distribution: $CF_DISTRIBUTION_ID"
+          echo "  Commit         : ${GITHUB_SHA:0:7}"
+          echo "============================================================"
