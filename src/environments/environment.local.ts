@@ -1,5 +1,9 @@
 export const environment = {
   production: false,
+  // apiUrl: 'https://ipr-api.vercel.app/api/v1', //vercel
+  // apiUrl: 'https://fyybmxkyv0.execute-api.ap-south-1.amazonaws.com/api/v1', //aws backup dev
+  // apiUrl: 'https://9os37clv2g.execute-api.ap-south-1.amazonaws.com/api/v1', //aws dev
+
   apiUrl: 'http://localhost:3000/api/v1',
   clerkPublishableKey: 'pk_test_b3V0Z29pbmctZmxlYS0zMC5jbGVyay5hY2NvdW50cy5kZXYk',
   razorpayKeyId: 'rzp_test_your_key_here',
