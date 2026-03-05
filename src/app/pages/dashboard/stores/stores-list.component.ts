@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StoreService } from '../../../core/services/store.service';
+import { SubdomainService } from '../../../core/services/subdomain.service';
 import { Store } from '../../../core/models/index';
 import { PaginationMeta, PaginatedResponse } from '../../../core/services/pagination.types';
 import { ConfirmService } from '../../../core/services/confirm.service';
@@ -515,10 +516,10 @@ import { ToasterService } from '../../../core/services/toaster.service';
                           <polyline points="15 3 21 3 21 9"/>
                           <line x1="10" y1="14" x2="21" y2="3"/>
                         </svg>
-                        {{ store.slug }}.yoursite.com
+                        {{ store.slug }}.{{ baseDomain() }}
                       </a>
                     } @else {
-                      <span class="text-sm text-black/50">{{ store.slug }}.yoursite.com</span>
+                      <span class="text-sm text-black/50">{{ store.slug }}.{{ baseDomain() }}</span>
                     }
                   </div>
                   
@@ -594,7 +595,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                     </div>
                     <div class="flex-1 min-w-0">
                       <h3 class="text-base sm:text-lg font-bold text-[#111111] truncate">{{ store.name }}</h3>
-                      <p class="text-sm text-[#111111]/60 font-medium">{{ store.slug }}.yoursite.com</p>
+                      <p class="text-sm text-[#111111]/60 font-medium">{{ store.slug }}.{{ baseDomain() }}</p>
                     </div>
                     <div class="flex items-center gap-4 ml-4">
                       <div class="text-sm font-bold text-[#111111]">{{ store._count?.products || 0 }} products</div>
@@ -669,6 +670,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
   `]
 })
 export class StoresListComponent implements OnInit {
+  readonly baseDomain = inject(SubdomainService).baseDomain;
   activeStores = signal<Store[]>([]);
   archivedStores = signal<Store[]>([]);
   deletedStores = signal<Store[]>([]);

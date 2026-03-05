@@ -113,7 +113,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               </div>
               <div class="live-store-info">
                 <p class="live-store-label">Your store is live!</p>
-                <a [href]="storeService.getStoreUrl(store()!)" target="_blank" class="live-store-url">{{ store()?.slug }}.yoursite.com</a>
+                <a [href]="storeService.getStoreUrl(store()!)" target="_blank" class="live-store-url">{{ store()?.slug }}.{{ baseDomain() }}</a>
               </div>
             </div>
             <div class="flex gap-2">
