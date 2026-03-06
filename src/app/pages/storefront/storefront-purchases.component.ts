@@ -424,8 +424,12 @@ export class StorefrontPurchasesComponent implements OnInit {
       // Clerk users go to the main library
       window.location.href = this.subdomainService.getMainSiteUrl() + '/library';
     } else if (this.guestAccess.isAuthenticated()) {
-      // Guest users go to guest all-purchases page
-      window.location.href = this.subdomainService.getMainSiteUrl() + '/guest/purchases';
+      // Guest users go to guest all-purchases page.
+      // Pass the token as a query param so the main site (different origin)
+      // can restore the auth session from localStorage.
+      const token = localStorage.getItem('guest_access_token');
+      const base = this.subdomainService.getMainSiteUrl() + '/guest/purchases';
+      window.location.href = token ? `${base}?token=${encodeURIComponent(token)}` : base;
     }
   }
 
