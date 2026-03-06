@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, inject, ViewChild, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { GuestAccessService, GuestPurchase } from '../../core/services/guest-access.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -342,6 +342,8 @@ export class GuestPurchasesComponent implements OnInit {
 
   guestAccess = inject(GuestAccessService);
   authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   
   loading = signal(false);
   purchases = signal<GuestPurchase[]>([]);
@@ -366,7 +368,21 @@ export class GuestPurchasesComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    // Accept a guest token forwarded from a storefront subdomain via ?token=…
+    const urlToken = this.route.snapshot.queryParamMap.get('token');
+    if (urlToken && !this.guestAccess.isAuthenticated()) {
+      await this.guestAccess.setTokenFromUrl(urlToken);
+    }
+    // Remove the token from the URL bar to avoid sharing/leaking it
+    if (urlToken) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { token: null },
+        queryParamsHandling: 'merge',
+        replaceUrl: true,
+      });
+    }
   }
 
   openAccessModal() {
