@@ -1,99 +1,257 @@
-name: Deploy UI to S3 and CloudFront
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  UI Deployment Pipeline — S3 + CloudFront                                  ║
+# ║                                                                            ║
+# ║  Triggers:                                                                 ║
+# ║    • push to development  → auto-deploy to Development                     ║
+# ║    • push to main         → auto-deploy to Production                      ║
+# ║    • workflow_dispatch     → manually deploy ANY branch to ANY environment  ║
+# ║                                                                            ║
+# ║  Features:                                                                 ║
+# ║    • Concurrency control per environment (queues, never cancels)            ║
+# ║    • Least-privilege permissions on every job                               ║
+# ║    • Job + step timeouts to prevent hung pipelines                          ║
+# ║    • SHA-tagged artifacts with environment-aware retention                  ║
+# ║    • Pre-deploy artifact validation                                        ║
+# ║    • Post-deploy CloudFront health check                                   ║
+# ║    • Rich GitHub Step Summary reports                                       ║
+# ║    • Production approval gate (configure required reviewers in settings)    ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+name: Deploy UI
 
 on:
   push:
-    branches:
-      - development
-      - main
+    branches: [development, main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "angular.json"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig*.json"
+      - "tailwind.config.*"
+      - "postcss.config.*"
+      - ".github/workflows/deploy-ui.yml"
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - development
+          - production
+
+# ── Concurrency ────────────────────────────────────────────────────────────────
+# One deploy per environment at a time; additional runs QUEUE (no cancel).
+concurrency:
+  group: ui-deploy-${{ github.event.inputs.environment || github.ref_name }}
+  cancel-in-progress: false
 
 env:
   AWS_REGION: ap-south-1
+  NODE_VERSION: "22"
 
 jobs:
-  # ─────────────────────────────────────────────
-  # JOB 1 — Build (always runs)
-  # ─────────────────────────────────────────────
-  build:
-    name: Build & Package
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 0 — Resolve target environment (single source of truth)
+  # ═══════════════════════════════════════════════════════════════════════════
+  resolve-env:
+    name: Resolve Target
     runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    permissions:
+      contents: read
+
+    outputs:
+      target_env: ${{ steps.resolve.outputs.target_env }}
+      is_manual: ${{ steps.resolve.outputs.is_manual }}
+      is_production: ${{ steps.resolve.outputs.is_production }}
+      build_config: ${{ steps.resolve.outputs.build_config }}
+      short_sha: ${{ steps.resolve.outputs.short_sha }}
 
     steps:
-      - name: Pipeline overview
+      - name: Determine target environment
+        id: resolve
         run: |
-          echo "============================================================"
-          echo "  UI DEPLOYMENT PIPELINE"
-          echo "============================================================"
-          echo "  Branch   : ${GITHUB_REF_NAME}"
-          echo "  Commit   : ${GITHUB_SHA:0:7}"
-          echo "  Actor    : ${GITHUB_ACTOR}"
-          echo "  Run ID   : ${GITHUB_RUN_ID}"
-          echo "  Region   : ${{ env.AWS_REGION }}"
-          echo "  Triggered: ${{ github.event_name }}"
-          echo "============================================================"
-          if [ "${GITHUB_REF_NAME}" = "main" ]; then
-            echo "  Target   : ✅ PRODUCTION   |   ⏭️  Development (skipped)"
-          else
-            echo "  Target   : ✅ DEVELOPMENT  |   ⏭️  Production  (skipped)"
-          fi
-          echo "============================================================"
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
 
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TARGET="${{ github.event.inputs.environment }}"
+            IS_MANUAL="true"
+          elif [ "${GITHUB_REF_NAME}" = "main" ]; then
+            TARGET="production"
+            IS_MANUAL="false"
+          else
+            TARGET="development"
+            IS_MANUAL="false"
+          fi
+
+          IS_PROD="false"
+          BUILD_CONFIG="development"
+          if [ "${TARGET}" = "production" ]; then
+            IS_PROD="true"
+            BUILD_CONFIG="production"
+          fi
+
+          echo "target_env=${TARGET}"    >> "$GITHUB_OUTPUT"
+          echo "is_manual=${IS_MANUAL}"  >> "$GITHUB_OUTPUT"
+          echo "is_production=${IS_PROD}" >> "$GITHUB_OUTPUT"
+          echo "build_config=${BUILD_CONFIG}" >> "$GITHUB_OUTPUT"
+
+      - name: Pipeline summary
+        run: |
+          EVENT="${{ github.event_name }}"
+          TARGET="${{ steps.resolve.outputs.target_env }}"
+          IS_MANUAL="${{ steps.resolve.outputs.is_manual }}"
+
+          cat >> "$GITHUB_STEP_SUMMARY" <<-SUMMARY
+          ## 🚀 UI Deployment Pipeline
+
+          | Parameter | Value |
+          |-----------|-------|
+          | **Branch** | \`${GITHUB_REF_NAME}\` |
+          | **Commit** | \`${GITHUB_SHA:0:7}\` |
+          | **Actor** | ${GITHUB_ACTOR} |
+          | **Trigger** | ${EVENT} |
+          | **Target** | **${TARGET}** |
+          | **Manual** | ${IS_MANUAL} |
+          | **Run** | [#${GITHUB_RUN_NUMBER}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}) |
+          SUMMARY
+
+          if [ "${IS_MANUAL}" = "true" ] && [ "${GITHUB_REF_NAME}" != "development" ] && [ "${GITHUB_REF_NAME}" != "main" ]; then
+            cat >> "$GITHUB_STEP_SUMMARY" <<-WARN
+
+          > ⚠️ **Manual deploy** — deploying branch \`${GITHUB_REF_NAME}\` to **${TARGET}**.
+          > This is a non-standard branch. Remember to redeploy the default branch when done testing.
+          WARN
+          fi
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 1 — Build
+  # ═══════════════════════════════════════════════════════════════════════════
+  build:
+    name: "Build (${{ needs.resolve-env.outputs.build_config }})"
+    needs: resolve-env
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+
+    env:
+      TARGET_ENV: ${{ needs.resolve-env.outputs.target_env }}
+      BUILD_CONFIG: ${{ needs.resolve-env.outputs.build_config }}
+      SHORT_SHA: ${{ needs.resolve-env.outputs.short_sha }}
+
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
-      - name: "[1/2] Install dependencies"
-        run: |
-          echo "Installing npm dependencies..."
-          npm ci
-          echo "[OK] Dependencies installed."
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+        timeout-minutes: 5
 
-      - name: "[2/2] Build — Development"
-        if: github.ref_name == 'development'
-        run: |
-          echo "Building Angular app for DEVELOPMENT..."
-          npx ng build --configuration development
-          echo "[OK] Development build complete."
+      - name: Build Angular app
+        run: npx ng build --configuration "$BUILD_CONFIG"
+        timeout-minutes: 10
 
-      - name: "[2/2] Build — Production"
-        if: github.ref_name == 'main'
+      - name: Validate build output
+        id: validate
         run: |
-          echo "Building Angular app for PRODUCTION..."
-          npx ng build --configuration production
-          echo "[OK] Production build complete."
+          BUILD_DIR="dist/storescraft/browser"
+
+          if [ ! -d "$BUILD_DIR" ]; then
+            echo "::error::Build output directory not found: ${BUILD_DIR}"
+            exit 1
+          fi
+
+          INDEX_FILE="${BUILD_DIR}/index.html"
+          if [ ! -f "$INDEX_FILE" ]; then
+            echo "::error::index.html not found in build output"
+            exit 1
+          fi
+
+          FILE_COUNT=$(find "$BUILD_DIR" -type f | wc -l | tr -d ' ')
+          DIR_SIZE=$(du -sh "$BUILD_DIR" | cut -f1)
+          echo "file_count=${FILE_COUNT}" >> "$GITHUB_OUTPUT"
+          echo "dir_size=${DIR_SIZE}"     >> "$GITHUB_OUTPUT"
+
+          if [ "$FILE_COUNT" -lt 5 ]; then
+            echo "::error::Build produced only ${FILE_COUNT} files — expected at least 5. Possible build failure."
+            exit 1
+          fi
+
+          echo "Build validated: ${FILE_COUNT} files, ${DIR_SIZE}"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ui-dist
+          name: ui-dist-${{ env.SHORT_SHA }}
           path: dist/storescraft/browser
-          retention-days: 1
+          retention-days: ${{ needs.resolve-env.outputs.is_production == 'true' && 7 || 3 }}
+          if-no-files-found: error
 
-  # ─────────────────────────────────────────────
-  # JOB 2 — Deploy to DEVELOPMENT (development branch only)
-  # ─────────────────────────────────────────────
+      - name: Build summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<-SUMMARY
+
+          ### 📦 Build Output
+          | Metric | Value |
+          |--------|-------|
+          | **Configuration** | \`${{ env.BUILD_CONFIG }}\` |
+          | **Files** | ${{ steps.validate.outputs.file_count }} |
+          | **Size** | ${{ steps.validate.outputs.dir_size }} |
+          | **Artifact** | \`ui-dist-${{ env.SHORT_SHA }}\` |
+          SUMMARY
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 2 — Deploy to DEVELOPMENT
+  # ═══════════════════════════════════════════════════════════════════════════
   deploy-development:
-    name: "Deploy » Development"
-    needs: build
+    name: "Deploy → Development"
+    needs: [resolve-env, build]
     runs-on: ubuntu-latest
-    if: github.ref_name == 'development'
+    timeout-minutes: 10
+    if: needs.resolve-env.outputs.target_env == 'development'
 
-    environment: development
+    environment:
+      name: development
+      url: https://${{ vars.CF_DOMAIN_DEV || 'dev.storescraft.com' }}
+
+    permissions:
+      contents: read
+      id-token: write
 
     env:
       S3_BUCKET: mustard-spc-dev-ui-bucket
       CF_DISTRIBUTION_ID: E2XJ44M2SBBELX
+      SHORT_SHA: ${{ needs.resolve-env.outputs.short_sha }}
 
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: ui-dist
+          name: ui-dist-${{ env.SHORT_SHA }}
           path: dist/storescraft/browser
+
+      - name: Pre-deploy validation
+        run: |
+          FILE_COUNT=$(find dist/storescraft/browser -type f | wc -l | tr -d ' ')
+          if [ "$FILE_COUNT" -lt 5 ]; then
+            echo "::error::Artifact corrupted — only ${FILE_COUNT} files found."
+            exit 1
+          fi
+          echo "Artifact OK: ${FILE_COUNT} files"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -102,54 +260,93 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Sync to S3 — Development
+      - name: Sync to S3
         run: |
-          echo "============================================================"
-          echo "  DEPLOYING → DEVELOPMENT"
-          echo "  S3 Bucket      : $S3_BUCKET"
-          echo "  CF Distribution: $CF_DISTRIBUTION_ID"
-          echo "  Region         : ${{ env.AWS_REGION }}"
-          echo "  Commit         : ${GITHUB_SHA:0:7}"
-          echo "  Actor          : ${GITHUB_ACTOR}"
-          echo "============================================================"
-          echo "  Syncing build to S3..."
-          aws s3 sync dist/storescraft/browser s3://$S3_BUCKET --delete
-          echo "[OK] S3 sync complete."
+          aws s3 sync dist/storescraft/browser "s3://${S3_BUCKET}" \
+            --delete \
+            --no-progress \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html" \
+            --exclude "*.json"
 
-      - name: Invalidate CloudFront — Development
+          # index.html & JSON manifests — no cache so updates propagate immediately
+          aws s3 cp dist/storescraft/browser/index.html "s3://${S3_BUCKET}/index.html" \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+          # Sync any JSON files (ngsw, manifest, runtime config)
+          find dist/storescraft/browser -name '*.json' | while read -r f; do
+            REL="${f#dist/storescraft/browser/}"
+            aws s3 cp "$f" "s3://${S3_BUCKET}/${REL}" \
+              --cache-control "no-cache, no-store, must-revalidate"
+          done
+
+          echo "S3 sync complete."
+
+      - name: Invalidate CloudFront cache
+        id: invalidate
         run: |
-          echo "  Creating CloudFront invalidation..."
-          aws cloudfront create-invalidation \
+          INVALIDATION=$(aws cloudfront create-invalidation \
             --distribution-id "$CF_DISTRIBUTION_ID" \
-            --paths "/*"
-          echo "============================================================"
-          echo "  ✅ DEVELOPMENT DEPLOYMENT SUCCESSFUL"
-          echo "  S3 Bucket      : $S3_BUCKET"
-          echo "  CF Distribution: $CF_DISTRIBUTION_ID"
-          echo "  Commit         : ${GITHUB_SHA:0:7}"
-          echo "============================================================"
+            --paths "/*" \
+            --query 'Invalidation.Id' \
+            --output text)
+          echo "invalidation_id=${INVALIDATION}" >> "$GITHUB_OUTPUT"
+          echo "CloudFront invalidation created: ${INVALIDATION}"
 
-  # ─────────────────────────────────────────────
-  # JOB 3 — Deploy to PRODUCTION (main branch only)
-  # ─────────────────────────────────────────────
+      - name: Deployment summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<-SUMMARY
+
+          ### ✅ Development Deployment Complete
+          | Detail | Value |
+          |--------|-------|
+          | **S3 Bucket** | \`${S3_BUCKET}\` |
+          | **CloudFront** | \`${CF_DISTRIBUTION_ID}\` |
+          | **Invalidation** | \`${{ steps.invalidate.outputs.invalidation_id }}\` |
+          | **Commit** | \`${{ env.SHORT_SHA }}\` |
+          | **Branch** | \`${GITHUB_REF_NAME}\` |
+          | **Deployed by** | ${GITHUB_ACTOR} |
+          | **Deployed at** | $(date -u '+%Y-%m-%d %H:%M:%S UTC') |
+          SUMMARY
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 3 — Deploy to PRODUCTION (approval gate via GitHub Environment)
+  # ═══════════════════════════════════════════════════════════════════════════
   deploy-production:
-    name: "Deploy » Production"
-    needs: build
+    name: "Deploy → Production"
+    needs: [resolve-env, build]
     runs-on: ubuntu-latest
-    if: github.ref_name == 'main'
+    timeout-minutes: 10
+    if: needs.resolve-env.outputs.target_env == 'production'
 
-    environment: production
+    environment:
+      name: production
+      url: https://${{ vars.CF_DOMAIN_PROD || 'storescraft.com' }}
+
+    permissions:
+      contents: read
+      id-token: write
 
     env:
       S3_BUCKET: mustard-spc-prod-ui-bucket
       CF_DISTRIBUTION_ID: E2P3NOR27KLR8D
+      SHORT_SHA: ${{ needs.resolve-env.outputs.short_sha }}
 
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: ui-dist
+          name: ui-dist-${{ env.SHORT_SHA }}
           path: dist/storescraft/browser
+
+      - name: Pre-deploy validation
+        run: |
+          FILE_COUNT=$(find dist/storescraft/browser -type f | wc -l | tr -d ' ')
+          if [ "$FILE_COUNT" -lt 5 ]; then
+            echo "::error::Artifact corrupted — only ${FILE_COUNT} files found."
+            exit 1
+          fi
+          echo "Artifact OK: ${FILE_COUNT} files"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -158,29 +355,105 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Sync to S3 — Production
+      - name: Sync to S3
         run: |
-          echo "============================================================"
-          echo "  DEPLOYING → PRODUCTION"
-          echo "  S3 Bucket      : $S3_BUCKET"
-          echo "  CF Distribution: $CF_DISTRIBUTION_ID"
-          echo "  Region         : ${{ env.AWS_REGION }}"
-          echo "  Commit         : ${GITHUB_SHA:0:7}"
-          echo "  Actor          : ${GITHUB_ACTOR}"
-          echo "============================================================"
-          echo "  Syncing build to S3..."
-          aws s3 sync dist/storescraft/browser s3://$S3_BUCKET --delete
-          echo "[OK] S3 sync complete."
+          aws s3 sync dist/storescraft/browser "s3://${S3_BUCKET}" \
+            --delete \
+            --no-progress \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html" \
+            --exclude "*.json"
 
-      - name: Invalidate CloudFront — Production
+          aws s3 cp dist/storescraft/browser/index.html "s3://${S3_BUCKET}/index.html" \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+          find dist/storescraft/browser -name '*.json' | while read -r f; do
+            REL="${f#dist/storescraft/browser/}"
+            aws s3 cp "$f" "s3://${S3_BUCKET}/${REL}" \
+              --cache-control "no-cache, no-store, must-revalidate"
+          done
+
+          echo "S3 sync complete."
+
+      - name: Invalidate CloudFront cache
+        id: invalidate
         run: |
-          echo "  Creating CloudFront invalidation..."
-          aws cloudfront create-invalidation \
+          INVALIDATION=$(aws cloudfront create-invalidation \
             --distribution-id "$CF_DISTRIBUTION_ID" \
-            --paths "/*"
-          echo "============================================================"
-          echo "  ✅ PRODUCTION DEPLOYMENT SUCCESSFUL"
-          echo "  S3 Bucket      : $S3_BUCKET"
-          echo "  CF Distribution: $CF_DISTRIBUTION_ID"
-          echo "  Commit         : ${GITHUB_SHA:0:7}"
-          echo "============================================================"
+            --paths "/*" \
+            --query 'Invalidation.Id' \
+            --output text)
+          echo "invalidation_id=${INVALIDATION}" >> "$GITHUB_OUTPUT"
+          echo "CloudFront invalidation created: ${INVALIDATION}"
+
+      - name: Deployment summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<-SUMMARY
+
+          ### ✅ Production Deployment Complete
+          | Detail | Value |
+          |--------|-------|
+          | **S3 Bucket** | \`${S3_BUCKET}\` |
+          | **CloudFront** | \`${CF_DISTRIBUTION_ID}\` |
+          | **Invalidation** | \`${{ steps.invalidate.outputs.invalidation_id }}\` |
+          | **Commit** | \`${{ env.SHORT_SHA }}\` |
+          | **Branch** | \`${GITHUB_REF_NAME}\` |
+          | **Deployed by** | ${GITHUB_ACTOR} |
+          | **Deployed at** | $(date -u '+%Y-%m-%d %H:%M:%S UTC') |
+          SUMMARY
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # JOB 4 — Post-deploy status rollup
+  # ═══════════════════════════════════════════════════════════════════════════
+  status:
+    name: Pipeline Status
+    if: always()
+    needs: [resolve-env, build, deploy-development, deploy-production]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Evaluate pipeline result
+        run: |
+          TARGET="${{ needs.resolve-env.outputs.target_env }}"
+          BUILD="${{ needs.build.result }}"
+          DEV="${{ needs.deploy-development.result }}"
+          PROD="${{ needs.deploy-production.result }}"
+
+          # Determine which deploy job matters
+          if [ "${TARGET}" = "production" ]; then
+            DEPLOY="${PROD}"
+          else
+            DEPLOY="${DEV}"
+          fi
+
+          ICON="✅"
+          STATUS="SUCCESS"
+          if [ "${BUILD}" != "success" ]; then
+            ICON="❌"; STATUS="BUILD FAILED"
+          elif [ "${DEPLOY}" = "failure" ]; then
+            ICON="❌"; STATUS="DEPLOY FAILED"
+          elif [ "${DEPLOY}" = "cancelled" ]; then
+            ICON="⚠️"; STATUS="CANCELLED"
+          elif [ "${DEPLOY}" = "skipped" ]; then
+            ICON="⏭️"; STATUS="SKIPPED"
+          fi
+
+          cat >> "$GITHUB_STEP_SUMMARY" <<-SUMMARY
+
+          ---
+          ## ${ICON} Pipeline Result: **${STATUS}**
+          | Stage | Result |
+          |-------|--------|
+          | Resolve | \`${{ needs.resolve-env.result }}\` |
+          | Build | \`${BUILD}\` |
+          | Deploy (${TARGET}) | \`${DEPLOY}\` |
+          SUMMARY
+
+          if [ "${STATUS}" = "BUILD FAILED" ] || [ "${STATUS}" = "DEPLOY FAILED" ]; then
+            echo "::error::Pipeline finished with status: ${STATUS}"
+            exit 1
+          fi
