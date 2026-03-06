@@ -145,6 +145,39 @@ export class GuestAccessService {
   }
 
   /**
+   * Accept a guest token handed in via URL query parameter (cross-domain hand-off).
+   * Stores the token, validates it and updates auth state.
+   * Returns true if the token is valid.
+   */
+  async setTokenFromUrl(token: string): Promise<boolean> {
+    if (!token) return false;
+
+    // Persist first so the existing validate helper can pick it up
+    this.storeToken(token);
+
+    try {
+      const response = await this.api.post<TokenValidation>(
+        '/guest-auth/validate-token',
+        {},
+        { headers: { 'x-guest-token': token } }
+      );
+
+      if (response.success && response.data?.valid) {
+        this._isAuthenticated.set(true);
+        this._identifier.set(response.data.identifier || null);
+        this._identifierType.set(response.data.type || null);
+        return true;
+      } else {
+        this.clearToken();
+        return false;
+      }
+    } catch {
+      this.clearToken();
+      return false;
+    }
+  }
+
+  /**
    * Check if a user exists (either Clerk account or guest purchases)
    */
   async checkUserExists(identifier: string, type: 'email' | 'phone'): Promise<UserCheckResponse> {
