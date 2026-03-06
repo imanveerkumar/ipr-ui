@@ -300,6 +300,39 @@ export class GuestAccessService {
   }
 
   /**
+   * Authenticate using an existing valid token (e.g. passed via URL from another subdomain).
+   * Stores the token locally and validates it with the server.
+   * Returns true if the token was valid and authentication succeeded.
+   */
+  async authenticateWithToken(token: string): Promise<boolean> {
+    try {
+      const response = await this.api.post<TokenValidation>(
+        '/guest-auth/validate-token',
+        {},
+        { headers: { 'x-guest-token': token } }
+      );
+
+      if (response.success && response.data?.valid) {
+        this.storeToken(token);
+        this._isAuthenticated.set(true);
+        this._identifier.set(response.data.identifier || null);
+        this._identifierType.set(response.data.type || null);
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Get the current stored token (for cross-domain transfer)
+   */
+  getToken(): string | null {
+    return this.getStoredToken();
+  }
+
+  /**
    * Logout guest user
    */
   logout(): void {

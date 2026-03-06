@@ -425,7 +425,10 @@ export class StorefrontPurchasesComponent implements OnInit {
       window.location.href = this.subdomainService.getMainSiteUrl() + '/library';
     } else if (this.guestAccess.isAuthenticated()) {
       // Guest users go to guest all-purchases page
-      window.location.href = this.subdomainService.getMainSiteUrl() + '/guest/purchases';
+      // Pass the guest token via URL so the main domain can authenticate without re-verification
+      const token = this.guestAccess.getToken();
+      const url = this.subdomainService.getMainSiteUrl() + '/guest/purchases';
+      window.location.href = token ? `${url}?token=${encodeURIComponent(token)}` : url;
     }
   }
 
