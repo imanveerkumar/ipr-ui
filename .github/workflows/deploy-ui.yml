@@ -4,7 +4,7 @@
 # ║  Triggers:                                                                 ║
 # ║    • push to development  → auto-deploy to Development                     ║
 # ║    • push to main         → auto-deploy to Production                      ║
-# ║    • workflow_dispatch     → manually deploy ANY branch to ANY environment  ║
+# ║    • workflow_dispatch     → manually deploy ANY branch to ANY environment ║
 # ║                                                                            ║
 # ║  Features:                                                                 ║
 # ║    • Concurrency control per environment (queues, never cancels)            ║
