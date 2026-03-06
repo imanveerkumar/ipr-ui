@@ -1954,16 +1954,6 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       <div class="mobile-menu-header">
         <a class="logo" (click)="handleLogoClick()">
           <span class="logo-text">StoresCraft</span>
-          <div class="mascot">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="48" fill="white" stroke="black" stroke-width="3"/>
-              <path d="M30 40C30 40 35 35 40 40" stroke="black" stroke-width="3" stroke-linecap="round"/>
-              <path d="M60 40C60 40 65 35 70 40" stroke="black" stroke-width="3" stroke-linecap="round"/>
-              <path d="M30 65C30 65 50 80 70 65" stroke="black" stroke-width="3" stroke-linecap="round"/>
-              <path d="M75 55L90 45" stroke="black" stroke-width="3" stroke-linecap="round"/>
-              <circle cx="85" cy="40" r="2" fill="black"/>
-            </svg>
-          </div>
         </a>
         <button class="mobile-menu-close" (click)="closeMobileMenu()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
