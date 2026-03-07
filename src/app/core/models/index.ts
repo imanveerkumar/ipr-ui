@@ -157,3 +157,23 @@ export interface PaginatedResponse<T> {
     hasPreviousPage: boolean;
   };
 }
+
+// ─── UI Messages ────────────────────────────────────────────────────────────
+
+export type UiMessageType = 'SALE' | 'TIP' | 'BANNER' | 'ANNOUNCEMENT' | 'NOTE';
+
+export interface UiMessage {
+  id: string;
+  type: UiMessageType;
+  placement: string;
+  title: string;
+  body?: string;
+  ctaText?: string;
+  ctaUrl?: string;
+  priority: number;
+  dismissible: boolean;
+}
+
+export interface UiMessagesResponse {
+  messages: UiMessage[];
+}

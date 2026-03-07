@@ -3,13 +3,31 @@ import { RouterLink, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AuthService } from '../../core/services/auth.service';
+import { UiMessageService } from '../../core/services/ui-message.service';
+import { UiNotificationContainerComponent, UiBannerComponent, UiTipCardComponent } from '../../shared/components/ui-messages';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, UiNotificationContainerComponent, UiBannerComponent, UiTipCardComponent],
   template: `
+    <!-- UI Messages: Top Banners -->
+    @for (msg of uiMessages.topBanners(); track msg.id) {
+      <app-ui-banner [message]="msg" (dismissed)="onDismissMessage($event)" />
+    }
+
     <div class="min-h-screen font-sans antialiased">
+      <!-- Homepage Cards (tips, promos) -->
+      @if (uiMessages.homepageCards().length > 0) {
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (msg of uiMessages.homepageCards(); track msg.id) {
+              <app-ui-tip-card [message]="msg" (dismissed)="onDismissMessage($event)" />
+            }
+          </div>
+        </div>
+      }
+
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
         <div class="hero-card bg-[#F9F4EB] border-2 border-black rounded-[2rem] mx-4 md:mx-8 lg:mx-12 mt-4 relative">
@@ -670,6 +688,14 @@ import { AuthService } from '../../core/services/auth.service';
         </div>
       </section>
     </div>
+
+    <!-- UI Messages: Footer Banners -->
+    @for (msg of uiMessages.footerBanners(); track msg.id) {
+      <app-ui-banner [message]="msg" (dismissed)="onDismissMessage($event)" />
+    }
+
+    <!-- UI Messages: Toasts -->
+    <app-ui-notification-container />
   `,
   styles: [`
     .font-dm-sans {
@@ -689,6 +715,7 @@ export class HomeComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
   authService = inject(AuthService);
   private router = inject(Router);
+  readonly uiMessages = inject(UiMessageService);
 
   constructor() {
     // Use effect to react to auth state changes
@@ -835,7 +862,13 @@ export class HomeComponent implements OnInit {
     },
   ];
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.uiMessages.loadMessages('homepage');
+  }
+
+  onDismissMessage(messageId: string): void {
+    this.uiMessages.dismiss(messageId);
+  }
 
   toggleFaq(id: number) {
     const faq = this.faqs.find(f => f.id === id);

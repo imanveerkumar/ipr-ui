@@ -41,99 +41,6 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       z-index: 50;
     }
 
-    /* === PROMO BANNER === */
-    .promo-banner {
-      background-color: var(--star-blue);
-      background-image: 
-        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
-      background-size: 20px 20px;
-      color: #fff;
-      text-align: center;
-      padding: 8px 2.5rem 8px 1rem;
-      font-size: 0.75rem;
-      letter-spacing: 0.3px;
-      position: relative;
-      border-bottom: 2px solid var(--text-black);
-    }
-
-    @media (min-width: 640px) {
-      .promo-banner {
-        padding: 10px 1rem;
-        font-size: 0.8125rem;
-      }
-    }
-
-    .promo-text {
-      font-family: 'DM Sans', sans-serif;
-      display: inline-block;
-    }
-
-    .promo-highlight {
-      font-family: 'Caveat', cursive;
-      font-size: 1rem;
-      color: var(--btn-yellow);
-    }
-
-    @media (min-width: 640px) {
-      .promo-highlight {
-        font-size: 1.25rem;
-      }
-    }
-
-    .promo-link {
-      color: var(--btn-yellow);
-      text-decoration: none;
-      font-weight: 600;
-      margin-left: 4px;
-      transition: opacity 0.2s;
-      display: inline-block;
-    }
-
-    @media (min-width: 640px) {
-      .promo-link {
-        margin-left: 8px;
-      }
-    }
-
-    .promo-link:hover {
-      opacity: 0.8;
-      text-decoration: underline;
-    }
-
-    .promo-close {
-      position: absolute;
-      right: 0.5rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255,255,255,0.2);
-      border: 2px solid rgba(255,255,255,0.3);
-      color: #fff;
-      cursor: pointer;
-      padding: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 6px;
-      transition: all 0.2s;
-    }
-
-    @media (min-width: 640px) {
-      .promo-close {
-        right: 1rem;
-        padding: 4px;
-      }
-    }
-
-    .promo-close:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    .promo-close svg {
-      width: 14px;
-      height: 14px;
-    }
-
     /* === MAIN HEADER === */
     .header {
       background-color: var(--bg-beige);
@@ -1621,21 +1528,6 @@ import { ConfirmService } from '../../../core/services/confirm.service';
   `],
   template: `
     <div class="header-wrapper">
-      <!-- Promo Banner -->
-      @if (showPromoBanner() && (!auth.isSignedIn() || !auth.isCreator())) {
-        <div class="promo-banner">
-          <span class="promo-text">
-            🎉 <span class="promo-highlight">New Year Sale!</span> Get 30% off on premium products
-            <a routerLink="/explore" class="promo-link">Shop Now →</a>
-          </span>
-          <button class="promo-close" (click)="closePromoBanner()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      }
-      
       <!-- Main Header -->
       <header class="header" [class.cart-open]="cartService.isOpen()">
         <div class="header-container">
@@ -2294,7 +2186,6 @@ export class NavbarComponent implements OnDestroy {
   profileMenuOpen = signal(false);
   mobileMenuOpen = signal(false);
   isScrolled = signal(false);
-  showPromoBanner = signal(true);
   
   // Desktop search state
   showSearchDropdown = signal(false);
@@ -2556,10 +2447,6 @@ export class NavbarComponent implements OnDestroy {
   getUserName(): string {
     const email = this.auth.user()?.email;
     return email ? email.split('@')[0] : 'User';
-  }
-
-  closePromoBanner() {
-    this.showPromoBanner.set(false);
   }
 
   toggleProfileMenu(event: Event) {
