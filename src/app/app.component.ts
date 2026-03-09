@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { CartSidebarComponent } from './pages/storefront/cart-sidebar.component';
@@ -45,8 +46,16 @@ export class AppComponent implements OnInit {
   subdomainService = inject(SubdomainService);
   storeContext = inject(StoreContextService);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   async ngOnInit() {
+    // Scroll to top on every navigation
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      });
+
     // Initialize auth state
     this.authService.init();
 
