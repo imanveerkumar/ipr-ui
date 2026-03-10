@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
+import { WishlistService } from '../../../core/services/wishlist.service';
 import { 
   ExploreService, 
   SearchSuggestions, 
@@ -670,7 +671,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.5);
-      z-index: 45;
+      z-index: 51;
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s;
@@ -1739,14 +1740,19 @@ import { ConfirmService } from '../../../core/services/confirm.service';
                   </button>
                 }
 
-                @if (auth.isSignedIn()) {
-                  <!-- Favorites -->
+                <!-- Wishlist (all users, hidden on homepage) -->
+                @if (!isHomePage()) {
                   <a class="icon-btn" routerLink="/wishlist" routerLinkActive="active">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                     </svg>
+                    @if (wishlistService.count() > 0) {
+                      <span class="icon-btn-badge">{{ wishlistService.count() > 99 ? '99+' : wishlistService.count() }}</span>
+                    }
                   </a>
-                  
+                }
+
+                @if (auth.isSignedIn()) {
                   <!-- Profile -->
                   <div class="profile-container">
                     <button 
@@ -1907,18 +1913,20 @@ import { ConfirmService } from '../../../core/services/confirm.service';
               }
             </button>
           }
+          @if (!isHomePage()) {
+            <a routerLink="/wishlist" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+              </svg>
+              Wishlist
+            </a>
+          }
           @if (auth.isSignedIn()) {
             <a routerLink="/library" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
               My Library
-            </a>
-            <a routerLink="/wishlist" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-              </svg>
-              Wishlist
             </a>
             @if (auth.isCreator()) {
               <a routerLink="/dashboard" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
@@ -2181,6 +2189,7 @@ export class NavbarComponent implements OnDestroy {
   private subdomainService = inject(SubdomainService);
   private router = inject(Router);
   cartService = inject(CartService);
+  wishlistService = inject(WishlistService);
   confirmService = inject(ConfirmService);
   
   profileMenuOpen = signal(false);

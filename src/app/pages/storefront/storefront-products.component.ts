@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
+import { WishlistButtonComponent } from '../../shared/components/wishlist-button/wishlist-button.component';
 import { StoreContextService } from '../../core/services/store-context.service';
 import { CartService } from '../../core/services/cart.service';
 import { CheckoutService } from '../../core/services/checkout.service';
@@ -13,7 +14,7 @@ import { Product } from '../../core/models';
 @Component({
   selector: 'app-storefront-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, MasonryGridComponent],
+  imports: [CommonModule, FormsModule, MasonryGridComponent, WishlistButtonComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Mobile-First Page Header -->
@@ -147,6 +148,9 @@ import { Product } from '../../core/models';
                       </span>
                     </div>
                   }
+
+                  <!-- Wishlist button -->
+                  <app-wishlist-button [productId]="product.id" size="sm" class="absolute top-2 right-2 sm:top-3 sm:right-3 z-[5]" />
 
                 </div>
 

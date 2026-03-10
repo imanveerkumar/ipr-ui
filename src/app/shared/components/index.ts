@@ -15,3 +15,6 @@ export type { GridColumn, GridPagination, GridDataRequest } from './data-grid/da
 
 // UI Messages
 export * from './ui-messages';
+
+// Wishlist
+export * from './wishlist-button/wishlist-button.component';

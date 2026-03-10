@@ -19,14 +19,14 @@ type ViewState = 'cart' | 'checkout';
     <!-- Overlay -->
     @if (cartService.isOpen()) {
       <div 
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[51] transition-opacity duration-300"
         (click)="handleOverlayClick()"
       ></div>
     }
 
     <!-- Cart Panel - Full screen on mobile, sidebar on desktop -->
     <div 
-      class="fixed z-50 bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]
+      class="fixed z-[52] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]
              bottom-0 left-0 right-0 h-[92vh] rounded-t-[2rem]
              md:top-0 md:right-0 md:left-auto md:bottom-auto md:h-full md:w-full md:max-w-md md:rounded-none"
       [class.translate-y-full]="!cartService.isOpen()"

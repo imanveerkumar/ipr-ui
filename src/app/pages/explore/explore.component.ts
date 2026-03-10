@@ -18,6 +18,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
 import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
+import { WishlistButtonComponent } from '../../shared/components/wishlist-button/wishlist-button.component';
 
 type ContentFilter = 'all' | 'products' | 'stores' | 'creators';
 type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
@@ -25,7 +26,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MasonryGridComponent],
+  imports: [CommonModule, FormsModule, RouterLink, MasonryGridComponent, WishlistButtonComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
 
@@ -506,6 +507,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                       >
                         -{{ exploreService.getDiscountPercentage(asProduct(item.data).price, asProduct(item.data).compareAtPrice!) }}%
                       </div>
+                      <!-- Wishlist button -->
+                      <app-wishlist-button [productId]="asProduct(item.data).id" [product]="asProduct(item.data)" size="sm" class="absolute top-2 right-2 z-[25] md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200" />
                     </div>
                     <!-- Desktop: minimal — title + price only -->
                     <div class="hidden md:block px-2.5 pt-2 pb-2.5">

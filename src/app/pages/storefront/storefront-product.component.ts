@@ -10,11 +10,12 @@ import { SubdomainService } from '../../core/services/subdomain.service';
 import { CartService } from '../../core/services/cart.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { Product } from '../../core/models';
+import { WishlistButtonComponent } from '../../shared/components/wishlist-button/wishlist-button.component';
 
 @Component({
   selector: 'app-storefront-product',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, WishlistButtonComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       @if (loading()) {
@@ -253,6 +254,7 @@ import { Product } from '../../core/models';
 
               <!-- Copy & Share -->
               <div class="flex gap-2 mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-gray-100">
+                <app-wishlist-button [productId]="product()!.id" size="md" />
                 <button
                   (click)="copyUrl()"
                   class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-200 active:bg-gray-300 transition-colors min-h-[44px]"

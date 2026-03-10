@@ -19,3 +19,6 @@ export * from './global-loader.service';
 
 // UI Messages
 export * from './ui-message.service';
+
+// Wishlist
+export * from './wishlist.service';

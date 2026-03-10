@@ -9,11 +9,12 @@ import { AuthService } from '../../core/services/auth.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
 import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
+import { WishlistButtonComponent } from '../../shared/components/wishlist-button/wishlist-button.component';
 
 @Component({
   selector: 'app-store',
   standalone: true,
-  imports: [CommonModule, RouterLink, MasonryGridComponent],
+  imports: [CommonModule, RouterLink, MasonryGridComponent, WishlistButtonComponent],
   template: `
     <div class="min-h-screen bg-[#F9F4EB] font-sans antialiased">
       @if (loading()) {
@@ -198,6 +199,9 @@ import { MasonryGridComponent } from '../../shared/components/masonry-grid/mason
                         -{{ getProductDiscount(product) }}%
                       </div>
                     }
+
+                    <!-- Wishlist button -->
+                    <app-wishlist-button [productId]="product.id" [product]="product" size="sm" class="absolute top-2 right-2 z-[5] md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200" />
 
                     <!-- Desktop hover overlay -->
                     <div *ngIf="product.price > 0" class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 hidden md:flex items-end justify-center opacity-0 group-hover:opacity-100 p-3">

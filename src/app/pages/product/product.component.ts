@@ -9,11 +9,12 @@ import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
+import { WishlistButtonComponent } from '../../shared/components/wishlist-button/wishlist-button.component';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, WishlistButtonComponent],
   template: `
     <div class="min-h-screen bg-[#F9F4EB] font-sans antialiased">
       @if (loading()) {
@@ -233,6 +234,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
               <!-- Share & Copy -->
               <div class="bg-white border-2 border-black rounded-2xl p-4 shadow-[3px_3px_0px_0px_#000]">
                 <div class="flex gap-2">
+                  <app-wishlist-button [productId]="product()!.id" [product]="product()!" size="md" />
                   <button
                     (click)="copyUrl()"
                     class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#F9F4EB] border-2 border-black rounded-lg text-sm font-bold text-[#111111] hover:bg-[#FFC60B] transition-colors"
