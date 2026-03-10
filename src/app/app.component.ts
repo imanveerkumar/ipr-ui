@@ -8,13 +8,15 @@ import { CartSidebarComponent } from './pages/storefront/cart-sidebar.component'
 import { ToasterComponent } from './shared/components/toaster/toaster.component';
 import { GlobalLoaderComponent } from './shared/components/global-loader/global-loader.component';
 import { AuthService, SubdomainService, StoreContextService } from './core/services';
+import { UiMessageService } from './core/services/ui-message.service';
+import { UiBannerComponent } from './shared/components/ui-messages';
 import { StorefrontLayoutComponent } from './pages/storefront/storefront-layout.component';
 import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent, StorefrontLayoutComponent, CartSidebarComponent, ToasterComponent, GlobalLoaderComponent, ConfirmModalComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, FooterComponent, StorefrontLayoutComponent, CartSidebarComponent, ToasterComponent, GlobalLoaderComponent, ConfirmModalComponent, UiBannerComponent],
   template: `
     @if (subdomainService.isStorefront()) {
       <!-- Storefront Mode: Show store-specific layout -->
@@ -22,6 +24,10 @@ import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm
     } @else {
       <!-- Main Site Mode: Show normal layout -->
       <div class="min-h-screen flex flex-col">
+        <!-- Sale / Top Banners — rendered above the sticky navbar -->
+        @for (msg of uiMessages.topBanners(); track msg.id) {
+          <app-ui-banner [message]="msg" (dismissed)="onDismissBanner($event)" />
+        }
         <app-navbar />
         <main class="flex-1">
           <router-outlet />
@@ -45,6 +51,7 @@ import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm
 export class AppComponent implements OnInit {
   subdomainService = inject(SubdomainService);
   storeContext = inject(StoreContextService);
+  readonly uiMessages = inject(UiMessageService);
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -63,5 +70,9 @@ export class AppComponent implements OnInit {
     if (this.subdomainService.isStorefront()) {
       await this.storeContext.initialize();
     }
+  }
+
+  onDismissBanner(messageId: string): void {
+    this.uiMessages.dismiss(messageId);
   }
 }

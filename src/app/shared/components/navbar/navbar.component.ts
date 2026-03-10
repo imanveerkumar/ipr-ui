@@ -1880,7 +1880,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
             </div>
           }
           <div class="mobile-user-details">
-            <p class="mobile-user-greeting">Welcome back! 👋</p>
+            <p class="mobile-user-greeting">Welcome back!</p>
             <p class="mobile-user-email">{{ auth.user()?.email }}</p>
           </div>
         </div>
