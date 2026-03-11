@@ -82,14 +82,6 @@ import { RouterLink } from '@angular/router';
             </div>
           </div>
 
-          <!-- Tech & Values -->
-          <div class="card">
-            <h2 class="section-heading">Built With Modern Tech</h2>
-            <p class="card-text">
-              StoresCraft is built with Angular and NestJS, backed by PostgreSQL and Prisma, with Clerk for secure authentication and AWS S3 for reliable file storage. We care about performance, security, and a delightful user experience.
-            </p>
-          </div>
-
           <!-- CTA -->
           <div class="card cta-card">
             <h2 class="cta-heading">Ready to start selling?</h2>
@@ -166,7 +158,8 @@ import { RouterLink } from '@angular/router';
     .card {
       background: #fff;
       border: 2px solid #111;
-      box-shadow: 4px 4px 0px 0px #111;
+      /* shadow removed per request */
+      box-shadow: none;
       padding: 2.5rem 2rem;
       margin-bottom: 1.5rem;
     }
