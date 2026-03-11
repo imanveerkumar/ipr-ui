@@ -10,9 +10,37 @@ export interface User {
   avatarUrl?: string;
   websiteUrl?: string;
   twitterHandle?: string;
+  instagramHandle?: string;
+  youtubeHandle?: string;
+  linkedinUrl?: string;
+  githubHandle?: string;
   role: 'USER' | 'CREATOR' | 'ADMIN';
   createdAt: string;
   updatedAt: string;
+}
+
+export interface UserSettings {
+  id: string;
+  userId: string;
+  language: string;
+  timezone: string;
+  payoutProvider?: string;
+  payoutAccountId?: string;
+  payoutCurrency: string;
+  payoutSchedule: string;
+  taxId?: string;
+  profilePublic: boolean;
+  showSalesMetrics: boolean;
+  showFollowerCount: boolean;
+  hideContactEmail: boolean;
+  twoFactorEnabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AllSettings {
+  profile: User;
+  settings: UserSettings;
 }
 
 export interface Store {

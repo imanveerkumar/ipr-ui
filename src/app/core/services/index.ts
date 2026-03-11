@@ -22,3 +22,6 @@ export * from './ui-message.service';
 
 // Wishlist
 export * from './wishlist.service';
+
+// Settings
+export * from './settings.service';
