@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy, inject, signal, ElementRef, ViewChild, AfterViewInit, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ElementRef, ViewChild, AfterViewInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { UiMessageService } from '../../core/services/ui-message.service';
 import {
   ExploreService,
   ExploreProduct,
@@ -798,26 +799,29 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </div>
           </div>
 
-          <!-- CTA Section -->
-          <section *ngIf="!isLoading() && feedItems().length > 0" class="px-3 sm:px-4 md:px-6 pb-8">
-            <div class="bg-[#68E079] border-2 border-black rounded-2xl p-6 md:p-10 text-center relative overflow-hidden shadow-[6px_6px_0px_0px_#000]">
-              <h2 class="font-dm-sans text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] mb-2 relative z-10">
-                Want to sell your products?
-              </h2>
-              <p class="text-sm md:text-base text-[#111111]/70 mb-5 font-medium relative z-10">
-                Join creators and start selling today
-              </p>
-              <a
-                routerLink="/become-creator"
-                (click)="handleCreatorCtaClick($event)"
-                class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
-              >
-                Start selling for free
-              </a>
-              <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/20 rounded-full border-2 border-black"></div>
-              <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/15 rounded-full border-2 border-black"></div>
-            </div>
-          </section>
+          <!-- CTA Section (from API) -->
+          <ng-container *ngIf="exploreCta() as cta">
+            <section *ngIf="!isLoading() && feedItems().length > 0" class="px-3 sm:px-4 md:px-6 pb-8">
+              <div class="bg-[#68E079] border-2 border-black rounded-2xl p-6 md:p-10 text-center relative overflow-hidden shadow-[6px_6px_0px_0px_#000]">
+                <h2 class="font-dm-sans text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] mb-2 relative z-10">
+                  {{ cta.title }}
+                </h2>
+                <p *ngIf="cta.body" class="text-sm md:text-base text-[#111111]/70 mb-5 font-medium relative z-10">
+                  {{ cta.body }}
+                </p>
+                <a
+                  *ngIf="cta.ctaText && cta.ctaUrl"
+                  [href]="cta.ctaUrl"
+                  (click)="handleCreatorCtaClick($event)"
+                  class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
+                >
+                  {{ cta.ctaText }}
+                </a>
+                <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/20 rounded-full border-2 border-black"></div>
+                <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/15 rounded-full border-2 border-black"></div>
+              </div>
+            </section>
+          </ng-container>
         </main>
       </div>
     </div>
@@ -1397,12 +1401,17 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   // sidebar state for desktop collapse
   sidebarCollapsed = signal(false);
 
+  // UI Messages
+  uiMessages = inject(UiMessageService);
+  exploreCta = computed(() => this.uiMessages.byPlacement('explore-cta')[0] ?? null);
+
   toggleSidebar() {
     this.sidebarCollapsed.set(!this.sidebarCollapsed());
   }
 
   // Lifecycle
   async ngOnInit() {
+    this.uiMessages.loadMessages('explore');
     this.route.queryParams.subscribe(async params => {
       const type = params['type'] as ContentFilter | undefined;
       if (type && ['all', 'products', 'stores', 'creators'].includes(type)) {

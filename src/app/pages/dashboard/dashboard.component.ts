@@ -6,7 +6,8 @@ import { ProductService } from '../../core/services/product.service';
 import { ApiService } from '../../core/services/api.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { AuthService } from '../../core/services/auth.service';
-import { Store, Product } from '../../core/models/index';
+import { UiMessageService } from '../../core/services/ui-message.service';
+import { Store, Product, UiMessage } from '../../core/models/index';
 
 interface SalesStats {
   totalSales: number;
@@ -469,28 +470,68 @@ interface SalesStats {
             </div>
           </div>
 
-          <!-- Tips Section -->
-          <div class="bg-[#FFC60B] border-2 border-black p-4 md:p-5 shadow-[4px_4px_0px_0px_#000]">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <div class="flex items-start gap-3">
-                <div class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shrink-0">
-                  <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="font-bold text-[#111111] mb-0.5">Pro Tip</h3>
-                  <p class="text-sm text-[#111111]/80">Add high-quality cover images to your products to increase conversions by up to 40%!</p>
+          <!-- Dynamic UI Messages Section -->
+          @if (uiMessages.loading()) {
+            <div class="border-2 border-black p-4 md:p-5 bg-[#F9F4EB] animate-pulse">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-[#111111]/10 border-2 border-black shrink-0"></div>
+                <div class="flex-1">
+                  <div class="h-4 w-32 bg-[#111111]/10 mb-2"></div>
+                  <div class="h-3 w-64 bg-[#111111]/10"></div>
                 </div>
               </div>
-              <a routerLink="/dashboard/products" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
-                Update Products
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </a>
             </div>
-          </div>
+          } @else {
+            @for (msg of uiMessages.inlineTips(); track msg.id) {
+              <div [class]="getMessageBgClass(msg.type) + ' border-2 border-black p-4 md:p-5 shadow-[4px_4px_0px_0px_#000] mb-4'">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div class="flex items-start gap-3 flex-1 min-w-0">
+                    <div [class]="getMessageIconBgClass(msg.type) + ' w-10 h-10 border-2 border-black flex items-center justify-center shrink-0'">
+                      <svg class="w-5 h-5" [class]="getMessageIconColorClass(msg.type)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        @switch (msg.type) {
+                          @case ('TIP') {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                          }
+                          @case ('SALE') {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                          }
+                          @case ('ANNOUNCEMENT') {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                          }
+                          @default {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                          }
+                        }
+                      </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 [class]="'font-bold mb-0.5 ' + getMessageTextClass(msg.type)">{{ msg.title }}</h3>
+                      @if (msg.body) {
+                        <p [class]="'text-sm ' + getMessageBodyClass(msg.type)">{{ msg.body }}</p>
+                      }
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    @if (msg.ctaText && msg.ctaUrl) {
+                      <a [href]="msg.ctaUrl" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
+                        {{ msg.ctaText }}
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                      </a>
+                    }
+                    @if (msg.dismissible) {
+                      <button type="button" (click)="uiMessages.dismiss(msg.id)" class="w-8 h-8 flex items-center justify-center border-2 border-black bg-white hover:bg-[#F9F4EB] transition-colors" aria-label="Dismiss">
+                        <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          }
         </div>
       </section>
     </div>
@@ -506,6 +547,7 @@ interface SalesStats {
 })
 export class DashboardComponent implements OnInit {
   auth = inject(AuthService);
+  uiMessages = inject(UiMessageService);
   stores = signal<Store[]>([]);
   products = signal<Product[]>([]);
   loading = signal(true);
@@ -522,6 +564,7 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.uiMessages.loadMessages('dashboard');
     try {
       const [stores, products, statsResponse] = await Promise.all([
         this.storeService.getMyStores(),
@@ -568,6 +611,40 @@ export class DashboardComponent implements OnInit {
 
   getStoreInitial(name: string): string {
     return name ? name.charAt(0).toUpperCase() : 'S';
+  }
+
+  getMessageBgClass(type: UiMessage['type']): string {
+    const map: Record<string, string> = {
+      TIP: 'bg-[#FFC60B]',
+      SALE: 'bg-[#68E079]',
+      ANNOUNCEMENT: 'bg-[#2B57D6]',
+      BANNER: 'bg-[#7C3AED]',
+      NOTE: 'bg-[#F9F4EB]',
+    };
+    return map[type] ?? 'bg-[#F9F4EB]';
+  }
+
+  getMessageIconBgClass(type: UiMessage['type']): string {
+    const map: Record<string, string> = {
+      TIP: 'bg-white',
+      SALE: 'bg-white',
+      ANNOUNCEMENT: 'bg-white',
+      BANNER: 'bg-white',
+      NOTE: 'bg-white',
+    };
+    return map[type] ?? 'bg-white';
+  }
+
+  getMessageIconColorClass(type: UiMessage['type']): string {
+    return 'text-[#111111]';
+  }
+
+  getMessageTextClass(type: UiMessage['type']): string {
+    return type === 'ANNOUNCEMENT' || type === 'BANNER' ? 'text-white' : 'text-[#111111]';
+  }
+
+  getMessageBodyClass(type: UiMessage['type']): string {
+    return type === 'ANNOUNCEMENT' || type === 'BANNER' ? 'text-white/80' : 'text-[#111111]/80';
   }
 
   navigateTo(path: string): void {
