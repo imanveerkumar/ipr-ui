@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UiMessageService } from '../../../core/services/ui-message.service';
 import { UiBannerComponent } from './ui-banner.component';
-import { UiTipCardComponent } from './ui-tip-card.component';
+
 
 /**
  * Container component that renders all UI messages for the current context.
@@ -21,7 +21,7 @@ import { UiTipCardComponent } from './ui-tip-card.component';
 @Component({
   selector: 'app-ui-notification-container',
   standalone: true,
-  imports: [CommonModule, RouterLink, UiBannerComponent, UiTipCardComponent],
+  imports: [CommonModule, RouterLink, UiBannerComponent],
   template: `
     <!-- Top banners (handled by AppComponent - above navbar) -->
 

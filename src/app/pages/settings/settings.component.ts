@@ -107,7 +107,7 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
                     <div class="form-group full-width">
                       <label class="form-label">Bio</label>
                       <textarea class="form-input textarea" placeholder="Tell the world about yourself..." [(ngModel)]="profileForm.bio" maxlength="500" rows="3"></textarea>
-                      <span class="form-hint">{{ (profileForm.bio?.length || 0) }}/500</span>
+                      <span class="form-hint">{{ (profileForm.bio.length || 0) }}/500</span>
                     </div>
 
                     <!-- Website -->
