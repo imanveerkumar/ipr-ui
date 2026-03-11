@@ -89,6 +89,7 @@ export class UiMessageService {
     } catch (err) {
       console.error('Failed to load UI messages:', err);
       this._messages.set([]);
+      this._currentContext = null;
     } finally {
       this._loading.set(false);
     }

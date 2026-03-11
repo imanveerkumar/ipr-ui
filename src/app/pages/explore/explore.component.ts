@@ -810,8 +810,18 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   {{ cta.body }}
                 </p>
                 <a
-                  *ngIf="cta.ctaText && cta.ctaUrl"
+                  *ngIf="cta.ctaText && cta.ctaUrl && isExternalUrl(cta.ctaUrl)"
                   [href]="cta.ctaUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  (click)="handleCreatorCtaClick($event)"
+                  class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
+                >
+                  {{ cta.ctaText }}
+                </a>
+                <a
+                  *ngIf="cta.ctaText && cta.ctaUrl && !isExternalUrl(cta.ctaUrl)"
+                  [routerLink]="cta.ctaUrl"
                   (click)="handleCreatorCtaClick($event)"
                   class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
                 >
@@ -1917,6 +1927,10 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.cardStyleCache.set(id, { r: c.r, g: c.g, b: c.b, style });
     return style;
+  }
+
+  isExternalUrl(url: string): boolean {
+    return /^https?:\/\//i.test(url);
   }
 
   async handleCreatorCtaClick(event: Event) {

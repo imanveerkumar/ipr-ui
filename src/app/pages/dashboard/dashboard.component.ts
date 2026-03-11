@@ -513,12 +513,21 @@ interface SalesStats {
                   </div>
                   <div class="flex items-center gap-2 shrink-0">
                     @if (msg.ctaText && msg.ctaUrl) {
-                      <a [href]="msg.ctaUrl" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
-                        {{ msg.ctaText }}
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                      </a>
+                      @if (isExternalUrl(msg.ctaUrl!)) {
+                        <a [href]="msg.ctaUrl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
+                          {{ msg.ctaText }}
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                          </svg>
+                        </a>
+                      } @else {
+                        <a [routerLink]="msg.ctaUrl" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
+                          {{ msg.ctaText }}
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                          </svg>
+                        </a>
+                      }
                     }
                     @if (msg.dismissible) {
                       <button type="button" (click)="uiMessages.dismiss(msg.id)" class="w-8 h-8 flex items-center justify-center border-2 border-black bg-white hover:bg-[#F9F4EB] transition-colors" aria-label="Dismiss">
@@ -607,6 +616,10 @@ export class DashboardComponent implements OnInit {
       return (value / 1000).toFixed(1) + 'K';
     }
     return value.toFixed(0);
+  }
+
+  isExternalUrl(url: string): boolean {
+    return /^https?:\/\//i.test(url);
   }
 
   getStoreInitial(name: string): string {
