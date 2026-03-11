@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { User } from '../models';
 import { ApiService } from './api.service';
 import { GlobalLoaderService } from './global-loader.service';
+import { WishlistService } from './wishlist.service';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,7 @@ export class AuthService {
   readonly isAdmin = computed(() => this._user()?.role === 'ADMIN');
 
   private globalLoader = inject(GlobalLoaderService);
+  private wishlistService = inject(WishlistService);
 
   constructor(private apiService: ApiService, private router: Router) {}
 
@@ -66,6 +68,8 @@ export class AuthService {
         this._clerkUser.set(this.clerk.user);
         this._isSignedIn.set(true);
         await this.fetchCurrentUser();
+        // Sync anonymous wishlist & hydrate server state
+        this.wishlistService.syncAfterLogin().catch(() => {});
         this.handlePostAuthRedirect();
       }
 
@@ -88,6 +92,8 @@ export class AuthService {
             this._clerkUser.set(event.user);
             this._isSignedIn.set(true);
             await this.fetchCurrentUser();
+            // Sync anonymous wishlist & hydrate server state
+            this.wishlistService.syncAfterLogin().catch(() => {});
             this.handlePostAuthRedirect();
             
             // Hide loader after a brief delay
@@ -164,6 +170,8 @@ export class AuthService {
       await this.clerk.signOut();
       this._user.set(null);
       this._isSignedIn.set(false);
+      // Clear wishlist state on sign out
+      this.wishlistService.clear();
 
       // Navigate to home to ensure protected routes are no longer accessible
       try {

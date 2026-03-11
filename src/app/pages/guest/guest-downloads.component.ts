@@ -44,103 +44,125 @@ interface GuestOrder {
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="min-h-screen bg-gray-50 py-12">
-      <div class="max-w-4xl mx-auto px-4">
-        <!-- Header -->
-        <div class="text-center mb-8">
-          <div class="w-16 h-16 bg-gradient-to-br from-[#b8e6c9] to-[#d8f8e0] rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
-            </svg>
+    <div class="min-h-screen bg-white font-sans antialiased">
+
+      <!-- Hero Header -->
+      <section class="relative overflow-hidden">
+        <div class="bg-[#F9F4EB] border-b-2 border-black">
+          <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-10 md:pt-12 md:pb-14">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 md:w-16 md:h-16 bg-[#68E079] border-2 border-black flex items-center justify-center flex-shrink-0 shadow-[3px_3px_0px_0px_#000]">
+                <svg class="w-6 h-6 md:w-8 md:h-8 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+              </div>
+              <div>
+                <h1 class="font-display tracking-tighter text-3xl md:text-5xl font-bold text-[#111111] mb-1 leading-tight">
+                  Your Free Downloads
+                </h1>
+                <p class="text-[#111111]/60 font-medium text-sm md:text-base">
+                  Access your free downloads below
+                </p>
+              </div>
+            </div>
           </div>
-          <h1 class="text-3xl font-display font-bold text-gray-900 mb-2">Your Downloads</h1>
-          <p class="text-gray-600">Access your purchased files below</p>
         </div>
+      </section>
+
+      <!-- Content -->
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
 
         @if (loading()) {
           <!-- Loading State -->
-          <div class="card p-8">
-            <div class="animate-pulse space-y-4">
-              <div class="h-6 bg-gray-200 rounded w-1/3"></div>
-              <div class="h-24 bg-gray-200 rounded"></div>
-              <div class="h-24 bg-gray-200 rounded"></div>
-            </div>
+          <div class="bg-white border-2 border-black p-6 shadow-[4px_4px_0px_0px_#000] animate-pulse space-y-4">
+            <div class="h-5 bg-[#111111]/10 rounded w-1/3"></div>
+            <div class="h-24 bg-[#111111]/10 rounded"></div>
+            <div class="h-24 bg-[#111111]/10 rounded"></div>
           </div>
+
         } @else if (error()) {
           <!-- Error State -->
-          <div class="card p-12 text-center">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          <div class="bg-white border-2 border-black p-10 md:p-14 text-center shadow-[6px_6px_0px_0px_#FA4B28]">
+            <div class="w-16 h-16 bg-[#FA4B28] border-2 border-black flex items-center justify-center mx-auto mb-5">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
             </div>
-            <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ error() }}</h2>
-            <p class="text-gray-600 mb-6">
+            <h2 class="font-display text-xl md:text-2xl font-bold text-[#111111] mb-2">{{ error() }}</h2>
+            <p class="text-[#111111]/60 font-medium mb-8 max-w-md mx-auto">
               This download link may be invalid or expired. Please check your email for the correct link.
             </p>
-            <a routerLink="/" class="btn-primary">Go to Homepage</a>
+            <a routerLink="/" class="inline-flex items-center justify-center px-8 py-3 bg-[#FFC60B] text-[#111111] border-2 border-black font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
+              Go to Homepage
+            </a>
           </div>
+
         } @else if (order()) {
-          <!-- Order Details -->
-          <div class="card p-6 mb-6">
-            <div class="flex items-center justify-between mb-4">
+          <!-- Order Summary Card -->
+          <div class="bg-white border-2 border-black p-5 md:p-6 mb-6 shadow-[4px_4px_0px_0px_#000]">
+            <div class="flex items-start justify-between gap-4 flex-wrap mb-4">
               <div>
-                <p class="text-sm text-gray-500">Order ID</p>
-                <p class="font-mono text-gray-900">{{ order()!.id }}</p>
+                <p class="text-xs font-bold text-[#111111]/50 uppercase tracking-widest mb-1">Order ID</p>
+                <p class="font-mono text-sm font-bold text-[#111111]">{{ order()!.id }}</p>
               </div>
               <div class="text-right">
-                <p class="text-sm text-gray-500">Total Paid</p>
-                <p class="text-xl font-bold text-gray-900">₹{{ order()!.totalAmount / 100 }}</p>
+                <p class="text-xs font-bold text-[#111111]/50 uppercase tracking-widest mb-1">Total Paid</p>
+                <p class="text-2xl font-display font-bold text-[#111111]">₹{{ order()!.totalAmount / 100 }}</p>
               </div>
             </div>
-            <div class="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">
+            <div class="flex items-center gap-2 text-sm font-bold text-[#111111] bg-[#68E079] border-2 border-black px-3 py-2 w-fit">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
               </svg>
               <span>Payment Verified</span>
             </div>
           </div>
 
+          <!-- Section Heading -->
+          <h2 class="font-display tracking-tight text-xl font-bold text-[#111111] mb-4">Your Files</h2>
+
           <!-- Products -->
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">Your Files</h2>
           <div class="space-y-4">
             @for (item of order()!.items; track item.id) {
-              <div class="card p-6">
+              <div class="bg-white border-2 border-black p-5 md:p-6 shadow-[4px_4px_0px_0px_#000]">
                 <div class="flex items-start gap-4">
                   <!-- Product Image -->
                   @if (item.product.coverImageUrl) {
                     <img 
                       [src]="item.product.coverImageUrl" 
                       [alt]="item.product.title"
-                      class="w-20 h-20 object-cover rounded-xl flex-shrink-0"
+                      class="w-20 h-20 object-cover border-2 border-black flex-shrink-0"
                     >
                   } @else {
-                    <div class="w-20 h-20 bg-gradient-to-br from-[#b8e6c9] to-[#d8f8e0] rounded-xl flex-shrink-0 flex items-center justify-center">
-                      <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-20 h-20 bg-[#F9F4EB] border-2 border-black flex-shrink-0 flex items-center justify-center">
+                      <svg class="w-8 h-8 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                       </svg>
                     </div>
                   }
 
                   <!-- Product Details -->
-                  <div class="flex-1">
-                    <h3 class="font-semibold text-gray-900 mb-1">{{ item.product.title }}</h3>
-                    
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-display font-bold text-[#111111] text-base md:text-lg mb-1 leading-snug">{{ item.product.title }}</h3>
+
                     <!-- License Info -->
                     @if (getLicenseForProduct(item.product.id); as license) {
-                      <p class="text-xs text-gray-500 mb-3">
-                        Downloads: {{ license.downloadCount }} / {{ license.maxDownloads }}
-                      </p>
+                      <div class="inline-flex items-center gap-1.5 px-2 py-1 bg-[#F9F4EB] border border-black text-xs font-bold text-[#111111]/70 mb-3">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        {{ license.downloadCount }} / {{ license.maxDownloads }} downloads used
+                      </div>
                     }
 
                     <!-- Download Buttons -->
                     @if (item.product.files && item.product.files.length > 0) {
-                      <div class="flex flex-wrap gap-2">
+                      <div class="flex flex-wrap gap-2 mt-2">
                         @for (pf of item.product.files; track pf.id) {
                           <button 
                             (click)="downloadFile(item.product.id, pf.fileId, pf.file.filename)"
                             [disabled]="downloading() === pf.fileId"
-                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800 active:bg-gray-950 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-[#FFC60B] text-[#111111] border-2 border-black text-sm font-bold shadow-[3px_3px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_#000] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-[3px_3px_0px_0px_#000] transition-all"
                           >
                             @if (downloading() === pf.fileId) {
                               <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -149,17 +171,17 @@ interface GuestOrder {
                               </svg>
                               <span>Downloading...</span>
                             } @else {
-                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                              <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                               </svg>
-                              <span>{{ pf.file.filename }}</span>
-                              <span class="text-xs text-gray-400">({{ formatFileSize(pf.file.size) }})</span>
+                              <span class="truncate max-w-[160px]">{{ pf.file.filename }}</span>
+                              <span class="text-xs font-medium text-[#111111]/60 whitespace-nowrap">{{ formatFileSize(pf.file.size) }}</span>
                             }
                           </button>
                         }
                       </div>
                     } @else {
-                      <p class="text-sm text-gray-500">No files available</p>
+                      <p class="text-sm font-medium text-[#111111]/50">No files available</p>
                     }
                   </div>
                 </div>
@@ -167,25 +189,19 @@ interface GuestOrder {
             }
           </div>
 
-          <!-- Footer -->
-          <div class="mt-8 p-6 bg-white rounded-2xl border border-gray-100 text-center">
-            <p class="text-gray-600 mb-4">
-              Want to manage all your purchases in one place?
-            </p>
-            <a routerLink="/signup" class="btn-primary">Create an Account</a>
+          <!-- Footer CTA -->
+          <div class="mt-8 bg-[#F9F4EB] border-2 border-black p-6 md:p-8 text-center shadow-[4px_4px_0px_0px_#000]">
+            <p class="font-display font-bold text-[#111111] text-lg mb-1">Want to manage all your purchases?</p>
+            <p class="text-[#111111]/60 text-sm font-medium mb-6">Create an account and keep track of everything in one place.</p>
+            <a routerLink="/signup" class="inline-flex items-center justify-center px-8 py-3 bg-[#FFC60B] text-[#111111] border-2 border-black font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
+              Create an Account
+            </a>
           </div>
         }
       </div>
     </div>
   `,
-  styles: [`
-    .btn-primary {
-      @apply inline-flex items-center justify-center px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-colors;
-    }
-    .card {
-      @apply bg-white rounded-2xl border border-gray-100 shadow-sm;
-    }
-  `]
+  styles: []
 })
 export class GuestDownloadsComponent implements OnInit {
   order = signal<GuestOrder | null>(null);

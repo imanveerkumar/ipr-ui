@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-footer',
@@ -9,31 +8,6 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [CommonModule, RouterLink],
   template: `
     <footer class="footer">
-      <!-- TOP SECTION (RED with Grid) -->
-      <div class="footer-top" *ngIf="!authService.isSignedIn() || !authService.isCreator()">
-        <div class="wave-border-top"></div>
-        
-        <div class="cta-container">
-          <!-- Ticket -->
-          <div class="ticket">
-            <strong>CREATE</strong>
-            <span>Your Store</span>
-          </div>
-
-          <!-- Main CTA Button -->
-          <a routerLink="/become-creator" (click)="handleCreatorCtaClick($event)" class="book-btn">
-            <u>Get Started</u>
-          </a>
-
-          <!-- Starburst -->
-          <div class="starburst">
-            Sale!
-          </div>
-        </div>
-
-        <div class="wave-border"></div>
-      </div>
-
       <!-- BOTTOM SECTION (BEIGE) -->
       <div class="footer-bottom">
         <div class="bottom-content">
@@ -43,11 +17,11 @@ import { AuthService } from '../../../core/services/auth.service';
               More Info <span [class.rotated]="isExpanded">▼</span>
             </button>
             <div *ngIf="isExpanded" class="expanded-content">
-              <a href="#" class="footer-link">Privacy Policy</a>
-              <a href="#" class="footer-link">About</a>
-              <a href="#" class="footer-link">Contact Us</a>
-              <a href="#" class="footer-link">Terms of Service</a>
-              <a href="#" class="footer-link">FAQ</a>
+              <a routerLink="/privacy" class="footer-link">Privacy Policy</a>
+              <a routerLink="/about" class="footer-link">About</a>
+              <a routerLink="/contact" class="footer-link">Contact Us</a>
+              <a routerLink="/terms" class="footer-link">Terms of Service</a>
+              <a routerLink="/faq" class="footer-link">FAQ</a>
             </div>
           </div>
 
@@ -92,219 +66,13 @@ import { AuthService } from '../../../core/services/auth.service';
     :host {
       --bg-red: #FA4B28;
       --bg-beige: #F9F4EB;
-      --btn-yellow: #FFC60B;
-      --ticket-green: #68E079;
-      --star-blue: #2B57D6;
       --text-black: #111111;
-      --grid-line: rgba(0, 0, 0, 0.8);
       
       display: block;
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
       width: 100%;
       max-width: 100vw;
-    }
-
-    /* === TOP SECTION (RED) === */
-    .footer-top {
-      position: relative;
-      background-color: var(--bg-red);
-      background-image: 
-        linear-gradient(var(--grid-line) 2px, transparent 2px),
-        linear-gradient(90deg, var(--grid-line) 2px, transparent 2px);
-      background-size: 50px 50px;
-      background-position: center top;
-      padding: 60px 16px 100px 16px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      border-top: 2px solid var(--text-black);
-    }
-
-    @media (min-width: 768px) {
-      .footer-top {
-        background-size: 100px 100px;
-        padding: 80px 20px 120px 20px;
-      }
-    }
-
-    /* Scalloped Wave Border - Bottom */
-    .wave-border {
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      width: 100%;
-      height: 30px;
-      background-color: transparent;
-      background-image: radial-gradient(circle at 20px 0, transparent 20px, var(--bg-beige) 21px);
-      background-size: 40px 30px;
-      background-repeat: repeat-x;
-    }
-
-    @media (min-width: 768px) {
-      .wave-border {
-        height: 40px;
-        background-image: radial-gradient(circle at 25px 0, transparent 25px, var(--bg-beige) 26px);
-        background-size: 50px 40px;
-      }
-    }
-
-    /* Scalloped Wave Border - Top */
-    .wave-border-top {
-      position: absolute;
-      top: -1px;
-      left: 0;
-      width: 100%;
-      height: 25px;
-      background-image: radial-gradient(circle at 20px 25px, var(--bg-red) 20px, transparent 21px);
-      background-size: 40px 25px;
-      background-repeat: repeat-x;
-      z-index: 10;
-    }
-
-    @media (min-width: 768px) {
-      .wave-border-top {
-        height: 30px;
-        background-image: radial-gradient(circle at 25px 30px, var(--bg-red) 25px, transparent 26px);
-        background-size: 50px 30px;
-      }
-    }
-
-    /* CTA Container */
-    .cta-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 30px;
-      width: 100%;
-      max-width: 1000px;
-      position: relative;
-    }
-
-    @media (min-width: 768px) {
-      .cta-container {
-        flex-direction: row;
-        gap: 60px;
-      }
-    }
-
-    /* === TICKET === */
-    .ticket {
-      background-color: var(--ticket-green);
-      border: 2px solid var(--text-black);
-      padding: 12px 24px;
-      transform: rotate(-10deg);
-      box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      font-family: 'DM Sans', sans-serif;
-      text-transform: uppercase;
-      font-size: 12px;
-      line-height: 1.2;
-      position: relative;
-    }
-
-    @media (min-width: 768px) {
-      .ticket {
-        padding: 15px 30px;
-        font-size: 14px;
-      }
-    }
-
-    .ticket strong {
-      display: block;
-      font-size: 10px;
-      letter-spacing: 1px;
-      margin-bottom: 2px;
-    }
-
-    @media (min-width: 768px) {
-      .ticket strong {
-        font-size: 12px;
-      }
-    }
-
-    .ticket span {
-      font-family: 'Caveat', cursive;
-      font-size: 22px;
-      text-transform: none;
-      display: block;
-      transform: rotate(-5deg);
-    }
-
-    @media (min-width: 768px) {
-      .ticket span {
-        font-size: 28px;
-      }
-    }
-
-    /* === MAIN BUTTON === */
-    .book-btn {
-      background-color: var(--btn-yellow);
-      border: 3px solid var(--text-black);
-      padding: 12px 40px;
-      border-radius: 50px;
-      font-family: 'Caveat', cursive;
-      font-size: 32px;
-      color: var(--text-black);
-      text-decoration: none;
-      box-shadow: 6px 8px 0px var(--text-black);
-      transition: transform 0.2s, box-shadow 0.2s;
-      position: relative;
-      z-index: 5;
-      display: inline-block;
-    }
-
-    @media (min-width: 768px) {
-      .book-btn {
-        padding: 15px 60px;
-        font-size: 42px;
-        box-shadow: 8px 10px 0px var(--text-black);
-      }
-    }
-
-    .book-btn u {
-      text-decoration-thickness: 3px;
-    }
-
-    .book-btn:hover {
-      transform: translate(2px, 2px);
-      box-shadow: 4px 6px 0px var(--text-black);
-    }
-
-    @media (min-width: 768px) {
-      .book-btn:hover {
-        box-shadow: 6px 8px 0px var(--text-black);
-      }
-    }
-
-    /* === STARBURST === */
-    .starburst {
-      width: 90px;
-      height: 90px;
-      background: var(--star-blue);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-family: 'Caveat', cursive;
-      font-size: 24px;
-      transform: rotate(15deg);
-      clip-path: polygon(
-        20% 0%, 30% 10%, 45% 0%, 55% 10%, 70% 0%, 80% 10%, 95% 0%, 
-        100% 20%, 90% 30%, 100% 45%, 90% 55%, 100% 70%, 90% 80%, 100% 95%,
-        80% 100%, 70% 90%, 55% 100%, 45% 90%, 30% 100%, 20% 90%, 5% 100%, 
-        0% 80%, 10% 70%, 0% 55%, 10% 45%, 0% 30%, 10% 20%, 0% 5%
-      );
-    }
-
-    @media (min-width: 768px) {
-      .starburst {
-        width: 120px;
-        height: 120px;
-        font-size: 32px;
-      }
     }
 
     /* === BOTTOM SECTION (BEIGE) === */
@@ -522,15 +290,7 @@ export class FooterComponent {
   currentYear = new Date().getFullYear();
   isExpanded = false;
 
-  constructor(public authService: AuthService) {}
-
   toggleExpanded() {
     this.isExpanded = !this.isExpanded;
-  }
-
-  async handleCreatorCtaClick(event: Event) {
-    if (this.authService.isSignedIn()) return;
-    event.preventDefault();
-    await this.authService.openCreatorSignup();
   }
 }

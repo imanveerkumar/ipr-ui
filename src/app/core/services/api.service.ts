@@ -19,6 +19,8 @@ export interface ApiRequestOptions {
   skipDeduplication?: boolean;
   /** Custom request key (auto-generated if not provided) */
   requestKey?: string;
+  /** Skip automatic sign-out on 401 responses (e.g. optional/guest-accessible endpoints) */
+  skipAuthErrorHandling?: boolean;
 }
 
 /** Default rate limit configs for different request types */
@@ -142,10 +144,12 @@ export class ApiService {
   /**
    * Parse and validate HTTP response
    */
-  private async parseResponse<T>(response: Response): Promise<T> {
+  private async parseResponse<T>(response: Response, skipAuthErrorHandling = false): Promise<T> {
     // Check for authentication errors
     if (response.status === 401) {
-      await this.handleAuthError({ status: 401 });
+      if (!skipAuthErrorHandling) {
+        await this.handleAuthError({ status: 401 });
+      }
       const error: any = new Error('Authentication required. Please sign in again.');
       error.status = 401;
       throw error;
@@ -189,7 +193,7 @@ export class ApiService {
             headers,
             signal: controller.signal,
           });
-          return await this.parseResponse<ApiResponse<T>>(response);
+          return await this.parseResponse<ApiResponse<T>>(response, options?.skipAuthErrorHandling);
         } finally {
           clearTimeout(timeoutId);
         }
@@ -223,7 +227,7 @@ export class ApiService {
           body: JSON.stringify(body),
           signal: controller.signal,
         });
-        return await this.parseResponse<ApiResponse<T>>(response);
+        return await this.parseResponse<ApiResponse<T>>(response, options?.skipAuthErrorHandling);
       },
       {
         key: requestKey,
@@ -251,7 +255,7 @@ export class ApiService {
           body: JSON.stringify(body),
           signal: controller.signal,
         });
-        return await this.parseResponse<ApiResponse<T>>(response);
+        return await this.parseResponse<ApiResponse<T>>(response, options?.skipAuthErrorHandling);
       },
       {
         key: requestKey,
@@ -279,7 +283,7 @@ export class ApiService {
           body: JSON.stringify(body),
           signal: controller.signal,
         });
-        return await this.parseResponse<ApiResponse<T>>(response);
+        return await this.parseResponse<ApiResponse<T>>(response, options?.skipAuthErrorHandling);
       },
       {
         key: requestKey,
@@ -306,7 +310,7 @@ export class ApiService {
           headers,
           signal: controller.signal,
         });
-        return await this.parseResponse<ApiResponse<T>>(response);
+        return await this.parseResponse<ApiResponse<T>>(response, options?.skipAuthErrorHandling);
       },
       {
         key: requestKey,

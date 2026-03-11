@@ -19,14 +19,14 @@ type ViewState = 'cart' | 'checkout';
     <!-- Overlay -->
     @if (cartService.isOpen()) {
       <div 
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[51] transition-opacity duration-300"
         (click)="handleOverlayClick()"
       ></div>
     }
 
     <!-- Cart Panel - Full screen on mobile, sidebar on desktop -->
     <div 
-      class="fixed z-50 bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]
+      class="fixed z-[52] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]
              bottom-0 left-0 right-0 h-[92vh] rounded-t-[2rem]
              md:top-0 md:right-0 md:left-auto md:bottom-auto md:h-full md:w-full md:max-w-md md:rounded-none"
       [class.translate-y-full]="!cartService.isOpen()"
@@ -311,7 +311,7 @@ type ViewState = 'cart' | 'checkout';
                 <div class="flex items-start gap-2.5">
                   <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                   </div>
                   <div class="flex-1">
