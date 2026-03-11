@@ -1,14 +1,15 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { WishlistService, WishlistItem, WishlistLocalProduct } from '../../core/services/wishlist.service';
+import { WishlistService, WishlistItem, WishlistLocalProduct, WishlistProduct } from '../../core/services/wishlist.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ToasterService } from '../../core/services/toaster.service';
+import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
 
 @Component({
   selector: 'app-wishlist',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MasonryGridComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Hero Section -->
@@ -82,9 +83,16 @@ import { ToasterService } from '../../core/services/toaster.service';
 
         <!-- Products Grid (Authenticated) -->
         @else if (isAuthenticated()) {
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            @for (item of items(); track item.id) {
-              <div class="group relative bg-white rounded-xl border-2 border-black overflow-hidden shadow-[2px_2px_0px_0px_#000] hover:shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200">
+          <app-masonry-grid
+            [items]="items()"
+            [colsMobile]="2"
+            [colsTablet]="3"
+            [colsDesktop]="3"
+            [colsLargeDesktop]="4"
+            [gap]="16"
+            [getItemRatio]="getAuthItemRatio">
+            <ng-template let-item let-i="index">
+              <div class="group relative bg-white rounded-xl border-2 border-black overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300">
                 <!-- Remove Button -->
                 <button
                   (click)="removeItem($event, item.productId)"
@@ -98,7 +106,8 @@ import { ToasterService } from '../../core/services/toaster.service';
 
                 <!-- Product Link -->
                 <a [routerLink]="['/product', item.productId]" class="block">
-                  <div class="aspect-[4/3] bg-[#F9F4EB] overflow-hidden">
+                  <div class="relative overflow-hidden bg-[#F9F4EB]"
+                       [style.aspect-ratio]="getProductAspectRatio(item.product)">
                     @if (item.product.coverImageUrl) {
                       <img
                         [src]="item.product.coverImageUrl"
@@ -114,7 +123,7 @@ import { ToasterService } from '../../core/services/toaster.service';
                     }
                   </div>
                   <div class="p-3 md:p-4">
-                    <h3 class="font-bold text-sm md:text-base text-[#111111] truncate mb-1">
+                    <h3 class="font-bold text-sm md:text-base text-[#111111] truncate mb-1 group-hover:text-[#2B57D6] transition-colors">
                       {{ item.product.title }}
                     </h3>
                     <p class="text-xs text-[#111111]/50 truncate mb-2">
@@ -139,8 +148,8 @@ import { ToasterService } from '../../core/services/toaster.service';
                   </div>
                 </a>
               </div>
-            }
-          </div>
+            </ng-template>
+          </app-masonry-grid>
 
           <!-- Pagination -->
           @if (totalPages() > 1) {
@@ -166,9 +175,16 @@ import { ToasterService } from '../../core/services/toaster.service';
 
         <!-- Products Grid (Anonymous - from localStorage) -->
         @else {
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            @for (item of localItems(); track item.id) {
-              <div class="group relative bg-white rounded-xl border-2 border-black overflow-hidden shadow-[2px_2px_0px_0px_#000] hover:shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200">
+          <app-masonry-grid
+            [items]="localItems()"
+            [colsMobile]="2"
+            [colsTablet]="3"
+            [colsDesktop]="3"
+            [colsLargeDesktop]="4"
+            [gap]="16"
+            [getItemRatio]="getLocalItemRatio">
+            <ng-template let-item let-i="index">
+              <div class="group relative bg-white rounded-xl border-2 border-black overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300">
                 <!-- Remove Button -->
                 <button
                   (click)="removeItem($event, item.id)"
@@ -182,7 +198,8 @@ import { ToasterService } from '../../core/services/toaster.service';
 
                 <!-- Product Link -->
                 <a [routerLink]="['/product', item.id]" class="block">
-                  <div class="aspect-[4/3] bg-[#F9F4EB] overflow-hidden">
+                  <div class="relative overflow-hidden bg-[#F9F4EB]"
+                       [style.aspect-ratio]="getProductAspectRatio(item)">
                     @if (item.coverImageUrl) {
                       <img
                         [src]="item.coverImageUrl"
@@ -198,7 +215,7 @@ import { ToasterService } from '../../core/services/toaster.service';
                     }
                   </div>
                   <div class="p-3 md:p-4">
-                    <h3 class="font-bold text-sm md:text-base text-[#111111] truncate mb-1">
+                    <h3 class="font-bold text-sm md:text-base text-[#111111] truncate mb-1 group-hover:text-[#2B57D6] transition-colors">
                       {{ item.title }}
                     </h3>
                     <p class="text-xs text-[#111111]/50 truncate mb-2">
@@ -223,8 +240,8 @@ import { ToasterService } from '../../core/services/toaster.service';
                   </div>
                 </a>
               </div>
-            }
-          </div>
+            </ng-template>
+          </app-masonry-grid>
         }
       </div>
     </div>
@@ -324,5 +341,55 @@ export class WishlistComponent implements OnInit {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(amount);
+  }
+
+  // ─── Aspect Ratio Helpers ──────────────────────────────────────────────
+
+  private readonly fallbackRatios = ['3/4', '4/5', '1/1', '3/4', '4/3', '3/4', '1/1', '4/5'];
+  private readonly aspectRatioCache = new Map<string, string>();
+
+  getProductAspectRatio(product: { id?: string; coverImageWidth?: number | null; coverImageHeight?: number | null }): string {
+    const id = product.id ?? '';
+    if (this.aspectRatioCache.has(id)) {
+      return this.aspectRatioCache.get(id)!;
+    }
+
+    let ratio: string;
+    if (product.coverImageWidth && product.coverImageHeight) {
+      ratio = `${product.coverImageWidth} / ${product.coverImageHeight}`;
+    } else {
+      const idx = Math.abs(this.hashString(id)) % this.fallbackRatios.length;
+      ratio = this.fallbackRatios[idx];
+    }
+
+    this.aspectRatioCache.set(id, ratio);
+    return ratio;
+  }
+
+  /** Ratio extractor for masonry grid (authenticated items) */
+  getAuthItemRatio = (item: WishlistItem): number => {
+    const p = item.product;
+    if (p.coverImageWidth && p.coverImageHeight) {
+      return p.coverImageWidth / p.coverImageHeight;
+    }
+    return 3 / 4;
+  };
+
+  /** Ratio extractor for masonry grid (anonymous/local items) */
+  getLocalItemRatio = (item: WishlistLocalProduct): number => {
+    if (item.coverImageWidth && item.coverImageHeight) {
+      return item.coverImageWidth / item.coverImageHeight;
+    }
+    return 3 / 4;
+  };
+
+  private hashString(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash |= 0;
+    }
+    return hash;
   }
 }
