@@ -6,7 +6,7 @@ import { UiMessageService } from '../../core/services/ui-message.service';
 import { UiNotificationContainerComponent, UiBannerComponent, UiTipCardComponent } from '../../shared/components/ui-messages';
 import {
   LucideAngularModule,
-  Zap, Banknote, CreditCard, HardDrive,
+  Gauge, Banknote, CreditCard, HardDrive,
   BookOpen, Music, Film, Paintbrush, Code, Camera, Package, Users, LayoutTemplate, GraduationCap,
   ArrowRight, ChevronDown, X,
   LucideIconData
@@ -69,7 +69,7 @@ import {
           @for (msg of uiMessages.inlineTips(); track msg.id) {
             <div class="bg-[#F9F4EB]/60 border-2 border-black px-5 py-4 flex items-start gap-3 mb-4 last:mb-0 shadow-[2px_2px_0px_0px_#000]">
               <span class="mt-0.5 flex-shrink-0 text-[#111111]">
-                <lucide-icon [img]="Zap" [size]="20" [strokeWidth]="2.5"></lucide-icon>
+                <lucide-icon [img]="Gauge" [size]="20" [strokeWidth]="2.5"></lucide-icon>
               </span>
               <div class="flex-1 min-w-0">
                 <p class="text-sm md:text-base font-bold text-[#111111]">{{ msg.title }}</p>
@@ -245,7 +245,7 @@ export class HomeComponent implements OnInit {
 
   readonly ArrowRight = ArrowRight;
   readonly ChevronDown = ChevronDown;
-  readonly Zap = Zap;
+  readonly Gauge = Gauge;
   readonly XIcon = X;
 
   constructor() {
@@ -264,7 +264,7 @@ export class HomeComponent implements OnInit {
 
   benefits: { icon: LucideIconData; title: string; description: string }[] = [
     {
-      icon: Zap,
+      icon: Gauge,
       title: 'Instant setup',
       description: 'Go from zero to live store in under 60 seconds. No tech skills required.'
     },
