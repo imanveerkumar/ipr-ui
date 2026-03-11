@@ -88,7 +88,7 @@ import { ToasterService } from '../../core/services/toaster.service';
                 <!-- Remove Button -->
                 <button
                   (click)="removeItem($event, item.productId)"
-                  class="absolute top-2 right-2 z-10 w-8 h-8 bg-[#FA4B28] border-2 border-black rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all duration-150 shadow-[2px_2px_0px_0px_#000]"
+                  class="absolute top-2 right-2 z-10 w-8 h-8 bg-[#FA4B28] border-2 border-black rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all duration-150"
                   title="Remove from wishlist"
                   [attr.aria-label]="'Remove ' + item.product.title + ' from wishlist'">
                   <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -172,7 +172,7 @@ import { ToasterService } from '../../core/services/toaster.service';
                 <!-- Remove Button -->
                 <button
                   (click)="removeItem($event, item.id)"
-                  class="absolute top-2 right-2 z-10 w-8 h-8 bg-[#FA4B28] border-2 border-black rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all duration-150 shadow-[2px_2px_0px_0px_#000]"
+                  class="absolute top-2 right-2 z-10 w-8 h-8 bg-[#FA4B28] border-2 border-black rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all duration-150"
                   title="Remove from wishlist"
                   [attr.aria-label]="'Remove ' + item.title + ' from wishlist'">
                   <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">

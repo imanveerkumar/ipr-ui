@@ -57,7 +57,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
           <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10">
             <!-- Left Column: Image -->
             <div class="lg:col-span-3">
-              <div class="bg-white border-2 border-black rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl overflow-hidden">
                 @if (product()?.coverImageUrl) {
                   <img [src]="product()?.coverImageUrl" [alt]="product()?.title" class="w-full object-cover" [style.aspect-ratio]="getCoverAspectRatio()">
                 } @else {
@@ -74,7 +74,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
             <!-- Right Column: Details -->
             <div class="lg:col-span-2 space-y-5">
               <!-- Title & Price Card -->
-              <div class="bg-white border-2 border-black rounded-2xl p-5 md:p-6 shadow-[4px_4px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl p-5 md:p-6">
                 <h1 class="font-display text-xl md:text-2xl font-bold text-[#111111] leading-tight">{{ product()?.title }}</h1>
 
                 <!-- Store & Creator -->
@@ -205,7 +205,6 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                         <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                         Processing...
                       } @else {
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Buy Now — ₹{{ (product()?.price || 0) / 100 }}
                       }
                     </button>
@@ -232,7 +231,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
               </div>
 
               <!-- Share & Copy -->
-              <div class="bg-white border-2 border-black rounded-2xl p-4 shadow-[3px_3px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl p-4">
                 <div class="flex gap-2">
                   <app-wishlist-button [productId]="product()!.id" [product]="product()!" size="md" />
                   <button
@@ -259,7 +258,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
 
               <!-- Files Included -->
               @if (product()?.files && product()!.files!.length > 0) {
-                <div class="bg-white border-2 border-black rounded-2xl p-5 shadow-[3px_3px_0px_0px_#000]">
+                <div class="bg-white border-2 border-black rounded-2xl p-5">
                   <h3 class="font-display text-sm font-bold text-[#111111] mb-3 flex items-center gap-2">
                     <svg class="w-4 h-4 text-[#68E079]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     Files Included ({{ product()!.files!.length }})
@@ -281,7 +280,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
               }
 
               <!-- Trust Badges -->
-              <div class="bg-white border-2 border-black rounded-2xl p-5 shadow-[3px_3px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl p-5">
                 <div class="space-y-3">
                   <div class="flex items-center gap-3">
                     <div class="w-8 h-8 bg-[#68E079]/20 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -318,7 +317,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
           <!-- Description (full width) -->
           @if (product()?.description) {
             <div class="mt-8">
-              <div class="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl p-6">
                 <h2 class="font-display text-lg font-bold text-[#111111] mb-4 flex items-center gap-2">
                   <svg class="w-5 h-5 text-[#2B57D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   Description
@@ -331,7 +330,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
       } @else {
         <!-- Not Found -->
         <div class="min-h-[60vh] flex items-center justify-center px-4">
-          <div class="text-center bg-white border-2 border-black rounded-2xl p-8 md:p-12 shadow-[6px_6px_0px_0px_#000] max-w-md w-full">
+          <div class="text-center bg-white border-2 border-black rounded-2xl p-8 md:p-12 max-w-md w-full">
             <div class="w-20 h-20 mx-auto mb-6 bg-[#FA4B28]/10 border-2 border-black rounded-2xl flex items-center justify-center">
               <svg class="w-10 h-10 text-[#FA4B28]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>

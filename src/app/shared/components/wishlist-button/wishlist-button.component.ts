@@ -19,6 +19,9 @@ import { ToasterService } from '../../../core/services/toaster.service';
   selector: 'app-wishlist-button',
   standalone: true,
   imports: [CommonModule],
+  host: {
+    '[style.opacity]': "isWishlisted() ? '1' : null",
+  },
   template: `
     <button
       (click)="onToggle($event)"
