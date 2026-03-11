@@ -57,9 +57,7 @@ import {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b-2 border-black/10">
           <div class="grid gap-4" [ngClass]="uiMessages.homepageCards().length === 1 ? 'grid-cols-1 max-w-2xl mx-auto' : 'grid-cols-1 sm:grid-cols-2'">
             @for (msg of uiMessages.homepageCards(); track msg.id) {
-              <div class="border-2 border-black p-4 shadow-[4px_4px_0px_0px_rgb(104_224_121)]">
-                <app-ui-tip-card [message]="msg" (dismissed)="onDismissMessage($event)" />
-              </div>
+              <app-ui-tip-card [message]="msg" (dismissed)="onDismissMessage($event)" />
             }
           </div>
         </div>

@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UiMessage } from '../../../core/models';
-import { LucideAngularModule, LucideIconData, Rocket, Lightbulb, Tag, Megaphone, Pin, Info, ArrowRight, X } from 'lucide-angular';
+import { LucideAngularModule, LucideIconData, Crown, Lightbulb, Tag, Megaphone, Pin, Info, ArrowRight, X } from 'lucide-angular';
 
 /**
  * Renders a homepage card-style UI message — tips, promos, announcements.
@@ -20,7 +20,7 @@ import { LucideAngularModule, LucideIconData, Rocket, Lightbulb, Tag, Megaphone,
   imports: [CommonModule, RouterLink, LucideAngularModule],
   template: `
     <div
-      class="relative rounded-2xl border overflow-hidden hover:-translate-y-0.5 transition-transform duration-200"
+      class="relative border-2"
       [ngClass]="cardClasses"
       role="status"
     >
@@ -31,7 +31,7 @@ import { LucideAngularModule, LucideIconData, Rocket, Lightbulb, Tag, Megaphone,
           *ngIf="message.dismissible"
           (click)="dismissed.emit(message.id)"
           [ngClass]="dismissClasses"
-          class="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-full transition-transform duration-200 hover:scale-110 active:scale-95 hover:shadow-sm"
+          class="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-full"
           aria-label="Dismiss"
         >
           <lucide-icon [img]="X" [size]="14" [strokeWidth]="2.5"></lucide-icon>
@@ -39,7 +39,7 @@ import { LucideAngularModule, LucideIconData, Rocket, Lightbulb, Tag, Megaphone,
 
         <!-- Icon box — matches the step-number box style on homepage -->
         <div
-          class="w-11 h-11 rounded-2xl flex items-center justify-center mb-4 border"
+          class="w-11 h-11 flex items-center justify-center mb-4 border-2"
           [ngClass]="iconBoxClasses"
         >
           <lucide-icon [img]="icon" [size]="20" [strokeWidth]="2" [color]="iconColor"></lucide-icon>
@@ -69,12 +69,12 @@ import { LucideAngularModule, LucideIconData, Rocket, Lightbulb, Tag, Megaphone,
           {{ message.body }}
         </p>
 
-        <!-- CTA — always rounded-full to match homepage "Start selling" button -->
+        <!-- CTA — matches homepage neo-brutalist button style -->
         <a
           *ngIf="message.ctaUrl && message.ctaText"
           [routerLink]="message.ctaUrl"
           [ngClass]="ctaClasses"
-          class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
+          class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 border-2 border-black text-sm font-bold"
         >
           {{ message.ctaText }}
           <lucide-icon [img]="ArrowRight" [size]="16" [strokeWidth]="2.5"></lucide-icon>
@@ -96,14 +96,14 @@ export class UiTipCardComponent {
   /** Dark card for BANNER (mirrors homepage #111111 section); cream for everything else */
   get cardClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'bg-[#111111] border-black/0'
-      : 'bg-[#F9F4EB] border-black/[0.07]';
+      ? 'bg-[#111111] border-black shadow-[4px_4px_0px_0px_#FFC60B]'
+      : 'bg-[#F9F4EB] border-black shadow-[4px_4px_0px_0px_rgb(104_224_121)]';
   }
 
   get iconBoxClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'bg-white/5 border-white/10'
-      : 'bg-white border-black/10';
+      ? 'bg-white/10 border-white/20'
+      : 'bg-white border-black';
   }
 
   get labelClasses(): string {
@@ -137,13 +137,13 @@ export class UiTipCardComponent {
    */
   get ctaClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'bg-[#FFC60B] text-[#111111] hover:bg-[#ffdb4d]'
-      : 'bg-[#111111] text-white hover:bg-[#333333]';
+      ? 'bg-[#FFC60B] text-[#111111] shadow-[3px_3px_0px_0px_#000]'
+      : 'bg-[#111111] text-white shadow-[3px_3px_0px_0px_rgb(104_224_121)]';
   }
 
   get icon(): LucideIconData {
     switch (this.message.type) {
-      case 'BANNER':       return Rocket;
+      case 'BANNER':       return Crown;
       case 'TIP':          return Lightbulb;
       case 'SALE':         return Tag;
       case 'ANNOUNCEMENT': return Megaphone;
