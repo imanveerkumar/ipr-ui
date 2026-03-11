@@ -84,7 +84,7 @@ import { ToasterService } from '../../core/services/toaster.service';
         @else if (isAuthenticated()) {
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             @for (item of items(); track item.id) {
-              <div class="group relative bg-white rounded-xl border-2 border-black overflow-hidden shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200">
+              <div class="group relative bg-white rounded-xl border-2 border-black overflow-hidden shadow-[2px_2px_0px_0px_#000] hover:shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200">
                 <!-- Remove Button -->
                 <button
                   (click)="removeItem($event, item.productId)"
@@ -168,7 +168,7 @@ import { ToasterService } from '../../core/services/toaster.service';
         @else {
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             @for (item of localItems(); track item.id) {
-              <div class="group relative bg-white rounded-xl border-2 border-black overflow-hidden shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200">
+              <div class="group relative bg-white rounded-xl border-2 border-black overflow-hidden shadow-[2px_2px_0px_0px_#000] hover:shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200">
                 <!-- Remove Button -->
                 <button
                   (click)="removeItem($event, item.id)"
