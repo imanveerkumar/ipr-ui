@@ -175,12 +175,18 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                           <input
                             type="email"
                             [(ngModel)]="guestEmail"
+                            (ngModelChange)="guestEmailError = ''"
                             placeholder="your@email.com"
-                            class="w-full px-3 py-2.5 border-2 border-black rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
+                            class="w-full px-3 py-2.5 border-2 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
+                            [class.border-red-500]="guestEmailError"
+                            [class.border-black]="!guestEmailError"
                           />
+                          @if (guestEmailError) {
+                            <p class="text-xs text-red-500">{{ guestEmailError }}</p>
+                          }
                           <button
                             (click)="confirmGuestFreeDownload()"
-                            [disabled]="purchasing() || !guestEmail"
+                            [disabled]="purchasing()"
                             class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#68E079] text-[#111111] border-2 border-black rounded-xl font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             @if (purchasing()) {
@@ -358,8 +364,13 @@ export class ProductComponent implements OnInit {
   // Free / pay-what-you-want state
   customAmount = 0;
   guestEmail = '';
+  guestEmailError = '';
   showGuestEmailInput = signal(false);
   selectedFreeOption = signal<'free' | 'custom' | null>(null);
+
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  }
 
   cartService = inject(CartService);
   private toaster = inject(ToasterService);
@@ -554,7 +565,17 @@ export class ProductComponent implements OnInit {
   /** Handle guest free download after email is entered */
   async confirmGuestFreeDownload() {
     const product = this.product();
-    if (!product || !this.guestEmail) return;
+    if (!product) return;
+
+    this.guestEmailError = '';
+    if (!this.guestEmail.trim()) {
+      this.guestEmailError = 'Email is required.';
+      return;
+    }
+    if (!this.isValidEmail(this.guestEmail)) {
+      this.guestEmailError = 'Please enter a valid email address.';
+      return;
+    }
 
     this.purchasing.set(true);
 

@@ -160,12 +160,18 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                         <input
                           type="email"
                           [(ngModel)]="guestEmail"
+                          (ngModelChange)="guestEmailError = ''"
                           placeholder="your@email.com"
-                          class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-gray-400/30"
+                          class="w-full px-3 py-2.5 border rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-gray-400/30"
+                          [class.border-red-500]="guestEmailError"
+                          [class.border-gray-300]="!guestEmailError"
                         />
+                        @if (guestEmailError) {
+                          <p class="text-xs text-red-500">{{ guestEmailError }}</p>
+                        }
                         <button
                           (click)="confirmGuestFreeDownload()"
-                          [disabled]="purchasing() || !guestEmail"
+                          [disabled]="purchasing()"
                           class="w-full py-3 text-sm font-semibold bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors min-h-[48px]"
                         >
                           @if (purchasing()) {
@@ -393,8 +399,13 @@ export class StorefrontProductComponent implements OnInit, OnDestroy {
   // Free / pay-what-you-want state
   customAmount = 0;
   guestEmail = '';
+  guestEmailError = '';
   showGuestEmailInput = signal(false);
   selectedFreeOption = signal<'free' | 'custom' | null>(null);
+
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  }
 
   private routeSub?: Subscription;
 
@@ -518,10 +529,19 @@ export class StorefrontProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Handle guest free download after email entry */
   async confirmGuestFreeDownload() {
     const product = this.product();
-    if (!product || !this.guestEmail) return;
+    if (!product) return;
+
+    this.guestEmailError = '';
+    if (!this.guestEmail.trim()) {
+      this.guestEmailError = 'Email is required.';
+      return;
+    }
+    if (!this.isValidEmail(this.guestEmail)) {
+      this.guestEmailError = 'Please enter a valid email address.';
+      return;
+    }
 
     this.purchasing.set(true);
 
