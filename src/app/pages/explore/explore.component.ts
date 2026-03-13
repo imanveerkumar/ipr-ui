@@ -602,8 +602,10 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   >
                     <!-- Store badge — direct child of card so overflow-hidden clips it correctly -->
                     <span class="absolute top-2 right-2 px-2 py-0.5 bg-theme-primary border border-white/30 rounded text-[9px] font-bold text-white uppercase tracking-wider z-[4] group-hover:opacity-0 transition-opacity duration-200">Store</span>
-                    <div class="bg-gradient-to-br from-[#2B57D6] to-[#7C3AED] relative overflow-hidden rounded-t-xl" [style.aspect-ratio]="getStoreBannerAspectRatio(asStore(item.data))" style="min-height: 80px; max-height: 160px;">
-                      <img *ngIf="asStore(item.data).bannerUrl" [src]="asStore(item.data).bannerUrl" [alt]="asStore(item.data).name" loading="lazy" class="w-full h-full object-cover" />
+                    <div class="bg-gradient-to-br from-[#2B57D6] to-[#7C3AED] relative rounded-t-xl" [style.aspect-ratio]="getStoreBannerAspectRatio(asStore(item.data))" style="min-height: 80px; max-height: 160px;">
+                      <div class="absolute inset-0 overflow-hidden rounded-t-xl">
+                        <img *ngIf="asStore(item.data).bannerUrl" [src]="asStore(item.data).bannerUrl" [alt]="asStore(item.data).name" loading="lazy" class="w-full h-full object-cover" />
+                      </div>
                       <div class="absolute -bottom-5 left-3 w-12 h-12 bg-theme-surface border-2 border-theme-border rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000] z-10 group-hover:opacity-0 transition-opacity duration-200">
                         <img *ngIf="asStore(item.data).logoUrl" [src]="asStore(item.data).logoUrl" [alt]="asStore(item.data).name" class="w-full h-full object-cover" />
                         <div *ngIf="!asStore(item.data).logoUrl" class="w-full h-full bg-theme-secondary flex items-center justify-center">
