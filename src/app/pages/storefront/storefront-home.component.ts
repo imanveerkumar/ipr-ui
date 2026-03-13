@@ -12,26 +12,26 @@ import { Product } from '../../core/models';
   standalone: true,
   imports: [CommonModule, MasonryGridComponent, WishlistButtonComponent],
   template: `
-    <div class="min-h-screen bg-white font-sans antialiased">
+    <div class="min-h-screen bg-theme-surface font-sans antialiased">
       <!-- Clean Hero Section -->
       <section class="px-4 sm:px-6 md:px-8 lg:px-10 pt-8 sm:pt-12 md:pt-16 pb-6 sm:pb-8 md:pb-10">
         <div class="max-w-3xl mx-auto text-center">
-          <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-[1.15]">
+          <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-theme-fg tracking-tight leading-[1.15]">
             {{ storeContext.storeName() }}
           </h1>
 
           @if (storeContext.store()?.tagline) {
-            <p class="mt-3 sm:mt-4 text-base sm:text-lg text-gray-500 max-w-xl mx-auto leading-relaxed">{{ storeContext.store()?.tagline }}</p>
+            <p class="mt-3 sm:mt-4 text-base sm:text-lg text-theme-muted max-w-xl mx-auto leading-relaxed">{{ storeContext.store()?.tagline }}</p>
           }
 
           <div class="flex items-center justify-center gap-3 mt-5 sm:mt-6">
             @if (storeContext.products().length > 0) {
-              <span class="text-sm text-gray-400">{{ storeContext.products().length }} products</span>
-              <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+              <span class="text-sm text-theme-muted">{{ storeContext.products().length }} products</span>
+              <span class="w-1 h-1 rounded-full bg-theme-secondary"></span>
             }
             <button
               (click)="copyUrl()"
-              class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              class="inline-flex items-center gap-1.5 text-sm text-theme-muted hover:text-theme-muted transition-colors"
             >
               @if (copied()) {
                 <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -41,10 +41,10 @@ import { Product } from '../../core/models';
                 Copy link
               }
             </button>
-            <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+            <span class="w-1 h-1 rounded-full bg-theme-secondary"></span>
             <button
               (click)="shareUrl()"
-              class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+              class="inline-flex items-center gap-1.5 text-sm text-theme-muted hover:text-theme-muted transition-colors"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
               Share
@@ -55,7 +55,7 @@ import { Product } from '../../core/models';
 
       <!-- Thin divider -->
       <div class="max-w-5xl mx-auto px-4 sm:px-6">
-        <div class="border-t border-gray-100"></div>
+        <div class="border-t border-theme-secondary"></div>
       </div>
 
       <!-- Products Section -->
@@ -66,7 +66,7 @@ import { Product } from '../../core/models';
               <svg class="w-12 h-12 mx-auto text-gray-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
               </svg>
-              <p class="text-gray-400 text-sm">No products yet. Check back soon.</p>
+              <p class="text-theme-muted text-sm">No products yet. Check back soon.</p>
             </div>
           } @else {
             <!-- Products Grid -->
@@ -79,7 +79,7 @@ import { Product } from '../../core/models';
               [getItemRatio]="getItemRatio"
             >
               <ng-template let-product>
-                <div class="bg-white rounded-xl overflow-hidden group relative cursor-pointer border border-gray-100 hover:border-gray-200 transition-all duration-300" (click)="navigateTo('/product/' + product.id)">
+                <div class="bg-theme-surface rounded-xl overflow-hidden group relative cursor-pointer border border-theme-secondary hover:border-theme-secondary transition-all duration-300" (click)="navigateTo('/product/' + product.id)">
                   <!-- Product Image -->
                   <div class="relative overflow-hidden">
                     @if (product.coverImageUrl) {
@@ -92,7 +92,7 @@ import { Product } from '../../core/models';
                         >
                       </div>
                     } @else {
-                      <div class="aspect-square bg-gray-50 flex items-center justify-center">
+                      <div class="aspect-square bg-theme-bg flex items-center justify-center">
                         <svg class="w-8 h-8 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
@@ -101,7 +101,7 @@ import { Product } from '../../core/models';
                     
                     @if (product.compareAtPrice && product.compareAtPrice > product.price) {
                       <div class="absolute top-2.5 left-2.5">
-                        <span class="px-2 py-0.5 bg-gray-900 text-white text-[10px] sm:text-xs font-medium rounded-md">
+                        <span class="px-2 py-0.5 bg-theme-fg text-white text-[10px] sm:text-xs font-medium rounded-md">
                           -{{ getDiscount(product) }}%
                         </span>
                       </div>
@@ -113,16 +113,16 @@ import { Product } from '../../core/models';
 
                   <!-- Mobile Product Info -->
                   <div class="md:hidden px-3 pt-2.5 pb-3">
-                    <h3 class="font-medium text-gray-900 text-sm leading-snug line-clamp-2 mb-2">
+                    <h3 class="font-medium text-theme-fg text-sm leading-snug line-clamp-2 mb-2">
                       {{ product.title }}
                     </h3>
                     <div class="flex items-center justify-between gap-2">
                       <div class="flex items-center gap-1.5">
-                        <span class="font-semibold text-gray-900 text-sm">
+                        <span class="font-semibold text-theme-fg text-sm">
                           ₹{{ product.price / 100 }}
                         </span>
                         @if (product.compareAtPrice && product.compareAtPrice > product.price) {
-                          <span class="text-xs text-gray-300 line-through">
+                          <span class="text-xs text-theme-muted line-through">
                             ₹{{ product.compareAtPrice / 100 }}
                           </span>
                         }
@@ -131,7 +131,7 @@ import { Product } from '../../core/models';
                         <button
                           (click)="cartService.isInCart(product.id) ? removeFromCart(product) : addToCart(product); $event.stopPropagation()"
                           class="flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all active:scale-95 flex-shrink-0"
-                          [class]="cartService.isInCart(product.id) ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                          [class]="cartService.isInCart(product.id) ? 'bg-theme-fg text-white' : 'bg-theme-secondary text-theme-muted hover:bg-theme-secondary'"
                         >
                           @if (cartService.isInCart(product.id)) {
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,7 +170,7 @@ import { Product } from '../../core/models';
                           <button
                             (click)="cartService.isInCart(product.id) ? removeFromCart(product) : addToCart(product); $event.stopPropagation()"
                             class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
-                            [class]="cartService.isInCart(product.id) ? 'bg-white text-gray-900' : 'bg-white/20 text-white hover:bg-white/30'"
+                            [class]="cartService.isInCart(product.id) ? 'bg-theme-surface text-theme-fg' : 'bg-white/20 text-white hover:bg-white/30'"
                           >
                             @if (cartService.isInCart(product.id)) {
                               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +186,7 @@ import { Product } from '../../core/models';
                           </button>
                           <button
                             (click)="handleBuyNow(product); $event.stopPropagation()"
-                            class="px-3 py-1.5 bg-white text-gray-900 text-xs font-medium rounded-lg hover:bg-white/90 transition-all"
+                            class="px-3 py-1.5 bg-theme-surface text-theme-fg text-xs font-medium rounded-lg hover:bg-white/90 transition-all"
                           >
                             Buy Now
                           </button>
@@ -202,7 +202,7 @@ import { Product } from '../../core/models';
               <div class="mt-8 sm:mt-10 text-center">
                 <button 
                   (click)="navigateTo('/products')" 
-                  class="inline-flex items-center gap-2 px-6 py-3 border border-gray-200 text-gray-700 rounded-lg font-medium text-sm hover:border-gray-300 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+                  class="inline-flex items-center gap-2 px-6 py-3 border border-theme-secondary text-theme-fg rounded-lg font-medium text-sm hover:border-theme-secondary hover:bg-theme-bg active:bg-theme-secondary transition-colors"
                 >
                   View all {{ storeContext.products().length }} products
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,8 +219,8 @@ import { Product } from '../../core/models';
       @if (storeContext.store()?.description) {
         <section class="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 lg:px-10">
           <div class="max-w-2xl mx-auto text-center">
-            <h2 class="text-sm font-medium text-gray-400 uppercase tracking-widest mb-4 sm:mb-6">About</h2>
-            <div class="prose prose-sm sm:prose-base prose-gray max-w-none text-gray-500 leading-relaxed" [innerHTML]="storeContext.store()?.description"></div>
+            <h2 class="text-sm font-medium text-theme-muted uppercase tracking-widest mb-4 sm:mb-6">About</h2>
+            <div class="prose prose-sm sm:prose-base prose-gray max-w-none text-theme-muted leading-relaxed" [innerHTML]="storeContext.store()?.description"></div>
           </div>
         </section>
       }
@@ -228,31 +228,31 @@ import { Product } from '../../core/models';
       <!-- Why Shop With Us - Minimal inline layout -->
       <section class="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 lg:px-10">
         <div class="max-w-3xl mx-auto">
-          <h2 class="text-sm font-medium text-gray-400 uppercase tracking-widest text-center mb-8 sm:mb-10">Why Shop With Us</h2>
+          <h2 class="text-sm font-medium text-theme-muted uppercase tracking-widest text-center mb-8 sm:mb-10">Why Shop With Us</h2>
           
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             <div class="text-center">
-              <svg class="w-5 h-5 mx-auto text-gray-400 mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 mx-auto text-theme-muted mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
               </svg>
-              <h3 class="text-sm font-semibold text-gray-900 mb-1">Instant Access</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">Download immediately after purchase</p>
+              <h3 class="text-sm font-semibold text-theme-fg mb-1">Instant Access</h3>
+              <p class="text-xs text-theme-muted leading-relaxed">Download immediately after purchase</p>
             </div>
             
             <div class="text-center">
-              <svg class="w-5 h-5 mx-auto text-gray-400 mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 mx-auto text-theme-muted mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
               </svg>
-              <h3 class="text-sm font-semibold text-gray-900 mb-1">Secure Payment</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">Encrypted & safe transactions</p>
+              <h3 class="text-sm font-semibold text-theme-fg mb-1">Secure Payment</h3>
+              <p class="text-xs text-theme-muted leading-relaxed">Encrypted & safe transactions</p>
             </div>
             
             <div class="text-center">
-              <svg class="w-5 h-5 mx-auto text-gray-400 mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 mx-auto text-theme-muted mb-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              <h3 class="text-sm font-semibold text-gray-900 mb-1">Quality Guaranteed</h3>
-              <p class="text-xs text-gray-400 leading-relaxed">Premium products crafted with care</p>
+              <h3 class="text-sm font-semibold text-theme-fg mb-1">Quality Guaranteed</h3>
+              <p class="text-xs text-theme-muted leading-relaxed">Premium products crafted with care</p>
             </div>
           </div>
         </div>

@@ -93,7 +93,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
       @if (showSearch) {
         <div class="mb-4">
           <div class="relative">
-            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
             <input
@@ -101,7 +101,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               [placeholder]="searchPlaceholder"
               [(ngModel)]="searchValue"
               (ngModelChange)="onSearch($event)"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm transition-all bg-white shadow-sm"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-theme-secondary focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm transition-all bg-theme-surface shadow-sm"
             />
           </div>
         </div>
@@ -111,36 +111,36 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
       @if (loading()) {
         <div class="space-y-4">
           @for (i of skeletonRows; track i) {
-            <div class="bg-white rounded-xl border border-gray-100 p-4 animate-pulse shadow-sm">
+            <div class="bg-theme-surface rounded-xl border border-theme-secondary p-4 animate-pulse shadow-sm">
               <div class="flex items-start justify-between mb-3">
                 <div class="space-y-2 flex-1">
-                  <div class="h-5 bg-gray-200 rounded w-3/4"></div>
-                  <div class="h-4 bg-gray-100 rounded w-1/2"></div>
+                  <div class="h-5 bg-theme-secondary rounded w-3/4"></div>
+                  <div class="h-4 bg-theme-secondary rounded w-1/2"></div>
                 </div>
-                <div class="h-6 w-16 bg-gray-200 rounded-full"></div>
+                <div class="h-6 w-16 bg-theme-secondary rounded-full"></div>
               </div>
               <div class="flex justify-between items-center pt-3 border-t border-gray-50">
-                <div class="h-4 bg-gray-100 rounded w-24"></div>
-                <div class="h-5 bg-gray-200 rounded w-20"></div>
+                <div class="h-4 bg-theme-secondary rounded w-24"></div>
+                <div class="h-5 bg-theme-secondary rounded w-20"></div>
               </div>
             </div>
           }
         </div>
       } @else if (rowData().length === 0) {
-        <div class="bg-white rounded-xl border border-gray-100 p-8 text-center shadow-sm">
-          <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-theme-surface rounded-xl border border-theme-secondary p-8 text-center shadow-sm">
+          <div class="w-16 h-16 mx-auto mb-4 bg-theme-secondary rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ emptyTitle }}</h3>
-          <p class="text-gray-500 text-sm">{{ emptyMessage }}</p>
+          <h3 class="text-lg font-semibold text-theme-fg mb-1">{{ emptyTitle }}</h3>
+          <p class="text-theme-muted text-sm">{{ emptyMessage }}</p>
         </div>
       } @else {
         <div class="space-y-3">
           @for (row of paginatedMobileData(); track trackByFn(row)) {
             <div 
-              class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm hover:shadow-md hover:border-gray-200 transition-all duration-200 active:scale-[0.99]"
+              class="bg-theme-surface rounded-xl border border-theme-secondary p-4 shadow-sm hover:shadow-md hover:border-theme-secondary transition-all duration-200 active:scale-[0.99]"
               (click)="onRowClick(row)"
               [class.cursor-pointer]="rowClickable"
             >
@@ -148,12 +148,12 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <div class="flex items-start justify-between mb-3">
                 <div class="flex-1 min-w-0">
                   @if (getPrimaryColumn()) {
-                    <div class="font-semibold text-gray-900 truncate">
+                    <div class="font-semibold text-theme-fg truncate">
                       {{ formatCellValue(row, getPrimaryColumn()!) }}
                     </div>
                   }
                   @if (getSecondaryColumn()) {
-                    <div class="text-sm text-gray-500 truncate mt-0.5">
+                    <div class="text-sm text-theme-muted truncate mt-0.5">
                       {{ formatCellValue(row, getSecondaryColumn()!) }}
                     </div>
                   }
@@ -173,8 +173,8 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <div class="flex flex-wrap gap-x-4 gap-y-2 pt-3 border-t border-gray-50">
                 @for (col of getMobileVisibleColumns(); track col.field) {
                   <div class="flex items-center text-sm">
-                    <span class="text-gray-400 mr-1.5">{{ col.headerName }}:</span>
-                    <span class="text-gray-700 font-medium">{{ formatCellValue(row, col) }}</span>
+                    <span class="text-theme-muted mr-1.5">{{ col.headerName }}:</span>
+                    <span class="text-theme-fg font-medium">{{ formatCellValue(row, col) }}</span>
                   </div>
                 }
               </div>
@@ -184,15 +184,15 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
 
         <!-- Mobile Pagination -->
         @if (showPagination && pagination()) {
-          <div class="mt-6 bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+          <div class="mt-6 bg-theme-surface rounded-xl border border-theme-secondary p-4 shadow-sm">
             <div class="flex items-center justify-between mb-4">
-              <span class="text-sm text-gray-500">
+              <span class="text-sm text-theme-muted">
                 {{ getMobilePaginationText() }}
               </span>
               <select 
                 [(ngModel)]="pageSize"
                 (ngModelChange)="onPageSizeChange($event)"
-                class="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none bg-white"
+                class="text-sm border border-theme-secondary rounded-lg px-3 py-1.5 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none bg-theme-surface"
               >
                 @for (size of pageSizeOptions; track size) {
                   <option [value]="size">{{ size }} / page</option>
@@ -203,7 +203,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <button 
                 (click)="goToFirstPage()"
                 [disabled]="!pagination()?.page || pagination()!.page <= 1"
-                class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                class="p-2 rounded-lg border border-theme-secondary hover:bg-theme-bg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
@@ -212,7 +212,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <button 
                 (click)="goToPreviousPage()"
                 [disabled]="!pagination()?.page || pagination()!.page <= 1"
-                class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                class="p-2 rounded-lg border border-theme-secondary hover:bg-theme-bg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -222,13 +222,13 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <div class="flex items-center gap-1 px-2">
                 @for (pageNum of getVisiblePageNumbers(); track pageNum) {
                   @if (pageNum === -1) {
-                    <span class="px-2 text-gray-400">...</span>
+                    <span class="px-2 text-theme-muted">...</span>
                   } @else {
                     <button
                       (click)="goToPage(pageNum)"
                       [class]="pageNum === pagination()?.page 
                         ? 'w-8 h-8 rounded-lg bg-primary-600 text-white font-medium text-sm' 
-                        : 'w-8 h-8 rounded-lg hover:bg-gray-100 text-gray-600 text-sm transition-colors'"
+                        : 'w-8 h-8 rounded-lg hover:bg-theme-secondary text-theme-muted text-sm transition-colors'"
                     >
                       {{ pageNum }}
                     </button>
@@ -239,7 +239,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <button 
                 (click)="goToNextPage()"
                 [disabled]="!pagination()?.page || pagination()!.page >= pagination()!.totalPages"
-                class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                class="p-2 rounded-lg border border-theme-secondary hover:bg-theme-bg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -248,7 +248,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <button 
                 (click)="goToLastPage()"
                 [disabled]="!pagination()?.page || pagination()!.page >= pagination()!.totalPages"
-                class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                class="p-2 rounded-lg border border-theme-secondary hover:bg-theme-bg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
@@ -267,7 +267,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
         <div class="flex items-center justify-between mb-4 gap-4">
           @if (showSearch) {
             <div class="relative flex-1 max-w-md">
-              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
               <input
@@ -275,14 +275,14 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
                 [placeholder]="searchPlaceholder"
                 [(ngModel)]="searchValue"
                 (ngModelChange)="onSearch($event)"
-                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm transition-all"
+                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-theme-secondary focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm transition-all"
               />
             </div>
           }
           @if (showExport) {
             <button 
               (click)="exportData()"
-              class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-theme-fg bg-theme-surface border border-theme-secondary rounded-lg hover:bg-theme-bg transition-colors"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -294,13 +294,13 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
       }
 
       <!-- AG Grid -->
-      <div class="ag-theme-custom rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+      <div class="ag-theme-custom rounded-xl border border-theme-secondary overflow-hidden shadow-sm">
         @if (loading()) {
           <div class="p-8">
             <div class="animate-pulse space-y-4">
-              <div class="h-10 bg-gray-100 rounded"></div>
+              <div class="h-10 bg-theme-secondary rounded"></div>
               @for (i of skeletonRows; track i) {
-                <div class="h-14 bg-gray-50 rounded"></div>
+                <div class="h-14 bg-theme-bg rounded"></div>
               }
             </div>
           </div>
@@ -330,7 +330,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
       <!-- Custom Pagination for Server-Side -->
       @if (showPagination && !useClientPagination && pagination()) {
         <div class="flex items-center justify-between mt-4 px-2">
-          <div class="text-sm text-gray-500">
+          <div class="text-sm text-theme-muted">
             Showing {{ getStartRecord() }} to {{ getEndRecord() }} of {{ pagination()!.total }} results
           </div>
           
@@ -338,7 +338,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
             <select 
               [(ngModel)]="pageSize"
               (ngModelChange)="onPageSizeChange($event)"
-              class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none bg-white"
+              class="text-sm border border-theme-secondary rounded-lg px-3 py-2 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none bg-theme-surface"
             >
               @for (size of pageSizeOptions; track size) {
                 <option [value]="size">{{ size }} per page</option>
@@ -349,7 +349,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <button 
                 (click)="goToFirstPage()"
                 [disabled]="pagination()!.page <= 1"
-                class="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                class="p-2 rounded-lg hover:bg-theme-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 title="First page"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -359,7 +359,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <button 
                 (click)="goToPreviousPage()"
                 [disabled]="pagination()!.page <= 1"
-                class="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                class="p-2 rounded-lg hover:bg-theme-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 title="Previous page"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -369,13 +369,13 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               
               @for (pageNum of getVisiblePageNumbers(); track pageNum) {
                 @if (pageNum === -1) {
-                  <span class="px-2 text-gray-400">...</span>
+                  <span class="px-2 text-theme-muted">...</span>
                 } @else {
                   <button
                     (click)="goToPage(pageNum)"
                     [class]="pageNum === pagination()!.page 
                       ? 'min-w-[36px] h-9 rounded-lg bg-primary-600 text-white font-medium text-sm' 
-                      : 'min-w-[36px] h-9 rounded-lg hover:bg-gray-100 text-gray-600 text-sm transition-colors'"
+                      : 'min-w-[36px] h-9 rounded-lg hover:bg-theme-secondary text-theme-muted text-sm transition-colors'"
                   >
                     {{ pageNum }}
                   </button>
@@ -385,7 +385,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <button 
                 (click)="goToNextPage()"
                 [disabled]="pagination()!.page >= pagination()!.totalPages"
-                class="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                class="p-2 rounded-lg hover:bg-theme-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 title="Next page"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -395,7 +395,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               <button 
                 (click)="goToLastPage()"
                 [disabled]="pagination()!.page >= pagination()!.totalPages"
-                class="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                class="p-2 rounded-lg hover:bg-theme-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 title="Last page"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -17,20 +17,20 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
   standalone: true,
   imports: [CommonModule, FormsModule, WishlistButtonComponent],
   template: `
-    <div class="min-h-screen bg-white font-sans antialiased">
+    <div class="min-h-screen bg-theme-surface font-sans antialiased">
       @if (loading()) {
         <!-- Loading Skeleton - Mobile optimized -->
         <div class="px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 max-w-6xl mx-auto">
           <div class="animate-pulse">
-            <div class="h-4 bg-gray-200 rounded w-32 mb-4"></div>
+            <div class="h-4 bg-theme-secondary rounded w-32 mb-4"></div>
             <div class="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-              <div class="aspect-square bg-gray-200 rounded-2xl"></div>
+              <div class="aspect-square bg-theme-secondary rounded-2xl"></div>
               <div class="space-y-4">
-                <div class="h-8 bg-gray-200 rounded w-3/4"></div>
-                <div class="h-10 bg-gray-200 rounded w-1/3"></div>
-                <div class="h-4 bg-gray-200 rounded w-full"></div>
-                <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-                <div class="h-14 bg-gray-200 rounded-xl w-full mt-6"></div>
+                <div class="h-8 bg-theme-secondary rounded w-3/4"></div>
+                <div class="h-10 bg-theme-secondary rounded w-1/3"></div>
+                <div class="h-4 bg-theme-secondary rounded w-full"></div>
+                <div class="h-4 bg-theme-secondary rounded w-2/3"></div>
+                <div class="h-14 bg-theme-secondary rounded-xl w-full mt-6"></div>
               </div>
             </div>
           </div>
@@ -41,14 +41,14 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
           <nav class="mb-4 sm:mb-6">
             <ol class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm overflow-x-auto whitespace-nowrap">
               <li>
-                <button (click)="navigateTo('/')" class="text-gray-500 hover:text-gray-900 active:text-gray-700 transition-colors py-1">Home</button>
+                <button (click)="navigateTo('/')" class="text-theme-muted hover:text-theme-fg active:text-theme-fg transition-colors py-1">Home</button>
               </li>
-              <li class="text-gray-400">/</li>
+              <li class="text-theme-muted">/</li>
               <li>
-                <button (click)="navigateTo('/products')" class="text-gray-500 hover:text-gray-900 active:text-gray-700 transition-colors py-1">Products</button>
+                <button (click)="navigateTo('/products')" class="text-theme-muted hover:text-theme-fg active:text-theme-fg transition-colors py-1">Products</button>
               </li>
-              <li class="text-gray-400">/</li>
-              <li class="text-gray-900 font-medium truncate max-w-[150px] sm:max-w-[200px]">{{ product()?.title }}</li>
+              <li class="text-theme-muted">/</li>
+              <li class="text-theme-fg font-medium truncate max-w-[150px] sm:max-w-[200px]">{{ product()?.title }}</li>
             </ol>
           </nav>
 
@@ -82,18 +82,18 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
             <!-- Product Details -->
             <div class="flex flex-col">
               <!-- Title -->
-              <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
+              <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-theme-fg mb-3 sm:mb-4 leading-tight">
                 {{ product()?.title }}
               </h1>
 
               <!-- Price Block -->
               <div class="bg-gradient-to-br from-[#fff3d0] via-[#fff7e0] to-[#fffbeb] rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-4 sm:mb-6">
                 <div class="flex items-baseline gap-2 sm:gap-3 flex-wrap">
-                  <span class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
+                  <span class="text-2xl sm:text-3xl md:text-4xl font-bold text-theme-fg">
                     ₹{{ (product()?.price || 0) / 100 }}
                   </span>
                   @if (product()?.compareAtPrice && product()!.compareAtPrice! > product()!.price) {
-                    <span class="text-base sm:text-lg text-gray-400 line-through">
+                    <span class="text-base sm:text-lg text-theme-muted line-through">
                       ₹{{ product()!.compareAtPrice! / 100 }}
                     </span>
                     <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-xs sm:text-sm font-semibold rounded-lg">
@@ -108,7 +108,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                 @if ((product()?.price || 0) === 0) {
                   <!-- Free product: choose free or pay what you want -->
                   <div class="bg-[#f0fdf4] border border-emerald-200 rounded-xl p-4 space-y-3">
-                    <p class="text-sm font-semibold text-gray-700">This product is free! Choose how to get it:</p>
+                    <p class="text-sm font-semibold text-theme-fg">This product is free! Choose how to get it:</p>
 
                     <button
                       (click)="downloadForFree()"
@@ -124,27 +124,27 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                       }
                     </button>
 
-                    <div class="flex items-center gap-2 text-xs text-gray-400">
-                      <div class="flex-1 h-px bg-gray-200"></div>
+                    <div class="flex items-center gap-2 text-xs text-theme-muted">
+                      <div class="flex-1 h-px bg-theme-secondary"></div>
                       <span>or support the creator</span>
-                      <div class="flex-1 h-px bg-gray-200"></div>
+                      <div class="flex-1 h-px bg-theme-secondary"></div>
                     </div>
 
                     <div class="flex gap-2">
                       <div class="relative flex-1">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">₹</span>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-theme-muted font-semibold text-sm">₹</span>
                         <input
                           type="number"
                           [(ngModel)]="customAmount"
                           min="1"
                           placeholder="Enter amount"
-                          class="w-full pl-7 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-gray-400/30"
+                          class="w-full pl-7 pr-3 py-2.5 border border-theme-secondary rounded-lg text-sm font-medium bg-theme-surface focus:outline-none focus:ring-2 focus:ring-gray-400/30"
                         />
                       </div>
                       <button
                         (click)="payCustomAmount()"
                         [disabled]="purchasing() || !customAmount || customAmount < 1"
-                        class="px-4 py-2.5 bg-gray-900 text-white border border-gray-900 rounded-lg font-semibold text-sm hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap transition-colors"
+                        class="px-4 py-2.5 bg-theme-fg text-white border border-gray-900 rounded-lg font-semibold text-sm hover:bg-theme-surface-hover disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap transition-colors"
                       >
                         @if (purchasing() && selectedFreeOption() === 'custom') {
                           <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
@@ -156,15 +156,15 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
 
                     @if (!authService.isSignedIn() && showGuestEmailInput()) {
                       <div class="space-y-2 pt-1">
-                        <p class="text-xs text-gray-500">Enter your email to receive the download link:</p>
+                        <p class="text-xs text-theme-muted">Enter your email to receive the download link:</p>
                         <input
                           type="email"
                           [(ngModel)]="guestEmail"
                           (ngModelChange)="guestEmailError = ''"
                           placeholder="your@email.com"
-                          class="w-full px-3 py-2.5 border rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-gray-400/30"
+                          class="w-full px-3 py-2.5 border rounded-lg text-sm font-medium bg-theme-surface focus:outline-none focus:ring-2 focus:ring-gray-400/30"
                           [class.border-red-500]="guestEmailError"
-                          [class.border-gray-300]="!guestEmailError"
+                          [class.border-theme-secondary]="!guestEmailError"
                         />
                         @if (guestEmailError) {
                           <p class="text-xs text-red-500">{{ guestEmailError }}</p>
@@ -189,7 +189,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                   <button 
                     (click)="handleBuy()"
                     [disabled]="purchasing()"
-                    class="w-full py-4 sm:py-5 text-base sm:text-lg font-semibold bg-gray-900 text-white rounded-xl hover:bg-gray-800 active:bg-gray-950 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors min-h-[56px]"
+                    class="w-full py-4 sm:py-5 text-base sm:text-lg font-semibold bg-theme-fg text-white rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors min-h-[56px]"
                   >
                     @if (purchasing()) {
                       <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
@@ -205,10 +205,10 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                   <button 
                     (click)="toggleCart()"
                     class="w-full py-4 text-base font-semibold border-2 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 min-h-[52px]"
-                    [class.border-gray-200]="!isInCart()"
-                    [class.bg-white]="!isInCart()"
-                    [class.hover:border-gray-300]="!isInCart()"
-                    [class.active:bg-gray-50]="!isInCart()"
+                    [class.border-theme-secondary]="!isInCart()"
+                    [class.bg-theme-surface]="!isInCart()"
+                    [class.hover:border-theme-secondary]="!isInCart()"
+                    [class.active:bg-theme-bg]="!isInCart()"
                     [class.border-red-500]="isInCart()"
                     [class.bg-red-50]="isInCart()"
                     [class.text-red-700]="isInCart()"
@@ -230,37 +230,37 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
               </div>
 
               <!-- Trust Badges - Compact grid -->
-              <div class="grid grid-cols-2 gap-3 sm:gap-4 mt-6 pt-6 border-t border-gray-100">
+              <div class="grid grid-cols-2 gap-3 sm:gap-4 mt-6 pt-6 border-t border-theme-secondary">
                 <div class="flex items-center gap-2.5 sm:gap-3 text-sm">
                   <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#b8e6c9] to-[#d8f8e0] flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                   </div>
                   <div class="min-w-0">
-                    <div class="font-medium text-gray-900 text-xs sm:text-sm">Digital Download</div>
-                    <div class="text-gray-500 text-xs truncate">Instant access</div>
+                    <div class="font-medium text-theme-fg text-xs sm:text-sm">Digital Download</div>
+                    <div class="text-theme-muted text-xs truncate">Instant access</div>
                   </div>
                 </div>
                 <div class="flex items-center gap-2.5 sm:gap-3 text-sm">
                   <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-[#fff3d0] to-[#fffbeb] flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                     </svg>
                   </div>
                   <div class="min-w-0">
-                    <div class="font-medium text-gray-900 text-xs sm:text-sm">Secure Payment</div>
-                    <div class="text-gray-500 text-xs truncate">Razorpay</div>
+                    <div class="font-medium text-theme-fg text-xs sm:text-sm">Secure Payment</div>
+                    <div class="text-theme-muted text-xs truncate">Razorpay</div>
                   </div>
                 </div>
               </div>
 
               <!-- Copy & Share -->
-              <div class="flex gap-2 mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-gray-100">
+              <div class="flex gap-2 mt-4 sm:mt-5 pt-4 sm:pt-5 border-t border-theme-secondary">
                 <app-wishlist-button [productId]="product()!.id" size="md" />
                 <button
                   (click)="copyUrl()"
-                  class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-200 active:bg-gray-300 transition-colors min-h-[44px]"
+                  class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-theme-secondary border border-theme-secondary rounded-xl text-sm font-semibold text-theme-fg hover:bg-theme-secondary active:bg-theme-secondary transition-colors min-h-[44px]"
                 >
                   @if (copied()) {
                     <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -272,7 +272,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                 </button>
                 <button
                   (click)="shareUrl()"
-                  class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-800 hover:text-white active:bg-gray-900 transition-colors min-h-[44px]"
+                  class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-theme-secondary border border-theme-secondary rounded-xl text-sm font-semibold text-theme-fg hover:bg-theme-surface-hover hover:text-white active:bg-theme-fg transition-colors min-h-[44px]"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
                   Share
@@ -284,27 +284,27 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
           <!-- Description (full width) -->
           @if (product()?.description) {
             <div class="mt-8 sm:mt-10">
-              <div class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-sm">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <div class="bg-theme-surface rounded-2xl border border-theme-secondary p-6 sm:p-8 shadow-sm">
+                <h2 class="text-lg font-bold text-theme-fg mb-4 flex items-center gap-2">
+                  <svg class="w-5 h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   Description
                 </h2>
-                <div class="prose prose-base prose-gray max-w-none text-gray-600 break-words overflow-hidden [&_*]:max-w-full [&_img]:max-w-full [&_table]:w-full [&_table]:table-fixed [&_pre]:overflow-x-auto" [innerHTML]="product()?.description"></div>
+                <div class="prose prose-base prose-gray max-w-none text-theme-muted break-words overflow-hidden [&_*]:max-w-full [&_img]:max-w-full [&_table]:w-full [&_table]:table-fixed [&_pre]:overflow-x-auto" [innerHTML]="product()?.description"></div>
               </div>
             </div>
           }
 
           <!-- Related Products - Horizontal scroll on mobile -->
           @if (relatedProducts().length > 0) {
-            <section class="mt-8 sm:mt-12 pt-8 sm:pt-10 border-t border-gray-100">
-              <h2 class="font-bold text-lg sm:text-xl text-gray-900 mb-4 sm:mb-6">More Products</h2>
+            <section class="mt-8 sm:mt-12 pt-8 sm:pt-10 border-t border-theme-secondary">
+              <h2 class="font-bold text-lg sm:text-xl text-theme-fg mb-4 sm:mb-6">More Products</h2>
               
               <!-- Horizontal scroll on mobile, grid on desktop -->
               <div class="flex md:grid md:grid-cols-4 gap-3 sm:gap-4 overflow-x-auto pb-4 md:pb-0 snap-x snap-mandatory scrollbar-hide -mx-3 px-3 md:mx-0 md:px-0">
                 @for (relatedProduct of relatedProducts(); track relatedProduct.id) {
                   <div 
                     (click)="navigateTo('/product/' + relatedProduct.id)" 
-                    class="flex-shrink-0 w-[45vw] sm:w-[35vw] md:w-auto snap-center bg-white rounded-xl sm:rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg active:shadow-md transition-all cursor-pointer group"
+                    class="flex-shrink-0 w-[45vw] sm:w-[35vw] md:w-auto snap-center bg-theme-surface rounded-xl sm:rounded-2xl border border-theme-secondary overflow-hidden hover:shadow-lg active:shadow-md transition-all cursor-pointer group"
                   >
                     @if (relatedProduct.coverImageUrl) {
                       <div class="aspect-square overflow-hidden">
@@ -323,10 +323,10 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                       </div>
                     }
                     <div class="p-3 sm:p-4">
-                      <h3 class="font-semibold text-gray-900 text-sm line-clamp-2 mb-1.5">
+                      <h3 class="font-semibold text-theme-fg text-sm line-clamp-2 mb-1.5">
                         {{ relatedProduct.title }}
                       </h3>
-                      <span class="text-base font-bold text-gray-900">
+                      <span class="text-base font-bold text-theme-fg">
                         ₹{{ relatedProduct.price / 100 }}
                       </span>
                     </div>
@@ -340,7 +340,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
           <div class="mt-6 sm:mt-8">
             <button 
               (click)="navigateTo('/products')" 
-              class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-xl transition-colors font-medium min-h-[48px]"
+              class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 text-theme-fg hover:text-theme-fg bg-theme-secondary hover:bg-theme-secondary active:bg-theme-secondary rounded-xl transition-colors font-medium min-h-[48px]"
             >
               <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
@@ -354,15 +354,15 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
         <div class="px-3 sm:px-4 md:px-6 py-10 sm:py-16 max-w-lg mx-auto">
           <div class="bg-gradient-to-br from-[#fff3d0] via-[#fff7e0] to-[#fffbeb] rounded-2xl sm:rounded-3xl p-8 sm:p-10 text-center">
             <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-white/80 rounded-full flex items-center justify-center mb-5 sm:mb-6">
-              <svg class="w-10 h-10 sm:w-12 sm:h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-10 h-10 sm:w-12 sm:h-12 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
             </div>
-            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Product Not Found</h1>
-            <p class="text-gray-600 text-sm sm:text-base mb-6">This product doesn't exist or has been removed.</p>
+            <h1 class="text-xl sm:text-2xl font-bold text-theme-fg mb-2">Product Not Found</h1>
+            <p class="text-theme-muted text-sm sm:text-base mb-6">This product doesn't exist or has been removed.</p>
             <button 
               (click)="navigateTo('/products')" 
-              class="w-full sm:w-auto px-8 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-colors min-h-[48px]"
+              class="w-full sm:w-auto px-8 py-3.5 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
             >
               Browse Products
             </button>

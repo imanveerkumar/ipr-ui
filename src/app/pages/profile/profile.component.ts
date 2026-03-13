@@ -6,9 +6,9 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="min-h-screen bg-gray-50 py-12">
+    <div class="min-h-screen bg-theme-bg py-12">
       <div class="max-w-4xl mx-auto px-4">
-        <p class="text-center text-gray-600">Profile page - Coming soon</p>
+        <p class="text-center text-theme-muted">Profile page - Coming soon</p>
       </div>
     </div>
   `,

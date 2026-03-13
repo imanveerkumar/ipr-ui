@@ -22,7 +22,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     <!-- State Banner for Archived/Deleted Products -->
     @if (isEditing() && !isLoading()) {
       @if (productState().isDeleted) {
-        <section class="bg-[#FA4B28] border-b-2 border-black">
+        <section class="bg-theme-danger border-b-2 border-theme-border">
           <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
@@ -36,27 +36,27 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
                 </div>
               </div>
               <button type="button" (click)="restoreProduct()" 
-                class="px-4 py-2 bg-white text-[#FA4B28] font-bold border-2 border-white hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                class="px-4 py-2 bg-theme-surface text-theme-danger font-bold border-2 border-white hover:bg-theme-secondary transition-colors whitespace-nowrap">
                 Restore Product
               </button>
             </div>
           </div>
         </section>
       } @else if (productState().isArchived) {
-        <section class="bg-[#FFC60B] border-b-2 border-black">
+        <section class="bg-theme-accent border-b-2 border-theme-border">
           <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
-                <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
                 </svg>
                 <div>
-                  <p class="font-bold text-[#111111]">This product is archived</p>
+                  <p class="font-bold text-theme-fg">This product is archived</p>
                   <p class="text-sm text-[#111111]/80">It cannot be edited, purchased, or seen by customers. Unarchive to make changes.</p>
                 </div>
               </div>
               <button type="button" (click)="unarchiveProduct()" 
-                class="px-4 py-2 bg-white text-[#111111] font-bold border-2 border-black hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                class="px-4 py-2 bg-theme-surface text-theme-fg font-bold border-2 border-theme-border hover:bg-theme-secondary transition-colors whitespace-nowrap">
                 Unarchive Product
               </button>
             </div>
@@ -81,20 +81,20 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
             <p class="page-subtitle">{{ isEditing() ? 'Update your product details' : 'Add a new digital product to your store' }}</p>
 
             @if (!isEditing() && stores().length === 0 && !isLoading()) {
-              <div class="mt-6 bg-[#FFC60B] border-2 border-black p-4 md:p-5 shadow-[4px_4px_0px_0px_#000]">
+              <div class="mt-6 bg-theme-accent border-2 border-theme-border p-4 md:p-5 shadow-[4px_4px_0px_0px_#000]">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shrink-0">
-                      <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-10 h-10 bg-theme-surface border-2 border-theme-border flex items-center justify-center shrink-0">
+                      <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                       </svg>
                     </div>
                     <div>
-                      <h3 class="font-bold text-[#111111] mb-0.5">Note</h3>
+                      <h3 class="font-bold text-theme-fg mb-0.5">Note</h3>
                       <p class="text-sm text-[#111111]/80">There are no store created. Create a store first.</p>
                     </div>
                   </div>
-                  <a routerLink="/dashboard/stores/new" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
+                  <a routerLink="/dashboard/stores/new" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-surface border-2 border-theme-border font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
                     Create Store
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>

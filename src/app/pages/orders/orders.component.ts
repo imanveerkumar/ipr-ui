@@ -13,16 +13,16 @@ type SortOrder = 'desc' | 'asc';
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   template: `
-    <div class="min-h-screen bg-white font-sans antialiased">
+    <div class="min-h-screen bg-theme-surface font-sans antialiased">
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
-        <div class="bg-[#F9F4EB] border-b-2 border-black">
+        <div class="bg-theme-secondary border-b-2 border-theme-border">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
             <div class="text-left">
 
               
               <!-- Main Heading -->
-              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-0 md:mb-1 leading-tight">
+              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-theme-fg mb-0 md:mb-1 leading-tight">
                 Order History
               </h1>
 
@@ -30,14 +30,14 @@ type SortOrder = 'desc' | 'asc';
               <div class="mt-4 md:mt-6 grid grid-cols-3 gap-2 md:flex md:justify-start md:gap-8 max-w-2xl mx-auto md:mx-0">
                 <!-- Total Orders stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black rounded-lg flex items-center justify-center">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-primary border border-theme-border rounded-lg flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
                     @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ overallStats().totalOrders }}</div>
+                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ overallStats().totalOrders }}</div>
                     } @else {
                       <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
@@ -46,14 +46,14 @@ type SortOrder = 'desc' | 'asc';
                 </div>
                 <!-- Completed stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-success border border-theme-border rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
                     @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getCompletedCount() }}</div>
+                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getCompletedCount() }}</div>
                     } @else {
                       <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
@@ -62,14 +62,14 @@ type SortOrder = 'desc' | 'asc';
                 </div>
                 <!-- Total Spent stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FFC60B] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-accent border border-theme-border rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
                     @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalSpent() }}</div>
+                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getTotalSpent() }}</div>
                     } @else {
                       <div class="h-4 md:h-6 w-10 md:w-16 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
@@ -92,11 +92,11 @@ type SortOrder = 'desc' | 'asc';
                     (input)="onSearchInput()"
                     (keyup.enter)="performSearch()"
                     placeholder="Search orders by product name..."
-                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-white border-2 border-black rounded-xl text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-fg placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
                   />
                   <button
                     (click)="performSearch()"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-theme-accent text-theme-fg border-2 border-theme-border rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
                   >
                     Search
                   </button>
@@ -111,19 +111,19 @@ type SortOrder = 'desc' | 'asc';
       <section class="py-6 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8">
         <div class="max-w-5xl mx-auto">
           <!-- Filters Row -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 md:mb-8 sticky top-0 z-20 bg-white pt-2 pb-2 sm:relative sm:top-auto sm:z-auto sm:bg-transparent sm:pt-0 sm:pb-0">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 md:mb-8 sticky top-0 z-20 bg-theme-surface pt-2 pb-2 sm:relative sm:top-auto sm:z-auto sm:bg-transparent sm:pt-0 sm:pb-0">
             <!-- Status Filter Tabs -->
             <div class="flex overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-              <div class="flex gap-1.5 md:gap-2 p-1 bg-[#F9F4EB] border-2 border-black rounded-xl">
+              <div class="flex gap-1.5 md:gap-2 p-1 bg-theme-secondary border-2 border-theme-border rounded-xl">
                 @for (status of statusFilters; track status.value) {
                   <button
                     (click)="filterByStatus(status.value)"
                     class="flex items-center gap-1.5 px-2.5 py-2 md:px-4 md:py-2.5 rounded-lg font-bold text-xs md:text-sm whitespace-nowrap transition-all duration-200"
-                    [class.bg-[#111111]]="currentStatus() === status.value"
+                    [class.bg-theme-fg]="currentStatus() === status.value"
                     [class.text-white]="currentStatus() === status.value"
                     [class.shadow-[2px_2px_0px_0px_#FFC60B]]="currentStatus() === status.value"
-                    [class.text-[#111111]]="currentStatus() !== status.value"
-                    [class.hover:bg-white]="currentStatus() !== status.value"
+                    [class.text-theme-fg]="currentStatus() !== status.value"
+                    [class.hover:bg-theme-surface]="currentStatus() !== status.value"
                   >
                     {{ status.label }}
                   </button>
@@ -137,7 +137,7 @@ type SortOrder = 'desc' | 'asc';
               <div class="relative">
                 <button
                   (click)="toggleSortDropdown()"
-                  class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-black rounded-lg font-medium text-xs md:text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors"
+                  class="flex items-center gap-2 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-medium text-xs md:text-sm text-theme-fg hover:bg-theme-secondary transition-colors"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
@@ -150,18 +150,18 @@ type SortOrder = 'desc' | 'asc';
                 
                 <!-- Sort Options -->
                 @if (showSortDropdown()) {
-                  <div class="absolute top-full right-0 mt-2 w-40 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_#000] z-20 overflow-hidden">
+                  <div class="absolute top-full right-0 mt-2 w-40 bg-theme-surface border-2 border-theme-border rounded-xl shadow-[4px_4px_0px_0px_#000] z-20 overflow-hidden">
                     <button
                       (click)="setSortOrder('desc')"
-                      class="w-full px-4 py-3 text-left text-sm font-medium text-[#111111] hover:bg-[#F9F4EB] transition-colors border-b border-black/10"
-                      [class.bg-[#FFC60B]]="currentSortOrder() === 'desc'"
+                      class="w-full px-4 py-3 text-left text-sm font-medium text-theme-fg hover:bg-theme-secondary transition-colors border-b border-black/10"
+                      [class.bg-theme-accent]="currentSortOrder() === 'desc'"
                     >
                       Newest First
                     </button>
                     <button
                       (click)="setSortOrder('asc')"
-                      class="w-full px-4 py-3 text-left text-sm font-medium text-[#111111] hover:bg-[#F9F4EB] transition-colors"
-                      [class.bg-[#FFC60B]]="currentSortOrder() === 'asc'"
+                      class="w-full px-4 py-3 text-left text-sm font-medium text-theme-fg hover:bg-theme-secondary transition-colors"
+                      [class.bg-theme-accent]="currentSortOrder() === 'asc'"
                     >
                       Oldest First
                     </button>
@@ -173,7 +173,7 @@ type SortOrder = 'desc' | 'asc';
               @if (hasActiveFilters()) {
                 <button
                   (click)="clearFilters()"
-                  class="flex items-center gap-1.5 px-3 py-2 bg-[#FA4B28] border-2 border-black rounded-lg font-medium text-xs md:text-sm text-white hover:bg-[#e8421f] transition-colors"
+                  class="flex items-center gap-1.5 px-3 py-2 bg-theme-danger border-2 border-theme-border rounded-lg font-medium text-xs md:text-sm text-white hover:bg-[#e8421f] transition-colors"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -188,15 +188,15 @@ type SortOrder = 'desc' | 'asc';
           @if (loading()) {
             <div class="space-y-4">
               @for (i of [1,2,3,4]; track i) {
-                <div class="bg-white border-2 border-black rounded-xl overflow-hidden">
+                <div class="bg-theme-surface border-2 border-theme-border rounded-xl overflow-hidden">
                   <div class="p-4 md:p-5">
                     <div class="flex items-start gap-4">
-                      <div class="w-16 h-16 md:w-20 md:h-20 bg-[#F9F4EB] rounded-lg animate-pulse shrink-0"></div>
+                      <div class="w-16 h-16 md:w-20 md:h-20 bg-theme-secondary rounded-lg animate-pulse shrink-0"></div>
                       <div class="flex-1 min-w-0">
                         <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse w-3/4 mb-2"></div>
                         <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-1/2 mb-3"></div>
                         <div class="flex items-center gap-2">
-                          <div class="h-6 w-16 bg-[#FFC60B]/30 rounded animate-pulse"></div>
+                          <div class="h-6 w-16 bg-theme-accent/30 rounded animate-pulse"></div>
                           <div class="h-3 w-24 bg-[#111111]/5 rounded animate-pulse"></div>
                         </div>
                       </div>
@@ -212,19 +212,19 @@ type SortOrder = 'desc' | 'asc';
           } @else if (orders().length === 0 && !isFiltering()) {
             <!-- Empty State -->
             <div class="text-center py-12 md:py-16 transition-opacity duration-200">
-              <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 bg-[#F9F4EB] border-2 border-black rounded-2xl flex items-center justify-center transform rotate-3">
+              <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 bg-theme-secondary border-2 border-theme-border rounded-2xl flex items-center justify-center transform rotate-3">
                 <svg class="w-10 h-10 md:w-12 md:h-12 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                 </svg>
               </div>
-              <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-[#111111] mb-2">
+              <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-theme-fg mb-2">
                 {{ searchQuery || currentStatus() !== 'ALL' ? 'No orders found' : 'No orders yet' }}
               </h2>
               <p class="text-sm md:text-base text-[#111111]/60 max-w-md mx-auto mb-8 font-medium">
                 {{ searchQuery || currentStatus() !== 'ALL' ? 'Try adjusting your search or filters' : 'Start shopping and your orders will appear here.' }}
               </p>
               @if (!searchQuery && currentStatus() === 'ALL') {
-                <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-[#FFC60B] border-2 border-black rounded-lg font-bold text-[#111111] hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-theme-accent border-2 border-theme-border rounded-lg font-bold text-theme-fg hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                   Start Shopping
                 </a>
               }
@@ -235,9 +235,9 @@ type SortOrder = 'desc' | 'asc';
               <!-- Subtle Loading Overlay for Tab Switching -->
               @if (isFiltering()) {
                 <div class="absolute inset-0 bg-white/60 z-10 flex items-start justify-center pt-16 backdrop-blur-[1px] transition-opacity duration-150">
-                  <div class="flex items-center gap-3 px-4 py-2 bg-white border-2 border-black rounded-full shadow-[2px_2px_0px_0px_#000]">
+                  <div class="flex items-center gap-3 px-4 py-2 bg-theme-surface border-2 border-theme-border rounded-full shadow-[2px_2px_0px_0px_#000]">
                     <div class="w-5 h-5 border-2 border-[#FFC60B] border-t-transparent rounded-full animate-spin"></div>
-                    <span class="text-sm font-medium text-[#111111]">Updating...</span>
+                    <span class="text-sm font-medium text-theme-fg">Updating...</span>
                   </div>
                 </div>
               }
@@ -245,29 +245,29 @@ type SortOrder = 'desc' | 'asc';
               <!-- Orders List -->
               <div class="space-y-4 md:space-y-6 transition-opacity duration-200" [class.opacity-50]="isFiltering()">
                 @for (order of orders(); track order.id) {
-                  <div class="group bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300">
+                  <div class="group bg-theme-surface border-2 border-theme-border rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300">
                     <!-- Order Header -->
-                    <div class="p-4 md:p-6 bg-[#F9F4EB] border-b-2 border-black">
+                    <div class="p-4 md:p-6 bg-theme-secondary border-b-2 border-theme-border">
                       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div class="flex items-center gap-3">
                           <!-- Order Icon -->
-                          <div class="w-10 h-10 md:w-12 md:h-12 bg-white border-2 border-black rounded-lg flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5 md:w-6 md:h-6 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div class="w-10 h-10 md:w-12 md:h-12 bg-theme-surface border-2 border-theme-border rounded-lg flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 md:w-6 md:h-6 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                             </svg>
                           </div>
                         <div>
                           <p class="text-xs md:text-sm text-[#111111]/60 font-medium">Order ID</p>
-                          <p class="font-bold text-sm md:text-base text-[#111111] font-mono">{{ formatId(order.id) }}</p>
+                          <p class="font-bold text-sm md:text-base text-theme-fg font-mono">{{ formatId(order.id) }}</p>
                         </div>
                       </div>
                       
                       <div class="flex items-center gap-3 sm:gap-4">
                         <div class="text-left sm:text-right">
                           <p class="text-xs md:text-sm text-[#111111]/60 font-medium">Date</p>
-                          <p class="font-bold text-sm md:text-base text-[#111111]">{{ order.createdAt | date:'mediumDate' }}</p>
+                          <p class="font-bold text-sm md:text-base text-theme-fg">{{ order.createdAt | date:'mediumDate' }}</p>
                         </div>
-                        <span [class]="getStatusClass(order.status)" class="px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg border-2 border-black">
+                        <span [class]="getStatusClass(order.status)" class="px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg border-2 border-theme-border">
                           {{ getStatusLabel(order.status) }}
                         </span>
                       </div>
@@ -278,9 +278,9 @@ type SortOrder = 'desc' | 'asc';
                   <div class="p-4 md:p-6">
                     <div class="space-y-3">
                       @for (item of order.items; track item.id) {
-                        <div class="flex items-center gap-3 md:gap-4 p-3 bg-[#F9F4EB]/50 rounded-lg border border-black/10">
+                        <div class="flex items-center gap-3 md:gap-4 p-3 bg-theme-secondary/50 rounded-lg border border-black/10">
                           <!-- Product Image -->
-                          <div class="w-12 h-12 md:w-16 md:h-16 bg-[#F9F4EB] border-2 border-black rounded-lg overflow-hidden shrink-0">
+                          <div class="w-12 h-12 md:w-16 md:h-16 bg-theme-secondary border-2 border-theme-border rounded-lg overflow-hidden shrink-0">
                             @if (item.product.coverImageUrl) {
                               <img [src]="item.product.coverImageUrl" [alt]="item.titleSnapshot" class="w-full h-full object-cover"/>
                             } @else {
@@ -294,7 +294,7 @@ type SortOrder = 'desc' | 'asc';
                           
                           <!-- Product Info -->
                           <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-sm md:text-base text-[#111111] truncate">{{ item.titleSnapshot }}</h4>
+                            <h4 class="font-bold text-sm md:text-base text-theme-fg truncate">{{ item.titleSnapshot }}</h4>
                             @if (item.product.store?.name) {
                               <p class="text-xs text-[#111111]/60 font-medium truncate">by {{ item.product!.store!.name }}</p>
                             }
@@ -302,7 +302,7 @@ type SortOrder = 'desc' | 'asc';
                           
                           <!-- Price -->
                           <div class="text-right shrink-0">
-                            <span class="font-bold text-sm md:text-base text-[#111111]">₹{{ item.priceAtPurchase / 100 }}</span>
+                            <span class="font-bold text-sm md:text-base text-theme-fg">₹{{ item.priceAtPurchase / 100 }}</span>
                           </div>
                         </div>
                       }
@@ -311,18 +311,18 @@ type SortOrder = 'desc' | 'asc';
                     <!-- Order Total -->
                     <div class="flex items-center justify-between mt-4 pt-4 border-t-2 border-dashed border-black/20">
                       <div class="flex items-center gap-2">
-                        <span class="text-sm font-bold text-[#111111]">{{ order.items.length }} {{ order.items.length === 1 ? 'item' : 'items' }}</span>
+                        <span class="text-sm font-bold text-theme-fg">{{ order.items.length }} {{ order.items.length === 1 ? 'item' : 'items' }}</span>
                       </div>
                       <div class="flex items-center gap-2">
                         <span class="text-sm text-[#111111]/60 font-medium">Total:</span>
-                        <span class="text-lg md:text-xl font-bold text-[#111111]">₹{{ order.totalAmount / 100 }}</span>
+                        <span class="text-lg md:text-xl font-bold text-theme-fg">₹{{ order.totalAmount / 100 }}</span>
                       </div>
                     </div>
 
                     <!-- Action Buttons -->
                     @if (order.status === 'PAID' || order.status === 'FULFILLED') {
                       <div class="mt-4 pt-4 border-t border-black/10">
-                        <a routerLink="/library" class="inline-flex items-center gap-2 px-4 py-2 bg-[#68E079] border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#5cd46d] transition-all shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                        <a routerLink="/library" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-success border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-[#5cd46d] transition-all shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                           </svg>
@@ -347,7 +347,7 @@ type SortOrder = 'desc' | 'asc';
                   <button
                     (click)="goToPage(meta().page - 1)"
                     [disabled]="!meta().hasPreviousPage"
-                    class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="flex items-center gap-1 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -362,10 +362,10 @@ type SortOrder = 'desc' | 'asc';
                       } @else {
                         <button
                           (click)="goToPage(+page)"
-                          class="w-10 h-10 flex items-center justify-center border-2 border-black rounded-lg font-bold text-sm transition-all"
-                          [class.bg-[#FFC60B]]="meta().page === +page"
-                          [class.bg-white]="meta().page !== +page"
-                          [class.hover:bg-[#F9F4EB]]="meta().page !== +page"
+                          class="w-10 h-10 flex items-center justify-center border-2 border-theme-border rounded-lg font-bold text-sm transition-all"
+                          [class.bg-theme-accent]="meta().page === +page"
+                          [class.bg-theme-surface]="meta().page !== +page"
+                          [class.hover:bg-theme-secondary]="meta().page !== +page"
                         >
                           {{ page }}
                         </button>
@@ -376,7 +376,7 @@ type SortOrder = 'desc' | 'asc';
                   <button
                     (click)="goToPage(meta().page + 1)"
                     [disabled]="!meta().hasNextPage"
-                    class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="flex items-center gap-1 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -587,16 +587,16 @@ export class OrdersComponent implements OnInit {
     switch (status) {
       case 'PAID':
       case 'FULFILLED':
-        return 'bg-[#68E079] text-[#111111]';
+        return 'bg-theme-success text-theme-fg';
       case 'PENDING':
-        return 'bg-[#FFC60B] text-[#111111]';
+        return 'bg-theme-accent text-theme-fg';
       case 'FAILED':
       case 'CANCELLED':
-        return 'bg-[#FA4B28] text-white';
+        return 'bg-theme-danger text-white';
       case 'REFUNDED':
-        return 'bg-[#2B57D6] text-white';
+        return 'bg-theme-primary text-white';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-theme-secondary text-theme-fg';
     }
   }
 

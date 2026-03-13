@@ -38,45 +38,45 @@ interface PaginatedResponse<T> {
   imports: [CommonModule, DataGridComponent, RouterLink],
   template: `
     <!-- Hero Section -->
-    <section class="bg-[#F9F4EB] border-b-2 border-black">
+    <section class="bg-theme-secondary border-b-2 border-theme-border">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <!-- Breadcrumb -->
         <nav class="flex items-center gap-2 mb-4 flex-wrap">
-          <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-black transition-colors">
+          <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-theme-fg transition-colors">
             Dashboard
           </a>
           <svg class="w-4 h-4 text-black/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M9 18l6-6-6-6"/>
           </svg>
-          <span class="text-sm font-bold text-black">Sales</span>
+          <span class="text-sm font-bold text-theme-fg">Sales</span>
         </nav>
         
         <!-- Header Content -->
         <div>
-          <h1 class="text-2xl sm:text-3xl font-black text-[#111111] tracking-tight mb-1">Sales & Analytics</h1>
+          <h1 class="text-2xl sm:text-3xl font-black text-theme-fg tracking-tight mb-1">Sales & Analytics</h1>
         </div>
       </div>
     </section>
 
     <!-- Content Section -->
-    <section class="bg-[#F9F4EB] min-h-[60vh]">
+    <section class="bg-theme-secondary min-h-[60vh]">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         
         <!-- Stats Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           
           <!-- Total Sales Card -->
-          <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] p-5 sm:p-6">
+          <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] p-5 sm:p-6">
             <div class="flex items-start justify-between">
               <div>
                 <p class="text-sm font-bold text-[#111111]/60 uppercase tracking-wide mb-2">Total Sales</p>
                 @if (statsLoading()) {
                   <div class="h-8 w-16 bg-black/10 animate-pulse"></div>
                 } @else {
-                  <p class="text-2xl sm:text-3xl font-black text-[#111111]">{{ stats().totalSales }}</p>
+                  <p class="text-2xl sm:text-3xl font-black text-theme-fg">{{ stats().totalSales }}</p>
                 }
               </div>
-              <div class="w-12 h-12 bg-[#7C3AED] border-2 border-black flex items-center justify-center">
+              <div class="w-12 h-12 bg-[#7C3AED] border-2 border-theme-border flex items-center justify-center">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                 </svg>
@@ -85,18 +85,18 @@ interface PaginatedResponse<T> {
           </div>
 
           <!-- Total Revenue Card -->
-          <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] p-5 sm:p-6">
+          <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] p-5 sm:p-6">
             <div class="flex items-start justify-between">
               <div>
                 <p class="text-sm font-bold text-[#111111]/60 uppercase tracking-wide mb-2">Total Revenue</p>
                 @if (statsLoading()) {
                   <div class="h-8 w-24 bg-black/10 animate-pulse"></div>
                 } @else {
-                  <p class="text-2xl sm:text-3xl font-black text-[#68E079]">₹{{ formatCurrency(stats().totalRevenue) }}</p>
+                  <p class="text-2xl sm:text-3xl font-black text-theme-success">₹{{ formatCurrency(stats().totalRevenue) }}</p>
                 }
               </div>
-              <div class="w-12 h-12 bg-[#68E079] border-2 border-black flex items-center justify-center">
-                <svg class="w-6 h-6 text-[#111111]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <div class="w-12 h-12 bg-theme-success border-2 border-theme-border flex items-center justify-center">
+                <svg class="w-6 h-6 text-theme-fg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </div>
@@ -104,17 +104,17 @@ interface PaginatedResponse<T> {
           </div>
 
           <!-- This Month Card -->
-          <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] p-5 sm:p-6">
+          <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] p-5 sm:p-6">
             <div class="flex items-start justify-between">
               <div>
                 <p class="text-sm font-bold text-[#111111]/60 uppercase tracking-wide mb-2">This Month</p>
                 @if (statsLoading()) {
                   <div class="h-8 w-20 bg-black/10 animate-pulse"></div>
                 } @else {
-                  <p class="text-2xl sm:text-3xl font-black text-[#2B57D6]">₹{{ formatCurrency(stats().monthlyRevenue) }}</p>
+                  <p class="text-2xl sm:text-3xl font-black text-theme-primary">₹{{ formatCurrency(stats().monthlyRevenue) }}</p>
                 }
               </div>
-              <div class="w-12 h-12 bg-[#2B57D6] border-2 border-black flex items-center justify-center">
+              <div class="w-12 h-12 bg-theme-primary border-2 border-theme-border flex items-center justify-center">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
@@ -124,16 +124,16 @@ interface PaginatedResponse<T> {
         </div>
 
         <!-- Sales Table Card -->
-        <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+        <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000]">
           <!-- Table Header -->
-          <div class="p-5 sm:p-6 border-b-2 border-black">
+          <div class="p-5 sm:p-6 border-b-2 border-theme-border">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
-                <h2 class="text-lg sm:text-xl font-black text-[#111111]">Recent Sales</h2>
+                <h2 class="text-lg sm:text-xl font-black text-theme-fg">Recent Sales</h2>
                 <p class="text-sm text-[#111111]/60 font-medium">View and manage all your sales transactions</p>
               </div>
               @if (pagination() && pagination()!.total > 0) {
-                <span class="inline-flex items-center px-3 py-1.5 bg-[#F9F4EB] border-2 border-black text-sm font-bold">
+                <span class="inline-flex items-center px-3 py-1.5 bg-theme-secondary border-2 border-theme-border text-sm font-bold">
                   {{ pagination()!.total }} transactions
                 </span>
               }

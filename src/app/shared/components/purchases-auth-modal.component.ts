@@ -26,30 +26,30 @@ interface UserCheckResult {
       >
         <!-- Modal - Bottom sheet on mobile, centered on desktop -->
         <div 
-          class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto safe-area-bottom"
+          class="bg-theme-surface w-full sm:max-w-md sm:rounded-2xl rounded-t-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto safe-area-bottom"
           (click)="$event.stopPropagation()"
         >
           <!-- Mobile drag handle -->
           <div class="sm:hidden flex justify-center pt-3 pb-1">
-            <div class="w-10 h-1 bg-gray-300 rounded-full"></div>
+            <div class="w-10 h-1 bg-theme-secondary rounded-full"></div>
           </div>
 
           <!-- Header -->
-          <div class="px-6 py-5 border-b border-gray-100">
+          <div class="px-6 py-5 border-b border-theme-secondary">
             <div class="flex items-center justify-between">
-              <h2 class="text-xl font-bold text-gray-900">
+              <h2 class="text-xl font-bold text-theme-fg">
                 Access Your Purchases
               </h2>
               <button 
                 (click)="closeModal()"
-                class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+                class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-theme-secondary transition-colors"
               >
-                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
             </div>
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-sm text-theme-muted mt-1">
               Enter your email or phone used during purchase
             </p>
           </div>
@@ -59,20 +59,20 @@ interface UserCheckResult {
             @switch (step()) {
               @case ('input') {
                 <!-- Method Tabs -->
-                <div class="flex bg-gray-100 rounded-xl p-1 mb-6">
+                <div class="flex bg-theme-secondary rounded-xl p-1 mb-6">
                   <button 
                     (click)="setMethod('email')"
                     [class]="method() === 'email' 
-                      ? 'flex-1 py-2.5 px-4 rounded-lg bg-white shadow-sm font-medium text-gray-900 transition-all' 
-                      : 'flex-1 py-2.5 px-4 rounded-lg font-medium text-gray-500 hover:text-gray-700 transition-all'"
+                      ? 'flex-1 py-2.5 px-4 rounded-lg bg-theme-surface shadow-sm font-medium text-theme-fg transition-all' 
+                      : 'flex-1 py-2.5 px-4 rounded-lg font-medium text-theme-muted hover:text-theme-fg transition-all'"
                   >
                     Email
                   </button>
                   <button 
                     (click)="setMethod('phone')"
                     [class]="method() === 'phone' 
-                      ? 'flex-1 py-2.5 px-4 rounded-lg bg-white shadow-sm font-medium text-gray-900 transition-all' 
-                      : 'flex-1 py-2.5 px-4 rounded-lg font-medium text-gray-500 hover:text-gray-700 transition-all'"
+                      ? 'flex-1 py-2.5 px-4 rounded-lg bg-theme-surface shadow-sm font-medium text-theme-fg transition-all' 
+                      : 'flex-1 py-2.5 px-4 rounded-lg font-medium text-theme-muted hover:text-theme-fg transition-all'"
                   >
                     Phone
                   </button>
@@ -81,12 +81,12 @@ interface UserCheckResult {
                 <!-- Input Field -->
                 @if (method() === 'email') {
                   <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <label class="block text-sm font-medium text-theme-fg mb-2">
                       Email Address <span class="text-red-500">*</span>
                       <button 
                         type="button"
                         (click)="toggleTooltip('email')"
-                        class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                        class="info-button inline-block w-4 h-4 ml-1 text-theme-muted hover:text-theme-muted cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
                         aria-label="Help for Email Address field"
                       >
                         <svg viewBox="0 0 16 16" class="w-full h-full">
@@ -95,12 +95,12 @@ interface UserCheckResult {
                         </svg>
                       </button>
                       @if (activeTooltip() === 'email') {
-                        <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                          <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                        <div class="tooltip-container mt-2 p-3 bg-theme-fg text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                          <div class="absolute -top-1 left-6 w-2 h-2 bg-theme-fg transform rotate-45"></div>
                           {{ getTooltipText('email') }}
                           <button 
                             (click)="hideTooltip()"
-                            class="ml-2 text-gray-300 hover:text-white text-sm"
+                            class="ml-2 text-theme-muted hover:text-white text-sm"
                             aria-label="Close tooltip"
                           >
                             ×
@@ -112,7 +112,7 @@ interface UserCheckResult {
                       type="email"
                       [(ngModel)]="email"
                       placeholder="you@example.com"
-                      class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 outline-none transition-all text-gray-900"
+                      class="w-full px-4 py-3 rounded-xl border border-theme-secondary focus:border-theme-secondary focus:ring-2 focus:ring-gray-200 outline-none transition-all text-theme-fg"
                       [class.border-red-300]="emailError() && inputTouched().email"
                       [class.bg-red-50]="emailError() && inputTouched().email"
                       (input)="validateEmailInput()"
@@ -130,12 +130,12 @@ interface UserCheckResult {
                   </div>
                 } @else {
                   <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <label class="block text-sm font-medium text-theme-fg mb-2">
                       Phone Number <span class="text-red-500">*</span>
                       <button 
                         type="button"
                         (click)="toggleTooltip('phone')"
-                        class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                        class="info-button inline-block w-4 h-4 ml-1 text-theme-muted hover:text-theme-muted cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
                         aria-label="Help for Phone Number field"
                       >
                         <svg viewBox="0 0 16 16" class="w-full h-full">
@@ -144,12 +144,12 @@ interface UserCheckResult {
                         </svg>
                       </button>
                       @if (activeTooltip() === 'phone') {
-                        <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                          <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                        <div class="tooltip-container mt-2 p-3 bg-theme-fg text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                          <div class="absolute -top-1 left-6 w-2 h-2 bg-theme-fg transform rotate-45"></div>
                           {{ getTooltipText('phone') }}
                           <button 
                             (click)="hideTooltip()"
-                            class="ml-2 text-gray-300 hover:text-white text-sm"
+                            class="ml-2 text-theme-muted hover:text-white text-sm"
                             aria-label="Close tooltip"
                           >
                             ×
@@ -161,7 +161,7 @@ interface UserCheckResult {
                       type="tel"
                       [(ngModel)]="phone"
                       placeholder="+91 9876543210"
-                      class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 outline-none transition-all text-gray-900"
+                      class="w-full px-4 py-3 rounded-xl border border-theme-secondary focus:border-theme-secondary focus:ring-2 focus:ring-gray-200 outline-none transition-all text-theme-fg"
                       [class.border-red-300]="phoneError() && inputTouched().phone"
                       [class.bg-red-50]="phoneError() && inputTouched().phone"
                       (input)="validatePhoneInput()"
@@ -190,7 +190,7 @@ interface UserCheckResult {
                 <button 
                   (click)="checkUser()"
                   [disabled]="loading() || !isInputValid()"
-                  class="w-full py-3.5 px-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[48px]"
+                  class="w-full py-3.5 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   @if (loading()) {
                     <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -207,13 +207,13 @@ interface UserCheckResult {
               @case ('checking') {
                 <!-- Checking State -->
                 <div class="text-center py-8">
-                  <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg class="animate-spin h-8 w-8 text-gray-600" viewBox="0 0 24 24">
+                  <div class="w-16 h-16 mx-auto mb-4 bg-theme-secondary rounded-full flex items-center justify-center">
+                    <svg class="animate-spin h-8 w-8 text-theme-muted" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
                     </svg>
                   </div>
-                  <p class="text-gray-600">Looking up your account...</p>
+                  <p class="text-theme-muted">Looking up your account...</p>
                 </div>
               }
 
@@ -225,24 +225,24 @@ interface UserCheckResult {
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
-                  <h3 class="text-lg font-bold text-gray-900 mb-2">No Purchases Found</h3>
-                  <p class="text-gray-600 mb-6 text-sm">
+                  <h3 class="text-lg font-bold text-theme-fg mb-2">No Purchases Found</h3>
+                  <p class="text-theme-muted mb-6 text-sm">
                     We couldn't find any purchases associated with<br>
-                    <span class="font-medium text-gray-900">{{ method() === 'email' ? email : phone }}</span>
+                    <span class="font-medium text-theme-fg">{{ method() === 'email' ? email : phone }}</span>
                   </p>
-                  <p class="text-gray-500 text-xs mb-6">
+                  <p class="text-theme-muted text-xs mb-6">
                     Make sure you're using the same email or phone number you used during checkout.
                   </p>
                   <div class="space-y-3">
                     <button 
                       (click)="goBack()"
-                      class="w-full py-3 px-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors min-h-[48px]"
+                      class="w-full py-3 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors min-h-[48px]"
                     >
                       Try Different Email/Phone
                     </button>
                     <button 
                       (click)="closeModal()"
-                      class="w-full py-3 px-4 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors min-h-[48px]"
+                      class="w-full py-3 px-4 bg-theme-secondary text-theme-fg font-medium rounded-xl hover:bg-theme-secondary transition-colors min-h-[48px]"
                     >
                       Browse Products
                     </button>
@@ -259,23 +259,23 @@ interface UserCheckResult {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                       </svg>
                     </div>
-                    <p class="text-gray-600 text-sm">
+                    <p class="text-theme-muted text-sm">
                       Account found for<br>
-                      <span class="font-medium text-gray-900">{{ method() === 'email' ? email : phone }}</span>
+                      <span class="font-medium text-theme-fg">{{ method() === 'email' ? email : phone }}</span>
                     </p>
                   </div>
 
                   @if (userCheckResult()?.hasClerkAccount) {
                     <button 
                       (click)="loginWithClerk()"
-                      class="w-full py-4 px-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-3 mb-3 min-h-[56px]"
+                      class="w-full py-4 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors flex items-center justify-center gap-3 mb-3 min-h-[56px]"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                       </svg>
                       <span>Sign In with Account</span>
                     </button>
-                    <p class="text-xs text-gray-500 text-center mb-4">
+                    <p class="text-xs text-theme-muted text-center mb-4">
                       Access all your purchases and library
                     </p>
                   }
@@ -283,14 +283,14 @@ interface UserCheckResult {
                   @if (userCheckResult()?.hasGuestPurchases && !userCheckResult()?.hasClerkAccount) {
                     <button 
                       (click)="continueAsGuest()"
-                      class="w-full py-4 px-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-3 min-h-[56px]"
+                      class="w-full py-4 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors flex items-center justify-center gap-3 min-h-[56px]"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                       </svg>
                       <span>Verify via OTP</span>
                     </button>
-                    <p class="text-xs text-gray-500 text-center mt-2">
+                    <p class="text-xs text-theme-muted text-center mt-2">
                       We'll send a verification code to your {{ method() }}
                     </p>
                   }
@@ -298,27 +298,27 @@ interface UserCheckResult {
                   @if (userCheckResult()?.hasGuestPurchases && userCheckResult()?.hasClerkAccount) {
                     <div class="relative my-4">
                       <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-200"></div>
+                        <div class="w-full border-t border-theme-secondary"></div>
                       </div>
                       <div class="relative flex justify-center text-xs">
-                        <span class="px-2 bg-white text-gray-500">or</span>
+                        <span class="px-2 bg-theme-surface text-theme-muted">or</span>
                       </div>
                     </div>
 
                     <button 
                       (click)="continueAsGuest()"
-                      class="w-full py-3.5 px-4 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 min-h-[48px]"
+                      class="w-full py-3.5 px-4 bg-theme-secondary text-theme-fg font-medium rounded-xl hover:bg-theme-secondary transition-colors flex items-center justify-center gap-2 min-h-[48px]"
                     >
                       <span>Continue as Guest</span>
                     </button>
-                    <p class="text-xs text-gray-500 text-center mt-2">
+                    <p class="text-xs text-theme-muted text-center mt-2">
                       Verify with OTP for this store only
                     </p>
                   }
 
                   <button 
                     (click)="goBack()"
-                    class="w-full mt-4 py-2 text-sm text-gray-500 hover:text-gray-700"
+                    class="w-full mt-4 py-2 text-sm text-theme-muted hover:text-theme-fg"
                   >
                     ← Use different email/phone
                   </button>
@@ -328,27 +328,27 @@ interface UserCheckResult {
               @case ('clerk-redirect') {
                 <!-- Clerk Redirect State -->
                 <div class="text-center py-8">
-                  <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg class="animate-spin h-8 w-8 text-gray-600" viewBox="0 0 24 24">
+                  <div class="w-16 h-16 mx-auto mb-4 bg-theme-secondary rounded-full flex items-center justify-center">
+                    <svg class="animate-spin h-8 w-8 text-theme-muted" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
                     </svg>
                   </div>
-                  <p class="text-gray-600">Opening sign in...</p>
+                  <p class="text-theme-muted">Opening sign in...</p>
                 </div>
               }
 
               @case ('otp') {
                 <!-- OTP Header -->
                 <div class="text-center mb-6">
-                  <div class="w-14 h-14 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg class="w-7 h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-14 h-14 mx-auto mb-4 bg-theme-secondary rounded-full flex items-center justify-center">
+                    <svg class="w-7 h-7 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                   </div>
-                  <p class="text-gray-600">
+                  <p class="text-theme-muted">
                     Enter the 6-digit code sent to<br>
-                    <span class="font-medium text-gray-900">{{ method() === 'email' ? email : phone }}</span>
+                    <span class="font-medium text-theme-fg">{{ method() === 'email' ? email : phone }}</span>
                   </p>
                 </div>
 
@@ -365,7 +365,7 @@ interface UserCheckResult {
                       (input)="onOtpInput($event, digit)"
                       (keydown)="onOtpKeydown($event, digit)"
                       (paste)="onOtpPaste($event)"
-                      class="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-200 outline-none transition-all"
+                      class="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold border-2 border-theme-secondary rounded-xl focus:border-theme-secondary focus:ring-2 focus:ring-gray-200 outline-none transition-all"
                     >
                   }
                 </div>
@@ -381,7 +381,7 @@ interface UserCheckResult {
                 <button 
                   (click)="verifyOtp()"
                   [disabled]="loading() || !isOtpComplete()"
-                  class="w-full py-3.5 px-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[48px]"
+                  class="w-full py-3.5 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   @if (loading()) {
                     <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -398,15 +398,15 @@ interface UserCheckResult {
                 <div class="text-center mt-4">
                   <button 
                     (click)="goBack()"
-                    class="text-sm text-gray-500 hover:text-gray-700"
+                    class="text-sm text-theme-muted hover:text-theme-fg"
                   >
                     ← Change {{ method() }}
                   </button>
-                  <span class="mx-2 text-gray-300">|</span>
+                  <span class="mx-2 text-theme-muted">|</span>
                   <button 
                     (click)="resendOtp()"
                     [disabled]="resendCooldown() > 0"
-                    class="text-sm text-gray-500 hover:text-gray-700 disabled:text-gray-300"
+                    class="text-sm text-theme-muted hover:text-theme-fg disabled:text-theme-muted"
                   >
                     @if (resendCooldown() > 0) {
                       Resend in {{ resendCooldown() }}s
@@ -425,11 +425,11 @@ interface UserCheckResult {
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
                   </div>
-                  <h3 class="text-lg font-bold text-gray-900 mb-2">Verification Successful!</h3>
-                  <p class="text-gray-600 mb-6">You now have access to your purchased products.</p>
+                  <h3 class="text-lg font-bold text-theme-fg mb-2">Verification Successful!</h3>
+                  <p class="text-theme-muted mb-6">You now have access to your purchased products.</p>
                   <button 
                     (click)="onSuccess()"
-                    class="w-full py-3.5 px-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors min-h-[48px]"
+                    class="w-full py-3.5 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors min-h-[48px]"
                   >
                     View My Purchases
                   </button>
@@ -441,8 +441,8 @@ interface UserCheckResult {
           <!-- Footer -->
           @if (step() === 'input') {
             <div class="px-6 pb-6">
-              <div class="pt-4 border-t border-gray-100">
-                <p class="text-xs text-gray-400 text-center">
+              <div class="pt-4 border-t border-theme-secondary">
+                <p class="text-xs text-theme-muted text-center">
                   By continuing, you agree to our Terms of Service and Privacy Policy
                 </p>
               </div>

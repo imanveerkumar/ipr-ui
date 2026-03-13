@@ -15,21 +15,21 @@ import { ToasterService } from '../../../core/services/toaster.service';
   imports: [CommonModule, RouterLink, FormsModule],
   template: `
     <!-- Hero Section -->
-    <section class="bg-[#F9F4EB] border-b-2 border-black">
+    <section class="bg-theme-secondary border-b-2 border-theme-border">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div class="grid sm:grid-cols-3 grid-cols-1 items-center gap-4">
           <div class="flex items-center gap-2">
-            <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-black transition-colors">
+            <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-theme-fg transition-colors">
               Dashboard
             </a>
             <svg class="w-4 h-4 text-black/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M9 18l6-6-6-6"/>
             </svg>
-            <span class="text-sm font-bold text-black">Stores</span>
+            <span class="text-sm font-bold text-theme-fg">Stores</span>
           </div>
 
           <div class="flex justify-center">
-            <h1 class="text-2xl sm:text-3xl font-black text-[#111111] tracking-tight mb-0">My Stores</h1>
+            <h1 class="text-2xl sm:text-3xl font-black text-theme-fg tracking-tight mb-0">My Stores</h1>
           </div>
 
           <div class="flex justify-end">
@@ -51,13 +51,13 @@ import { ToasterService } from '../../../core/services/toaster.service';
               (input)="onSearchInput()"
               (keyup.enter)="performSearch()"
               placeholder="Search stores..."
-              class="w-full pl-10 md:pl-12 pr-3 py-2 md:py-3 bg-white border-2 border-black rounded-none text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+              class="w-full pl-10 md:pl-12 pr-3 py-2 md:py-3 bg-theme-surface border-2 border-theme-border rounded-none text-theme-fg placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
             />
           </div>
 
           <button
             (click)="toggleFilters()"
-            class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-white text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap"
+            class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-theme-surface text-theme-fg font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap"
             aria-label="Toggle filters"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -67,7 +67,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
           </button>
 
           <a routerLink="/dashboard/stores/new" 
-             class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
+             class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-theme-accent text-theme-fg font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path d="M12 5v14M5 12h14"/>
             </svg>
@@ -80,13 +80,13 @@ import { ToasterService } from '../../../core/services/toaster.service';
     <!-- Filter Modal -->
     @if (showFilters()) {
       <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" (click)="closeFiltersOnBackdrop($event)">
-        <div class="bg-white border-2 border-black shadow-[8px_8px_0px_0px_#000] max-w-md w-full max-h-[80vh] overflow-y-auto" (click)="$event.stopPropagation()">
+        <div class="bg-theme-surface border-2 border-theme-border shadow-[8px_8px_0px_0px_#000] max-w-md w-full max-h-[80vh] overflow-y-auto" (click)="$event.stopPropagation()">
           <div class="p-6">
             <div class="flex items-center justify-between mb-6">
-              <h3 class="text-xl font-black text-[#111111]">Filters</h3>
+              <h3 class="text-xl font-black text-theme-fg">Filters</h3>
               <button
                 (click)="toggleFilters()"
-                class="w-8 h-8 flex items-center justify-center border-2 border-black hover:bg-[#F9F4EB] transition-colors"
+                class="w-8 h-8 flex items-center justify-center border-2 border-theme-border hover:bg-theme-secondary transition-colors"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -97,7 +97,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
             <div class="space-y-6">
               <!-- Status Filter -->
               <div>
-                <label class="block text-sm font-bold text-[#111111] mb-3">Status</label>
+                <label class="block text-sm font-bold text-theme-fg mb-3">Status</label>
                 <div class="space-y-2">
                   <label class="flex items-center gap-3 cursor-pointer">
                     <input
@@ -105,9 +105,9 @@ import { ToasterService } from '../../../core/services/toaster.service';
                       name="status"
                       value="ALL"
                       [(ngModel)]="filterStatus"
-                      class="w-4 h-4 text-[#FFC60B] border-2 border-black focus:ring-[#FFC60B]"
+                      class="w-4 h-4 text-theme-accent border-2 border-theme-border focus:ring-[#FFC60B]"
                     />
-                    <span class="text-sm font-medium text-[#111111]">All Stores</span>
+                    <span class="text-sm font-medium text-theme-fg">All Stores</span>
                   </label>
                   <label class="flex items-center gap-3 cursor-pointer">
                     <input
@@ -115,9 +115,9 @@ import { ToasterService } from '../../../core/services/toaster.service';
                       name="status"
                       value="PUBLISHED"
                       [(ngModel)]="filterStatus"
-                      class="w-4 h-4 text-[#FFC60B] border-2 border-black focus:ring-[#FFC60B]"
+                      class="w-4 h-4 text-theme-accent border-2 border-theme-border focus:ring-[#FFC60B]"
                     />
-                    <span class="text-sm font-medium text-[#111111]">Live</span>
+                    <span class="text-sm font-medium text-theme-fg">Live</span>
                   </label>
                   <label class="flex items-center gap-3 cursor-pointer">
                     <input
@@ -125,9 +125,9 @@ import { ToasterService } from '../../../core/services/toaster.service';
                       name="status"
                       value="DRAFT"
                       [(ngModel)]="filterStatus"
-                      class="w-4 h-4 text-[#FFC60B] border-2 border-black focus:ring-[#FFC60B]"
+                      class="w-4 h-4 text-theme-accent border-2 border-theme-border focus:ring-[#FFC60B]"
                     />
-                    <span class="text-sm font-medium text-[#111111]">Draft</span>
+                    <span class="text-sm font-medium text-theme-fg">Draft</span>
                   </label>
                 </div>
               </div>
@@ -136,13 +136,13 @@ import { ToasterService } from '../../../core/services/toaster.service';
             <div class="flex gap-3 mt-8">
               <button
                 (click)="resetFilters()"
-                class="flex-1 px-4 py-2 bg-white border-2 border-black text-[#111111] font-bold hover:bg-[#F9F4EB] transition-colors"
+                class="flex-1 px-4 py-2 bg-theme-surface border-2 border-theme-border text-theme-fg font-bold hover:bg-theme-secondary transition-colors"
               >
                 Reset
               </button>
               <button
                 (click)="applyFilters()"
-                class="flex-1 px-4 py-2 bg-[#FFC60B] border-2 border-black text-[#111111] font-bold hover:bg-[#ffdb4d] transition-colors"
+                class="flex-1 px-4 py-2 bg-theme-accent border-2 border-theme-border text-theme-fg font-bold hover:bg-[#ffdb4d] transition-colors"
               >
                 Apply
               </button>
@@ -153,40 +153,40 @@ import { ToasterService } from '../../../core/services/toaster.service';
     }
 
     <!-- Tabs Section -->
-    <section class="bg-white border-b-2 border-black">
+    <section class="bg-theme-surface border-b-2 border-theme-border">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="flex items-center gap-0 overflow-x-auto">
           <button (click)="setActiveTab('active')"
             [class]="activeTab() === 'active' 
-              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#68E079] text-[#111111] whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
+              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#68E079] text-theme-fg whitespace-nowrap' 
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-theme-fg whitespace-nowrap transition-colors'">
             Active
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#68E079] text-[#111111]">{{ tabCounts().active }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-success text-theme-fg">{{ tabCounts().active }}</span>
             } @else {
-              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
           </button>
           <button (click)="setActiveTab('archived')"
             [class]="activeTab() === 'archived' 
-              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FFC60B] text-[#111111] whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
+              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FFC60B] text-theme-fg whitespace-nowrap' 
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-theme-fg whitespace-nowrap transition-colors'">
             Archived
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FFC60B] text-[#111111]">{{ tabCounts().archived }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-accent text-theme-fg">{{ tabCounts().archived }}</span>
             } @else {
-              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
           </button>
           <button (click)="setActiveTab('deleted')"
             [class]="activeTab() === 'deleted' 
-              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FA4B28] text-[#111111] whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
+              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FA4B28] text-theme-fg whitespace-nowrap' 
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-theme-fg whitespace-nowrap transition-colors'">
             Bin
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FA4B28] text-white">{{ tabCounts().deleted }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-danger text-white">{{ tabCounts().deleted }}</span>
             } @else {
-              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
           </button>
         </div>
@@ -196,7 +196,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
     <!-- Stats Bar (only for active tab) -->
     @if (activeTab() === 'active') {
       @if (statsLoading()) {
-        <section class="bg-white border-b-2 border-black">
+        <section class="bg-theme-surface border-b-2 border-theme-border">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
               <div class="flex items-center gap-2 shrink-0">
@@ -217,21 +217,21 @@ import { ToasterService } from '../../../core/services/toaster.service';
           </div>
         </section>
       } @else {
-        <section class="bg-white border-b-2 border-black">
+        <section class="bg-theme-surface border-b-2 border-theme-border">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xl sm:text-2xl font-black text-[#111111]">{{ stats().total }}</span>
+                <span class="text-xl sm:text-2xl font-black text-theme-fg">{{ stats().total }}</span>
                 <span class="text-sm font-medium text-[#111111]/70">Total Stores</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xl sm:text-2xl font-black text-[#68E079]">{{ stats().published }}</span>
+                <span class="text-xl sm:text-2xl font-black text-theme-success">{{ stats().published }}</span>
                 <span class="text-sm font-medium text-[#111111]/70">Published</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xl sm:text-2xl font-black text-[#FFC60B]">{{ stats().drafts }}</span>
+                <span class="text-xl sm:text-2xl font-black text-theme-accent">{{ stats().drafts }}</span>
                 <span class="text-sm font-medium text-[#111111]/70">Drafts</span>
               </div>
             </div>
@@ -244,46 +244,46 @@ import { ToasterService } from '../../../core/services/toaster.service';
     @if (selectedIds().length > 0) {
       <section class="fixed bottom-4 left-0 right-0 z-50 pointer-events-none">
         <div class="max-w-4xl mx-auto px-4 sm:px-6">
-          <div class="bg-[#FFC60B] text-[#111111] shadow-[4px_4px_0px_0px_#000] px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto relative">
+          <div class="bg-theme-accent text-theme-fg shadow-[4px_4px_0px_0px_#000] px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto relative">
             <div class="flex items-center gap-3">
               <!-- Desktop clear button -->
-              <button (click)="clearSelection()" class="hidden sm:inline-flex w-8 h-8 flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_#000] bg-white text-[#111111] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
+              <button (click)="clearSelection()" class="hidden sm:inline-flex w-8 h-8 flex items-center justify-center border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] bg-theme-surface text-theme-fg hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
               <!-- Mobile absolute clear button (top-right) -->
-              <button (click)="clearSelection()" class="sm:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_#000] bg-white text-[#111111] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
+              <button (click)="clearSelection()" class="sm:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] bg-theme-surface text-theme-fg hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
-              <span class="text-[#111111] font-bold">{{ selectedIds().length }} selected</span>
+              <span class="text-theme-fg font-bold">{{ selectedIds().length }} selected</span>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
               @if (activeTab() === 'active') {
                 <button (click)="bulkArchive()" 
-                  class="px-3 py-1.5 bg-[#FFC60B] text-[#111111] font-bold text-sm border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e5b00a] transition-all">
+                  class="px-3 py-1.5 bg-theme-accent text-theme-fg font-bold text-sm border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e5b00a] transition-all">
                   Archive
                 </button>
                 <button (click)="bulkDelete()" 
-                  class="px-3 py-1.5 bg-[#fa4b28] text-white font-bold text-sm border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all">
+                  class="px-3 py-1.5 bg-[#fa4b28] text-white font-bold text-sm border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all">
                   Delete
                 </button>
               }
               @if (activeTab() === 'archived') {
                 <button (click)="bulkUnarchive()" 
-                  class="px-3 py-1.5 bg-[#68E079] text-[#111111] font-bold text-sm border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all">
+                  class="px-3 py-1.5 bg-theme-success text-theme-fg font-bold text-sm border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all">
                   Unarchive
                 </button>
                 <button (click)="bulkDelete()" 
-                  class="px-3 py-1.5 bg-[#fa4b28] text-white font-bold text-sm border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all">
+                  class="px-3 py-1.5 bg-[#fa4b28] text-white font-bold text-sm border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all">
                   Delete
                 </button>
               }
               @if (activeTab() === 'deleted') {
                 <button (click)="bulkRestore()" 
-                  class="px-3 py-1.5 bg-[#68E079] text-[#111111] font-bold text-sm border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#52c963] transition-all">
+                  class="px-3 py-1.5 bg-theme-success text-theme-fg font-bold text-sm border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#52c963] transition-all">
                   Restore
                 </button>
               }
@@ -294,7 +294,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
     }
 
     <!-- Content Section -->
-    <section class="bg-[#F9F4EB] min-h-[60vh]">
+    <section class="bg-theme-secondary min-h-[60vh]">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         
         @if (loading()) {
@@ -302,7 +302,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
           @if (viewMode() === 'gallery') {
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               @for (i of [1, 2, 3]; track i) {
-                <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+                <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000]">
                   <div class="h-28 sm:h-32 bg-black/10 animate-pulse"></div>
                   <div class="p-4 sm:p-5">
                     <div class="h-5 w-2/3 bg-black/10 animate-pulse mb-3"></div>
@@ -316,9 +316,9 @@ import { ToasterService } from '../../../core/services/toaster.service';
               }
             </div>
           } @else {
-            <div class="bg-white border-2 border-black">
+            <div class="bg-theme-surface border-2 border-theme-border">
               @for (i of [1,2,3,4,5]; track i) {
-                <div class="flex items-center gap-4 px-3 py-3 border-b border-black last:border-b-0">
+                <div class="flex items-center gap-4 px-3 py-3 border-b border-theme-border last:border-b-0">
                   <div class="w-28 h-14 sm:w-32 sm:h-16 bg-black/10 animate-pulse flex-shrink-0"></div>
                   <div class="flex-1 min-w-0">
                     <div class="h-5 w-2/3 bg-black/10 animate-pulse mb-2"></div>
@@ -331,39 +331,39 @@ import { ToasterService } from '../../../core/services/toaster.service';
           }
         } @else if (currentStores().length === 0) {
           <!-- Empty State -->
-          <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] p-8 sm:p-12 flex flex-col items-center text-center">
+          <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] p-8 sm:p-12 flex flex-col items-center text-center">
             @if (activeTab() === 'active') {
-              <div class="w-20 h-20 bg-[#F9F4EB] border-2 border-black flex items-center justify-center mb-6">
-                <svg class="w-10 h-10 text-[#111111]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <div class="w-20 h-20 bg-theme-secondary border-2 border-theme-border flex items-center justify-center mb-6">
+                <svg class="w-10 h-10 text-theme-fg" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                   <polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
               </div>
-              <h3 class="text-xl sm:text-2xl font-black text-[#111111] mb-2">No stores yet</h3>
+              <h3 class="text-xl sm:text-2xl font-black text-theme-fg mb-2">No stores yet</h3>
               <p class="text-[#111111]/70 font-medium mb-6 max-w-sm">Create your first store to start selling digital products</p>
               <a routerLink="/dashboard/stores/new" 
-                 class="inline-flex items-center gap-2 px-6 py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+                 class="inline-flex items-center gap-2 px-6 py-3 bg-theme-accent text-theme-fg font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                   <path d="M12 5v14M5 12h14"/>
                 </svg>
                 Create Your First Store
               </a>
             } @else if (activeTab() === 'archived') {
-              <div class="w-20 h-20 bg-[#FFC60B]/20 border-2 border-black flex items-center justify-center mb-6">
-                <svg class="w-10 h-10 text-[#111111]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <div class="w-20 h-20 bg-theme-accent/20 border-2 border-theme-border flex items-center justify-center mb-6">
+                <svg class="w-10 h-10 text-theme-fg" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
                 </svg>
               </div>
-              <h3 class="text-xl sm:text-2xl font-black text-[#111111] mb-2">No archived stores</h3>
+              <h3 class="text-xl sm:text-2xl font-black text-theme-fg mb-2">No archived stores</h3>
               <p class="text-[#111111]/70 font-medium max-w-sm">Archived stores will appear here</p>
             } @else {
-              <div class="w-20 h-20 bg-[#FA4B28]/20 border-2 border-black flex items-center justify-center mb-6">
-                <svg class="w-10 h-10 text-[#111111]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <div class="w-20 h-20 bg-theme-danger/20 border-2 border-theme-border flex items-center justify-center mb-6">
+                <svg class="w-10 h-10 text-theme-fg" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <polyline points="3 6 5 6 21 6"/>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                 </svg>
               </div>
-              <h3 class="text-xl sm:text-2xl font-black text-[#111111] mb-2">Bin is empty</h3>
+              <h3 class="text-xl sm:text-2xl font-black text-theme-fg mb-2">Bin is empty</h3>
               <p class="text-[#111111]/70 font-medium max-w-sm">Deleted stores will appear here for 30 days before permanent deletion</p>
             }
           </div>
@@ -376,28 +376,28 @@ import { ToasterService } from '../../../core/services/toaster.service';
                        [checked]="isAllSelected()"
                        (change)="toggleSelectAll($event)"
                        class="sr-only">
-                <div class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all">
+                <div class="w-8 h-8 bg-theme-surface border-2 border-theme-border flex items-center justify-center shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all">
                   @if (isAllSelected()) {
-                    <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-theme-fg" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
                   }
                 </div>
-                <span class="ml-2 inline text-sm font-bold text-[#111111]">Select all</span>
+                <span class="ml-2 inline text-sm font-bold text-theme-fg">Select all</span>
 
                 <!-- Tooltip note -->
-                <div class="absolute top-full left-0 mt-2 w-[18rem] bg-white border-2 border-black p-2 text-sm text-[#111111] shadow-[4px_4px_0px_0px_#000] z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+                <div class="absolute top-full left-0 mt-2 w-[18rem] bg-theme-surface border-2 border-theme-border p-2 text-sm text-theme-fg shadow-[4px_4px_0px_0px_#000] z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
                   Select all stores on this page. Use bulk actions to manage multiple items at once.
                 </div>
               </label>
             </div>
 
             <div class="flex items-center gap-2">
-              <span class="text-sm font-bold text-[#111111]">Sort:</span>
+              <span class="text-sm font-bold text-theme-fg">Sort:</span>
               <select
                 [(ngModel)]="sortField"
                 (change)="onSortChange()"
-                class="px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+                class="px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
               >
                 <option value="createdAt">Newest</option>
                 <option value="name">Name</option>
@@ -405,26 +405,26 @@ import { ToasterService } from '../../../core/services/toaster.service';
               </select>
               <button
                 (click)="toggleSortOrder()"
-                class="p-2 bg-white border-2 border-black rounded-lg hover:translate-x-[1px] hover:translate-y-[1px] transition-all shadow-[2px_2px_0px_0px_#000]"
+                class="p-2 bg-theme-surface border-2 border-theme-border rounded-lg hover:translate-x-[1px] hover:translate-y-[1px] transition-all shadow-[2px_2px_0px_0px_#000]"
                 [title]="sortOrder() === 'asc' ? 'Ascending' : 'Descending'"
               >
                 @if (sortOrder() === 'asc') {
-                  <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
                   </svg>
                 } @else {
-                  <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                 }
               </button>
 
               <div class="flex items-center gap-2 ml-4">
-                <span class="text-sm font-bold text-[#111111]">View:</span>
+                <span class="text-sm font-bold text-theme-fg">View:</span>
                 <select
                   [ngModel]="viewMode()"
                   (ngModelChange)="setViewMode($event)"
-                  class="px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+                  class="px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
                 >
                   <option value="gallery">Gallery</option>
                   <option value="list">List</option>
@@ -436,7 +436,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
           @if (viewMode() === 'gallery') {
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             @for (store of currentStores(); track store.id) {
-              <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all group">
+              <div class="relative bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all group">
                 <!-- Selection Checkbox -->
                 <div class="absolute top-3 left-3 z-10">
                   <label class="relative cursor-pointer">
@@ -444,9 +444,9 @@ import { ToasterService } from '../../../core/services/toaster.service';
                       [checked]="selectedIds().includes(store.id)"
                       (change)="toggleSelection(store.id)"
                       class="peer sr-only">
-                    <div class="w-5 h-5 bg-white border-2 border-black peer-checked:bg-[#FFC60B] flex items-center justify-center transition-colors shadow-[2px_2px_0px_0px_#000]">
+                    <div class="w-5 h-5 bg-theme-surface border-2 border-theme-border peer-checked:bg-theme-accent flex items-center justify-center transition-colors shadow-[2px_2px_0px_0px_#000]">
                       @if (selectedIds().includes(store.id)) {
-                        <svg class="w-3 h-3 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                        <svg class="w-3 h-3 text-theme-fg" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                           <polyline points="20 6 9 17 4 12"/>
                         </svg>
                       }
@@ -457,13 +457,13 @@ import { ToasterService } from '../../../core/services/toaster.service';
                 <!-- State Badge -->
                 @if (activeTab() === 'archived') {
                   <div class="absolute top-3 right-3 z-10">
-                    <span class="px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FFC60B] text-[#111111] border-2 border-black">
+                    <span class="px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-theme-fg border-2 border-theme-border">
                       Archived
                     </span>
                   </div>
                 } @else if (activeTab() === 'deleted') {
                   <div class="absolute top-3 right-3 z-10">
-                    <span class="px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FA4B28] text-white border-2 border-black">
+                    <span class="px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-danger text-white border-2 border-theme-border">
                       Deleted
                     </span>
                   </div>
@@ -472,9 +472,9 @@ import { ToasterService } from '../../../core/services/toaster.service';
                 <!-- Banner -->
                 <div class="relative">
                   @if (store.bannerUrl) {
-                    <img [src]="store.bannerUrl" alt="" class="w-full h-28 sm:h-32 object-cover border-b-2 border-black">
+                    <img [src]="store.bannerUrl" alt="" class="w-full h-28 sm:h-32 object-cover border-b-2 border-theme-border">
                   } @else {
-                    <div class="w-full h-28 sm:h-32 bg-[#F9F4EB] border-b-2 border-black flex items-center justify-center">
+                    <div class="w-full h-28 sm:h-32 bg-theme-secondary border-b-2 border-theme-border flex items-center justify-center">
                       <svg class="w-8 h-8 text-black/30" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
@@ -486,20 +486,20 @@ import { ToasterService } from '../../../core/services/toaster.service';
                 <!-- Content -->
                 <div class="p-4 sm:p-5">
                   <div class="flex items-start justify-between gap-3 mb-3">
-                    <h3 class="text-base sm:text-lg font-bold text-[#111111] leading-tight">{{ store.name }}</h3>
+                    <h3 class="text-base sm:text-lg font-bold text-theme-fg leading-tight">{{ store.name }}</h3>
                     
                     @if (activeTab() === 'active') {
                       <!-- Status Badge -->
                       @if (store.status === 'PUBLISHED') {
-                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#68E079] text-[#111111] border-2 border-black">
+                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-success text-theme-fg border-2 border-theme-border">
                           Live
                         </span>
                       } @else if (store.status === 'DRAFT') {
-                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FFC60B] text-[#111111] border-2 border-black">
+                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-theme-fg border-2 border-theme-border">
                           Draft
                         </span>
                       } @else {
-                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FA4B28] text-white border-2 border-black">
+                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-danger text-white border-2 border-theme-border">
                           {{ store.status }}
                         </span>
                       }
@@ -510,7 +510,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                   <div class="mb-4">
                     @if (store.status === 'PUBLISHED' && activeTab() === 'active') {
                       <a [href]="storeService.getStoreUrl(store)" target="_blank" 
-                         class="inline-flex items-center gap-1.5 text-sm font-medium text-[#2B57D6] hover:underline">
+                         class="inline-flex items-center gap-1.5 text-sm font-medium text-theme-primary hover:underline">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                           <polyline points="15 3 21 3 21 9"/>
@@ -535,7 +535,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                     <!-- Actions based on tab -->
                     @if (activeTab() === 'active') {
                       <a [routerLink]="['/dashboard/stores', store.id]" 
-                         class="inline-flex items-center gap-1 text-sm font-bold text-[#111111] group-hover:text-[#2B57D6] transition-colors">
+                         class="inline-flex items-center gap-1 text-sm font-bold text-theme-fg group-hover:text-theme-primary transition-colors">
                         Manage
                       </a>
                     } @else if (activeTab() === 'archived') {
@@ -548,29 +548,29 @@ import { ToasterService } from '../../../core/services/toaster.service';
                   @if (activeTab() === 'active') {
                     <div class="flex items-center gap-2 mt-3 pt-3 border-t border-black/10">
                       <button (click)="archiveStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#FFC60B] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e5b00a] transition-all flex items-center justify-center">
+                        class="flex-1 py-1.5 text-sm font-bold bg-theme-accent text-theme-fg border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e5b00a] transition-all flex items-center justify-center">
                         Archive
                       </button>
                       <button (click)="deleteStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#FA4B28] text-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all flex items-center justify-center">
+                        class="flex-1 py-1.5 text-sm font-bold bg-theme-danger text-white border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all flex items-center justify-center">
                         Delete
                       </button>
                     </div>
                   } @else if (activeTab() === 'archived') {
                     <div class="flex items-center gap-2 mt-3 pt-3 border-t border-black/10">
                       <button (click)="unarchiveStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all flex items-center justify-center">
+                        class="flex-1 py-1.5 text-sm font-bold bg-theme-success text-theme-fg border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all flex items-center justify-center">
                         Unarchive
                       </button>
                       <button (click)="deleteStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#fa4b28] text-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all flex items-center justify-center">
+                        class="flex-1 py-1.5 text-sm font-bold bg-[#fa4b28] text-white border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#e53e1e] transition-all flex items-center justify-center">
                         Delete
                       </button>
                     </div>
                   } @else if (activeTab() === 'deleted') {
                     <div class="flex items-center gap-2 mt-3 pt-3 border-t border-black/10">
                       <button (click)="restoreStore(store)" 
-                        class="flex-1 py-1.5 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all flex items-center justify-center">
+                        class="flex-1 py-1.5 text-sm font-bold bg-theme-success text-theme-fg border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-[#52c963] transition-all flex items-center justify-center">
                         Restore
                       </button>
                     </div>
@@ -580,10 +580,10 @@ import { ToasterService } from '../../../core/services/toaster.service';
             }
             </div>
             } @if (viewMode() === 'list') {
-              <div class="bg-white border-2 border-black">
+              <div class="bg-theme-surface border-2 border-theme-border">
                 @for (store of currentStores(); track store.id) {
-                  <div class="flex items-center gap-4 px-3 py-3 border-b border-black last:border-b-0">
-                    <div class="w-20 h-12 bg-[#F9F4EB] flex items-center justify-center overflow-hidden rounded-sm flex-shrink-0">
+                  <div class="flex items-center gap-4 px-3 py-3 border-b border-theme-border last:border-b-0">
+                    <div class="w-20 h-12 bg-theme-secondary flex items-center justify-center overflow-hidden rounded-sm flex-shrink-0">
                       @if (store.bannerUrl) {
                         <img [src]="store.bannerUrl" [alt]="store.name" class="w-full h-full object-cover">
                       } @else {
@@ -594,11 +594,11 @@ import { ToasterService } from '../../../core/services/toaster.service';
                       }
                     </div>
                     <div class="flex-1 min-w-0">
-                      <h3 class="text-base sm:text-lg font-bold text-[#111111] truncate">{{ store.name }}</h3>
+                      <h3 class="text-base sm:text-lg font-bold text-theme-fg truncate">{{ store.name }}</h3>
                       <p class="text-sm text-[#111111]/60 font-medium">{{ store.slug }}.{{ baseDomain() }}</p>
                     </div>
                     <div class="flex items-center gap-4 ml-4">
-                      <div class="text-sm font-bold text-[#111111]">{{ store._count?.products || 0 }} products</div>
+                      <div class="text-sm font-bold text-theme-fg">{{ store._count?.products || 0 }} products</div>
                       @if (activeTab() === 'active') {
                         <a [routerLink]="['/dashboard/stores', store.id]" class="text-sm font-bold text-[#111111]/70">Manage</a>
                       }
@@ -619,7 +619,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                 <button
                   (click)="goToPage(meta().page - 1)"
                   [disabled]="!meta().hasPreviousPage"
-                  class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="flex items-center gap-1 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -634,10 +634,10 @@ import { ToasterService } from '../../../core/services/toaster.service';
                     } @else {
                       <button
                         (click)="goToPage(+page)"
-                        class="w-10 h-10 flex items-center justify-center border-2 border-black rounded-lg font-bold text-sm transition-all"
-                        [class.bg-[#FFC60B]]="meta().page === +page"
-                        [class.bg-white]="meta().page !== +page"
-                        [class.hover:bg-[#F9F4EB]]="meta().page !== +page"
+                        class="w-10 h-10 flex items-center justify-center border-2 border-theme-border rounded-lg font-bold text-sm transition-all"
+                        [class.bg-theme-accent]="meta().page === +page"
+                        [class.bg-theme-surface]="meta().page !== +page"
+                        [class.hover:bg-theme-secondary]="meta().page !== +page"
                       >
                         {{ page }}
                       </button>
@@ -648,7 +648,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                 <button
                   (click)="goToPage(meta().page + 1)"
                   [disabled]="!meta().hasNextPage"
-                  class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="flex items-center gap-1 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
