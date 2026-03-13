@@ -19,30 +19,30 @@ type AuthMethod = 'email' | 'phone';
       >
         <!-- Modal - Bottom sheet on mobile, centered on desktop -->
         <div 
-          class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto safe-area-bottom"
+          class="bg-theme-surface w-full sm:max-w-md sm:rounded-2xl rounded-t-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto safe-area-bottom"
           (click)="$event.stopPropagation()"
         >
           <!-- Mobile drag handle -->
           <div class="sm:hidden flex justify-center pt-3 pb-1">
-            <div class="w-10 h-1 bg-gray-300 rounded-full"></div>
+            <div class="w-10 h-1 bg-theme-secondary rounded-full"></div>
           </div>
 
           <!-- Header -->
-          <div class="px-6 py-5 border-b border-gray-100">
+          <div class="px-6 py-5 border-b border-theme-secondary">
             <div class="flex items-center justify-between">
-              <h2 class="text-xl font-bold text-gray-900">
+              <h2 class="text-xl font-bold text-theme-fg">
                 {{ mode === 'purchases' ? 'Access Your Purchases' : 'Sign In' }}
               </h2>
               <button 
                 (click)="closeModal()"
-                class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+                class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-theme-secondary transition-colors"
               >
-                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
             </div>
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="text-sm text-theme-muted mt-1">
               @if (mode === 'purchases') {
                 Enter your email or phone used during purchase
               } @else {
@@ -56,20 +56,20 @@ type AuthMethod = 'email' | 'phone';
             @switch (step()) {
               @case ('input') {
                 <!-- Method Tabs -->
-                <div class="flex bg-gray-100 rounded-xl p-1 mb-6">
+                <div class="flex bg-theme-secondary rounded-xl p-1 mb-6">
                   <button 
                     (click)="setMethod('email')"
                     [class]="method() === 'email' 
-                      ? 'flex-1 py-2.5 px-4 rounded-lg bg-white shadow-sm font-medium text-gray-900 transition-all' 
-                      : 'flex-1 py-2.5 px-4 rounded-lg font-medium text-gray-500 hover:text-gray-700 transition-all'"
+                      ? 'flex-1 py-2.5 px-4 rounded-lg bg-theme-surface shadow-sm font-medium text-theme-fg transition-all' 
+                      : 'flex-1 py-2.5 px-4 rounded-lg font-medium text-theme-muted hover:text-theme-fg transition-all'"
                   >
                     Email
                   </button>
                   <button 
                     (click)="setMethod('phone')"
                     [class]="method() === 'phone' 
-                      ? 'flex-1 py-2.5 px-4 rounded-lg bg-white shadow-sm font-medium text-gray-900 transition-all' 
-                      : 'flex-1 py-2.5 px-4 rounded-lg font-medium text-gray-500 hover:text-gray-700 transition-all'"
+                      ? 'flex-1 py-2.5 px-4 rounded-lg bg-theme-surface shadow-sm font-medium text-theme-fg transition-all' 
+                      : 'flex-1 py-2.5 px-4 rounded-lg font-medium text-theme-muted hover:text-theme-fg transition-all'"
                   >
                     Phone
                   </button>
@@ -78,12 +78,12 @@ type AuthMethod = 'email' | 'phone';
                 <!-- Input Field -->
                 @if (method() === 'email') {
                   <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <label class="block text-sm font-medium text-theme-fg mb-2">
                       Email Address <span class="text-red-500">*</span>
                       <button 
                         type="button"
                         (click)="toggleTooltip('email')"
-                        class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                        class="info-button inline-block w-4 h-4 ml-1 text-theme-muted hover:text-theme-muted cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
                         aria-label="Help for Email Address field"
                       >
                         <svg viewBox="0 0 16 16" class="w-full h-full">
@@ -92,12 +92,12 @@ type AuthMethod = 'email' | 'phone';
                         </svg>
                       </button>
                       @if (activeTooltip() === 'email') {
-                        <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                          <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                        <div class="tooltip-container mt-2 p-3 bg-theme-fg text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                          <div class="absolute -top-1 left-6 w-2 h-2 bg-theme-fg transform rotate-45"></div>
                           {{ getTooltipText('email') }}
                           <button 
                             (click)="hideTooltip()"
-                            class="ml-2 text-gray-300 hover:text-white text-sm"
+                            class="ml-2 text-theme-muted hover:text-white text-sm"
                             aria-label="Close tooltip"
                           >
                             ×
@@ -109,7 +109,7 @@ type AuthMethod = 'email' | 'phone';
                       type="email"
                       [(ngModel)]="email"
                       placeholder="you@example.com"
-                      class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 outline-none transition-all text-gray-900"
+                      class="w-full px-4 py-3 rounded-xl border border-theme-secondary focus:border-theme-secondary focus:ring-2 focus:ring-gray-200 outline-none transition-all text-theme-fg"
                       [class.border-red-300]="emailError() && inputTouched().email"
                       [class.bg-red-50]="emailError() && inputTouched().email"
                       (input)="validateEmailInput()"
@@ -127,12 +127,12 @@ type AuthMethod = 'email' | 'phone';
                   </div>
                 } @else {
                   <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <label class="block text-sm font-medium text-theme-fg mb-2">
                       Phone Number <span class="text-red-500">*</span>
                       <button 
                         type="button"
                         (click)="toggleTooltip('phone')"
-                        class="info-button inline-block w-4 h-4 ml-1 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
+                        class="info-button inline-block w-4 h-4 ml-1 text-theme-muted hover:text-theme-muted cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full"
                         aria-label="Help for Phone Number field"
                       >
                         <svg viewBox="0 0 16 16" class="w-full h-full">
@@ -141,12 +141,12 @@ type AuthMethod = 'email' | 'phone';
                         </svg>
                       </button>
                       @if (activeTooltip() === 'phone') {
-                        <div class="tooltip-container mt-2 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
-                          <div class="absolute -top-1 left-6 w-2 h-2 bg-gray-900 transform rotate-45"></div>
+                        <div class="tooltip-container mt-2 p-3 bg-theme-fg text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                          <div class="absolute -top-1 left-6 w-2 h-2 bg-theme-fg transform rotate-45"></div>
                           {{ getTooltipText('phone') }}
                           <button 
                             (click)="hideTooltip()"
-                            class="ml-2 text-gray-300 hover:text-white text-sm"
+                            class="ml-2 text-theme-muted hover:text-white text-sm"
                             aria-label="Close tooltip"
                           >
                             ×
@@ -158,7 +158,7 @@ type AuthMethod = 'email' | 'phone';
                       type="tel"
                       [(ngModel)]="phone"
                       placeholder="+91 9876543210"
-                      class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 outline-none transition-all text-gray-900"
+                      class="w-full px-4 py-3 rounded-xl border border-theme-secondary focus:border-theme-secondary focus:ring-2 focus:ring-gray-200 outline-none transition-all text-theme-fg"
                       [class.border-red-300]="phoneError() && inputTouched().phone"
                       [class.bg-red-50]="phoneError() && inputTouched().phone"
                       (input)="validatePhoneInput()"
@@ -187,7 +187,7 @@ type AuthMethod = 'email' | 'phone';
                 <button 
                   (click)="requestOtp()"
                   [disabled]="loading() || !isInputValid()"
-                  class="w-full py-3.5 px-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  class="w-full py-3.5 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                 >
                   @if (loading()) {
                     <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -204,14 +204,14 @@ type AuthMethod = 'email' | 'phone';
               @case ('otp') {
                 <!-- OTP Header -->
                 <div class="text-center mb-6">
-                  <div class="w-14 h-14 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg class="w-7 h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-14 h-14 mx-auto mb-4 bg-theme-secondary rounded-full flex items-center justify-center">
+                    <svg class="w-7 h-7 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                   </div>
-                  <p class="text-gray-600">
+                  <p class="text-theme-muted">
                     Enter the 6-digit code sent to<br>
-                    <span class="font-medium text-gray-900">{{ method() === 'email' ? email : phone }}</span>
+                    <span class="font-medium text-theme-fg">{{ method() === 'email' ? email : phone }}</span>
                   </p>
                 </div>
 
@@ -228,7 +228,7 @@ type AuthMethod = 'email' | 'phone';
                       (input)="onOtpInput($event, digit)"
                       (keydown)="onOtpKeydown($event, digit)"
                       (paste)="onOtpPaste($event)"
-                      class="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-200 outline-none transition-all"
+                      class="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold border-2 border-theme-secondary rounded-xl focus:border-theme-secondary focus:ring-2 focus:ring-gray-200 outline-none transition-all"
                     >
                   }
                 </div>
@@ -244,7 +244,7 @@ type AuthMethod = 'email' | 'phone';
                 <button 
                   (click)="verifyOtp()"
                   [disabled]="loading() || !isOtpComplete()"
-                  class="w-full py-3.5 px-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  class="w-full py-3.5 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                 >
                   @if (loading()) {
                     <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -261,15 +261,15 @@ type AuthMethod = 'email' | 'phone';
                 <div class="text-center mt-4">
                   <button 
                     (click)="goBack()"
-                    class="text-sm text-gray-500 hover:text-gray-700"
+                    class="text-sm text-theme-muted hover:text-theme-fg"
                   >
                     ← Change {{ method() }}
                   </button>
-                  <span class="mx-2 text-gray-300">|</span>
+                  <span class="mx-2 text-theme-muted">|</span>
                   <button 
                     (click)="resendOtp()"
                     [disabled]="resendCooldown() > 0"
-                    class="text-sm text-gray-500 hover:text-gray-700 disabled:text-gray-300"
+                    class="text-sm text-theme-muted hover:text-theme-fg disabled:text-theme-muted"
                   >
                     @if (resendCooldown() > 0) {
                       Resend in {{ resendCooldown() }}s
@@ -288,11 +288,11 @@ type AuthMethod = 'email' | 'phone';
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
                   </div>
-                  <h3 class="text-lg font-bold text-gray-900 mb-2">Verification Successful!</h3>
-                  <p class="text-gray-600 mb-6">You now have access to your purchased products.</p>
+                  <h3 class="text-lg font-bold text-theme-fg mb-2">Verification Successful!</h3>
+                  <p class="text-theme-muted mb-6">You now have access to your purchased products.</p>
                   <button 
                     (click)="onSuccess()"
-                    class="w-full py-3.5 px-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+                    class="w-full py-3.5 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors"
                   >
                     View My Purchases
                   </button>
@@ -304,8 +304,8 @@ type AuthMethod = 'email' | 'phone';
           <!-- Footer -->
           @if (step() === 'input') {
             <div class="px-6 pb-6">
-              <div class="pt-4 border-t border-gray-100">
-                <p class="text-xs text-gray-400 text-center">
+              <div class="pt-4 border-t border-theme-secondary">
+                <p class="text-xs text-theme-muted text-center">
                   By continuing, you agree to our Terms of Service and Privacy Policy
                 </p>
               </div>

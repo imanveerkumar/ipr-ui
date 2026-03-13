@@ -16,10 +16,10 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, WishlistButtonComponent],
   template: `
-    <div class="min-h-screen bg-[#F9F4EB] font-sans antialiased">
+    <div class="min-h-screen bg-theme-secondary font-sans antialiased">
       @if (loading()) {
         <!-- Loading Skeleton -->
-        <div class="bg-[#F9F4EB] border-b-2 border-black">
+        <div class="bg-theme-secondary border-b-2 border-theme-border">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="h-4 w-48 bg-[#111111]/10 rounded animate-pulse"></div>
           </div>
@@ -27,7 +27,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
           <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10">
             <div class="lg:col-span-3">
-              <div class="bg-white border-2 border-black rounded-2xl animate-pulse" [style.aspect-ratio]="'4/3'"></div>
+              <div class="bg-theme-surface border-2 border-theme-border rounded-2xl animate-pulse" [style.aspect-ratio]="'4/3'"></div>
             </div>
             <div class="lg:col-span-2 space-y-4">
               <div class="h-8 bg-[#111111]/10 rounded w-3/4 animate-pulse"></div>
@@ -40,14 +40,14 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
         </div>
       } @else if (product()) {
         <!-- Breadcrumb -->
-        <div class="bg-[#F9F4EB] border-b-2 border-black">
+        <div class="bg-theme-secondary border-b-2 border-theme-border">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4">
             <nav class="flex items-center gap-2 text-sm font-medium text-[#111111]/60 overflow-x-auto">
-              <a routerLink="/" class="hover:text-[#111111] transition-colors whitespace-nowrap">Home</a>
+              <a routerLink="/" class="hover:text-theme-fg transition-colors whitespace-nowrap">Home</a>
               <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-              <a routerLink="/explore" class="hover:text-[#111111] transition-colors whitespace-nowrap">Explore</a>
+              <a routerLink="/explore" class="hover:text-theme-fg transition-colors whitespace-nowrap">Explore</a>
               <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-              <span class="text-[#111111] truncate">{{ product()?.title }}</span>
+              <span class="text-theme-fg truncate">{{ product()?.title }}</span>
             </nav>
           </div>
         </div>
@@ -57,7 +57,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
           <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10">
             <!-- Left Column: Image -->
             <div class="lg:col-span-3">
-              <div class="bg-white border-2 border-black rounded-2xl overflow-hidden">
+              <div class="bg-theme-surface border-2 border-theme-border rounded-2xl overflow-hidden">
                 @if (product()?.coverImageUrl) {
                   <img [src]="product()?.coverImageUrl" [alt]="product()?.title" class="w-full object-cover" [style.aspect-ratio]="getCoverAspectRatio()">
                 } @else {
@@ -74,27 +74,27 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
             <!-- Right Column: Details -->
             <div class="lg:col-span-2 space-y-5">
               <!-- Title & Price Card -->
-              <div class="bg-white border-2 border-black rounded-2xl p-5 md:p-6">
-                <h1 class="font-display text-xl md:text-2xl font-bold text-[#111111] leading-tight">{{ product()?.title }}</h1>
+              <div class="bg-theme-surface border-2 border-theme-border rounded-2xl p-5 md:p-6">
+                <h1 class="font-display text-xl md:text-2xl font-bold text-theme-fg leading-tight">{{ product()?.title }}</h1>
 
                 <!-- Store & Creator -->
                 @if (product()?.store) {
                   <a [routerLink]="['/store', product()?.store?.slug]" class="flex items-center gap-2.5 mt-3 group">
-                    <div class="w-8 h-8 rounded-lg bg-[#2B57D6] border border-black overflow-hidden flex-shrink-0 flex items-center justify-center">
+                    <div class="w-8 h-8 rounded-lg bg-theme-primary border border-theme-border overflow-hidden flex-shrink-0 flex items-center justify-center">
                       @if (product()?.store?.logoUrl) {
                         <img [src]="product()?.store?.logoUrl" class="w-full h-full object-cover" />
                       } @else {
                         <span class="text-xs font-bold text-white">{{ product()?.store?.name?.charAt(0) }}</span>
                       }
                     </div>
-                    <span class="text-sm font-medium text-[#111111]/60 group-hover:text-[#2B57D6] transition-colors">{{ product()?.store?.name }}</span>
+                    <span class="text-sm font-medium text-[#111111]/60 group-hover:text-theme-primary transition-colors">{{ product()?.store?.name }}</span>
                   </a>
                   @if (product()?.store?.slug) {
                     <a
                       [href]="getStorefrontUrl()"
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 bg-[#68E079] text-[#111111] border-2 border-black rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
+                      class="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 bg-theme-success text-theme-fg border-2 border-theme-border rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
                     >
                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                       Visit Storefront
@@ -105,10 +105,10 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
 
                 <!-- Price -->
                 <div class="mt-5 flex items-end gap-3">
-                  <span class="text-3xl md:text-4xl font-bold text-[#111111]">₹{{ (product()?.price || 0) / 100 }}</span>
+                  <span class="text-3xl md:text-4xl font-bold text-theme-fg">₹{{ (product()?.price || 0) / 100 }}</span>
                   @if (product()?.compareAtPrice && product()!.compareAtPrice! > product()!.price) {
                     <span class="text-lg text-[#111111]/40 line-through mb-1">₹{{ product()!.compareAtPrice! / 100 }}</span>
-                    <span class="px-2 py-0.5 bg-[#FA4B28] text-white text-xs font-bold rounded-md border border-black mb-1">
+                    <span class="px-2 py-0.5 bg-theme-danger text-white text-xs font-bold rounded-md border border-theme-border mb-1">
                       -{{ getDiscount() }}%
                     </span>
                   }
@@ -118,14 +118,14 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                 <div class="mt-6 space-y-3">
                   @if ((product()?.price || 0) === 0) {
                     <!-- Free product: choose free download or support creator -->
-                    <div class="bg-[#F9F4EB] border-2 border-black rounded-xl p-4 space-y-3">
-                      <p class="text-sm font-bold text-[#111111]">This product is free! Choose how to get it:</p>
+                    <div class="bg-theme-secondary border-2 border-theme-border rounded-xl p-4 space-y-3">
+                      <p class="text-sm font-bold text-theme-fg">This product is free! Choose how to get it:</p>
 
                       <!-- Free download button -->
                       <button
                         (click)="downloadForFree()"
                         [disabled]="purchasing()"
-                        class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#68E079] text-[#111111] border-2 border-black rounded-xl font-bold text-base shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-theme-success text-theme-fg border-2 border-theme-border rounded-xl font-bold text-base shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         @if (purchasing() && selectedFreeOption() === 'free') {
                           <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -152,13 +152,13 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                             [(ngModel)]="customAmount"
                             min="1"
                             placeholder="Enter amount"
-                            class="w-full pl-7 pr-3 py-2.5 border-2 border-black rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
+                            class="w-full pl-7 pr-3 py-2.5 border-2 border-theme-border rounded-lg text-sm font-medium bg-theme-surface focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
                           />
                         </div>
                         <button
                           (click)="payCustomAmount()"
                           [disabled]="purchasing() || !customAmount || customAmount < 1"
-                          class="px-4 py-2.5 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                          class="px-4 py-2.5 bg-theme-accent text-theme-fg border-2 border-theme-border rounded-lg font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                         >
                           @if (purchasing() && selectedFreeOption() === 'custom') {
                             <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -177,9 +177,9 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                             [(ngModel)]="guestEmail"
                             (ngModelChange)="guestEmailError = ''"
                             placeholder="your@email.com"
-                            class="w-full px-3 py-2.5 border-2 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
+                            class="w-full px-3 py-2.5 border-2 rounded-lg text-sm font-medium bg-theme-surface focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
                             [class.border-red-500]="guestEmailError"
-                            [class.border-black]="!guestEmailError"
+                            [class.border-theme-border]="!guestEmailError"
                           />
                           @if (guestEmailError) {
                             <p class="text-xs text-red-500">{{ guestEmailError }}</p>
@@ -187,7 +187,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                           <button
                             (click)="confirmGuestFreeDownload()"
                             [disabled]="purchasing()"
-                            class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#68E079] text-[#111111] border-2 border-black rounded-xl font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-theme-success text-theme-fg border-2 border-theme-border rounded-xl font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             @if (purchasing()) {
                               <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -205,7 +205,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                     <button
                       (click)="purchase()"
                       [disabled]="purchasing()"
-                      class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-xl font-bold text-base shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-theme-accent text-theme-fg border-2 border-theme-border rounded-xl font-bold text-base shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       @if (purchasing()) {
                         <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -216,8 +216,8 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                     </button>
                     <button
                       (click)="addToCart()"
-                      class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#111111] border-2 border-black rounded-xl font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
-                      [class.bg-[#68E079]]="isInCart()"
+                      class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-theme-surface text-theme-fg border-2 border-theme-border rounded-xl font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
+                      [class.bg-theme-success]="isInCart()"
                     >
                       @if (isInCart()) {
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -237,15 +237,15 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
               </div>
 
               <!-- Share & Copy -->
-              <div class="bg-white border-2 border-black rounded-2xl p-4">
+              <div class="bg-theme-surface border-2 border-theme-border rounded-2xl p-4">
                 <div class="flex gap-2">
                   <app-wishlist-button [productId]="product()!.id" [product]="product()!" size="md" />
                   <button
                     (click)="copyUrl()"
-                    class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#F9F4EB] border-2 border-black rounded-lg text-sm font-bold text-[#111111] hover:bg-[#FFC60B] transition-colors"
+                    class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-theme-secondary border-2 border-theme-border rounded-lg text-sm font-bold text-theme-fg hover:bg-theme-accent transition-colors"
                   >
                     @if (copied()) {
-                      <svg class="w-4 h-4 text-[#68E079]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      <svg class="w-4 h-4 text-theme-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                       Copied!
                     } @else {
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
@@ -254,7 +254,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                   </button>
                   <button
                     (click)="shareUrl()"
-                    class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#F9F4EB] border-2 border-black rounded-lg text-sm font-bold text-[#111111] hover:bg-[#2B57D6] hover:text-white transition-colors"
+                    class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-theme-secondary border-2 border-theme-border rounded-lg text-sm font-bold text-theme-fg hover:bg-theme-primary hover:text-white transition-colors"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
                     Share
@@ -264,19 +264,19 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
 
               <!-- Files Included -->
               @if (product()?.files && product()!.files!.length > 0) {
-                <div class="bg-white border-2 border-black rounded-2xl p-5">
-                  <h3 class="font-display text-sm font-bold text-[#111111] mb-3 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-[#68E079]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <div class="bg-theme-surface border-2 border-theme-border rounded-2xl p-5">
+                  <h3 class="font-display text-sm font-bold text-theme-fg mb-3 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-theme-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     Files Included ({{ product()!.files!.length }})
                   </h3>
                   <ul class="space-y-2">
                     @for (pf of product()?.files; track pf.id) {
-                      <li class="flex items-center gap-3 p-2.5 bg-[#F9F4EB] rounded-lg border border-black/10">
-                        <div class="w-8 h-8 bg-[#2B57D6]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <svg class="w-4 h-4 text-[#2B57D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                      <li class="flex items-center gap-3 p-2.5 bg-theme-secondary rounded-lg border border-black/10">
+                        <div class="w-8 h-8 bg-theme-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <svg class="w-4 h-4 text-theme-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         </div>
                         <div class="min-w-0 flex-1">
-                          <p class="text-sm font-medium text-[#111111] truncate">{{ pf.file.filename }}</p>
+                          <p class="text-sm font-medium text-theme-fg truncate">{{ pf.file.filename }}</p>
                           <p class="text-xs text-[#111111]/50">{{ formatFileSize(pf.file.size) }}</p>
                         </div>
                       </li>
@@ -286,32 +286,32 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
               }
 
               <!-- Trust Badges -->
-              <div class="bg-white border-2 border-black rounded-2xl p-5">
+              <div class="bg-theme-surface border-2 border-theme-border rounded-2xl p-5">
                 <div class="space-y-3">
                   <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-[#68E079]/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <svg class="w-4 h-4 text-[#68E079]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <div class="w-8 h-8 bg-theme-success/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <svg class="w-4 h-4 text-theme-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                     </div>
                     <div>
-                      <p class="text-sm font-bold text-[#111111]">Secure Payment</p>
+                      <p class="text-sm font-bold text-theme-fg">Secure Payment</p>
                       <p class="text-xs text-[#111111]/50">Powered by Razorpay</p>
                     </div>
                   </div>
                   <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-[#2B57D6]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <svg class="w-4 h-4 text-[#2B57D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <div class="w-8 h-8 bg-theme-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <svg class="w-4 h-4 text-theme-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     </div>
                     <div>
-                      <p class="text-sm font-bold text-[#111111]">Instant Access</p>
+                      <p class="text-sm font-bold text-theme-fg">Instant Access</p>
                       <p class="text-xs text-[#111111]/50">Download immediately after purchase</p>
                     </div>
                   </div>
                   <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-[#FFC60B]/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <svg class="w-4 h-4 text-[#FFC60B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                    <div class="w-8 h-8 bg-theme-accent/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <svg class="w-4 h-4 text-theme-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                     </div>
                     <div>
-                      <p class="text-sm font-bold text-[#111111]">License Key</p>
+                      <p class="text-sm font-bold text-theme-fg">License Key</p>
                       <p class="text-xs text-[#111111]/50">Unique license included with purchase</p>
                     </div>
                   </div>
@@ -323,12 +323,12 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
           <!-- Description (full width) -->
           @if (product()?.description) {
             <div class="mt-8">
-              <div class="bg-white border-2 border-black rounded-2xl p-6">
-                <h2 class="font-display text-lg font-bold text-[#111111] mb-4 flex items-center gap-2">
-                  <svg class="w-5 h-5 text-[#2B57D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <div class="bg-theme-surface border-2 border-theme-border rounded-2xl p-6">
+                <h2 class="font-display text-lg font-bold text-theme-fg mb-4 flex items-center gap-2">
+                  <svg class="w-5 h-5 text-theme-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   Description
                 </h2>
-                <div class="prose prose-base max-w-none text-[#111111]/80 prose-headings:text-[#111111] prose-a:text-[#2B57D6] break-words overflow-hidden [&_*]:max-w-full [&_img]:max-w-full [&_table]:w-full [&_table]:table-fixed [&_pre]:overflow-x-auto" [innerHTML]="product()?.description"></div>
+                <div class="prose prose-base max-w-none text-[#111111]/80 prose-headings:text-theme-fg prose-a:text-theme-primary break-words overflow-hidden [&_*]:max-w-full [&_img]:max-w-full [&_table]:w-full [&_table]:table-fixed [&_pre]:overflow-x-auto" [innerHTML]="product()?.description"></div>
               </div>
             </div>
           }
@@ -336,13 +336,13 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
       } @else {
         <!-- Not Found -->
         <div class="min-h-[60vh] flex items-center justify-center px-4">
-          <div class="text-center bg-white border-2 border-black rounded-2xl p-8 md:p-12 max-w-md w-full">
-            <div class="w-20 h-20 mx-auto mb-6 bg-[#FA4B28]/10 border-2 border-black rounded-2xl flex items-center justify-center">
-              <svg class="w-10 h-10 text-[#FA4B28]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div class="text-center bg-theme-surface border-2 border-theme-border rounded-2xl p-8 md:p-12 max-w-md w-full">
+            <div class="w-20 h-20 mx-auto mb-6 bg-theme-danger/10 border-2 border-theme-border rounded-2xl flex items-center justify-center">
+              <svg class="w-10 h-10 text-theme-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
-            <h1 class="text-2xl font-display font-bold text-[#111111] mb-2">Product not found</h1>
+            <h1 class="text-2xl font-display font-bold text-theme-fg mb-2">Product not found</h1>
             <p class="text-[#111111]/60 mb-6">The product you're looking for doesn't exist or has been removed.</p>
-            <a routerLink="/explore" class="inline-flex items-center gap-2 px-6 py-3 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-xl font-bold shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+            <a routerLink="/explore" class="inline-flex items-center gap-2 px-6 py-3 bg-theme-accent text-theme-fg border-2 border-theme-border rounded-xl font-bold shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               Explore Products
             </a>

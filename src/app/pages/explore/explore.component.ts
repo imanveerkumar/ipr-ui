@@ -29,42 +29,42 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink, MasonryGridComponent, WishlistButtonComponent],
   template: `
-    <div class="min-h-screen bg-white font-sans antialiased">
+    <div class="min-h-screen bg-theme-surface font-sans antialiased">
 
       <!-- TOP BAR (Filters summary) -->
-      <div class="sticky top-14 sm:top-16 z-40 bg-[#F9F4EB]/95 backdrop-blur-sm border-b-2 border-black/10" [class.lg:hidden]="!hasActiveFilters()">
+      <div class="sticky top-14 sm:top-16 z-40 bg-theme-secondary/95 backdrop-blur-sm border-b-2 border-theme-border/20" [class.lg:hidden]="!hasActiveFilters()">
         <div class="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div class="flex items-center gap-2 sm:gap-3 h-12 sm:h-14">
             <!-- Mobile filter toggle -->
             <button
               (click)="toggleMobileFilters()"
-              class="lg:hidden flex items-center justify-center gap-1.5 h-9 px-3.5 bg-[#F9F4EB] border-2 border-black/20 rounded-lg text-[#111111]/60 hover:border-black hover:bg-[#FFC60B]/10 active:scale-95 transition-all duration-200 flex-shrink-0 font-dm-sans min-w-[44px]"
-              [class.border-black]="showMobileFilters()"
-              [class.bg-[#111111]]="showMobileFilters()"
+              class="lg:hidden flex items-center justify-center gap-1.5 h-9 px-3.5 bg-theme-secondary border-2 border-theme-border/30 rounded-lg text-fg-muted hover:border-theme-border hover:bg-theme-accent/10 active:scale-95 transition-all duration-200 flex-shrink-0 font-dm-sans min-w-[44px]"
+              [class.border-theme-border]="showMobileFilters()"
+              [class.bg-theme-fg]="showMobileFilters()"
               [class.text-white]="showMobileFilters()"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
               </svg>
               <span class="text-xs font-semibold">Filters</span>
-              <span *ngIf="hasActiveFilters()" class="w-1.5 h-1.5 rounded-full bg-[#FA4B28] flex-shrink-0"></span>
+              <span *ngIf="hasActiveFilters()" class="w-1.5 h-1.5 rounded-full bg-theme-danger flex-shrink-0"></span>
             </button>
 
             <!-- Active filters summary -->
             <div class="flex-1 flex items-center gap-1.5 min-w-0 overflow-hidden">
               <ng-container *ngIf="hasActiveFilters()">
                 <ng-container *ngFor="let chip of getActiveFilterChips().slice(0, 3)">
-                  <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-[#FFC60B]/20 border border-[#111111]/15 rounded-lg text-[11px] font-bold text-[#111111] flex-shrink-0 hover:bg-[#FFC60B]/30 transition-colors font-dm-sans">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-theme-accent/20 border border-theme-border/15 rounded-lg text-[11px] font-bold text-theme-fg flex-shrink-0 hover:bg-theme-accent/30 transition-colors font-dm-sans">
                     {{ chip.label }}
-                    <button (click)="chip.remove()" class="ml-0.5 text-[#111111]/40 hover:text-[#FA4B28] transition-colors leading-none">
+                    <button (click)="chip.remove()" class="ml-0.5 text-fg-subtle hover:text-theme-danger transition-colors leading-none">
                       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                   </span>
                 </ng-container>
-                <span *ngIf="getActiveFilterChips().length > 3" class="inline-flex items-center px-2 py-1 bg-[#FFC60B]/10 border border-[#111111]/10 rounded-lg text-[11px] font-bold text-[#111111]/60 flex-shrink-0">
+                <span *ngIf="getActiveFilterChips().length > 3" class="inline-flex items-center px-2 py-1 bg-theme-accent/10 border border-theme-border/10 rounded-lg text-[11px] font-bold text-fg-muted flex-shrink-0">
                   +{{ getActiveFilterChips().length - 3 }}
                 </span>
-                <button (click)="clearAllFilters()" class="ml-auto flex-shrink-0 text-[11px] font-bold text-[#FA4B28] hover:text-[#d63a1a] transition-colors whitespace-nowrap font-dm-sans">Clear all</button>
+                <button (click)="clearAllFilters()" class="ml-auto flex-shrink-0 text-[11px] font-bold text-theme-danger hover:text-[#d63a1a] transition-colors whitespace-nowrap font-dm-sans">Clear all</button>
               </ng-container>
             </div>
 
@@ -77,15 +77,15 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 
         <!-- ==================== LEFT SIDEBAR (Desktop) ==================== -->
         <aside
-          class="sidebar-container hidden lg:block flex-shrink-0 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden scrollbar-hide bg-[#F9F4EB] border-r-2 border-black/10"
+          class="sidebar-container hidden lg:block flex-shrink-0 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden scrollbar-hide bg-theme-secondary border-r-2 border-theme-border/20"
           [class.sidebar-collapsed]="sidebarCollapsed()"
           [class.sidebar-expanded]="!sidebarCollapsed()"
         >
           <!-- Collapse / Expand toggle -->
-          <div class="flex items-center px-4 h-14 border-b-2 border-black/10">
+          <div class="flex items-center px-4 h-14 border-b-2 border-theme-border/20">
             <button
               (click)="toggleSidebar()"
-              class="sidebar-toggle group relative w-8 h-8 flex items-center justify-center rounded-lg text-[#111111]/50 hover:text-[#111111] hover:bg-[#111111]/5 transition-all duration-200"
+              class="sidebar-toggle group relative w-8 h-8 flex items-center justify-center rounded-lg text-fg-muted hover:text-theme-fg hover:bg-fg-faint transition-all duration-200"
               [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
             >
               <svg
@@ -96,8 +96,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7" />
               </svg>
             </button>
-            <span *ngIf="!sidebarCollapsed()" class="ml-3 text-[13px] font-bold text-[#111111] tracking-tight sidebar-label font-dm-sans">Filters</span>
-            <button *ngIf="!sidebarCollapsed() && hasActiveFilters()" (click)="clearAllFilters()" class="ml-auto text-[11px] font-semibold text-[#FA4B28] hover:text-[#d63a1a] transition-colors sidebar-label">Reset all</button>
+            <span *ngIf="!sidebarCollapsed()" class="ml-3 text-[13px] font-bold text-theme-fg tracking-tight sidebar-label font-dm-sans">Filters</span>
+            <button *ngIf="!sidebarCollapsed() && hasActiveFilters()" (click)="clearAllFilters()" class="ml-auto text-[11px] font-semibold text-theme-danger hover:text-[#d63a1a] transition-colors sidebar-label">Reset all</button>
           </div>
 
           <!-- EXPANDED STATE -->
@@ -108,7 +108,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               <div class="sidebar-section">
                 <button (click)="toggleSection('type')" class="sidebar-section-header">
                   <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-[#111111]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-fg-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                     </svg>
                     <span>Browse</span>
@@ -140,13 +140,13 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               <div class="sidebar-section">
                 <button (click)="toggleSection('sort')" class="sidebar-section-header">
                   <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-[#111111]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-fg-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 4h13M3 8h9m-9 4h6m4 0l4 4m0 0l4-4m-4 4V4"/>
                     </svg>
                     <span>Sort By</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span *ngIf="currentSort().value !== 'createdAt' || currentSort().order !== 'desc'" class="text-[10px] font-bold text-[#111111] bg-[#FFC60B]/20 px-1.5 py-0.5 rounded">{{ currentSort().label }}</span>
+                    <span *ngIf="currentSort().value !== 'createdAt' || currentSort().order !== 'desc'" class="text-[10px] font-bold text-theme-fg bg-theme-accent/20 px-1.5 py-0.5 rounded">{{ currentSort().label }}</span>
                     <svg class="sidebar-chevron" [class.rotate-180]="expandedSections().has('sort')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
@@ -171,13 +171,13 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               <div *ngIf="showPricingFilter && pricingOptions.length > 0" class="sidebar-section">
                 <button (click)="toggleSection('pricing')" class="sidebar-section-header">
                   <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-[#111111]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-fg-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                     </svg>
                     <span>Pricing</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span *ngIf="activePricing() !== 'all'" class="text-[10px] font-bold text-[#111111] bg-[#FFC60B]/20 px-1.5 py-0.5 rounded">{{ activePricing() | titlecase }}</span>
+                    <span *ngIf="activePricing() !== 'all'" class="text-[10px] font-bold text-theme-fg bg-theme-accent/20 px-1.5 py-0.5 rounded">{{ activePricing() | titlecase }}</span>
                     <svg class="sidebar-chevron" [class.rotate-180]="expandedSections().has('pricing')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
@@ -202,13 +202,13 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               <div *ngIf="showPriceRange" class="sidebar-section">
                 <button (click)="toggleSection('price')" class="sidebar-section-header">
                   <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-[#111111]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-fg-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <span>Price</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span *ngIf="appliedMinPrice !== null || appliedMaxPrice !== null" class="text-[10px] font-bold text-[#111111] bg-[#68E079]/15 px-1.5 py-0.5 rounded">
+                    <span *ngIf="appliedMinPrice !== null || appliedMaxPrice !== null" class="text-[10px] font-bold text-theme-fg bg-theme-success/15 px-1.5 py-0.5 rounded">
                       {{ appliedMinPrice !== null ? '\u20B9' + appliedMinPrice : '' }}{{ appliedMinPrice !== null && appliedMaxPrice !== null ? ' – ' : '' }}{{ appliedMaxPrice !== null ? '\u20B9' + appliedMaxPrice : '' }}
                     </span>
                     <svg class="sidebar-chevron" [class.rotate-180]="expandedSections().has('price')" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,7 +219,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                 <div *ngIf="expandedSections().has('price')" class="sidebar-section-body">
                   <div class="flex items-center gap-2">
                     <div class="flex-1 relative">
-                      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#111111]/40 text-xs pointer-events-none">\u20B9</span>
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle text-xs pointer-events-none">\u20B9</span>
                       <input
                         type="number"
                         [(ngModel)]="minPrice"
@@ -227,9 +227,9 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                         class="sidebar-price-input pl-7"
                       />
                     </div>
-                    <span class="text-[#111111]/20 text-sm font-medium select-none">–</span>
+                    <span class="text-fg-ghost text-sm font-medium select-none">–</span>
                     <div class="flex-1 relative">
-                      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#111111]/40 text-xs pointer-events-none">\u20B9</span>
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle text-xs pointer-events-none">\u20B9</span>
                       <input
                         type="number"
                         [(ngModel)]="maxPrice"
@@ -250,20 +250,20 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </div>
 
             <!-- Stats Panel -->
-            <div *ngIf="stats()" class="mx-4 mb-4 p-3.5 bg-white border-2 border-black/10 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)]">
-              <div class="text-[10px] font-bold text-[#111111]/40 uppercase tracking-[0.08em] mb-3 font-dm-sans">Marketplace</div>
+            <div *ngIf="stats()" class="mx-4 mb-4 p-3.5 bg-theme-surface border-2 border-theme-border/20 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)]">
+              <div class="text-[10px] font-bold text-fg-subtle uppercase tracking-[0.08em] mb-3 font-dm-sans">Marketplace</div>
               <div class="grid grid-cols-3 gap-2">
                 <div class="text-center">
-                  <div class="text-base font-bold text-[#111111]">{{ stats()!.totalProducts }}</div>
-                  <div class="text-[10px] text-[#111111]/40 font-medium mt-0.5">Products</div>
+                  <div class="text-base font-bold text-theme-fg">{{ stats()!.totalProducts }}</div>
+                  <div class="text-[10px] text-fg-subtle font-medium mt-0.5">Products</div>
                 </div>
-                <div class="text-center border-x border-black/10">
-                  <div class="text-base font-bold text-[#111111]">{{ stats()!.totalStores }}</div>
-                  <div class="text-[10px] text-[#111111]/40 font-medium mt-0.5">Stores</div>
+                <div class="text-center border-x border-theme-border/20">
+                  <div class="text-base font-bold text-theme-fg">{{ stats()!.totalStores }}</div>
+                  <div class="text-[10px] text-fg-subtle font-medium mt-0.5">Stores</div>
                 </div>
                 <div class="text-center">
-                  <div class="text-base font-bold text-[#111111]">{{ stats()!.totalCreators }}</div>
-                  <div class="text-[10px] text-[#111111]/40 font-medium mt-0.5">Creators</div>
+                  <div class="text-base font-bold text-theme-fg">{{ stats()!.totalCreators }}</div>
+                  <div class="text-[10px] text-fg-subtle font-medium mt-0.5">Creators</div>
                 </div>
               </div>
             </div>
@@ -292,14 +292,14 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <!-- Sort icon -->
             <button (click)="toggleSidebar()" class="sidebar-collapsed-btn group relative">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 4h13M3 8h9m-9 4h6m4 0l4 4m0 0l4-4m-4 4V4"/></svg>
-              <span *ngIf="currentSort().value !== 'createdAt' || currentSort().order !== 'desc'" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#FFC60B] border border-black rounded-full"></span>
+              <span *ngIf="currentSort().value !== 'createdAt' || currentSort().order !== 'desc'" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-theme-accent border border-theme-border rounded-full"></span>
               <span class="sidebar-tooltip">Sort</span>
             </button>
 
             <!-- Price icon -->
             <button *ngIf="showPriceRange" (click)="toggleSidebar()" class="sidebar-collapsed-btn group relative">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <span *ngIf="appliedMinPrice !== null || appliedMaxPrice !== null" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#68E079] rounded-full"></span>
+              <span *ngIf="appliedMinPrice !== null || appliedMaxPrice !== null" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-theme-success rounded-full"></span>
               <span class="sidebar-tooltip">Price</span>
             </button>
           </div>
@@ -311,17 +311,17 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
           class="fixed inset-0 z-50 lg:hidden"
         >
           <div (click)="showMobileFilters.set(false)" class="absolute inset-0 bg-black/40 backdrop-blur-[2px] mobile-overlay-enter"></div>
-          <div class="absolute bottom-0 left-0 right-0 bg-[#F9F4EB] rounded-t-2xl max-h-[85vh] flex flex-col mobile-drawer-enter shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
+          <div class="absolute bottom-0 left-0 right-0 bg-theme-secondary rounded-t-2xl max-h-[85vh] flex flex-col mobile-drawer-enter shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
             <!-- Handle bar -->
             <div class="flex justify-center pt-3 pb-1 flex-shrink-0">
               <div class="w-10 h-1 bg-black/15 rounded-full"></div>
             </div>
-            <div class="flex-shrink-0 bg-[#F9F4EB] border-b-2 border-black/10 px-5 py-3.5 flex items-center justify-between">
-              <span class="text-[15px] font-bold text-[#111111] font-dm-sans">Filters</span>
+            <div class="flex-shrink-0 bg-theme-secondary border-b-2 border-theme-border/20 px-5 py-3.5 flex items-center justify-between">
+              <span class="text-[15px] font-bold text-theme-fg font-dm-sans">Filters</span>
               <div class="flex items-center gap-3">
-                <button *ngIf="hasActiveFilters()" (click)="clearAllFilters()" class="text-xs text-[#FA4B28] font-bold font-dm-sans">Reset</button>
-                <button (click)="showMobileFilters.set(false)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-[#111111]/5 hover:bg-[#111111]/10 active:bg-[#111111]/15 transition-colors border border-black/10">
-                  <svg class="w-4 h-4 text-[#111111]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button *ngIf="hasActiveFilters()" (click)="clearAllFilters()" class="text-xs text-theme-danger font-bold font-dm-sans">Reset</button>
+                <button (click)="showMobileFilters.set(false)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-fg-faint hover:bg-theme-border/20 active:bg-theme-border/30 transition-colors border border-theme-border/20">
+                  <svg class="w-4 h-4 text-fg-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                   </svg>
                 </button>
@@ -330,21 +330,21 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <div class="flex-1 overflow-y-auto overscroll-contain px-5 py-4 space-y-5">
               <!-- Content Type -->
               <div>
-                <span class="text-xs font-bold text-[#111111]/50 uppercase tracking-wider mb-2.5 block font-dm-sans">Browse</span>
+                <span class="text-xs font-bold text-fg-muted uppercase tracking-wider mb-2.5 block font-dm-sans">Browse</span>
                 <div class="flex flex-wrap gap-2">
                   <button
                     *ngFor="let filter of contentFilters"
                     (click)="setContentFilter(filter.value)"
                     class="px-4 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-200 border-2 font-dm-sans min-h-[44px] active:scale-95"
-                    [class.bg-[#111111]]="activeFilter() === filter.value"
+                    [class.bg-theme-fg]="activeFilter() === filter.value"
                     [class.text-white]="activeFilter() === filter.value"
-                    [class.border-black]="activeFilter() === filter.value"
+                    [class.border-theme-border]="activeFilter() === filter.value"
                     [class.shadow-[2px_2px_0px_0px_#000]]="activeFilter() === filter.value"
-                    [class.bg-white]="activeFilter() !== filter.value"
-                    [class.text-[#111111]/60]="activeFilter() !== filter.value"
-                    [class.border-black/15]="activeFilter() !== filter.value"
-                    [class.hover:border-black/30]="activeFilter() !== filter.value"
-                    [class.hover:bg-white]="activeFilter() !== filter.value"
+                    [class.bg-theme-surface]="activeFilter() !== filter.value"
+                    [class.text-fg-muted]="activeFilter() !== filter.value"
+                    [class.border-theme-border/30]="activeFilter() !== filter.value"
+                    [class.hover:border-theme-border]="activeFilter() !== filter.value"
+                    [class.hover:bg-theme-surface]="activeFilter() !== filter.value"
                   >
                     {{ filter.label }}
                   </button>
@@ -352,20 +352,20 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               </div>
               <!-- Sort -->
               <div>
-                <span class="text-xs font-bold text-[#111111]/50 uppercase tracking-wider mb-2.5 block font-dm-sans">Sort By</span>
+                <span class="text-xs font-bold text-fg-muted uppercase tracking-wider mb-2.5 block font-dm-sans">Sort By</span>
                 <div class="grid grid-cols-2 gap-2">
                   <button
                     *ngFor="let option of sortOptions"
                     (click)="selectSort(option)"
                     class="px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 border-2 min-h-[44px] active:scale-95"
-                    [class.bg-[#111111]]="currentSort().value === option.value && currentSort().order === option.order"
+                    [class.bg-theme-fg]="currentSort().value === option.value && currentSort().order === option.order"
                     [class.text-white]="currentSort().value === option.value && currentSort().order === option.order"
-                    [class.border-black]="currentSort().value === option.value && currentSort().order === option.order"
+                    [class.border-theme-border]="currentSort().value === option.value && currentSort().order === option.order"
                     [class.shadow-[2px_2px_0px_0px_#000]]="currentSort().value === option.value && currentSort().order === option.order"
-                    [class.bg-white]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                    [class.text-[#111111]/60]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                    [class.border-black/15]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                    [class.hover:bg-white]="!(currentSort().value === option.value && currentSort().order === option.order)"
+                    [class.bg-theme-surface]="!(currentSort().value === option.value && currentSort().order === option.order)"
+                    [class.text-fg-muted]="!(currentSort().value === option.value && currentSort().order === option.order)"
+                    [class.border-theme-border/30]="!(currentSort().value === option.value && currentSort().order === option.order)"
+                    [class.hover:bg-theme-surface]="!(currentSort().value === option.value && currentSort().order === option.order)"
                   >
                     {{ option.label }}
                   </button>
@@ -373,19 +373,19 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               </div>
               <!-- Pricing (mobile) -->
               <div *ngIf="showPricingFilter && pricingOptions.length > 0">
-                <span class="text-xs font-bold text-[#111111]/50 uppercase tracking-wider mb-2.5 block font-dm-sans">Pricing</span>
+                <span class="text-xs font-bold text-fg-muted uppercase tracking-wider mb-2.5 block font-dm-sans">Pricing</span>
                 <div class="flex flex-wrap gap-2">
                   <button
                     *ngFor="let option of pricingOptions"
                     (click)="setPricing(option.value)"
                     class="px-4 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-200 border-2 font-dm-sans min-h-[44px] active:scale-95"
-                    [class.bg-[#111111]]="activePricing() === option.value"
+                    [class.bg-theme-fg]="activePricing() === option.value"
                     [class.text-white]="activePricing() === option.value"
-                    [class.border-black]="activePricing() === option.value"
+                    [class.border-theme-border]="activePricing() === option.value"
                     [class.shadow-[2px_2px_0px_0px_#000]]="activePricing() === option.value"
-                    [class.bg-white]="activePricing() !== option.value"
-                    [class.text-[#111111]/60]="activePricing() !== option.value"
-                    [class.border-black/15]="activePricing() !== option.value"
+                    [class.bg-theme-surface]="activePricing() !== option.value"
+                    [class.text-fg-muted]="activePricing() !== option.value"
+                    [class.border-theme-border/30]="activePricing() !== option.value"
                   >
                     {{ option.label }}
                   </button>
@@ -393,25 +393,25 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               </div>
               <!-- Price -->
               <div *ngIf="showPriceRange">
-                <span class="text-xs font-bold text-[#111111]/50 uppercase tracking-wider mb-2.5 block font-dm-sans">Price Range</span>
+                <span class="text-xs font-bold text-fg-muted uppercase tracking-wider mb-2.5 block font-dm-sans">Price Range</span>
                 <div class="flex items-center gap-2">
                   <div class="flex-1 relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#111111]/40 text-sm">\u20B9</span>
-                    <input type="number" [(ngModel)]="minPrice" placeholder="Min" class="w-full pl-7 pr-3 py-3 bg-white border-2 border-black/15 rounded-lg text-sm text-[#111111] placeholder-[#111111]/35 focus:outline-none focus:ring-2 focus:ring-[#111111]/10 focus:border-[#111111] transition-all min-h-[48px]" />
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle text-sm">\u20B9</span>
+                    <input type="number" [(ngModel)]="minPrice" placeholder="Min" class="w-full pl-7 pr-3 py-3 bg-theme-surface border-2 border-theme-border/30 rounded-lg text-sm text-theme-fg focus:outline-none focus:ring-2 focus:ring-theme-border/20 focus:border-theme-border transition-all min-h-[48px]" />
                   </div>
-                  <span class="text-[#111111]/20 text-sm select-none">–</span>
+                  <span class="text-fg-ghost text-sm select-none">–</span>
                   <div class="flex-1 relative">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[#111111]/40 text-sm">\u20B9</span>
-                    <input type="number" [(ngModel)]="maxPrice" placeholder="Max" class="w-full pl-7 pr-3 py-3 bg-white border-2 border-black/15 rounded-lg text-sm text-[#111111] placeholder-[#111111]/35 focus:outline-none focus:ring-2 focus:ring-[#111111]/10 focus:border-[#111111] transition-all min-h-[48px]" />
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle text-sm">\u20B9</span>
+                    <input type="number" [(ngModel)]="maxPrice" placeholder="Max" class="w-full pl-7 pr-3 py-3 bg-theme-surface border-2 border-theme-border/30 rounded-lg text-sm text-theme-fg focus:outline-none focus:ring-2 focus:ring-theme-border/20 focus:border-theme-border transition-all min-h-[48px]" />
                   </div>
                 </div>
               </div>
             </div>
             <!-- Sticky footer -->
-            <div class="flex-shrink-0 border-t border-black/10 px-5 pt-3 pb-4 bg-[#F9F4EB]">
+            <div class="flex-shrink-0 border-t border-theme-border/20 px-5 pt-3 pb-4 bg-theme-secondary">
               <button
                 (click)="applyMobileFilters()"
-                class="w-full py-3.5 bg-[#FFC60B] border-2 border-black rounded-lg text-[15px] font-bold text-[#111111] hover:bg-[#ffdb4d] active:scale-[0.98] transition-all duration-200 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] font-dm-sans min-h-[52px]"
+                class="w-full py-3.5 bg-theme-accent border-2 border-theme-border rounded-lg text-[15px] font-bold text-theme-fg hover:bg-[#ffdb4d] active:scale-[0.98] transition-all duration-200 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] font-dm-sans min-h-[52px]"
               >
                 Show Results
               </button>
@@ -423,18 +423,18 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
         <!-- ==================== MASONRY GRID ==================== -->
         <main class="flex-1 min-w-0">
           <!-- Mobile content type pills -->
-          <div class="lg:hidden overflow-x-auto scrollbar-hide border-b border-black/10 bg-[#F9F4EB]">
+          <div class="lg:hidden overflow-x-auto scrollbar-hide border-b border-theme-border/20 bg-theme-secondary">
             <div class="flex gap-2 px-3 py-2.5">
               <button
                 *ngFor="let filter of contentFilters"
                 (click)="setContentFilter(filter.value)"
                 class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 border-2 font-dm-sans min-h-[36px] active:scale-95"
-                [class.bg-[#111111]]="activeFilter() === filter.value"
+                [class.bg-theme-fg]="activeFilter() === filter.value"
                 [class.text-white]="activeFilter() === filter.value"
-                [class.border-black]="activeFilter() === filter.value"
-                [class.bg-white]="activeFilter() !== filter.value"
-                [class.text-[#111111]/50]="activeFilter() !== filter.value"
-                [class.border-black/15]="activeFilter() !== filter.value"
+                [class.border-theme-border]="activeFilter() === filter.value"
+                [class.bg-theme-surface]="activeFilter() !== filter.value"
+                [class.text-fg-muted]="activeFilter() !== filter.value"
+                [class.border-theme-border/30]="activeFilter() !== filter.value"
               >
                 {{ filter.label }}
               </button>
@@ -445,8 +445,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <!-- Skeleton Loader -->
             <app-masonry-grid *ngIf="isLoading() && feedItems().length === 0" [items]="skeletonArray" [gap]="16" [colsMobile]="2" [colsTablet]="3" [colsDesktop]="3" [colsLargeDesktop]="4">
               <ng-template let-i>
-                <div class="bg-white border-2 border-black/10 rounded-xl overflow-hidden">
-                  <div class="bg-[#F9F4EB] animate-pulse" [style.height.px]="getSkeletonHeight(i)"></div>
+                <div class="bg-theme-surface border-2 border-theme-border/20 rounded-xl overflow-hidden">
+                  <div class="bg-theme-secondary animate-pulse rounded-t-xl" [style.height.px]="getSkeletonHeight(i)"></div>
                   <div class="p-3">
                     <div class="h-4 bg-[#111111]/10 rounded animate-pulse mb-2 w-3/4"></div>
                     <div class="flex items-center gap-2 mb-2">
@@ -461,16 +461,16 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 
             <!-- Empty State -->
             <div *ngIf="!isLoading() && feedItems().length === 0" class="py-20 text-center">
-              <div class="w-24 h-24 mx-auto mb-6 bg-[#F9F4EB] border-2 border-black rounded-2xl flex items-center justify-center">
-                <svg class="w-12 h-12 text-[#111111]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-24 h-24 mx-auto mb-6 bg-theme-secondary border-2 border-theme-border rounded-2xl flex items-center justify-center">
+                <svg class="w-12 h-12 text-fg-ghost" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
               </div>
-              <h3 class="text-xl font-bold text-[#111111] mb-2 font-dm-sans">Nothing found</h3>
-              <p class="text-[#111111]/60 font-medium mb-6">Try adjusting your search or filters</p>
+              <h3 class="text-xl font-bold text-theme-fg mb-2 font-dm-sans">Nothing found</h3>
+              <p class="text-fg-muted font-medium mb-6">Try adjusting your search or filters</p>
               <button
                 (click)="clearAllFilters()"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#FFC60B] border-2 border-black rounded-xl text-sm font-bold text-[#111111] shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-theme-accent border-2 border-theme-border rounded-xl text-sm font-bold text-theme-fg shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
               >
                 Clear all filters
               </button>
@@ -484,11 +484,11 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   <!-- PRODUCT CARD -->
                   <div
                     *ngIf="item.type === 'product'"
-                    class="group card-dyn bg-white rounded-xl overflow-hidden transition-all duration-300 cursor-pointer relative"
+                    class="group card-dyn bg-theme-surface rounded-xl overflow-hidden transition-all duration-300 cursor-pointer relative"
                     [style]="getCardCssVarsStyle(item)"
                     (click)="navigateToProduct(asProduct(item.data).id)"
                   >
-                    <div class="relative overflow-hidden bg-[#F9F4EB]" [style.aspect-ratio]="getProductAspectRatio(asProduct(item.data))">
+                    <div class="relative overflow-hidden bg-theme-secondary rounded-xl" [style.aspect-ratio]="getProductAspectRatio(asProduct(item.data))">
                       <img
                         *ngIf="asProduct(item.data).coverImageUrl"
                         [src]="asProduct(item.data).coverImageUrl"
@@ -501,67 +501,33 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
                       </div>
-                      <!-- Discount badge (mobile only — desktop shows in overlay) -->
+                      <!-- Discount badge (desktop overlay only) -->
                       <div
                         *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
-                        class="md:hidden absolute top-2 left-2 px-1.5 py-0.5 bg-[#FA4B28] rounded-full text-[10px] font-bold text-white"
+                        class="hidden md:hidden absolute top-2 left-2 px-1.5 py-0.5 bg-theme-danger rounded-full text-[10px] font-bold text-white"
                       >
                         -{{ exploreService.getDiscountPercentage(asProduct(item.data).price, asProduct(item.data).compareAtPrice!) }}%
                       </div>
-                      <!-- Wishlist button -->
-                      <app-wishlist-button [productId]="asProduct(item.data).id" [product]="asProduct(item.data)" size="sm" class="absolute top-2 right-2 z-[25] md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200" />
+                      <!-- Wishlist button (desktop only) -->
+                      <app-wishlist-button [productId]="asProduct(item.data).id" [product]="asProduct(item.data)" size="sm" class="absolute top-2 right-2 z-[25] hidden md:block md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200" />
                     </div>
                     <!-- Desktop: minimal — title + price only -->
                     <div class="hidden md:block px-2.5 pt-2 pb-2.5">
-                      <h3 class="font-semibold text-[#111111] text-[13px] leading-snug line-clamp-1">
+                      <h3 class="font-semibold text-theme-fg text-[13px] leading-snug line-clamp-1">
                         {{ asProduct(item.data).title }}
                       </h3>
-                      <span class="font-bold text-[#111111] text-[13px]">
+                      <span class="font-bold text-theme-fg text-[13px]">
                         {{ exploreService.formatPrice(asProduct(item.data).price, asProduct(item.data).currency) }}
                       </span>
                     </div>
-                    <!-- Mobile: full info (no hover on touch) -->
-                    <div class="md:hidden px-2.5 pt-2 pb-2.5">
-                      <h3 class="font-semibold text-[#111111] text-[13px] leading-snug line-clamp-2 mb-1">
+                    <!-- Mobile: minimal Pinterest-style (image + title + price only) -->
+                    <div class="md:hidden px-2 pt-1 pb-1.5">
+                      <h3 class="text-theme-fg text-[12px] leading-snug line-clamp-2 mb-0">
                         {{ asProduct(item.data).title }}
                       </h3>
-                      <div class="flex items-center gap-1.5 mb-1.5">
-                        <div class="w-4 h-4 rounded-full bg-[#F9F4EB] border border-black/10 overflow-hidden flex-shrink-0">
-                          <img *ngIf="asProduct(item.data).creator.avatarUrl" [src]="asProduct(item.data).creator.avatarUrl" class="w-full h-full object-cover" />
-                        </div>
-                        <span class="text-[11px] text-[#111111]/50 font-medium truncate">
-                          {{ asProduct(item.data).creator.displayName || asProduct(item.data).creator.username }}
-                        </span>
-                      </div>
-                      <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-1.5 min-w-0">
-                          <span class="font-bold text-[#111111] text-[13px] whitespace-nowrap">
-                            {{ exploreService.formatPrice(asProduct(item.data).price, asProduct(item.data).currency) }}
-                          </span>
-                          <span
-                            *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
-                            class="text-[10px] text-[#111111]/35 line-through whitespace-nowrap"
-                          >
-                            {{ exploreService.formatPrice(asProduct(item.data).compareAtPrice!, asProduct(item.data).currency) }}
-                          </span>
-                        </div>
-                        <button *ngIf="asProduct(item.data).price > 0"
-                          (click)="isInCart(asProduct(item.data).id) ? removeFromCart(asProduct(item.data).id, $event) : addToCart(asProduct(item.data), $event)"
-                          class="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold transition-all active:scale-95 flex-shrink-0"
-                          [class.bg-[#68E079]/15]="isInCart(asProduct(item.data).id)"
-                          [class.text-[#111111]]="isInCart(asProduct(item.data).id)"
-                          [class.bg-[#111111]/5]="!isInCart(asProduct(item.data).id)"
-                          [class.text-[#111111]/70]="!isInCart(asProduct(item.data).id)"
-                        >
-                          <svg *ngIf="!isInCart(asProduct(item.data).id)" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v12m6-6H6"/>
-                          </svg>
-                          <svg *ngIf="isInCart(asProduct(item.data).id)" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-                          </svg>
-                          {{ isInCart(asProduct(item.data).id) ? 'Added' : 'Cart' }}
-                        </button>
-                      </div>
+                      <span class="text-fg-muted text-[11px] leading-none">
+                        {{ exploreService.formatPrice(asProduct(item.data).price, asProduct(item.data).currency) }}
+                      </span>
                     </div>
                     <!-- Hover Detail Panel (Desktop) -->
                     <div class="hover-overlay product-hover-overlay hidden md:flex" aria-hidden="true">
@@ -600,7 +566,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                             </span>
                             <span
                               *ngIf="asProduct(item.data).compareAtPrice && asProduct(item.data).compareAtPrice! > asProduct(item.data).price"
-                              class="text-[9px] font-bold text-[#68E079] bg-[#68E079]/15 px-1.5 py-0.5 rounded-full"
+                              class="text-[9px] font-bold text-theme-success bg-theme-success/15 px-1.5 py-0.5 rounded-full"
                             >
                               -{{ exploreService.getDiscountPercentage(asProduct(item.data).price, asProduct(item.data).compareAtPrice!) }}%
                             </span>
@@ -630,42 +596,44 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   <!-- STORE CARD -->
                   <div
                     *ngIf="item.type === 'store'"
-                    class="group card-dyn bg-white rounded-xl overflow-hidden transition-all duration-300 cursor-pointer relative"
+                    class="group card-dyn bg-theme-surface rounded-xl overflow-hidden transition-all duration-300 cursor-pointer relative"
                     [style]="getCardCssVarsStyle(item)"
                     (click)="navigateToStore(asStore(item.data).slug)"
                   >
                     <!-- Store badge — direct child of card so overflow-hidden clips it correctly -->
-                    <span class="absolute top-2 right-2 px-2 py-0.5 bg-[#2B57D6] border border-white/30 rounded text-[9px] font-bold text-white uppercase tracking-wider z-[4] group-hover:opacity-0 transition-opacity duration-200">Store</span>
-                    <div class="bg-gradient-to-br from-[#2B57D6] to-[#7C3AED] relative" [style.aspect-ratio]="getStoreBannerAspectRatio(asStore(item.data))" style="min-height: 80px; max-height: 160px;">
-                      <img *ngIf="asStore(item.data).bannerUrl" [src]="asStore(item.data).bannerUrl" [alt]="asStore(item.data).name" loading="lazy" class="w-full h-full object-cover" />
-                      <div class="absolute -bottom-5 left-3 w-12 h-12 bg-white border-2 border-black rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000] z-10 group-hover:opacity-0 transition-opacity duration-200">
+                    <span class="absolute top-2 right-2 px-2 py-0.5 bg-theme-primary border border-white/30 rounded text-[9px] font-bold text-white uppercase tracking-wider z-[4] group-hover:opacity-0 transition-opacity duration-200">Store</span>
+                    <div class="bg-gradient-to-br from-[#2B57D6] to-[#7C3AED] relative rounded-t-xl" [style.aspect-ratio]="getStoreBannerAspectRatio(asStore(item.data))" style="min-height: 80px; max-height: 160px;">
+                      <div class="absolute inset-0 overflow-hidden rounded-t-xl">
+                        <img *ngIf="asStore(item.data).bannerUrl" [src]="asStore(item.data).bannerUrl" [alt]="asStore(item.data).name" loading="lazy" class="w-full h-full object-cover" />
+                      </div>
+                      <div class="absolute -bottom-5 left-3 w-12 h-12 bg-theme-surface border-2 border-theme-border rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000] z-10 group-hover:opacity-0 transition-opacity duration-200">
                         <img *ngIf="asStore(item.data).logoUrl" [src]="asStore(item.data).logoUrl" [alt]="asStore(item.data).name" class="w-full h-full object-cover" />
-                        <div *ngIf="!asStore(item.data).logoUrl" class="w-full h-full bg-[#F9F4EB] flex items-center justify-center">
-                          <span class="text-base font-bold text-[#111111]">{{ asStore(item.data).name.charAt(0) }}</span>
+                        <div *ngIf="!asStore(item.data).logoUrl" class="w-full h-full bg-theme-secondary flex items-center justify-center">
+                          <span class="text-base font-bold text-theme-fg">{{ asStore(item.data).name.charAt(0) }}</span>
                         </div>
                       </div>
                     </div>
                     <!-- Desktop: minimal — name only -->
                     <div class="hidden md:block p-3 pt-8">
-                      <h3 class="card-dyn-title font-bold text-[#111111] text-sm sm:text-base transition-colors truncate">
+                      <h3 class="card-dyn-title font-bold text-theme-fg text-sm sm:text-base transition-colors truncate">
                         {{ asStore(item.data).name }}
                       </h3>
                     </div>
                     <!-- Mobile: full info (no hover on touch) -->
                     <div class="md:hidden p-3 pt-8">
-                      <h3 class="card-dyn-title font-bold text-[#111111] text-sm sm:text-base mb-0.5 transition-colors">
+                      <h3 class="card-dyn-title font-bold text-theme-fg text-sm sm:text-base mb-0.5 transition-colors">
                         {{ asStore(item.data).name }}
                       </h3>
-                      <p *ngIf="asStore(item.data).tagline" class="text-xs text-[#111111]/50 font-medium line-clamp-2 mb-3">
+                      <p *ngIf="asStore(item.data).tagline" class="text-xs text-fg-muted font-medium line-clamp-2 mb-3">
                         {{ asStore(item.data).tagline }}
                       </p>
-                      <div class="flex items-center gap-3 text-xs text-[#111111]/50 font-medium">
+                      <div class="flex items-center gap-3 text-xs text-fg-muted font-medium">
                         <span class="flex items-center gap-1">
                           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                           {{ asStore(item.data).productCount }} products
                         </span>
                         <span class="flex items-center gap-1">
-                          <div class="w-4 h-4 rounded-full bg-[#68E079] border border-black overflow-hidden flex-shrink-0">
+                          <div class="w-4 h-4 rounded-full bg-theme-success border border-theme-border overflow-hidden flex-shrink-0">
                             <img *ngIf="asStore(item.data).creator.avatarUrl" [src]="asStore(item.data).creator.avatarUrl" class="w-full h-full object-cover" />
                           </div>
                           {{ asStore(item.data).creator.displayName || asStore(item.data).creator.username }}
@@ -712,33 +680,33 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   <!-- CREATOR CARD -->
                   <div
                     *ngIf="item.type === 'creator'"
-                    class="group card-dyn bg-white rounded-xl overflow-hidden transition-all duration-300 cursor-pointer p-4 text-center relative"
+                    class="group card-dyn bg-theme-surface rounded-xl overflow-hidden transition-all duration-300 cursor-pointer p-4 text-center relative"
                     [style]="getCardCssVarsStyle(item)"
                     (click)="navigateToCreator(asCreator(item.data).id)"
                   >
-                    <span class="inline-block px-2 py-0.5 bg-[#FFC60B]/20 border border-[#FFC60B] rounded text-[9px] font-bold text-[#111111] uppercase tracking-wider mb-3">Creator</span>
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-[#FFC60B] to-[#FA4B28] border-2 border-black overflow-hidden shadow-[3px_3px_0px_0px_#000]">
+                    <span class="inline-block px-2 py-0.5 bg-theme-accent/20 border border-[#FFC60B] rounded text-[9px] font-bold text-theme-fg uppercase tracking-wider mb-3">Creator</span>
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-[#FFC60B] to-[#FA4B28] border-2 border-theme-border overflow-hidden shadow-[3px_3px_0px_0px_#000]">
                       <img *ngIf="asCreator(item.data).avatarUrl" [src]="asCreator(item.data).avatarUrl" [alt]="asCreator(item.data).displayName || asCreator(item.data).username" loading="lazy" class="w-full h-full object-cover" />
                       <div *ngIf="!asCreator(item.data).avatarUrl" class="w-full h-full flex items-center justify-center">
                         <span class="text-xl sm:text-2xl font-bold text-white">{{ (asCreator(item.data).displayName || asCreator(item.data).username).charAt(0).toUpperCase() }}</span>
                       </div>
                     </div>
-                    <h3 class="card-dyn-title font-bold text-[#111111] text-sm sm:text-base mb-0.5 transition-colors">
+                    <h3 class="card-dyn-title font-bold text-theme-fg text-sm sm:text-base mb-0.5 transition-colors">
                       {{ asCreator(item.data).displayName || asCreator(item.data).username }}
                     </h3>
                     <!-- Desktop: minimal — avatar + name only, rest on hover -->
                     <!-- Mobile: full info (no hover on touch) -->
-                    <p class="md:hidden text-xs text-[#111111]/50 font-medium mb-2">&#64;{{ asCreator(item.data).username }}</p>
-                    <p *ngIf="asCreator(item.data).bio" class="md:hidden text-xs text-[#111111]/60 line-clamp-2 mb-3">{{ asCreator(item.data).bio }}</p>
+                    <p class="md:hidden text-xs text-fg-muted font-medium mb-2">&#64;{{ asCreator(item.data).username }}</p>
+                    <p *ngIf="asCreator(item.data).bio" class="md:hidden text-xs text-fg-muted line-clamp-2 mb-3">{{ asCreator(item.data).bio }}</p>
                     <div class="md:hidden flex justify-center gap-4">
                       <div class="text-center">
-                        <div class="text-base font-bold text-[#111111]">{{ asCreator(item.data).storeCount }}</div>
-                        <div class="text-[10px] text-[#111111]/40 font-medium">Stores</div>
+                        <div class="text-base font-bold text-theme-fg">{{ asCreator(item.data).storeCount }}</div>
+                        <div class="text-[10px] text-fg-subtle font-medium">Stores</div>
                       </div>
                       <div class="w-px bg-black/10"></div>
                       <div class="text-center">
-                        <div class="text-base font-bold text-[#111111]">{{ asCreator(item.data).productCount }}</div>
-                        <div class="text-[10px] text-[#111111]/40 font-medium">Products</div>
+                        <div class="text-base font-bold text-theme-fg">{{ asCreator(item.data).productCount }}</div>
+                        <div class="text-[10px] text-fg-subtle font-medium">Products</div>
                       </div>
                     </div>
                     <!-- Creator Hover Overlay (Desktop) -->
@@ -785,28 +753,28 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <div *ngIf="isLoadingMore()" class="flex justify-center py-8">
               <div class="flex items-center gap-3">
                 <div class="flex gap-1">
-                  <div class="w-2 h-2 bg-[#111111] rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-                  <div class="w-2 h-2 bg-[#111111] rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-                  <div class="w-2 h-2 bg-[#111111] rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                  <div class="w-2 h-2 bg-theme-fg rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                  <div class="w-2 h-2 bg-theme-fg rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                  <div class="w-2 h-2 bg-theme-fg rounded-full animate-bounce" style="animation-delay: 300ms"></div>
                 </div>
-                <span class="text-sm font-medium text-[#111111]/50">Loading more</span>
+                <span class="text-sm font-medium text-fg-muted">Loading more</span>
               </div>
             </div>
 
             <!-- End of results -->
             <div *ngIf="!isLoading() && !hasMore() && feedItems().length > 0" class="text-center py-8">
-              <span class="text-sm text-[#111111]/40 font-medium">You've seen it all</span>
+              <span class="text-sm text-fg-subtle font-medium">You've seen it all</span>
             </div>
           </div>
 
           <!-- CTA Section (from API) -->
           <ng-container *ngIf="exploreCta() as cta">
             <section *ngIf="!isLoading() && feedItems().length > 0" class="px-3 sm:px-4 md:px-6 pb-8">
-              <div class="bg-[#68E079] border-2 border-black rounded-2xl p-6 md:p-10 text-center relative overflow-hidden shadow-[6px_6px_0px_0px_#000]">
-                <h2 class="font-dm-sans text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] mb-2 relative z-10">
+              <div class="bg-theme-success border-2 border-theme-border rounded-2xl p-6 md:p-10 text-center relative overflow-hidden shadow-[6px_6px_0px_0px_#000]">
+                <h2 class="font-dm-sans text-xl md:text-2xl lg:text-3xl font-bold text-theme-fg mb-2 relative z-10">
                   {{ cta.title }}
                 </h2>
-                <p *ngIf="cta.body" class="text-sm md:text-base text-[#111111]/70 mb-5 font-medium relative z-10">
+                <p *ngIf="cta.body" class="text-sm md:text-base text-theme-fg/70 mb-5 font-medium relative z-10">
                   {{ cta.body }}
                 </p>
                 <a
@@ -815,7 +783,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   target="_blank"
                   rel="noopener noreferrer"
                   (click)="handleCreatorCtaClick($event)"
-                  class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
+                  class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-theme-fg text-white border-2 border-theme-border rounded-lg font-bold text-sm md:text-base hover:bg-theme-surface-hover transition-colors shadow-[4px_4px_0px_0px_#fff]"
                 >
                   {{ cta.ctaText }}
                 </a>
@@ -823,12 +791,12 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                   *ngIf="cta.ctaText && cta.ctaUrl && !isExternalUrl(cta.ctaUrl)"
                   [routerLink]="cta.ctaUrl"
                   (click)="handleCreatorCtaClick($event)"
-                  class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
+                  class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-theme-fg text-white border-2 border-theme-border rounded-lg font-bold text-sm md:text-base hover:bg-theme-surface-hover transition-colors shadow-[4px_4px_0px_0px_#fff]"
                 >
                   {{ cta.ctaText }}
                 </a>
-                <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/20 rounded-full border-2 border-black"></div>
-                <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/15 rounded-full border-2 border-black"></div>
+                <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/20 rounded-full border-2 border-theme-border"></div>
+                <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/15 rounded-full border-2 border-theme-border"></div>
               </div>
             </section>
           </ng-container>
@@ -860,6 +828,12 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
       overflow: hidden;
     }
 
+    /* ========= THEME-AWARE MUTED TEXT UTILITIES ========= */
+    .text-fg-muted  { color: color-mix(in srgb, var(--foreground) 55%, transparent); }
+    .text-fg-subtle { color: color-mix(in srgb, var(--foreground) 38%, transparent); }
+    .text-fg-ghost  { color: color-mix(in srgb, var(--foreground) 20%, transparent); }
+    .bg-fg-faint    { background: color-mix(in srgb, var(--foreground) 5%, transparent); }
+
     /* ========= SIDEBAR ========= */
     .sidebar-container {
       transition: width 280ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -881,7 +855,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     }
 
     .sidebar-toggle:hover {
-      background: rgba(0,0,0,0.04);
+      background: color-mix(in srgb, var(--foreground) 5%, transparent);
     }
 
     /* Section header */
@@ -897,18 +871,18 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
       border-radius: 10px;
       font-size: 13px;
       font-weight: 600;
-      color: #111111;
+      color: var(--foreground);
       font-family: 'DM Sans', sans-serif;
       transition: background 150ms ease, color 150ms ease;
     }
     .sidebar-section-header:hover {
-      background: rgba(17,17,17,0.04);
-      color: #111111;
+      background: color-mix(in srgb, var(--foreground) 5%, transparent);
+      color: var(--foreground);
     }
     .sidebar-chevron {
       width: 14px;
       height: 14px;
-      color: rgba(17,17,17,0.35);
+      color: color-mix(in srgb, var(--foreground) 40%, transparent);
       transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
       flex-shrink: 0;
     }
@@ -931,47 +905,47 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
       border-radius: 8px;
       font-size: 13px;
       font-weight: 500;
-      color: rgba(17,17,17,0.55);
+      color: color-mix(in srgb, var(--foreground) 60%, transparent);
       transition: all 150ms ease;
     }
     .sidebar-option:hover {
-      background: rgba(17,17,17,0.04);
-      color: #111111;
+      background: color-mix(in srgb, var(--foreground) 5%, transparent);
+      color: var(--foreground);
     }
     .sidebar-option-active {
       background: rgba(255,198,11,0.15) !important;
-      color: #111111 !important;
+      color: var(--foreground) !important;
       font-weight: 600;
     }
     .sidebar-option-active .sidebar-option-icon {
-      color: #111111 !important;
+      color: var(--foreground) !important;
     }
     .sidebar-option-icon {
       width: 18px;
       height: 18px;
       flex-shrink: 0;
-      color: rgba(17,17,17,0.35);
+      color: color-mix(in srgb, var(--foreground) 40%, transparent);
       transition: color 150ms ease;
     }
     .sidebar-option:hover .sidebar-option-icon {
-      color: rgba(17,17,17,0.6);
+      color: color-mix(in srgb, var(--foreground) 65%, transparent);
     }
     .sidebar-option-count {
       margin-left: auto;
       font-size: 11px;
       font-weight: 600;
-      color: rgba(17,17,17,0.2);
+      color: color-mix(in srgb, var(--foreground) 25%, transparent);
       background: transparent;
       padding: 1px 6px;
       border-radius: 6px;
       transition: all 150ms ease;
     }
     .sidebar-option:hover .sidebar-option-count {
-      color: rgba(17,17,17,0.4);
-      background: white;
+      color: color-mix(in srgb, var(--foreground) 45%, transparent);
+      background: var(--surface);
     }
     .sidebar-option-active .sidebar-option-count {
-      color: rgba(17,17,17,0.4) !important;
+      color: color-mix(in srgb, var(--foreground) 45%, transparent) !important;
       background: transparent !important;
     }
 
@@ -985,22 +959,22 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
       border-radius: 8px;
       font-size: 13px;
       font-weight: 500;
-      color: rgba(17,17,17,0.55);
+      color: color-mix(in srgb, var(--foreground) 60%, transparent);
       transition: all 150ms ease;
     }
     .sidebar-sort-option:hover {
-      background: rgba(17,17,17,0.04);
-      color: #111111;
+      background: color-mix(in srgb, var(--foreground) 5%, transparent);
+      color: var(--foreground);
     }
     .sidebar-sort-active {
-      color: #111111 !important;
+      color: var(--foreground) !important;
       font-weight: 600;
     }
     .sidebar-radio {
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      border: 2px solid rgba(17,17,17,0.2);
+      border: 2px solid color-mix(in srgb, var(--foreground) 25%, transparent);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1008,13 +982,13 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
       transition: border-color 200ms ease;
     }
     .sidebar-sort-active .sidebar-radio {
-      border-color: #111111;
+      border-color: var(--foreground);
     }
     .sidebar-radio-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #111111;
+      background: var(--foreground);
       animation: radioDotIn 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     @keyframes radioDotIn {
@@ -1026,21 +1000,21 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     .sidebar-price-input {
       width: 100%;
       padding: 7px 10px;
-      background: white;
-      border: 2px solid rgba(17,17,17,0.15);
+      background: var(--surface);
+      border: 2px solid color-mix(in srgb, var(--foreground) 15%, transparent);
       border-radius: 8px;
       font-size: 13px;
-      color: #111111;
+      color: var(--foreground);
       transition: all 200ms ease;
     }
     .sidebar-price-input::placeholder {
-      color: rgba(17,17,17,0.35);
+      color: color-mix(in srgb, var(--foreground) 40%, transparent);
     }
     .sidebar-price-input:focus {
       outline: none;
-      border-color: #111111;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(17,17,17,0.06);
+      border-color: var(--foreground);
+      background: var(--surface);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--foreground) 8%, transparent);
     }
 
     /* Apply button */
@@ -1077,16 +1051,16 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
       align-items: center;
       justify-content: center;
       border-radius: 10px;
-      color: rgba(17,17,17,0.4);
+      color: color-mix(in srgb, var(--foreground) 45%, transparent);
       transition: all 200ms ease;
     }
     .sidebar-collapsed-btn:hover {
-      background: rgba(17,17,17,0.04);
-      color: #111111;
+      background: color-mix(in srgb, var(--foreground) 5%, transparent);
+      color: var(--foreground);
     }
     .sidebar-collapsed-btn-active {
       background: rgba(255,198,11,0.15) !important;
-      color: #111111 !important;
+      color: var(--foreground) !important;
     }
     .sidebar-tooltip {
       position: absolute;

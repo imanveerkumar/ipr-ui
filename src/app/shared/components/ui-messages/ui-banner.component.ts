@@ -120,27 +120,27 @@ export class UiBannerComponent {
   /** Background + text — using only the homepage's colour palette */
   get wrapperClasses(): string {
     switch (this.message.type) {
-      case 'SALE':         return 'bg-[#FFC60B] text-[#111111] border-b border-[#e6b300]';
-      case 'ANNOUNCEMENT': return 'bg-[#111111] text-white';
-      case 'NOTE':         return 'bg-[#111111] text-white/80';
-      default:             return 'bg-[#F9F4EB] text-[#111111]';
+      case 'SALE':         return 'bg-theme-accent text-theme-fg border-b border-[#e6b300]';
+      case 'ANNOUNCEMENT': return 'bg-theme-fg text-white';
+      case 'NOTE':         return 'bg-theme-fg text-white/80';
+      default:             return 'bg-theme-secondary text-theme-fg';
     }
   }
 
   /** CTA pill colours */
   get ctaClasses(): string {
     switch (this.message.type) {
-      case 'SALE':         return 'bg-[#111111] text-white shadow-sm';
+      case 'SALE':         return 'bg-theme-fg text-white shadow-sm';
       case 'ANNOUNCEMENT':
       case 'NOTE':         return 'bg-white/10 border border-white/15 text-white';
-      default:             return 'bg-[#111111] text-white';
+      default:             return 'bg-theme-fg text-white';
     }
   }
 
   /** Dismiss button colours */
   get dismissClasses(): string {
     switch (this.message.type) {
-      case 'SALE': return 'text-[#111111]/40 hover:bg-black/10 hover:text-[#111111]';
+      case 'SALE': return 'text-[#111111]/40 hover:bg-black/10 hover:text-theme-fg';
       default:     return 'text-white/30 hover:bg-white/10 hover:text-white';
     }
   }

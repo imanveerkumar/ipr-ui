@@ -12,15 +12,15 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule, PurchasesAuthModalComponent, PurchaseDetailsModalComponent],
   template: `
-    <div class="min-h-screen bg-white font-sans antialiased">
+    <div class="min-h-screen bg-theme-surface font-sans antialiased">
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
-        <div class="bg-[#F9F4EB] border-b-2 border-black">
+        <div class="bg-theme-secondary border-b-2 border-theme-border">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
             <div class="text-left">
               
               <!-- Main Heading -->
-              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-0 md:mb-1 leading-tight">
+              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-theme-fg mb-0 md:mb-1 leading-tight">
                 Guest Purchases
               </h1>
               
@@ -28,14 +28,14 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
               <div class="mt-4 md:mt-6 grid grid-cols-3 gap-2 md:flex md:justify-start md:gap-8 max-w-2xl mx-auto md:mx-0">
                 <!-- Products stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-success border border-theme-border rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
                     @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ purchases().length }}</div>
+                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ purchases().length }}</div>
                     } @else {
                       <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
@@ -44,14 +44,14 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                 </div>
                 <!-- Active stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FFC60B] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-accent border border-theme-border rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
                     @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getActiveCount() }}</div>
+                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getActiveCount() }}</div>
                     } @else {
                       <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
@@ -60,14 +60,14 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                 </div>
                 <!-- Downloads stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-danger border border-theme-border rounded-lg flex items-center justify-center">
                     <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
                     @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalDownloads() }}</div>
+                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getTotalDownloads() }}</div>
                     } @else {
                       <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
@@ -88,11 +88,11 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                     type="text"
                     [(ngModel)]="searchQuery"
                     placeholder="Search purchased products..."
-                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-white border-2 border-black rounded-none text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-theme-surface border-2 border-theme-border rounded-none text-theme-fg placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
                   />
                   <button
                     (click)="performSearch()"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-none font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-theme-accent text-theme-fg border-2 border-theme-border rounded-none font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
                   >
                     Search
                   </button>
@@ -108,19 +108,19 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
         <div class="max-w-7xl mx-auto">
           @if (!guestAccess.isAuthenticated()) {
             <!-- Not Authenticated -->
-            <div class="bg-white rounded-2xl sm:rounded-3xl border-2 border-black shadow-[8px_8px_0px_0px_#000] p-8 sm:p-12 text-center max-w-2xl mx-auto">
-              <div class="w-20 h-20 sm:w-24 sm:h-24 bg-[#F9F4EB] border-2 border-black rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-5 sm:mb-6 transform rotate-3">
-                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-theme-surface rounded-2xl sm:rounded-3xl border-2 border-theme-border shadow-[8px_8px_0px_0px_#000] p-8 sm:p-12 text-center max-w-2xl mx-auto">
+              <div class="w-20 h-20 sm:w-24 sm:h-24 bg-theme-secondary border-2 border-theme-border rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-5 sm:mb-6 transform rotate-3">
+                <svg class="w-10 h-10 sm:w-12 sm:h-12 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                 </svg>
               </div>
-              <h2 class="text-xl sm:text-2xl font-display font-bold text-[#111111] mb-2 sm:mb-3">Access Your Purchases</h2>
+              <h2 class="text-xl sm:text-2xl font-display font-bold text-theme-fg mb-2 sm:mb-3">Access Your Purchases</h2>
               <p class="text-sm sm:text-base text-[#111111]/60 mb-6 sm:mb-8 max-w-md mx-auto px-4 font-medium">
                 Enter the email or phone number you used during checkout to access your purchased products.
               </p>
               <button 
                 (click)="openAccessModal()"
-                class="inline-flex items-center gap-2 bg-[#FFC60B] text-[#111111] border-2 border-black px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] text-sm sm:text-base min-h-[48px]"
+                class="inline-flex items-center gap-2 bg-theme-accent text-theme-fg border-2 border-theme-border px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] text-sm sm:text-base min-h-[48px]"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -132,19 +132,19 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
             <!-- Authenticated Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-[#F9F4EB] border-2 border-black flex items-center justify-center">
-                  <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 rounded-full bg-theme-secondary border-2 border-theme-border flex items-center justify-center">
+                  <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                   </svg>
                 </div>
                 <div>
-                  <p class="font-bold text-[#111111]">{{ guestAccess.identifier() }}</p>
+                  <p class="font-bold text-theme-fg">{{ guestAccess.identifier() }}</p>
                   <p class="text-sm text-[#111111]/60 font-medium">Guest access</p>
                 </div>
               </div>
               <button 
                 (click)="logout()"
-                class="text-sm text-[#111111] font-bold px-4 py-2 border-2 border-black rounded-lg hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                class="text-sm text-theme-fg font-bold px-4 py-2 border-2 border-theme-border rounded-lg hover:bg-theme-secondary transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
               >
                 Sign Out
               </button>
@@ -154,21 +154,21 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
               <!-- Loading Skeleton -->
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 @for (i of [1,2,3,4,5,6]; track i) {
-                  <div class="bg-white border-2 border-black rounded-xl overflow-hidden">
+                  <div class="bg-theme-surface border-2 border-theme-border rounded-xl overflow-hidden">
                     <div class="p-3 md:p-4 flex gap-4">
-                      <div class="w-20 h-20 md:w-24 md:h-24 shrink-0 bg-[#F9F4EB] border-2 border-black rounded-lg animate-pulse"></div>
+                      <div class="w-20 h-20 md:w-24 md:h-24 shrink-0 bg-theme-secondary border-2 border-theme-border rounded-lg animate-pulse"></div>
                       <div class="flex-1 min-w-0">
                         <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse w-3/4 mb-2"></div>
                         <div class="h-3 bg-[#111111]/5 rounded animate-pulse w-1/2 mb-3"></div>
-                        <div class="h-6 w-32 bg-[#F9F4EB] rounded border border-black/10 animate-pulse"></div>
+                        <div class="h-6 w-32 bg-theme-secondary rounded border border-black/10 animate-pulse"></div>
                       </div>
                     </div>
                     <div class="px-3 md:px-4 pb-3 md:pb-4 border-t-2 border-black/5 pt-3 md:pt-4">
                       <div class="flex items-center justify-between mb-3">
                         <div class="h-3 w-20 bg-[#111111]/10 rounded animate-pulse"></div>
-                        <div class="h-3 w-16 bg-[#68E079]/30 rounded animate-pulse"></div>
+                        <div class="h-3 w-16 bg-theme-success/30 rounded animate-pulse"></div>
                       </div>
-                      <div class="h-10 bg-[#F9F4EB] border border-black rounded-lg animate-pulse"></div>
+                      <div class="h-10 bg-theme-secondary border border-theme-border rounded-lg animate-pulse"></div>
                     </div>
                   </div>
                 }
@@ -176,19 +176,19 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
             } @else if (filteredPurchases().length === 0) {
               <!-- Empty State -->
               <div class="text-center py-12 md:py-16">
-                <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 bg-[#F9F4EB] border-2 border-black rounded-2xl flex items-center justify-center transform rotate-3">
+                <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 bg-theme-secondary border-2 border-theme-border rounded-2xl flex items-center justify-center transform rotate-3">
                   <svg class="w-10 h-10 md:w-12 md:h-12 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                   </svg>
                 </div>
-                <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-[#111111] mb-2">
+                <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-theme-fg mb-2">
                   {{ searchQuery() ? 'No matches found' : 'No purchases yet' }}
                 </h2>
                 <p class="text-sm md:text-base text-[#111111]/60 max-w-md mx-auto mb-8 font-medium">
                   {{ searchQuery() ? 'Try adjusting your search terms' : 'Products you purchase will appear here. Start exploring amazing digital products from creators around the world.' }}
                 </p>
                 @if (!searchQuery()) {
-                  <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-[#FFC60B] border-2 border-black rounded-lg font-bold text-[#111111] hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                  <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-theme-accent border-2 border-theme-border rounded-lg font-bold text-theme-fg hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                     Explore Products
                   </a>
                 }
@@ -199,12 +199,12 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                 @for (purchase of filteredPurchases(); track purchase.id) {
                   <div 
                     (click)="openPurchaseDetails(purchase)"
-                    class="group bg-white border-2 border-black rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                    class="group bg-theme-surface border-2 border-theme-border rounded-xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                   >
                     <!-- Card Header (Image + Info) -->
                     <div class="p-3 md:p-4 flex gap-4">
                       <!-- Image -->
-                      <div class="w-20 h-20 md:w-24 md:h-24 shrink-0 bg-[#F9F4EB] border-2 border-black rounded-lg overflow-hidden">
+                      <div class="w-20 h-20 md:w-24 md:h-24 shrink-0 bg-theme-secondary border-2 border-theme-border rounded-lg overflow-hidden">
                         @if (purchase.product.thumbnailUrl) {
                           <img 
                             [src]="purchase.product.thumbnailUrl" 
@@ -222,7 +222,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
 
                       <!-- Info -->
                       <div class="flex-1 min-w-0">
-                        <h3 class="font-bold text-[#111111] text-sm md:text-base leading-tight mb-1 line-clamp-2">
+                        <h3 class="font-bold text-theme-fg text-sm md:text-base leading-tight mb-1 line-clamp-2">
                           {{ purchase.product.title }}
                         </h3>
                         @if (purchase.product.store) {
@@ -234,7 +234,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                         }
                         
                         <!-- License Key -->
-                        <div class="inline-flex items-center px-2 py-1 bg-[#F9F4EB] rounded border border-black/10 max-w-full">
+                        <div class="inline-flex items-center px-2 py-1 bg-theme-secondary rounded border border-black/10 max-w-full">
                           <svg class="w-3 h-3 text-[#111111]/40 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                           </svg>
@@ -248,8 +248,8 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                     <!-- Downloads Section -->
                     <div class="px-3 md:px-4 pb-3 md:pb-4 border-t-2 border-black/5 pt-3 md:pt-4">
                       <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-bold text-[#111111] uppercase tracking-wider">Downloads</span>
-                        <span class="text-xs font-medium" [class.text-[#FA4B28]]="purchase.downloadCount >= purchase.maxDownloads" [class.text-[#68E079]]="purchase.downloadCount < purchase.maxDownloads">
+                        <span class="text-xs font-bold text-theme-fg uppercase tracking-wider">Downloads</span>
+                        <span class="text-xs font-medium" [class.text-theme-danger]="purchase.downloadCount >= purchase.maxDownloads" [class.text-theme-success]="purchase.downloadCount < purchase.maxDownloads">
                           {{ purchase.downloadCount }} / {{ purchase.maxDownloads }} used
                         </span>
                       </div>
@@ -260,24 +260,24 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                             <button 
                               (click)="download(purchase, pf.id); $event.stopPropagation()"
                               [disabled]="downloading() === pf.id || purchase.downloadCount >= purchase.maxDownloads"
-                              class="w-full flex items-center justify-between px-3 py-2 bg-white border border-black rounded-lg hover:bg-[#F9F4EB] active:bg-[#F0EBE0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+                              class="w-full flex items-center justify-between px-3 py-2 bg-theme-surface border border-theme-border rounded-lg hover:bg-theme-secondary active:bg-[#F0EBE0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed group/btn"
                             >
                               <div class="flex items-center min-w-0 mr-3">
-                                <svg class="w-4 h-4 text-[#111111]/40 mr-2 shrink-0 group-hover/btn:text-[#111111] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-[#111111]/40 mr-2 shrink-0 group-hover/btn:text-theme-fg transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                <span class="text-xs font-medium text-[#111111] truncate text-left">
+                                <span class="text-xs font-medium text-theme-fg truncate text-left">
                                   {{ pf.filename }}
                                 </span>
                               </div>
 
                               @if (downloading() === pf.id) {
-                                <svg class="w-4 h-4 animate-spin text-[#111111]" fill="none" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 animate-spin text-theme-fg" fill="none" viewBox="0 0 24 24">
                                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                               } @else {
-                                <svg class="w-4 h-4 text-[#111111] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-theme-fg shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                 </svg>
                               }
@@ -295,10 +295,10 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
               </div>
 
               <!-- Create Account Prompt -->
-              <div class="mt-8 p-6 bg-[#F9F4EB] border-2 border-black rounded-2xl text-center max-w-2xl mx-auto">
-                <h3 class="font-bold text-[#111111] mb-2">Want easier access?</h3>
+              <div class="mt-8 p-6 bg-theme-secondary border-2 border-theme-border rounded-2xl text-center max-w-2xl mx-auto">
+                <h3 class="font-bold text-theme-fg mb-2">Want easier access?</h3>
                 <p class="text-sm text-[#111111]/60 mb-4 font-medium">Create an account to manage all your purchases and access them from any device.</p>
-                <button (click)="signUp()" class="inline-flex items-center gap-2 bg-[#111111] text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors text-sm min-h-[48px] shadow-[4px_4px_0px_0px_#FFC60B] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                <button (click)="signUp()" class="inline-flex items-center gap-2 bg-theme-fg text-white px-6 py-3 rounded-xl font-bold hover:bg-theme-surface-hover transition-colors text-sm min-h-[48px] shadow-[4px_4px_0px_0px_#FFC60B] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                   Create Account
                 </button>
               </div>

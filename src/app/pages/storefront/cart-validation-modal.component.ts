@@ -17,33 +17,33 @@ import { CartValidationResult } from '../../core/services/checkout.service';
       <!-- Modal Container - Centered on desktop, bottom sheet on mobile -->
       <div class="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4">
         <div 
-          class="w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden animate-slideUp sm:animate-fadeIn"
+          class="w-full sm:max-w-lg bg-theme-surface rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[85vh] flex flex-col overflow-hidden animate-slideUp sm:animate-fadeIn"
           (click)="$event.stopPropagation()"
         >
           <!-- Drag Handle (Mobile only) -->
           <div class="sm:hidden flex justify-center pt-3 pb-1">
-            <div class="w-10 h-1 bg-gray-300 rounded-full"></div>
+            <div class="w-10 h-1 bg-theme-secondary rounded-full"></div>
           </div>
 
           <!-- Header -->
-          <div class="px-5 py-4 border-b border-gray-100 flex items-start gap-3">
+          <div class="px-5 py-4 border-b border-theme-secondary flex items-start gap-3">
             <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
               <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
               </svg>
             </div>
             <div class="flex-1 min-w-0">
-              <h2 class="text-lg font-bold text-gray-900">Unable to Proceed</h2>
-              <p class="text-sm text-gray-500 mt-0.5">
+              <h2 class="text-lg font-bold text-theme-fg">Unable to Proceed</h2>
+              <p class="text-sm text-theme-muted mt-0.5">
                 {{ validation?.summary?.invalidItems || 0 }} item{{ (validation?.summary?.invalidItems || 0) !== 1 ? 's' : '' }} 
                 in your cart {{ (validation?.summary?.invalidItems || 0) !== 1 ? 'are' : 'is' }} no longer available
               </p>
             </div>
             <button 
               (click)="onClose()"
-              class="p-2 -mt-1 -mr-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors"
+              class="p-2 -mt-1 -mr-2 rounded-full hover:bg-theme-secondary active:bg-theme-secondary transition-colors"
             >
-              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
             </button>
@@ -66,7 +66,7 @@ import { CartValidationResult } from '../../core/services/checkout.service';
             <!-- Unavailable Items List -->
             <div class="space-y-3">
               @for (item of validation?.unavailableItems || []; track item.productId) {
-                <div class="bg-white border border-red-100 rounded-xl p-3.5 shadow-sm">
+                <div class="bg-theme-surface border border-red-100 rounded-xl p-3.5 shadow-sm">
                   <div class="flex gap-3">
                     <!-- Product Image -->
                     <div class="flex-shrink-0">
@@ -77,8 +77,8 @@ import { CartValidationResult } from '../../core/services/checkout.service';
                           class="w-14 h-14 object-cover rounded-lg"
                         >
                       } @else {
-                        <div class="w-14 h-14 bg-gray-100 rounded-lg flex items-center justify-center">
-                          <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-14 h-14 bg-theme-secondary rounded-lg flex items-center justify-center">
+                          <svg class="w-6 h-6 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                           </svg>
                         </div>
@@ -87,8 +87,8 @@ import { CartValidationResult } from '../../core/services/checkout.service';
 
                     <!-- Product Details -->
                     <div class="flex-1 min-w-0">
-                      <h4 class="text-sm font-semibold text-gray-900 line-clamp-1">{{ item.productTitle }}</h4>
-                      <p class="text-xs text-gray-500 mt-0.5">
+                      <h4 class="text-sm font-semibold text-theme-fg line-clamp-1">{{ item.productTitle }}</h4>
+                      <p class="text-xs text-theme-muted mt-0.5">
                         From: {{ item.storeName }}
                       </p>
                       
@@ -122,8 +122,8 @@ import { CartValidationResult } from '../../core/services/checkout.service';
 
             <!-- Valid Items Summary (if any) -->
             @if (validation && validation.summary.validItems > 0) {
-              <div class="mt-4 pt-4 border-t border-gray-100">
-                <div class="flex items-center gap-2 text-sm text-gray-600">
+              <div class="mt-4 pt-4 border-t border-theme-secondary">
+                <div class="flex items-center gap-2 text-sm text-theme-muted">
                   <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                   </svg>
@@ -137,7 +137,7 @@ import { CartValidationResult } from '../../core/services/checkout.service';
           </div>
 
           <!-- Footer Actions -->
-          <div class="px-5 py-4 border-t border-gray-100 bg-gray-50 safe-area-bottom">
+          <div class="px-5 py-4 border-t border-theme-secondary bg-theme-bg safe-area-bottom">
             <div class="flex flex-col sm:flex-row gap-2.5">
               <button 
                 (click)="onRemoveAllUnavailable()"
@@ -150,7 +150,7 @@ import { CartValidationResult } from '../../core/services/checkout.service';
               </button>
               <button 
                 (click)="onClose()"
-                class="sm:w-auto py-3 px-6 bg-white border border-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-colors min-h-[48px]"
+                class="sm:w-auto py-3 px-6 bg-theme-surface border border-theme-secondary text-theme-fg text-sm font-semibold rounded-xl hover:bg-theme-bg active:bg-theme-secondary transition-colors min-h-[48px]"
               >
                 Go Back
               </button>

@@ -3,6 +3,81 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== THEME SYSTEM ===== */
+:root,
+[data-theme="light"] {
+  --background: #FFFFFF;
+  --foreground: #111111;
+  --primary: #2B57D6;
+  --secondary: #F9F4EB;
+  --muted: #666666;
+  --accent: #FFC60B;
+  --border: #111111;
+  --surface: #FFFFFF;
+  --surface-hover: rgba(0, 0, 0, 0.05);
+  --overlay: rgba(0, 0, 0, 0.5);
+  --danger: #dc2626;
+  --danger-bg: #fecaca;
+  --success: #68E079;
+}
+
+[data-theme="dark"] {
+  --background: #1A1A1A;
+  --foreground: #F5F5F5;
+  --primary: #5B8DEF;
+  --secondary: #2A2A2A;
+  --muted: #999999;
+  --accent: #FFC60B;
+  --border: #444444;
+  --surface: #252525;
+  --surface-hover: rgba(255, 255, 255, 0.08);
+  --overlay: rgba(0, 0, 0, 0.7);
+  --danger: #ef4444;
+  --danger-bg: #451a1a;
+  --success: #4ade80;
+}
+
+[data-theme="mustard-light"] {
+  --background: #FFFFFF;
+  --foreground: #1A1A1A;
+  --primary: #FFC60B;
+  --secondary: #FFF8E1;
+  --muted: #666666;
+  --accent: #FFC60B;
+  --border: #1A1A1A;
+  --surface: #FFFFFF;
+  --surface-hover: rgba(255, 198, 11, 0.1);
+  --overlay: rgba(0, 0, 0, 0.5);
+  --danger: #dc2626;
+  --danger-bg: #fecaca;
+  --success: #68E079;
+}
+
+[data-theme="mustard-dark"] {
+  --background: #1A1A1A;
+  --foreground: #FFC60B;
+  --primary: #FFC60B;
+  --secondary: #2A2A2A;
+  --muted: #B8A060;
+  --accent: #FFC60B;
+  --border: #FFC60B;
+  --surface: #252525;
+  --surface-hover: rgba(255, 198, 11, 0.12);
+  --overlay: rgba(0, 0, 0, 0.7);
+  --danger: #ef4444;
+  --danger-bg: #451a1a;
+  --success: #4ade80;
+}
+
+body {
+  color: var(--foreground);
+}
+
+/* Global theme transition */
+*, *::before, *::after {
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
 /* Quill Editor Styles */
 @import 'quill/dist/quill.snow.css';
 
@@ -98,7 +173,9 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply antialiased;
     font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
     width: 100%;

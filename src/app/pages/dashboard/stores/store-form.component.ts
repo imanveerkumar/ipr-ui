@@ -19,7 +19,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     <!-- State Banner for Archived/Deleted Stores -->
     @if (isEditing() && !isLoading()) {
       @if (storeState().isDeleted) {
-        <section class="bg-[#FA4B28] border-b-2 border-black">
+        <section class="bg-theme-danger border-b-2 border-theme-border">
           <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
@@ -33,27 +33,27 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
                 </div>
               </div>
               <button type="button" (click)="restoreStore()" 
-                class="px-4 py-2 bg-white text-[#FA4B28] font-bold border-2 border-white hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                class="px-4 py-2 bg-theme-surface text-theme-danger font-bold border-2 border-white hover:bg-theme-secondary transition-colors whitespace-nowrap">
                 Restore Store
               </button>
             </div>
           </div>
         </section>
       } @else if (storeState().isArchived) {
-        <section class="bg-[#FFC60B] border-b-2 border-black">
+        <section class="bg-theme-accent border-b-2 border-theme-border">
           <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
-                <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
                 </svg>
                 <div>
-                  <p class="font-bold text-[#111111]">This store is archived</p>
+                  <p class="font-bold text-theme-fg">This store is archived</p>
                   <p class="text-sm text-[#111111]/80">It cannot be edited or accessed by customers. Unarchive to make changes.</p>
                 </div>
               </div>
               <button type="button" (click)="unarchiveStore()" 
-                class="px-4 py-2 bg-white text-[#111111] font-bold border-2 border-black hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                class="px-4 py-2 bg-theme-surface text-theme-fg font-bold border-2 border-theme-border hover:bg-theme-secondary transition-colors whitespace-nowrap">
                 Unarchive Store
               </button>
             </div>

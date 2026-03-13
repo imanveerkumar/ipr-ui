@@ -8,7 +8,7 @@ import { LucideAngularModule, LucideIconData, Crown, Lightbulb, Tag, Megaphone, 
  * Renders a homepage card-style UI message — tips, promos, announcements.
  *
  * BANNER (dark):  mirrors the "Why sellers choose us" #111111 dark card on the homepage.
- * TIP / others:   mirrors the step + sellable-item cards — bg-[#F9F4EB] + rounded-2xl.
+ * TIP / others:   mirrors the step + sellable-item cards — bg-theme-secondary + rounded-2xl.
  * CTAs:           always rounded-full to match homepage button style.
  *
  * Usage:
@@ -74,7 +74,7 @@ import { LucideAngularModule, LucideIconData, Crown, Lightbulb, Tag, Megaphone, 
           *ngIf="message.ctaUrl && message.ctaText"
           [routerLink]="message.ctaUrl"
           [ngClass]="ctaClasses"
-          class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 border-2 border-black text-sm font-bold"
+          class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 border-2 border-theme-border text-sm font-bold"
         >
           {{ message.ctaText }}
           <lucide-icon [img]="ArrowRight" [size]="16" [strokeWidth]="2.5"></lucide-icon>
@@ -96,26 +96,26 @@ export class UiTipCardComponent {
   /** Dark card for BANNER (mirrors homepage #111111 section); cream for everything else */
   get cardClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'bg-[#111111] border-black shadow-[4px_4px_0px_0px_#FFC60B]'
-      : 'bg-[#F9F4EB] border-black shadow-[4px_4px_0px_0px_rgb(104_224_121)]';
+      ? 'bg-theme-fg border-theme-border shadow-[4px_4px_0px_0px_#FFC60B]'
+      : 'bg-theme-secondary border-theme-border shadow-[4px_4px_0px_0px_rgb(104_224_121)]';
   }
 
   get iconBoxClasses(): string {
     return this.message.type === 'BANNER'
       ? 'bg-white/10 border-white/20'
-      : 'bg-white border-black';
+      : 'bg-theme-surface border-theme-border';
   }
 
   get labelClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'text-[#FFC60B]'
+      ? 'text-theme-accent'
       : 'text-[#111111]/40';
   }
 
   get titleClasses(): string {
     return this.message.type === 'BANNER'
       ? 'text-white'
-      : 'text-[#111111]';
+      : 'text-theme-fg';
   }
 
   get bodyClasses(): string {
@@ -127,7 +127,7 @@ export class UiTipCardComponent {
   get dismissClasses(): string {
     return this.message.type === 'BANNER'
       ? 'text-white/30 hover:bg-white/10 hover:text-white'
-      : 'text-[#111111]/30 hover:bg-black/5 hover:text-[#111111]';
+      : 'text-[#111111]/30 hover:bg-black/5 hover:text-theme-fg';
   }
 
   /**
@@ -137,8 +137,8 @@ export class UiTipCardComponent {
    */
   get ctaClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'bg-[#FFC60B] text-[#111111] shadow-[3px_3px_0px_0px_#000]'
-      : 'bg-[#111111] text-white shadow-[3px_3px_0px_0px_rgb(104_224_121)]';
+      ? 'bg-theme-accent text-theme-fg shadow-[3px_3px_0px_0px_#000]'
+      : 'bg-theme-fg text-white shadow-[3px_3px_0px_0px_rgb(104_224_121)]';
   }
 
   get icon(): LucideIconData {
