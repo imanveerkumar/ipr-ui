@@ -401,7 +401,7 @@ export class StoreComponent implements OnInit {
       try {
         await navigator.share({
           title: store?.name || 'Store',
-          text: `Check out ${store?.name || 'this store'} on StoresCraft`,
+          text: `Check out ${store?.name || 'this store'} on TheBlueMustard`,
           url: window.location.href,
         });
       } catch { /* user cancelled */ }

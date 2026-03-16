@@ -16,7 +16,7 @@ import { RouterLink } from '@angular/router';
             <svg class="breadcrumb-sep" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             <span class="breadcrumb-current">About</span>
           </nav>
-          <h1 class="page-title">About StoresCraft</h1>
+          <h1 class="page-title">About TheBlueMustard</h1>
           <p class="page-subtitle">Empowering creators to sell digital products — without friction.</p>
         </div>
       </section>
@@ -29,7 +29,7 @@ import { RouterLink } from '@angular/router';
             <div class="badge">Our Mission</div>
             <h2 class="card-heading">Build your store. Sell instantly.</h2>
             <p class="card-text">
-              StoresCraft is a no-code digital product marketplace that lets anyone create a beautiful online store and start selling in minutes. Whether you're a designer selling templates, a developer sharing code, or an artist offering digital prints — we give you the tools to turn your creativity into income.
+              TheBlueMustard is a no-code digital product marketplace that lets anyone create a beautiful online store and start selling in minutes. Whether you're a designer selling templates, a developer sharing code, or an artist offering digital prints — we give you the tools to turn your creativity into income.
             </p>
           </div>
 
@@ -85,7 +85,7 @@ import { RouterLink } from '@angular/router';
           <!-- CTA -->
           <div class="card cta-card">
             <h2 class="cta-heading">Ready to start selling?</h2>
-            <p class="cta-text">Join thousands of creators building their digital empires on StoresCraft. It's free to get started.</p>
+            <p class="cta-text">Join thousands of creators building their digital empires on TheBlueMustard. It's free to get started.</p>
             <a routerLink="/become-creator" class="btn btn-cta">Get Started Free</a>
           </div>
         </div>

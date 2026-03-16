@@ -41,7 +41,7 @@ interface SalesStats {
                 <div class="flex-1 flex justify-center lg:justify-start">
                   <div class="grid grid-cols-3 gap-2 md:flex md:justify-center lg:justify-start md:gap-8 max-w-2xl lg:max-w-none">
                     <!-- Stores stat -->
-                    <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 md:bg-transparent border border-black/10 md:border-0">
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-theme-surface/50 md:bg-transparent border border-theme-border/20 md:border-0">
                       <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-primary border border-theme-border flex items-center justify-center">
                         <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -52,13 +52,13 @@ interface SalesStats {
                         @if (!loading()) {
                           <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ stores().length }}</div>
                         } @else {
-                          <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                          <div class="h-4 md:h-6 w-8 md:w-12 bg-theme-fg/10 rounded animate-pulse mb-0.5"></div>
                         }
-                        <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Stores</div>
+                        <div class="text-[10px] md:text-xs text-theme-muted font-medium">Stores</div>
                       </div>
                     </div>
                     <!-- Products stat -->
-                    <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 md:bg-transparent border border-black/10 md:border-0">
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-theme-surface/50 md:bg-transparent border border-theme-border/20 md:border-0">
                       <div class="w-6 h-6 md:w-8 md:h-8 bg-[#7C3AED] border border-theme-border flex items-center justify-center">
                         <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
@@ -68,13 +68,13 @@ interface SalesStats {
                         @if (!loading()) {
                           <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ totalProducts() }}</div>
                         } @else {
-                          <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                          <div class="h-4 md:h-6 w-8 md:w-12 bg-theme-fg/10 rounded animate-pulse mb-0.5"></div>
                         }
-                        <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
+                        <div class="text-[10px] md:text-xs text-theme-muted font-medium">Products</div>
                       </div>
                     </div>
                     <!-- Revenue stat -->
-                    <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-white/50 md:bg-transparent border border-black/10 md:border-0">
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-theme-surface/50 md:bg-transparent border border-theme-border/20 md:border-0">
                       <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-success border border-theme-border flex items-center justify-center">
                         <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -84,9 +84,9 @@ interface SalesStats {
                         @if (!loading()) {
                           <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">₹{{ formatRevenue(totalRevenue()) }}</div>
                         } @else {
-                          <div class="h-4 md:h-6 w-10 md:w-16 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                          <div class="h-4 md:h-6 w-10 md:w-16 bg-theme-fg/10 rounded animate-pulse mb-0.5"></div>
                         }
-                        <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Revenue</div>
+                        <div class="text-[10px] md:text-xs text-theme-muted font-medium">Revenue</div>
                       </div>
                     </div>
                   </div>
@@ -117,7 +117,7 @@ interface SalesStats {
                       </div>
                     }
 
-                    <a routerLink="/dashboard/stores/new" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-theme-fg text-white border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] transition-all">
+                    <a routerLink="/dashboard/stores/new" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-theme-accent text-[#111111] border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] hover:bg-[#ffdb4d] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] transition-all">
                       <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                       </svg>
@@ -156,11 +156,11 @@ interface SalesStats {
                     <polyline points="9 22 9 12 15 12 15 22"/>
                   </svg>
                 </div>
-                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
               </div>
-              <p class="text-xs md:text-sm text-[#111111]/60 font-medium mb-1">Total Stores</p>
+              <p class="text-xs md:text-sm text-theme-muted font-medium mb-1">Total Stores</p>
               @if (loading()) {
                 <div class="h-8 w-16 bg-theme-secondary animate-pulse"></div>
               } @else {
@@ -180,17 +180,17 @@ interface SalesStats {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                   </svg>
                 </div>
-                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
               </div>
-              <p class="text-xs md:text-sm text-[#111111]/60 font-medium mb-1">Total Products</p>
+              <p class="text-xs md:text-sm text-theme-muted font-medium mb-1">Total Products</p>
               @if (loading()) {
                 <div class="h-8 w-16 bg-theme-secondary animate-pulse"></div>
               } @else {
                 <p class="text-2xl md:text-3xl font-bold text-theme-fg">{{ totalProducts() }}</p>
               }
-              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-theme-secondary border border-theme-border text-[10px] md:text-xs font-bold text-[#111111]/70">
+              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-theme-secondary border border-theme-border text-[10px] md:text-xs font-bold text-theme-muted">
                 Listed
               </div>
             </a>
@@ -199,15 +199,15 @@ interface SalesStats {
             <a routerLink="/dashboard/sales" class="group bg-theme-surface border-2 border-theme-border p-4 md:p-5 hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
               <div class="flex items-start justify-between mb-3">
                 <div class="w-10 h-10 md:w-12 md:h-12 bg-theme-accent border-2 border-theme-border flex items-center justify-center">
-                  <svg class="w-5 h-5 md:w-6 md:h-6 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5 md:w-6 md:h-6 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                   </svg>
                 </div>
-                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
               </div>
-              <p class="text-xs md:text-sm text-[#111111]/60 font-medium mb-1">Total Sales</p>
+              <p class="text-xs md:text-sm text-theme-muted font-medium mb-1">Total Sales</p>
               @if (loading()) {
                 <div class="h-8 w-16 bg-theme-secondary animate-pulse"></div>
               } @else {
@@ -230,7 +230,7 @@ interface SalesStats {
                   </svg>
                 </div>
               </div>
-              <p class="text-xs md:text-sm text-[#111111]/60 font-medium mb-1">Total Revenue</p>
+              <p class="text-xs md:text-sm text-theme-muted font-medium mb-1">Total Revenue</p>
               @if (loading()) {
                 <div class="h-8 w-24 bg-theme-secondary animate-pulse"></div>
               } @else {
@@ -248,7 +248,7 @@ interface SalesStats {
           <!-- Quick Actions Section -->
           <div class="mb-8 md:mb-12">
             <h2 class="font-dm-sans text-lg md:text-xl font-bold text-theme-fg mb-1">Quick Actions</h2>
-            <p class="text-sm text-[#111111]/60 font-medium mb-4 md:mb-6">Get started with these common tasks</p>
+            <p class="text-sm text-theme-muted font-medium mb-4 md:mb-6">Get started with these common tasks</p>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
               <!-- Create Store Action -->
@@ -266,9 +266,9 @@ interface SalesStats {
                       Create Store
                     }
                   </h3>
-                  <p class="text-xs md:text-sm text-[#111111]/60 truncate">Launch a new storefront</p>
+                  <p class="text-xs md:text-sm text-theme-muted truncate">Launch a new storefront</p>
                 </div>
-                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
               </a>
@@ -282,9 +282,9 @@ interface SalesStats {
                 </div>
                 <div class="flex-1 min-w-0">
                   <h3 class="font-bold text-theme-fg text-sm md:text-base mb-0.5">Add Product</h3>
-                  <p class="text-xs md:text-sm text-[#111111]/60 truncate">Upload digital assets</p>
+                  <p class="text-xs md:text-sm text-theme-muted truncate">Upload digital assets</p>
                 </div>
-                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
               </button>
@@ -292,15 +292,15 @@ interface SalesStats {
               <!-- View Analytics Action -->
               <a routerLink="/dashboard/sales" class="group flex items-center gap-4 p-4 md:p-5 bg-theme-secondary border-2 border-theme-border hover:shadow-[4px_4px_0px_0px_#FFC60B] hover:-translate-y-1 transition-all duration-200">
                 <div class="w-12 h-12 md:w-14 md:h-14 bg-theme-accent border-2 border-theme-border flex items-center justify-center shrink-0">
-                  <svg class="w-6 h-6 md:w-7 md:h-7 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-6 h-6 md:w-7 md:h-7 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                   </svg>
                 </div>
                 <div class="flex-1 min-w-0">
                   <h3 class="font-bold text-theme-fg text-sm md:text-base mb-0.5">View Analytics</h3>
-                  <p class="text-xs md:text-sm text-[#111111]/60 truncate">Track sales & performance</p>
+                  <p class="text-xs md:text-sm text-theme-muted truncate">Track sales & performance</p>
                 </div>
-                <svg class="w-5 h-5 text-[#111111]/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
               </a>
@@ -321,7 +321,7 @@ interface SalesStats {
                   </div>
                   <h3 class="font-bold text-theme-fg text-base md:text-lg">Your Stores</h3>
                 </div>
-                <a routerLink="/dashboard/stores" class="flex items-center gap-1 text-sm font-bold text-[#111111]/70 hover:text-theme-fg transition-colors">
+                <a routerLink="/dashboard/stores" class="flex items-center gap-1 text-sm font-bold text-theme-muted hover:text-theme-fg transition-colors">
                   View All
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -343,13 +343,13 @@ interface SalesStats {
                 } @else if (stores().length === 0) {
                   <div class="text-center py-8 md:py-12">
                     <div class="w-16 h-16 mx-auto mb-4 bg-theme-secondary border-2 border-theme-border flex items-center justify-center transform rotate-3">
-                      <svg class="w-8 h-8 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-8 h-8 text-theme-fg/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
                       </svg>
                     </div>
                     <h4 class="font-bold text-theme-fg mb-1">No stores yet</h4>
-                    <p class="text-sm text-[#111111]/60 mb-4">Create your first store to start selling!</p>
+                    <p class="text-sm text-theme-muted mb-4">Create your first store to start selling!</p>
                     <a routerLink="/dashboard/stores/new" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-accent border-2 border-theme-border font-bold text-sm text-theme-fg hover:bg-[#ffdb4d] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -360,19 +360,19 @@ interface SalesStats {
                 } @else {
                   <div class="space-y-2">
                     @for (store of stores().slice(0, 5); track store.id) {
-                      <a [routerLink]="['/dashboard/stores', store.id]" class="group flex items-center gap-3 p-3 border border-black/10 hover:border-theme-border hover:bg-theme-secondary/50 transition-all">
+                      <a [routerLink]="['/dashboard/stores', store.id]" class="group flex items-center gap-3 p-3 border border-theme-border/30 hover:border-theme-border hover:bg-theme-secondary/50 transition-all">
                         <div class="w-10 h-10 bg-theme-primary border border-theme-border flex items-center justify-center text-white font-bold text-lg shrink-0">
                           {{ getStoreInitial(store.name) }}
                         </div>
                         <div class="flex-1 min-w-0">
                           <h4 class="font-bold text-theme-fg text-sm truncate">{{ store.name }}</h4>
-                          <p class="text-xs text-[#111111]/60 truncate">{{ store.slug }}</p>
+                          <p class="text-xs text-theme-muted truncate">{{ store.slug }}</p>
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
-                          <span class="px-2 py-1 bg-theme-secondary border border-black/10 text-[10px] md:text-xs font-medium text-[#111111]/70">
+                          <span class="px-2 py-1 bg-theme-secondary border border-theme-border/30 text-[10px] md:text-xs font-medium text-theme-muted">
                             {{ store._count?.products || 0 }} products
                           </span>
-                          <svg class="w-4 h-4 text-[#111111]/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg class="w-4 h-4 text-theme-fg/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                           </svg>
                         </div>
@@ -394,7 +394,7 @@ interface SalesStats {
                   </div>
                   <h3 class="font-bold text-theme-fg text-base md:text-lg">Your Products</h3>
                 </div>
-                <a routerLink="/dashboard/products" class="flex items-center gap-1 text-sm font-bold text-[#111111]/70 hover:text-theme-fg transition-colors">
+                <a routerLink="/dashboard/products" class="flex items-center gap-1 text-sm font-bold text-theme-muted hover:text-theme-fg transition-colors">
                   View All
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -416,12 +416,12 @@ interface SalesStats {
                 } @else if (products().length === 0) {
                   <div class="text-center py-8 md:py-12">
                     <div class="w-16 h-16 mx-auto mb-4 bg-theme-secondary border-2 border-theme-border flex items-center justify-center transform -rotate-3">
-                      <svg class="w-8 h-8 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-8 h-8 text-theme-fg/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                       </svg>
                     </div>
                     <h4 class="font-bold text-theme-fg mb-1">No products yet</h4>
-                    <p class="text-sm text-[#111111]/60 mb-4">Add your first product to start earning!</p>
+                    <p class="text-sm text-theme-muted mb-4">Add your first product to start earning!</p>
                     <a routerLink="/dashboard/products/new" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-accent border-2 border-theme-border font-bold text-sm text-theme-fg hover:bg-[#ffdb4d] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -432,13 +432,13 @@ interface SalesStats {
                 } @else {
                   <div class="space-y-2">
                     @for (product of products().slice(0, 5); track product.id) {
-                      <a [routerLink]="['/dashboard/products', product.id]" class="group flex items-center gap-3 p-3 border border-black/10 hover:border-theme-border hover:bg-theme-secondary/50 transition-all">
+                      <a [routerLink]="['/dashboard/products', product.id]" class="group flex items-center gap-3 p-3 border border-theme-border/30 hover:border-theme-border hover:bg-theme-secondary/50 transition-all">
                         <div class="w-10 h-10 bg-theme-secondary border border-theme-border overflow-hidden shrink-0">
                           @if (product.coverImageUrl) {
                             <img [src]="product.coverImageUrl" [alt]="product.title" class="w-full h-full object-cover">
                           } @else {
                             <div class="w-full h-full flex items-center justify-center">
-                              <svg class="w-5 h-5 text-[#111111]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg class="w-5 h-5 text-theme-fg/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                                 <circle cx="8.5" cy="8.5" r="1.5"/>
                                 <polyline points="21 15 16 10 5 21"/>
@@ -448,7 +448,7 @@ interface SalesStats {
                         </div>
                         <div class="flex-1 min-w-0">
                           <h4 class="font-bold text-theme-fg text-sm truncate">{{ product.title }}</h4>
-                          <p class="text-xs text-[#111111]/60 truncate">{{ product.store?.name }}</p>
+                          <p class="text-xs text-theme-muted truncate">{{ product.store?.name }}</p>
                         </div>
                         <div class="flex flex-col items-end gap-1 shrink-0">
                           <span class="font-bold text-sm text-theme-fg">₹{{ product.price }}</span>
@@ -458,7 +458,7 @@ interface SalesStats {
                             [class.border]="product.status === 'PUBLISHED'"
                             [class.border-theme-border]="product.status === 'PUBLISHED'"
                             [class.bg-theme-secondary]="product.status !== 'PUBLISHED'"
-                            [class.text-[#111111]/60]="product.status !== 'PUBLISHED'">
+                            [class.text-theme-muted]="product.status !== 'PUBLISHED'">
                             {{ product.status === 'PUBLISHED' ? 'Live' : 'Draft' }}
                           </span>
                         </div>
@@ -657,7 +657,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getMessageBodyClass(type: UiMessage['type']): string {
-    return type === 'ANNOUNCEMENT' || type === 'BANNER' ? 'text-white/80' : 'text-[#111111]/80';
+    return type === 'ANNOUNCEMENT' || type === 'BANNER' ? 'text-white/80' : 'text-theme-muted';
   }
 
   navigateTo(path: string): void {

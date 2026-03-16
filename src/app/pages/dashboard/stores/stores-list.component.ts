@@ -19,10 +19,10 @@ import { ToasterService } from '../../../core/services/toaster.service';
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div class="grid sm:grid-cols-3 grid-cols-1 items-center gap-4">
           <div class="flex items-center gap-2">
-            <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-theme-fg transition-colors">
+            <a routerLink="/dashboard" class="text-sm font-medium text-theme-muted hover:text-theme-fg transition-colors">
               Dashboard
             </a>
-            <svg class="w-4 h-4 text-black/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-theme-muted opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M9 18l6-6-6-6"/>
             </svg>
             <span class="text-sm font-bold text-theme-fg">Stores</span>
@@ -41,7 +41,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
         <div class="mt-6 flex items-center gap-3 flex-wrap">
           <div class="relative flex-1 min-w-0 max-w-full">
             <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
-              <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 md:w-5 md:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
             </div>
@@ -51,7 +51,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
               (input)="onSearchInput()"
               (keyup.enter)="performSearch()"
               placeholder="Search stores..."
-              class="w-full pl-10 md:pl-12 pr-3 py-2 md:py-3 bg-theme-surface border-2 border-theme-border rounded-none text-theme-fg placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+              class="w-full pl-10 md:pl-12 pr-3 py-2 md:py-3 bg-theme-surface border-2 border-theme-border rounded-none text-theme-fg placeholder-theme-muted focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
             />
           </div>
 
@@ -67,7 +67,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
           </button>
 
           <a routerLink="/dashboard/stores/new" 
-             class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-theme-accent text-theme-fg font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
+             class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-theme-accent text-black font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path d="M12 5v14M5 12h14"/>
             </svg>
@@ -142,7 +142,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
               </button>
               <button
                 (click)="applyFilters()"
-                class="flex-1 px-4 py-2 bg-theme-accent border-2 border-theme-border text-theme-fg font-bold hover:bg-[#ffdb4d] transition-colors"
+                class="flex-1 px-4 py-2 bg-theme-accent border-2 border-theme-border text-black font-bold hover:bg-[#ffdb4d] transition-colors"
               >
                 Apply
               </button>
@@ -159,10 +159,10 @@ import { ToasterService } from '../../../core/services/toaster.service';
           <button (click)="setActiveTab('active')"
             [class]="activeTab() === 'active' 
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#68E079] text-theme-fg whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-theme-fg whitespace-nowrap transition-colors'">
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-theme-muted hover:text-theme-fg whitespace-nowrap transition-colors'">
             Active
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-success text-theme-fg">{{ tabCounts().active }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-success text-black">{{ tabCounts().active }}</span>
             } @else {
               <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
@@ -170,10 +170,10 @@ import { ToasterService } from '../../../core/services/toaster.service';
           <button (click)="setActiveTab('archived')"
             [class]="activeTab() === 'archived' 
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FFC60B] text-theme-fg whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-theme-fg whitespace-nowrap transition-colors'">
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-theme-muted hover:text-theme-fg whitespace-nowrap transition-colors'">
             Archived
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-accent text-theme-fg">{{ tabCounts().archived }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-accent text-black">{{ tabCounts().archived }}</span>
             } @else {
               <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
@@ -181,7 +181,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
           <button (click)="setActiveTab('deleted')"
             [class]="activeTab() === 'deleted' 
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FA4B28] text-theme-fg whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-theme-fg whitespace-nowrap transition-colors'">
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-theme-muted hover:text-theme-fg whitespace-nowrap transition-colors'">
             Bin
             @if (!statsLoading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-danger text-white">{{ tabCounts().deleted }}</span>
@@ -222,17 +222,17 @@ import { ToasterService } from '../../../core/services/toaster.service';
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xl sm:text-2xl font-black text-theme-fg">{{ stats().total }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Total Stores</span>
+                <span class="text-sm font-medium text-theme-muted">Total Stores</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xl sm:text-2xl font-black text-theme-success">{{ stats().published }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Published</span>
+                <span class="text-sm font-medium text-theme-muted">Published</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xl sm:text-2xl font-black text-theme-accent">{{ stats().drafts }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Drafts</span>
+                <span class="text-sm font-medium text-theme-muted">Drafts</span>
               </div>
             </div>
           </div>
@@ -340,7 +340,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                 </svg>
               </div>
               <h3 class="text-xl sm:text-2xl font-black text-theme-fg mb-2">No stores yet</h3>
-              <p class="text-[#111111]/70 font-medium mb-6 max-w-sm">Create your first store to start selling digital products</p>
+              <p class="text-theme-muted font-medium mb-6 max-w-sm">Create your first store to start selling digital products</p>
               <a routerLink="/dashboard/stores/new" 
                  class="inline-flex items-center gap-2 px-6 py-3 bg-theme-accent text-theme-fg font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -355,7 +355,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                 </svg>
               </div>
               <h3 class="text-xl sm:text-2xl font-black text-theme-fg mb-2">No archived stores</h3>
-              <p class="text-[#111111]/70 font-medium max-w-sm">Archived stores will appear here</p>
+              <p class="text-theme-muted font-medium max-w-sm">Archived stores will appear here</p>
             } @else {
               <div class="w-20 h-20 bg-theme-danger/20 border-2 border-theme-border flex items-center justify-center mb-6">
                 <svg class="w-10 h-10 text-theme-fg" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -364,7 +364,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                 </svg>
               </div>
               <h3 class="text-xl sm:text-2xl font-black text-theme-fg mb-2">Bin is empty</h3>
-              <p class="text-[#111111]/70 font-medium max-w-sm">Deleted stores will appear here for 30 days before permanent deletion</p>
+              <p class="text-theme-muted font-medium max-w-sm">Deleted stores will appear here for 30 days before permanent deletion</p>
             }
           </div>
         } @else {
@@ -475,7 +475,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                     <img [src]="store.bannerUrl" alt="" class="w-full h-28 sm:h-32 object-cover border-b-2 border-theme-border">
                   } @else {
                     <div class="w-full h-28 sm:h-32 bg-theme-secondary border-b-2 border-theme-border flex items-center justify-center">
-                      <svg class="w-8 h-8 text-black/30" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <svg class="w-8 h-8 text-theme-muted opacity-30" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
                       </svg>
@@ -491,11 +491,11 @@ import { ToasterService } from '../../../core/services/toaster.service';
                     @if (activeTab() === 'active') {
                       <!-- Status Badge -->
                       @if (store.status === 'PUBLISHED') {
-                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-success text-theme-fg border-2 border-theme-border">
+                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-success text-black border-2 border-theme-border">
                           Live
                         </span>
                       } @else if (store.status === 'DRAFT') {
-                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-theme-fg border-2 border-theme-border">
+                        <span class="shrink-0 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-black border-2 border-theme-border">
                           Draft
                         </span>
                       } @else {
@@ -519,13 +519,13 @@ import { ToasterService } from '../../../core/services/toaster.service';
                         {{ store.slug }}.{{ baseDomain() }}
                       </a>
                     } @else {
-                      <span class="text-sm text-black/50">{{ store.slug }}.{{ baseDomain() }}</span>
+                      <span class="text-sm text-theme-muted">{{ store.slug }}.{{ baseDomain() }}</span>
                     }
                   </div>
                   
                   <!-- Footer -->
                   <div class="flex items-center justify-between pt-4 border-t-2 border-black/10">
-                    <span class="inline-flex items-center gap-1.5 text-sm font-medium text-[#111111]/70">
+                    <span class="inline-flex items-center gap-1.5 text-sm font-medium text-theme-muted">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                       </svg>
@@ -587,7 +587,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                       @if (store.bannerUrl) {
                         <img [src]="store.bannerUrl" [alt]="store.name" class="w-full h-full object-cover">
                       } @else {
-                        <svg class="w-8 h-8 text-black/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <svg class="w-8 h-8 text-theme-muted opacity-20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                           <polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
@@ -595,12 +595,12 @@ import { ToasterService } from '../../../core/services/toaster.service';
                     </div>
                     <div class="flex-1 min-w-0">
                       <h3 class="text-base sm:text-lg font-bold text-theme-fg truncate">{{ store.name }}</h3>
-                      <p class="text-sm text-[#111111]/60 font-medium">{{ store.slug }}.{{ baseDomain() }}</p>
+                      <p class="text-sm text-theme-muted font-medium">{{ store.slug }}.{{ baseDomain() }}</p>
                     </div>
                     <div class="flex items-center gap-4 ml-4">
                       <div class="text-sm font-bold text-theme-fg">{{ store._count?.products || 0 }} products</div>
                       @if (activeTab() === 'active') {
-                        <a [routerLink]="['/dashboard/stores', store.id]" class="text-sm font-bold text-[#111111]/70">Manage</a>
+                        <a [routerLink]="['/dashboard/stores', store.id]" class="text-sm font-bold text-theme-muted">Manage</a>
                       }
                     </div>
                   </div>
@@ -611,7 +611,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
           <!-- Pagination -->
           @if (meta().totalPages > 1) {
             <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p class="text-sm text-[#111111]/60 font-medium">
+              <p class="text-sm text-theme-muted font-medium">
                 Showing {{ ((meta().page - 1) * meta().limit) + 1 }} - {{ getEndIndex() }} of {{ meta().total }} stores
               </p>
 
@@ -630,7 +630,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
                 <div class="flex items-center gap-1">
                   @for (page of getVisiblePages(); track page) {
                     @if (page === '...') {
-                      <span class="px-2 py-1 text-sm text-[#111111]/60">...</span>
+                      <span class="px-2 py-1 text-sm text-theme-muted">...</span>
                     } @else {
                       <button
                         (click)="goToPage(+page)"

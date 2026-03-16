@@ -37,9 +37,9 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                     @if (!loading()) {
                       <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ purchases().length }}</div>
                     } @else {
-                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-theme-fg/10 rounded animate-pulse mb-0.5"></div>
                     }
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Products</div>
+                    <div class="text-[10px] md:text-xs text-theme-fg/60 font-medium">Products</div>
                   </div>
                 </div>
                 <!-- Active stat -->
@@ -53,9 +53,9 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                     @if (!loading()) {
                       <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getActiveCount() }}</div>
                     } @else {
-                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-theme-fg/10 rounded animate-pulse mb-0.5"></div>
                     }
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Active</div>
+                    <div class="text-[10px] md:text-xs text-theme-fg/60 font-medium">Active</div>
                   </div>
                 </div>
                 <!-- Downloads stat -->
@@ -69,9 +69,9 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                     @if (!loading()) {
                       <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getTotalDownloads() }}</div>
                     } @else {
-                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+                      <div class="h-4 md:h-6 w-8 md:w-12 bg-theme-fg/10 rounded animate-pulse mb-0.5"></div>
                     }
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Downloads</div>
+                    <div class="text-[10px] md:text-xs text-theme-fg/60 font-medium">Downloads</div>
                   </div>
                 </div>
               </div>
@@ -80,7 +80,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
               <div class="mt-4 max-w-xl mx-auto md:mx-0 mb-8 md:mb-12">
                 <div class="relative">
                   <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
-                    <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 md:w-5 md:h-5 text-theme-fg/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                   </div>
@@ -88,7 +88,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                     type="text"
                     [(ngModel)]="searchQuery"
                     placeholder="Search purchased products..."
-                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-theme-surface border-2 border-theme-border rounded-none text-theme-fg placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-theme-surface border-2 border-theme-border rounded-none text-theme-fg placeholder-theme-muted focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
                   />
                   <button
                     (click)="performSearch()"
@@ -115,7 +115,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                 </svg>
               </div>
               <h2 class="text-xl sm:text-2xl font-display font-bold text-theme-fg mb-2 sm:mb-3">Access Your Purchases</h2>
-              <p class="text-sm sm:text-base text-[#111111]/60 mb-6 sm:mb-8 max-w-md mx-auto px-4 font-medium">
+              <p class="text-sm sm:text-base text-theme-fg/60 mb-6 sm:mb-8 max-w-md mx-auto px-4 font-medium">
                 Enter the email or phone number you used during checkout to access your purchased products.
               </p>
               <button 
@@ -139,7 +139,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                 </div>
                 <div>
                   <p class="font-bold text-theme-fg">{{ guestAccess.identifier() }}</p>
-                  <p class="text-sm text-[#111111]/60 font-medium">Guest access</p>
+                  <p class="text-sm text-theme-fg/60 font-medium">Guest access</p>
                 </div>
               </div>
               <button 
@@ -158,14 +158,14 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                     <div class="p-3 md:p-4 flex gap-4">
                       <div class="w-20 h-20 md:w-24 md:h-24 shrink-0 bg-theme-secondary border-2 border-theme-border rounded-lg animate-pulse"></div>
                       <div class="flex-1 min-w-0">
-                        <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse w-3/4 mb-2"></div>
-                        <div class="h-3 bg-[#111111]/5 rounded animate-pulse w-1/2 mb-3"></div>
+                        <div class="h-4 md:h-5 bg-theme-fg/10 rounded animate-pulse w-3/4 mb-2"></div>
+                        <div class="h-3 bg-theme-fg/5 rounded animate-pulse w-1/2 mb-3"></div>
                         <div class="h-6 w-32 bg-theme-secondary rounded border border-black/10 animate-pulse"></div>
                       </div>
                     </div>
                     <div class="px-3 md:px-4 pb-3 md:pb-4 border-t-2 border-black/5 pt-3 md:pt-4">
                       <div class="flex items-center justify-between mb-3">
-                        <div class="h-3 w-20 bg-[#111111]/10 rounded animate-pulse"></div>
+                        <div class="h-3 w-20 bg-theme-fg/10 rounded animate-pulse"></div>
                         <div class="h-3 w-16 bg-theme-success/30 rounded animate-pulse"></div>
                       </div>
                       <div class="h-10 bg-theme-secondary border border-theme-border rounded-lg animate-pulse"></div>
@@ -177,14 +177,14 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
               <!-- Empty State -->
               <div class="text-center py-12 md:py-16">
                 <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 bg-theme-secondary border-2 border-theme-border rounded-2xl flex items-center justify-center transform rotate-3">
-                  <svg class="w-10 h-10 md:w-12 md:h-12 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-10 h-10 md:w-12 md:h-12 text-theme-fg/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                   </svg>
                 </div>
                 <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-theme-fg mb-2">
                   {{ searchQuery() ? 'No matches found' : 'No purchases yet' }}
                 </h2>
-                <p class="text-sm md:text-base text-[#111111]/60 max-w-md mx-auto mb-8 font-medium">
+                <p class="text-sm md:text-base text-theme-fg/60 max-w-md mx-auto mb-8 font-medium">
                   {{ searchQuery() ? 'Try adjusting your search terms' : 'Products you purchase will appear here. Start exploring amazing digital products from creators around the world.' }}
                 </p>
                 @if (!searchQuery()) {
@@ -213,7 +213,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                           />
                         } @else {
                           <div class="w-full h-full flex items-center justify-center">
-                            <svg class="w-8 h-8 text-[#111111]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 text-theme-fg/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                           </div>
@@ -227,7 +227,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                         </h3>
                         @if (purchase.product.store) {
                           <div class="flex items-center gap-1.5 mb-2">
-                            <span class="text-xs text-[#111111]/60 font-medium truncate">
+                            <span class="text-xs text-theme-fg/60 font-medium truncate">
                               by {{ purchase.product.store.name }}
                             </span>
                           </div>
@@ -235,10 +235,10 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                         
                         <!-- License Key -->
                         <div class="inline-flex items-center px-2 py-1 bg-theme-secondary rounded border border-black/10 max-w-full">
-                          <svg class="w-3 h-3 text-[#111111]/40 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg class="w-3 h-3 text-theme-fg/40 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                           </svg>
-                          <code class="text-[10px] md:text-xs font-mono text-[#111111]/80 truncate select-all">
+                          <code class="text-[10px] md:text-xs font-mono text-theme-fg/80 truncate select-all">
                             {{ purchase.licenseKey }}
                           </code>
                         </div>
@@ -263,7 +263,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                               class="w-full flex items-center justify-between px-3 py-2 bg-theme-surface border border-theme-border rounded-lg hover:bg-theme-secondary active:bg-[#F0EBE0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed group/btn"
                             >
                               <div class="flex items-center min-w-0 mr-3">
-                                <svg class="w-4 h-4 text-[#111111]/40 mr-2 shrink-0 group-hover/btn:text-theme-fg transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-theme-fg/40 mr-2 shrink-0 group-hover/btn:text-theme-fg transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                                 <span class="text-xs font-medium text-theme-fg truncate text-left">
@@ -285,7 +285,7 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
                           }
                         </div>
                       } @else {
-                         <div class="text-xs text-[#111111]/50 italic text-center py-2">
+                         <div class="text-xs text-theme-fg/50 italic text-center py-2">
                            No files available
                          </div>
                       }
@@ -297,8 +297,8 @@ import { PurchaseDetailsModalComponent } from '../../shared/components/purchase-
               <!-- Create Account Prompt -->
               <div class="mt-8 p-6 bg-theme-secondary border-2 border-theme-border rounded-2xl text-center max-w-2xl mx-auto">
                 <h3 class="font-bold text-theme-fg mb-2">Want easier access?</h3>
-                <p class="text-sm text-[#111111]/60 mb-4 font-medium">Create an account to manage all your purchases and access them from any device.</p>
-                <button (click)="signUp()" class="inline-flex items-center gap-2 bg-theme-fg text-white px-6 py-3 rounded-xl font-bold hover:bg-theme-surface-hover transition-colors text-sm min-h-[48px] shadow-[4px_4px_0px_0px_#FFC60B] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                <p class="text-sm text-theme-fg/60 mb-4 font-medium">Create an account to manage all your purchases and access them from any device.</p>
+                <button (click)="signUp()" class="inline-flex items-center gap-2 bg-theme-fg text-theme-bg px-6 py-3 rounded-xl font-bold hover:bg-theme-surface-hover transition-colors text-sm min-h-[48px] shadow-[4px_4px_0px_0px_#FFC60B] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                   Create Account
                 </button>
               </div>

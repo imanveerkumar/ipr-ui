@@ -1686,7 +1686,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
           <div class="header-inner">
             <!-- Logo -->
             <a class="logo" (click)="handleLogoClick()">
-              <span class="logo-text">StoresCraft.     </span>
+              <span class="logo-text">BlueMustard.     </span>
 
             </a>
             
@@ -2084,7 +2084,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
     <div class="mobile-menu" [class.active]="mobileMenuOpen()">
       <div class="mobile-menu-header">
         <a class="logo" (click)="handleLogoClick()">
-          <span class="logo-text">StoresCraft</span>
+          <span class="logo-text">BlueMustard</span>
         </a>
         <button class="mobile-menu-close" (click)="closeMobileMenu()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -2373,7 +2373,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
             </div>
-            <p class="mobile-search-results-empty-title">Search StoresCraft</p>
+            <p class="mobile-search-results-empty-title">Search BlueMustard</p>
             <p class="mobile-search-results-empty-text">Find amazing products, stores, and creators</p>
           </div>
         } @else if (hasMobileNoResults()) {

@@ -95,12 +95,12 @@ interface UserCheckResult {
                         </svg>
                       </button>
                       @if (activeTooltip() === 'email') {
-                        <div class="tooltip-container mt-2 p-3 bg-theme-fg text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                        <div class="tooltip-container mt-2 p-3 bg-theme-fg text-theme-bg text-xs rounded-lg shadow-lg max-w-xs relative z-10">
                           <div class="absolute -top-1 left-6 w-2 h-2 bg-theme-fg transform rotate-45"></div>
                           {{ getTooltipText('email') }}
                           <button 
                             (click)="hideTooltip()"
-                            class="ml-2 text-theme-muted hover:text-white text-sm"
+                            class="ml-2 text-theme-bg/70 hover:text-theme-bg text-sm"
                             aria-label="Close tooltip"
                           >
                             ×
@@ -144,12 +144,12 @@ interface UserCheckResult {
                         </svg>
                       </button>
                       @if (activeTooltip() === 'phone') {
-                        <div class="tooltip-container mt-2 p-3 bg-theme-fg text-white text-xs rounded-lg shadow-lg max-w-xs relative z-10">
+                        <div class="tooltip-container mt-2 p-3 bg-theme-fg text-theme-bg text-xs rounded-lg shadow-lg max-w-xs relative z-10">
                           <div class="absolute -top-1 left-6 w-2 h-2 bg-theme-fg transform rotate-45"></div>
                           {{ getTooltipText('phone') }}
                           <button 
                             (click)="hideTooltip()"
-                            class="ml-2 text-theme-muted hover:text-white text-sm"
+                            class="ml-2 text-theme-bg/70 hover:text-theme-bg text-sm"
                             aria-label="Close tooltip"
                           >
                             ×
@@ -190,7 +190,7 @@ interface UserCheckResult {
                 <button 
                   (click)="checkUser()"
                   [disabled]="loading() || !isInputValid()"
-                  class="w-full py-3.5 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[48px]"
+                  class="w-full py-3.5 px-4 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   @if (loading()) {
                     <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -236,7 +236,7 @@ interface UserCheckResult {
                   <div class="space-y-3">
                     <button 
                       (click)="goBack()"
-                      class="w-full py-3 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors min-h-[48px]"
+                      class="w-full py-3 px-4 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors min-h-[48px]"
                     >
                       Try Different Email/Phone
                     </button>
@@ -268,7 +268,7 @@ interface UserCheckResult {
                   @if (userCheckResult()?.hasClerkAccount) {
                     <button 
                       (click)="loginWithClerk()"
-                      class="w-full py-4 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors flex items-center justify-center gap-3 mb-3 min-h-[56px]"
+                      class="w-full py-4 px-4 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors flex items-center justify-center gap-3 mb-3 min-h-[56px]"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -283,7 +283,7 @@ interface UserCheckResult {
                   @if (userCheckResult()?.hasGuestPurchases && !userCheckResult()?.hasClerkAccount) {
                     <button 
                       (click)="continueAsGuest()"
-                      class="w-full py-4 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors flex items-center justify-center gap-3 min-h-[56px]"
+                      class="w-full py-4 px-4 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors flex items-center justify-center gap-3 min-h-[56px]"
                     >
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -381,7 +381,7 @@ interface UserCheckResult {
                 <button 
                   (click)="verifyOtp()"
                   [disabled]="loading() || !isOtpComplete()"
-                  class="w-full py-3.5 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[48px]"
+                  class="w-full py-3.5 px-4 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   @if (loading()) {
                     <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -429,7 +429,7 @@ interface UserCheckResult {
                   <p class="text-theme-muted mb-6">You now have access to your purchased products.</p>
                   <button 
                     (click)="onSuccess()"
-                    class="w-full py-3.5 px-4 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors min-h-[48px]"
+                    class="w-full py-3.5 px-4 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover transition-colors min-h-[48px]"
                   >
                     View My Purchases
                   </button>

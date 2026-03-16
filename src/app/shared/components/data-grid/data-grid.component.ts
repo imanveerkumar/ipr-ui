@@ -101,7 +101,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
               [placeholder]="searchPlaceholder"
               [(ngModel)]="searchValue"
               (ngModelChange)="onSearch($event)"
-              class="w-full pl-10 pr-4 py-3 rounded-xl border border-theme-secondary focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm transition-all bg-theme-surface shadow-sm"
+              class="w-full pl-10 pr-4 py-3 rounded-xl border border-theme-secondary focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm transition-all bg-theme-surface text-theme-fg shadow-sm"
             />
           </div>
         </div>
@@ -275,7 +275,7 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
                 [placeholder]="searchPlaceholder"
                 [(ngModel)]="searchValue"
                 (ngModelChange)="onSearch($event)"
-                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-theme-secondary focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm transition-all"
+                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-theme-secondary focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none text-sm transition-all bg-theme-surface text-theme-fg"
               />
             </div>
           }
@@ -413,18 +413,18 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
       display: block;
     }
 
-    /* AG Grid Custom Theme - Consistent with app design */
+    /* AG Grid Custom Theme - Consistent with app design and theme system */
     .ag-theme-custom {
-      --ag-background-color: #ffffff;
-      --ag-foreground-color: #111827;
-      --ag-header-background-color: #f9fafb;
-      --ag-header-foreground-color: #6b7280;
-      --ag-border-color: #f3f4f6;
-      --ag-row-hover-color: #f9fafb;
-      --ag-selected-row-background-color: #eff6ff;
+      --ag-background-color: var(--surface);
+      --ag-foreground-color: var(--foreground);
+      --ag-header-background-color: var(--secondary);
+      --ag-header-foreground-color: var(--muted);
+      --ag-border-color: var(--border);
+      --ag-row-hover-color: var(--surface-hover);
+      --ag-selected-row-background-color: var(--surface-hover);
       --ag-font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
       --ag-font-size: 14px;
-      --ag-row-border-color: #f3f4f6;
+      --ag-row-border-color: var(--border);
       --ag-cell-horizontal-padding: 16px;
       --ag-header-height: 48px;
       --ag-row-height: 56px;
@@ -440,7 +440,8 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
     }
 
     .ag-theme-custom .ag-header {
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid var(--border);
+      background-color: var(--secondary);
     }
 
     .ag-theme-custom .ag-header-cell {
@@ -448,15 +449,17 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      background-color: var(--secondary);
     }
 
     .ag-theme-custom .ag-header-cell-text {
-      color: #6b7280;
+      color: var(--muted);
     }
 
     .ag-theme-custom .ag-row {
-      border-bottom: 1px solid #f3f4f6;
+      border-bottom: 1px solid var(--border);
       transition: background-color 0.15s ease;
+      background-color: var(--surface);
     }
 
     .ag-theme-custom .ag-row:last-child {
@@ -464,29 +467,57 @@ export interface GridColumn<T = any> extends Omit<ColDef<T>, 'field'> {
     }
 
     .ag-theme-custom .ag-row:hover {
-      background-color: #f9fafb;
+      background-color: var(--surface-hover);
     }
 
     .ag-theme-custom .ag-cell {
       display: flex;
       align-items: center;
-      color: #374151;
+      color: var(--foreground);
     }
 
     .ag-theme-custom .ag-header-cell-sortable:hover {
-      background-color: #f3f4f6;
+      background-color: var(--secondary);
     }
 
     .ag-theme-custom .ag-icon-asc,
     .ag-theme-custom .ag-icon-desc {
-      color: #0284c7;
+      color: var(--primary);
     }
 
     .ag-theme-custom .ag-paging-panel {
-      border-top: 1px solid #e5e7eb;
+      border-top: 1px solid var(--border);
       padding: 12px 16px;
-      color: #6b7280;
+      color: var(--muted);
       font-size: 14px;
+      background-color: var(--surface);
+    }
+
+    /* Search Input Styling */
+    input[type="text"] {
+      background-color: var(--surface) !important;
+      color: var(--foreground) !important;
+      border-color: var(--border) !important;
+    }
+
+    input[type="text"]::placeholder {
+      color: var(--muted) !important;
+      opacity: 0.7;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary) !important;
+    }
+
+    /* Select Dropdown Styling */
+    select {
+      background-color: var(--surface) !important;
+      color: var(--foreground) !important;
+      border-color: var(--border) !important;
+    }
+
+    select:focus {
+      border-color: var(--primary) !important;
     }
 
     /* Badge styles for status cells */

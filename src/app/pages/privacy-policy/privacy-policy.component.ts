@@ -27,7 +27,7 @@ import { RouterLink } from '@angular/router';
           <div class="card">
             <div class="prose">
               <h2>1. Introduction</h2>
-              <p>Welcome to StoresCraft. We are committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our digital marketplace platform.</p>
+              <p>Welcome to TheBlueMustard. We are committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our digital marketplace platform.</p>
 
               <h2>2. Information We Collect</h2>
               <h3>2.1 Personal Information</h3>
@@ -41,7 +41,7 @@ import { RouterLink } from '@angular/router';
               </ul>
 
               <h3>2.2 Store & Creator Information</h3>
-              <p>If you become a creator on StoresCraft, we additionally collect:</p>
+              <p>If you become a creator on TheBlueMustard, we additionally collect:</p>
               <ul>
                 <li>Store name, description, and branding assets (logo, banner images)</li>
                 <li>Product details including titles, descriptions, pricing, and categories</li>

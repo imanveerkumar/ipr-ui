@@ -29,7 +29,7 @@ interface FaqCategory {
             <span class="breadcrumb-current">FAQ</span>
           </nav>
           <h1 class="page-title">Frequently Asked Questions</h1>
-          <p class="page-subtitle">Everything you need to know about StoresCraft.</p>
+          <p class="page-subtitle">Everything you need to know about TheBlueMustard.</p>
         </div>
       </section>
 
@@ -270,8 +270,8 @@ export class FaqComponent {
       icon: 'rocket',
       items: [
         {
-          question: 'What is StoresCraft?',
-          answer: 'StoresCraft is a digital product marketplace that lets creators build their own online stores and sell digital assets like templates, fonts, graphics, code, eBooks, and more. Buyers can explore products across the marketplace or visit individual creator storefronts.',
+          question: 'What is TheBlueMustard?',
+          answer: 'TheBlueMustard is a digital product marketplace that lets creators build their own online stores and sell digital assets like templates, fonts, graphics, code, eBooks, and more. Buyers can explore products across the marketplace or visit individual creator storefronts.',
           open: false
         },
         {
@@ -280,7 +280,7 @@ export class FaqComponent {
           open: false
         },
         {
-          question: 'Is it free to use StoresCraft?',
+          question: 'Is it free to use TheBlueMustard?',
           answer: 'Yes! Creating an account and browsing the marketplace is completely free. If you want to become a creator and sell products, you can get started at no cost — sign up and create your first store for free.',
           open: false
         },
@@ -369,7 +369,7 @@ export class FaqComponent {
         },
         {
           question: 'What are user roles?',
-          answer: 'StoresCraft has three roles: User (default — can browse and buy), Creator (can create stores and sell products), and Admin (platform administration). You start as a User and can upgrade to Creator from the "Become a Creator" page.',
+          answer: 'TheBlueMustard has three roles: User (default — can browse and buy), Creator (can create stores and sell products), and Admin (platform administration). You start as a User and can upgrade to Creator from the "Become a Creator" page.',
           open: false
         }
       ]

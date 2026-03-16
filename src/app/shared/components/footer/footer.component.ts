@@ -28,7 +28,7 @@ import { RouterLink } from '@angular/router';
           <!-- Logo and Social Row -->
           <div class="logo-row">
             <div class="logo-container">
-              <span class="logo-text">StoresCraft</span>
+              <span class="logo-text">BlueMustard</span>
               <div class="mascot">
                 <svg fill="currentColor" width="60" height="60" viewBox="96.631 514.201 32.951 32.951" xmlns="http://www.w3.org/2000/svg">
                   <g>

@@ -472,7 +472,7 @@ export class ProductComponent implements OnInit {
       try {
         await navigator.share({
           title: product?.title || 'Product',
-          text: `Check out ${product?.title || 'this product'} on StoresCraft`,
+          text: `Check out ${product?.title || 'this product'} on TheBlueMustard`,
           url: window.location.href,
         });
       } catch { /* user cancelled */ }

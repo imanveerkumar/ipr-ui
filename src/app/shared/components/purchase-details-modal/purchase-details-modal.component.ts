@@ -55,7 +55,7 @@ import { RouterLink } from '@angular/router';
                       />
                     } @else {
                       <div class="w-full h-full flex items-center justify-center">
-                        <svg class="w-8 h-8 text-[#111111]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-8 h-8 text-theme-fg/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                       </div>
@@ -66,16 +66,16 @@ import { RouterLink } from '@angular/router';
                       {{ purchase()?.product?.title }}
                     </a>
                     <div class="flex items-center gap-1.5 mb-2">
-                      <span class="text-sm text-[#111111]/60 font-medium">by</span>
+                      <span class="text-sm text-theme-fg/60 font-medium">by</span>
                       <a [routerLink]="['/store', purchase()?.product?.store?.slug || purchase()?.product?.store?.id]" class="text-sm font-bold text-theme-fg hover:underline truncate">
                         {{ purchase()?.product?.store?.name }}
                       </a>
                     </div>
                     <div class="inline-flex items-center px-2 py-1 bg-theme-secondary rounded border border-black/10 max-w-full">
-                      <svg class="w-3 h-3 text-[#111111]/40 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-3 h-3 text-theme-fg/40 mr-1.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                       </svg>
-                      <code class="text-xs font-mono text-[#111111]/80 truncate select-all">
+                      <code class="text-xs font-mono text-theme-fg/80 truncate select-all">
                         {{ purchase()?.licenseKey }}
                       </code>
                     </div>
@@ -87,17 +87,17 @@ import { RouterLink } from '@angular/router';
                   <h3 class="font-bold text-theme-fg mb-3 text-sm uppercase tracking-wider">Order Details</h3>
                   <div class="grid grid-cols-2 gap-4">
                     <div>
-                      <p class="text-xs text-[#111111]/60 font-medium mb-1">Date</p>
+                      <p class="text-xs text-theme-fg/60 font-medium mb-1">Date</p>
                       <p class="text-sm font-bold text-theme-fg">{{ purchase()?.createdAt | date:'mediumDate' }}</p>
                     </div>
                     <div>
-                      <p class="text-xs text-[#111111]/60 font-medium mb-1">Amount</p>
+                      <p class="text-xs text-theme-fg/60 font-medium mb-1">Amount</p>
                       <p class="text-sm font-bold text-theme-fg">
                         {{ (purchase()?.order?.totalAmount || 0) / 100 | currency:(purchase()?.order?.currency || 'INR') }}
                       </p>
                     </div>
                     <div class="col-span-2">
-                      <p class="text-xs text-[#111111]/60 font-medium mb-1">Order ID</p>
+                      <p class="text-xs text-theme-fg/60 font-medium mb-1">Order ID</p>
                       <p class="text-sm font-mono text-theme-fg">{{ purchase()?.order?.id || purchase()?.orderId }}</p>
                     </div>
                   </div>
@@ -121,7 +121,7 @@ import { RouterLink } from '@angular/router';
                           class="w-full flex items-center justify-between px-4 py-3 bg-theme-surface border-2 border-theme-border rounded-xl hover:bg-theme-secondary active:bg-[#F0EBE0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed group/btn shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                         >
                           <div class="flex items-center min-w-0 mr-3">
-                            <svg class="w-5 h-5 text-[#111111]/40 mr-3 shrink-0 group-hover/btn:text-theme-fg transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-theme-fg/40 mr-3 shrink-0 group-hover/btn:text-theme-fg transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                             <span class="text-sm font-bold text-theme-fg truncate text-left">
@@ -143,7 +143,7 @@ import { RouterLink } from '@angular/router';
                       }
                     </div>
                   } @else {
-                     <div class="text-sm text-[#111111]/50 italic text-center py-4 border-2 border-dashed border-black/20 rounded-xl">
+                     <div class="text-sm text-theme-fg/50 italic text-center py-4 border-2 border-dashed border-black/20 rounded-xl">
                        No files available
                      </div>
                   }

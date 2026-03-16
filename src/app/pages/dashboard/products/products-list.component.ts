@@ -21,10 +21,10 @@ type TabType = 'active' | 'archived' | 'bin';
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div class="grid sm:grid-cols-3 grid-cols-1 items-center gap-4">
           <div class="flex items-center gap-2">
-            <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-theme-fg transition-colors">
+            <a routerLink="/dashboard" class="text-sm font-medium text-theme-muted hover:text-theme-fg transition-colors">
               Dashboard
             </a>
-            <svg class="w-4 h-4 text-black/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-theme-muted opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M9 18l6-6-6-6"/>
             </svg>
             <span class="text-sm font-bold text-theme-fg">Products</span>
@@ -43,7 +43,7 @@ type TabType = 'active' | 'archived' | 'bin';
         <div class="mt-6 flex items-center gap-3 flex-wrap">
           <div class="relative flex-1 min-w-0 max-w-full">
             <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
-              <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 md:w-5 md:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
             </div>
@@ -53,7 +53,7 @@ type TabType = 'active' | 'archived' | 'bin';
               (input)="onSearchInput()"
               (keyup.enter)="performSearch()"
               placeholder="Search products..."
-              class="w-full pl-10 md:pl-12 pr-3 py-2 md:py-3 bg-theme-surface border-2 border-theme-border rounded-none text-theme-fg placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+              class="w-full pl-10 md:pl-12 pr-3 py-2 md:py-3 bg-theme-surface border-2 border-theme-border rounded-none text-theme-fg placeholder-theme-muted focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
             />
           </div>
 
@@ -69,7 +69,7 @@ type TabType = 'active' | 'archived' | 'bin';
           </button>
 
           <a routerLink="/dashboard/products/new" 
-             class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-theme-accent text-theme-fg font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
+             class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-theme-accent text-black font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path d="M12 5v14M5 12h14"/>
             </svg>
@@ -146,7 +146,7 @@ type TabType = 'active' | 'archived' | 'bin';
                 >
                   <div class="flex flex-wrap gap-1">
                     @if (filterStoreIds().length === 0) {
-                      <span class="text-[#111111]/50">Select stores...</span>
+                      <span class="text-theme-muted">Select stores...</span>
                     } @else {
                       @for (store of getSelectedStores(); track store.id) {
                         <span class="inline-flex items-center gap-1 px-2 py-1 bg-theme-accent text-theme-fg text-xs font-bold border border-theme-border">
@@ -186,7 +186,7 @@ type TabType = 'active' | 'archived' | 'bin';
                         </div>
                       }
                     } @else if (stores().length === 0) {
-                      <div class="px-3 py-2 text-sm text-[#111111]/60 font-medium">
+                      <div class="px-3 py-2 text-sm text-theme-muted font-medium">
                         No stores found
                       </div>
                     } @else {
@@ -213,7 +213,7 @@ type TabType = 'active' | 'archived' | 'bin';
 
               <!-- Future filters can be added here -->
               <div class="border-t border-black/20 pt-4">
-                <p class="text-xs text-[#111111]/60 font-medium">More filters coming soon...</p>
+                <p class="text-xs text-theme-muted font-medium">More filters coming soon...</p>
               </div>
             </div>
 
@@ -226,7 +226,7 @@ type TabType = 'active' | 'archived' | 'bin';
               </button>
               <button
                 (click)="applyFilters()"
-                class="flex-1 px-4 py-2 bg-theme-accent border-2 border-theme-border text-theme-fg font-bold hover:bg-[#ffdb4d] transition-colors"
+                class="flex-1 px-4 py-2 bg-theme-accent border-2 border-theme-border text-black font-bold hover:bg-[#ffdb4d] transition-colors"
               >
                 Apply
               </button>
@@ -244,10 +244,10 @@ type TabType = 'active' | 'archived' | 'bin';
             (click)="switchTab('active')"
             [class]="currentTab() === 'active' 
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#68E079] text-theme-fg whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-theme-fg whitespace-nowrap transition-colors'">
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-theme-muted hover:text-theme-fg whitespace-nowrap transition-colors'">
             Active
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-success text-theme-fg">{{ tabCounts().active }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-success text-black">{{ tabCounts().active }}</span>
             } @else {
               <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
@@ -257,10 +257,10 @@ type TabType = 'active' | 'archived' | 'bin';
             (click)="switchTab('archived')"
             [class]="currentTab() === 'archived' 
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FFC60B] text-theme-fg whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-theme-fg whitespace-nowrap transition-colors'">
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-theme-muted hover:text-theme-fg whitespace-nowrap transition-colors'">
             Archived
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-accent text-theme-fg">{{ tabCounts().archived }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-accent text-black">{{ tabCounts().archived }}</span>
             } @else {
               <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
@@ -270,7 +270,7 @@ type TabType = 'active' | 'archived' | 'bin';
             (click)="switchTab('bin')"
             [class]="currentTab() === 'bin' 
               ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FA4B28] text-theme-fg whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-theme-fg whitespace-nowrap transition-colors'">
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-theme-muted hover:text-theme-fg whitespace-nowrap transition-colors'">
             Bin
             @if (!statsLoading()) {
               <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-danger text-white">{{ tabCounts().bin }}</span>
@@ -310,17 +310,17 @@ type TabType = 'active' | 'archived' | 'bin';
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xl sm:text-2xl font-black text-theme-fg">{{ stats().total }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Total Products</span>
+                <span class="text-sm font-medium text-theme-muted">Total Products</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xl sm:text-2xl font-black text-theme-success">{{ stats().published }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Published</span>
+                <span class="text-sm font-medium text-theme-muted">Published</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
                 <span class="text-xl sm:text-2xl font-black text-theme-accent">{{ stats().drafts }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Drafts</span>
+                <span class="text-sm font-medium text-theme-muted">Drafts</span>
               </div>
             </div>
           </div>
@@ -470,7 +470,7 @@ type TabType = 'active' | 'archived' | 'bin';
                 {{ searchQuery() ? 'No deleted products found' : 'Bin is empty' }}
               }
             </h3>
-            <div class="text-[#111111]/70 font-medium mb-6 max-w-md">
+            <div class="text-theme-muted font-medium mb-6 max-w-md">
               {{ emptyStateMessage() }}
             </div>
             @if (currentTab() === 'active' && !searchQuery()) {
@@ -583,7 +583,7 @@ type TabType = 'active' | 'archived' | 'bin';
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                       } @else {
                         <div class="w-full h-full flex items-center justify-center">
-                          <svg class="w-12 h-12 text-black/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                          <svg class="w-12 h-12 text-theme-muted opacity-20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                             <circle cx="8.5" cy="8.5" r="1.5"/>
                             <polyline points="21 15 16 10 5 21"/>
@@ -594,16 +594,16 @@ type TabType = 'active' | 'archived' | 'bin';
                       <!-- Status Badge -->
                       @if (currentTab() === 'active') {
                         @if (product.status === 'PUBLISHED') {
-                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-success text-theme-fg border-2 border-theme-border">
+                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-success text-black border-2 border-theme-border">
                             Live
                           </span>
                         } @else {
-                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-theme-fg border-2 border-theme-border">
+                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-black border-2 border-theme-border">
                             Draft
                           </span>
                         }
                       } @else if (currentTab() === 'archived') {
-                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-theme-fg border-2 border-theme-border">
+                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-black border-2 border-theme-border">
                           Archived
                         </span>
                       } @else {
@@ -616,13 +616,13 @@ type TabType = 'active' | 'archived' | 'bin';
                     <!-- Content -->
                     <div class="p-4 sm:p-5">
                       <h3 class="text-base sm:text-lg font-bold text-theme-fg mb-1 truncate">{{ product.title }}</h3>
-                      <p class="text-sm text-[#111111]/60 font-medium mb-4">{{ product.store?.name || 'No store' }}</p>
+                      <p class="text-sm text-theme-muted font-medium mb-4">{{ product.store?.name || 'No store' }}</p>
                       
                       <div class="flex items-center justify-between">
                         <span class="text-lg sm:text-xl font-black text-theme-fg">₹{{ product.price / 100 }}</span>
                         
                         @if (currentTab() === 'active') {
-                          <span class="inline-flex items-center gap-1 text-sm font-bold text-[#111111]/70 group-hover:text-theme-primary transition-colors">
+                          <span class="inline-flex items-center gap-1 text-sm font-bold text-theme-muted group-hover:text-theme-primary transition-colors">
                             Edit
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                               <path d="M9 18l6-6-6-6"/>
@@ -686,7 +686,7 @@ type TabType = 'active' | 'archived' | 'bin';
                       @if (product.coverImageUrl) {
                         <img [src]="product.coverImageUrl" [alt]="product.title" class="w-full h-full object-cover">
                       } @else {
-                        <svg class="w-8 h-8 text-black/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <svg class="w-8 h-8 text-theme-muted opacity-20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                           <circle cx="8.5" cy="8.5" r="1.5"/>
                           <polyline points="21 15 16 10 5 21"/>
@@ -697,14 +697,14 @@ type TabType = 'active' | 'archived' | 'bin';
                     <!-- Details -->
                     <div class="flex-1 min-w-0 py-1">
                       <h3 class="text-base sm:text-lg font-bold text-theme-fg truncate">{{ product.title }}</h3>
-                      <p class="text-sm text-[#111111]/60 font-medium">{{ product.store?.name || 'No store' }}</p>
+                      <p class="text-sm text-theme-muted font-medium">{{ product.store?.name || 'No store' }}</p>
                     </div>
 
                     <!-- Price & Actions -->
                     <div class="flex items-center gap-4 ml-4">
                       <div class="text-base sm:text-lg font-black text-theme-fg">₹{{ product.price / 100 }}</div>
                       @if (currentTab() === 'active') {
-                        <a [routerLink]="['/dashboard/products', product.id]" class="text-sm font-bold text-[#111111]/70">Edit</a>
+                        <a [routerLink]="['/dashboard/products', product.id]" class="text-sm font-bold text-theme-muted">Edit</a>
                       }
                     </div>
                   </div>
@@ -715,7 +715,7 @@ type TabType = 'active' | 'archived' | 'bin';
           <!-- Pagination -->
           @if (meta().totalPages > 1) {
             <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p class="text-sm text-[#111111]/60 font-medium">
+              <p class="text-sm text-theme-muted font-medium">
                 Showing {{ ((meta().page - 1) * meta().limit) + 1 }} - {{ getEndIndex() }} of {{ meta().total }} products
               </p>
               
@@ -734,7 +734,7 @@ type TabType = 'active' | 'archived' | 'bin';
                 <div class="flex items-center gap-1">
                   @for (page of getVisiblePages(); track page) {
                     @if (page === '...') {
-                      <span class="px-2 py-1 text-sm text-[#111111]/60">...</span>
+                      <span class="px-2 py-1 text-sm text-theme-muted">...</span>
                     } @else {
                       <button
                         (click)="goToPage(+page)"

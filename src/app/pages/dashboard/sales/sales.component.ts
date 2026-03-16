@@ -42,10 +42,10 @@ interface PaginatedResponse<T> {
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <!-- Breadcrumb -->
         <nav class="flex items-center gap-2 mb-4 flex-wrap">
-          <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-theme-fg transition-colors">
+          <a routerLink="/dashboard" class="text-sm font-medium text-theme-muted hover:text-theme-fg transition-colors">
             Dashboard
           </a>
-          <svg class="w-4 h-4 text-black/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 text-theme-muted opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M9 18l6-6-6-6"/>
           </svg>
           <span class="text-sm font-bold text-theme-fg">Sales</span>
@@ -69,9 +69,9 @@ interface PaginatedResponse<T> {
           <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] p-5 sm:p-6">
             <div class="flex items-start justify-between">
               <div>
-                <p class="text-sm font-bold text-[#111111]/60 uppercase tracking-wide mb-2">Total Sales</p>
+                <p class="text-sm font-bold text-theme-muted uppercase tracking-wide mb-2">Total Sales</p>
                 @if (statsLoading()) {
-                  <div class="h-8 w-16 bg-black/10 animate-pulse"></div>
+                  <div class="h-8 w-16 bg-theme-secondary animate-pulse"></div>
                 } @else {
                   <p class="text-2xl sm:text-3xl font-black text-theme-fg">{{ stats().totalSales }}</p>
                 }
@@ -88,9 +88,9 @@ interface PaginatedResponse<T> {
           <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] p-5 sm:p-6">
             <div class="flex items-start justify-between">
               <div>
-                <p class="text-sm font-bold text-[#111111]/60 uppercase tracking-wide mb-2">Total Revenue</p>
+                <p class="text-sm font-bold text-theme-muted uppercase tracking-wide mb-2">Total Revenue</p>
                 @if (statsLoading()) {
-                  <div class="h-8 w-24 bg-black/10 animate-pulse"></div>
+                  <div class="h-8 w-24 bg-theme-secondary animate-pulse"></div>
                 } @else {
                   <p class="text-2xl sm:text-3xl font-black text-theme-success">₹{{ formatCurrency(stats().totalRevenue) }}</p>
                 }
@@ -107,9 +107,9 @@ interface PaginatedResponse<T> {
           <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] p-5 sm:p-6">
             <div class="flex items-start justify-between">
               <div>
-                <p class="text-sm font-bold text-[#111111]/60 uppercase tracking-wide mb-2">This Month</p>
+                <p class="text-sm font-bold text-theme-muted uppercase tracking-wide mb-2">This Month</p>
                 @if (statsLoading()) {
-                  <div class="h-8 w-20 bg-black/10 animate-pulse"></div>
+                  <div class="h-8 w-20 bg-theme-secondary animate-pulse"></div>
                 } @else {
                   <p class="text-2xl sm:text-3xl font-black text-theme-primary">₹{{ formatCurrency(stats().monthlyRevenue) }}</p>
                 }
@@ -130,7 +130,7 @@ interface PaginatedResponse<T> {
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
                 <h2 class="text-lg sm:text-xl font-black text-theme-fg">Recent Sales</h2>
-                <p class="text-sm text-[#111111]/60 font-medium">View and manage all your sales transactions</p>
+                <p class="text-sm text-theme-muted font-medium">View and manage all your sales transactions</p>
               </div>
               @if (pagination() && pagination()!.total > 0) {
                 <span class="inline-flex items-center px-3 py-1.5 bg-theme-secondary border-2 border-theme-border text-sm font-bold">
@@ -178,21 +178,21 @@ interface PaginatedResponse<T> {
     }
     
     ::ng-deep .data-grid-search input {
-      border: 2px solid #111 !important;
+      border: 2px solid var(--border) !important;
       border-radius: 0 !important;
     }
     
     ::ng-deep .data-grid-search input:focus {
-      box-shadow: 4px 4px 0px 0px #000 !important;
+      box-shadow: 4px 4px 0px 0px var(--border) !important;
     }
     
     ::ng-deep .data-grid-pagination button {
-      border: 2px solid #111 !important;
+      border: 2px solid var(--border) !important;
       border-radius: 0 !important;
     }
     
     ::ng-deep .data-grid-pagination button:hover {
-      box-shadow: 2px 2px 0px 0px #000 !important;
+      box-shadow: 2px 2px 0px 0px var(--border) !important;
     }
   `]
 })

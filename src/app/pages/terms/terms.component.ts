@@ -27,11 +27,11 @@ import { RouterLink } from '@angular/router';
           <div class="card">
             <div class="prose">
               <h2>1. Acceptance of Terms</h2>
-              <p>By accessing or using StoresCraft ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our platform. These terms apply to all users, including buyers, creators (sellers), and visitors.</p>
+              <p>By accessing or using TheBlueMustard ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our platform. These terms apply to all users, including buyers, creators (sellers), and visitors.</p>
 
               <h2>2. Definitions</h2>
               <ul>
-                <li><strong>"Platform"</strong> refers to the StoresCraft website, application, and all related services.</li>
+                <li><strong>"Platform"</strong> refers to the TheBlueMustard website, application, and all related services.</li>
                 <li><strong>"Creator"</strong> refers to a user who creates a store and lists digital products for sale.</li>
                 <li><strong>"Buyer"</strong> refers to a user who purchases digital products on the platform.</li>
                 <li><strong>"Digital Product"</strong> refers to any digital asset listed for sale, including but not limited to templates, fonts, graphics, code, eBooks, and presets.</li>
@@ -87,7 +87,7 @@ import { RouterLink } from '@angular/router';
               <p>Refund requests must be submitted within 7 days of purchase.</p>
 
               <h2>8. Intellectual Property</h2>
-              <p>The StoresCraft platform, including its design, code, logos, and branding, is owned by StoresCraft and protected by intellectual property laws. Creators retain ownership of their digital products. Buyers receive only the usage rights granted by the product license.</p>
+              <p>The TheBlueMustard platform, including its design, code, logos, and branding, is owned by TheBlueMustard and protected by intellectual property laws. Creators retain ownership of their digital products. Buyers receive only the usage rights granted by the product license.</p>
 
               <h2>9. Prohibited Conduct</h2>
               <p>You agree not to:</p>
@@ -105,10 +105,10 @@ import { RouterLink } from '@angular/router';
               <p>We reserve the right to review, reject, or remove any product listing or store that violates these terms. Stores may be suspended, and accounts may be terminated for repeated violations.</p>
 
               <h2>11. Limitation of Liability</h2>
-              <p>StoresCraft is provided "as is" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the platform. Our total liability for any claim shall not exceed the amount you paid to us in the 12 months preceding the claim.</p>
+              <p>TheBlueMustard is provided "as is" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the platform. Our total liability for any claim shall not exceed the amount you paid to us in the 12 months preceding the claim.</p>
 
               <h2>12. Indemnification</h2>
-              <p>You agree to indemnify and hold harmless StoresCraft, its operators, and affiliates from any claims, damages, or expenses arising from your use of the platform or violation of these terms.</p>
+              <p>You agree to indemnify and hold harmless TheBlueMustard, its operators, and affiliates from any claims, damages, or expenses arising from your use of the platform or violation of these terms.</p>
 
               <h2>13. Changes to Terms</h2>
               <p>We may update these Terms of Service at any time. Continued use of the platform after changes constitutes acceptance of the updated terms. We will notify users of significant changes via email or platform notifications.</p>
