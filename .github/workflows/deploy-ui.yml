@@ -168,7 +168,7 @@ jobs:
       - name: Validate build output
         id: validate
         run: |
-          BUILD_DIR="dist/storescraft/browser"
+          BUILD_DIR="dist/thebluemustard/browser"
 
           if [ ! -d "$BUILD_DIR" ]; then
             echo "::error::Build output directory not found: ${BUILD_DIR}"
@@ -197,7 +197,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ui-dist-${{ env.SHORT_SHA }}
-          path: dist/storescraft/browser
+          path: dist/thebluemustard/browser
           retention-days: ${{ needs.resolve-env.outputs.is_production == 'true' && 7 || 3 }}
           if-no-files-found: error
 
@@ -226,7 +226,7 @@ jobs:
 
     environment:
       name: development
-      url: https://${{ vars.CF_DOMAIN_DEV || 'dev.storescraft.com' }}
+      url: https://${{ vars.CF_DOMAIN_DEV || 'dev.thebluemustard.com' }}
 
     permissions:
       contents: read
@@ -242,11 +242,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ui-dist-${{ env.SHORT_SHA }}
-          path: dist/storescraft/browser
+          path: dist/thebluemustard/browser
 
       - name: Pre-deploy validation
         run: |
-          FILE_COUNT=$(find dist/storescraft/browser -type f | wc -l | tr -d ' ')
+          FILE_COUNT=$(find dist/thebluemustard/browser -type f | wc -l | tr -d ' ')
           if [ "$FILE_COUNT" -lt 5 ]; then
             echo "::error::Artifact corrupted — only ${FILE_COUNT} files found."
             exit 1
@@ -262,7 +262,7 @@ jobs:
 
       - name: Sync to S3
         run: |
-          aws s3 sync dist/storescraft/browser "s3://${S3_BUCKET}" \
+          aws s3 sync dist/thebluemustard/browser "s3://${S3_BUCKET}" \
             --delete \
             --no-progress \
             --cache-control "public, max-age=31536000, immutable" \
@@ -270,12 +270,12 @@ jobs:
             --exclude "*.json"
 
           # index.html & JSON manifests — no cache so updates propagate immediately
-          aws s3 cp dist/storescraft/browser/index.html "s3://${S3_BUCKET}/index.html" \
+          aws s3 cp dist/thebluemustard/browser/index.html "s3://${S3_BUCKET}/index.html" \
             --cache-control "no-cache, no-store, must-revalidate"
 
           # Sync any JSON files (ngsw, manifest, runtime config)
-          find dist/storescraft/browser -name '*.json' | while read -r f; do
-            REL="${f#dist/storescraft/browser/}"
+          find dist/thebluemustard/browser -name '*.json' | while read -r f; do
+            REL="${f#dist/thebluemustard/browser/}"
             aws s3 cp "$f" "s3://${S3_BUCKET}/${REL}" \
               --cache-control "no-cache, no-store, must-revalidate"
           done
@@ -321,7 +321,7 @@ jobs:
 
     environment:
       name: production
-      url: https://${{ vars.CF_DOMAIN_PROD || 'storescraft.com' }}
+      url: https://${{ vars.CF_DOMAIN_PROD || 'thebluemustard.com' }}
 
     permissions:
       contents: read
@@ -337,11 +337,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ui-dist-${{ env.SHORT_SHA }}
-          path: dist/storescraft/browser
+          path: dist/thebluemustard/browser
 
       - name: Pre-deploy validation
         run: |
-          FILE_COUNT=$(find dist/storescraft/browser -type f | wc -l | tr -d ' ')
+          FILE_COUNT=$(find dist/thebluemustard/browser -type f | wc -l | tr -d ' ')
           if [ "$FILE_COUNT" -lt 5 ]; then
             echo "::error::Artifact corrupted — only ${FILE_COUNT} files found."
             exit 1
@@ -357,18 +357,18 @@ jobs:
 
       - name: Sync to S3
         run: |
-          aws s3 sync dist/storescraft/browser "s3://${S3_BUCKET}" \
+          aws s3 sync dist/thebluemustard/browser "s3://${S3_BUCKET}" \
             --delete \
             --no-progress \
             --cache-control "public, max-age=31536000, immutable" \
             --exclude "index.html" \
             --exclude "*.json"
 
-          aws s3 cp dist/storescraft/browser/index.html "s3://${S3_BUCKET}/index.html" \
+          aws s3 cp dist/thebluemustard/browser/index.html "s3://${S3_BUCKET}/index.html" \
             --cache-control "no-cache, no-store, must-revalidate"
 
-          find dist/storescraft/browser -name '*.json' | while read -r f; do
-            REL="${f#dist/storescraft/browser/}"
+          find dist/thebluemustard/browser -name '*.json' | while read -r f; do
+            REL="${f#dist/thebluemustard/browser/}"
             aws s3 cp "$f" "s3://${S3_BUCKET}/${REL}" \
               --cache-control "no-cache, no-store, must-revalidate"
           done

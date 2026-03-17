@@ -120,28 +120,28 @@ export class UiBannerComponent {
   /** Background + text — using only the homepage's colour palette */
   get wrapperClasses(): string {
     switch (this.message.type) {
-      case 'SALE':         return 'bg-[#FFC60B] text-[#111111] border-b border-[#e6b300]';
-      case 'ANNOUNCEMENT': return 'bg-[#111111] text-white';
-      case 'NOTE':         return 'bg-[#111111] text-white/80';
-      default:             return 'bg-[#F9F4EB] text-[#111111]';
+      case 'SALE':         return 'bg-theme-accent text-theme-bg border-b border-theme-border';
+      case 'ANNOUNCEMENT': return 'bg-theme-fg text-theme-bg';
+      case 'NOTE':         return 'bg-theme-fg text-theme-bg/80';
+      default:             return 'bg-theme-secondary text-theme-fg';
     }
   }
 
   /** CTA pill colours */
   get ctaClasses(): string {
     switch (this.message.type) {
-      case 'SALE':         return 'bg-[#111111] text-white shadow-sm';
+      case 'SALE':         return 'bg-theme-bg text-theme-fg border border-theme-border shadow-sm';
       case 'ANNOUNCEMENT':
-      case 'NOTE':         return 'bg-white/10 border border-white/15 text-white';
-      default:             return 'bg-[#111111] text-white';
+      case 'NOTE':         return 'bg-theme-bg/10 border border-theme-bg/20 text-theme-bg';
+      default:             return 'bg-theme-fg text-theme-bg';
     }
   }
 
   /** Dismiss button colours */
   get dismissClasses(): string {
     switch (this.message.type) {
-      case 'SALE': return 'text-[#111111]/40 hover:bg-black/10 hover:text-[#111111]';
-      default:     return 'text-white/30 hover:bg-white/10 hover:text-white';
+      case 'SALE': return 'text-theme-bg/60 hover:bg-theme-bg/10 hover:text-theme-bg';
+      default:     return 'text-theme-bg/60 hover:bg-theme-bg/10 hover:text-theme-bg';
     }
   }
 
@@ -164,10 +164,10 @@ export class UiBannerComponent {
 
   get iconColor(): string {
     switch (this.message.type) {
-      case 'SALE':         return '#111111';
+      case 'SALE':         return 'var(--background)';
       case 'ANNOUNCEMENT':
-      case 'NOTE':         return 'rgba(255,255,255,0.75)';
-      default:             return '#111111';
+      case 'NOTE':         return 'var(--background)';
+      default:             return 'var(--foreground)';
     }
   }
 }

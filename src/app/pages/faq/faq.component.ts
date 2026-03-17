@@ -29,7 +29,7 @@ interface FaqCategory {
             <span class="breadcrumb-current">FAQ</span>
           </nav>
           <h1 class="page-title">Frequently Asked Questions</h1>
-          <p class="page-subtitle">Everything you need to know about StoresCraft.</p>
+          <p class="page-subtitle">Everything you need to know about TheBlueMustard.</p>
         </div>
       </section>
 
@@ -70,7 +70,7 @@ interface FaqCategory {
     :host {
       display: block;
       min-height: 100vh;
-      background: #F9F4EB;
+      background: var(--background);
     }
 
     .container {
@@ -82,7 +82,7 @@ interface FaqCategory {
     /* Hero */
     .hero-section {
       padding: 2rem 0 1.5rem;
-      border-bottom: 2px solid #111;
+      border-bottom: 2px solid var(--border);
     }
 
     .breadcrumb {
@@ -95,31 +95,30 @@ interface FaqCategory {
     .breadcrumb-link {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #111;
+      color: var(--foreground);
       text-decoration: none;
     }
 
-    .breadcrumb-link:hover { color: #2B57D6; }
-    .breadcrumb-sep { color: #111; opacity: 0.4; }
+    .breadcrumb-link:hover { color: var(--primary); }
+    .breadcrumb-sep { color: var(--foreground); opacity: 0.4; }
 
     .breadcrumb-current {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111;
+      color: var(--foreground);
     }
 
     .page-title {
       font-size: 2.5rem;
       font-weight: 900;
-      color: #111;
+      color: var(--foreground);
       letter-spacing: -0.03em;
       margin: 0 0 0.5rem;
     }
 
     .page-subtitle {
       font-size: 1.1rem;
-      color: #111;
-      opacity: 0.7;
+      color: var(--muted);
       margin: 0;
       font-weight: 500;
     }
@@ -130,35 +129,35 @@ interface FaqCategory {
     }
 
     .category-card {
-      background: #fff;
-      border: 2px solid #111;
-      box-shadow: 4px 4px 0px 0px #111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       padding: 0;
       margin-bottom: 1.5rem;
       overflow: hidden;
     }
 
     .card {
-      background: #fff;
-      border: 2px solid #111;
-      box-shadow: 4px 4px 0px 0px #111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       margin-bottom: 1.5rem;
     }
 
     .category-title {
       font-size: 1.25rem;
       font-weight: 800;
-      color: #111;
+      color: var(--on-accent);
       margin: 0;
       padding: 1.25rem 1.5rem;
-      background: #FFC60B;
-      border-bottom: 2px solid #111;
+      background: var(--accent);
+      border-bottom: 2px solid var(--border);
       letter-spacing: -0.01em;
     }
 
     /* FAQ Item */
     .faq-item {
-      border-bottom: 2px solid #111;
+      border-bottom: 2px solid var(--border);
     }
 
     .faq-item:last-child {
@@ -175,7 +174,7 @@ interface FaqCategory {
       border: none;
       font-size: 1rem;
       font-weight: 700;
-      color: #111;
+      color: var(--foreground);
       text-align: left;
       cursor: pointer;
       font-family: inherit;
@@ -184,7 +183,7 @@ interface FaqCategory {
     }
 
     .faq-question:hover {
-      background: rgba(0, 0, 0, 0.03);
+      background: var(--surface-hover);
     }
 
     .chevron {
@@ -203,8 +202,7 @@ interface FaqCategory {
     .faq-answer p {
       font-size: 0.975rem;
       line-height: 1.7;
-      color: #111;
-      opacity: 0.8;
+      color: var(--muted);
       margin: 0;
     }
 
@@ -212,20 +210,20 @@ interface FaqCategory {
     .cta-card {
       text-align: center;
       padding: 2.5rem 2rem;
-      background: #FA4B28;
+      background: var(--primary);
     }
 
     .cta-heading {
       font-size: 1.5rem;
       font-weight: 900;
-      color: #111;
+      color: var(--on-primary);
       margin: 0 0 0.5rem;
     }
 
     .cta-text {
       font-size: 1rem;
-      color: #111;
-      opacity: 0.9;
+      color: var(--on-primary);
+      opacity: 0.95;
       margin: 0 0 1.5rem;
     }
 
@@ -233,12 +231,12 @@ interface FaqCategory {
       display: inline-flex;
       align-items: center;
       padding: 0.875rem 2.5rem;
-      background: #FFC60B;
-      color: #111;
+      background: var(--surface);
+      color: var(--foreground);
       font-size: 1rem;
       font-weight: 800;
-      border: 2px solid #111;
-      box-shadow: 4px 4px 0px 0px #111;
+      border: 2px solid var(--foreground);
+      box-shadow: 4px 4px 0px 0px var(--foreground);
       text-decoration: none;
       cursor: pointer;
       transition: transform 0.1s, box-shadow 0.1s;
@@ -246,7 +244,7 @@ interface FaqCategory {
 
     .btn-cta:hover {
       transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0px 0px #111;
+      box-shadow: 6px 6px 0px 0px var(--foreground);
     }
 
     .btn-cta:active {
@@ -270,8 +268,8 @@ export class FaqComponent {
       icon: 'rocket',
       items: [
         {
-          question: 'What is StoresCraft?',
-          answer: 'StoresCraft is a digital product marketplace that lets creators build their own online stores and sell digital assets like templates, fonts, graphics, code, eBooks, and more. Buyers can explore products across the marketplace or visit individual creator storefronts.',
+          question: 'What is TheBlueMustard?',
+          answer: 'TheBlueMustard is a digital product marketplace that lets creators build their own online stores and sell digital assets like templates, fonts, graphics, code, eBooks, and more. Buyers can explore products across the marketplace or visit individual creator storefronts.',
           open: false
         },
         {
@@ -280,7 +278,7 @@ export class FaqComponent {
           open: false
         },
         {
-          question: 'Is it free to use StoresCraft?',
+          question: 'Is it free to use TheBlueMustard?',
           answer: 'Yes! Creating an account and browsing the marketplace is completely free. If you want to become a creator and sell products, you can get started at no cost — sign up and create your first store for free.',
           open: false
         },
@@ -369,7 +367,7 @@ export class FaqComponent {
         },
         {
           question: 'What are user roles?',
-          answer: 'StoresCraft has three roles: User (default — can browse and buy), Creator (can create stores and sell products), and Admin (platform administration). You start as a User and can upgrade to Creator from the "Become a Creator" page.',
+          answer: 'TheBlueMustard has three roles: User (default — can browse and buy), Creator (can create stores and sell products), and Admin (platform administration). You start as a User and can upgrade to Creator from the "Become a Creator" page.',
           open: false
         }
       ]

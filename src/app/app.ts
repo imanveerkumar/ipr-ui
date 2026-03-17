@@ -9,5 +9,5 @@ import { ToasterComponent } from './shared/components/toaster/toaster.component'
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('storescraft');
+  protected readonly title = signal('thebluemustard');
 }

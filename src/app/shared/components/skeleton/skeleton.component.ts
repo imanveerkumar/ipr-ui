@@ -73,9 +73,9 @@ export class SkeletonComponent {
       ></div>
       <div class="text-center md:text-left">
         <!-- Value skeleton -->
-        <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
+        <div class="h-4 md:h-6 w-8 md:w-12 rounded animate-pulse mb-0.5" style="background-color: var(--secondary)"></div>
         <!-- Label skeleton -->
-        <div class="h-2.5 md:h-3 w-12 md:w-16 bg-[#111111]/5 rounded animate-pulse"></div>
+        <div class="h-2.5 md:h-3 w-12 md:w-16 rounded animate-pulse" style="background-color: var(--border)"></div>
       </div>
     </div>
   `,

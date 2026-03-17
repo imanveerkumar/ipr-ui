@@ -16,16 +16,16 @@ import { Product } from '../../core/models';
   standalone: true,
   imports: [CommonModule, FormsModule, MasonryGridComponent, WishlistButtonComponent],
   template: `
-    <div class="min-h-screen bg-white font-sans antialiased">
+    <div class="min-h-screen bg-theme-surface font-sans antialiased">
       <!-- Mobile-First Page Header -->
       <section class="relative overflow-hidden">
         <div class="bg-gradient-to-br from-[#b8e6c9] via-[#c8f0d0] to-[#d8f8e0] rounded-2xl sm:rounded-3xl mx-3 sm:mx-4 md:mx-6 lg:mx-8 mt-3 sm:mt-4">
           <div class="px-4 sm:px-6 py-6 sm:py-8 md:py-12">
             <div class="text-center">
               <div class="inline-flex items-center px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-sm mb-2 sm:mb-3">
-                <span class="text-xs sm:text-sm font-medium text-gray-800">Browse Collection</span>
+                <span class="text-xs sm:text-sm font-medium text-theme-fg">Browse Collection</span>
               </div>
-              <h1 class="font-dm-sans text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 uppercase tracking-tight">
+              <h1 class="font-dm-sans text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-theme-fg uppercase tracking-tight">
                 All Products
               </h1>
               <p class="text-sm sm:text-base text-gray-700/80 mt-2">
@@ -38,11 +38,11 @@ import { Product } from '../../core/models';
 
       <div class="px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8 max-w-7xl mx-auto">
         <!-- Search & Filter Bar - Mobile optimized -->
-        <div class="bg-gray-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6">
+        <div class="bg-theme-bg rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6">
           <div class="flex flex-col sm:flex-row gap-3">
             <!-- Search Input -->
             <div class="flex-1 relative">
-              <svg class="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
               <input
@@ -50,17 +50,17 @@ import { Product } from '../../core/models';
                 [(ngModel)]="searchQuery"
                 (input)="filterProducts()"
                 placeholder="Search products..."
-                class="w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all text-sm sm:text-base min-h-[48px]"
+                class="w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-3.5 bg-theme-surface border border-theme-secondary rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all text-sm sm:text-base min-h-[48px]"
               >
             </div>
             
             <!-- Sort Dropdown -->
             <div class="flex items-center gap-2 sm:gap-3">
-              <span class="text-xs sm:text-sm text-gray-500 whitespace-nowrap hidden sm:inline">Sort:</span>
+              <span class="text-xs sm:text-sm text-theme-muted whitespace-nowrap hidden sm:inline">Sort:</span>
               <select 
                 [(ngModel)]="sortBy"
                 (change)="filterProducts()"
-                class="flex-1 sm:flex-none px-3 sm:px-4 py-3 sm:py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm min-h-[48px] min-w-[140px] sm:min-w-[160px]"
+                class="flex-1 sm:flex-none px-3 sm:px-4 py-3 sm:py-3.5 bg-theme-surface border border-theme-secondary rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm min-h-[48px] min-w-[140px] sm:min-w-[160px]"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -73,13 +73,13 @@ import { Product } from '../../core/models';
           
           <!-- Active Search - Clear button -->
           @if (searchQuery) {
-            <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
-              <p class="text-sm text-gray-600">
+            <div class="flex items-center justify-between mt-3 pt-3 border-t border-theme-secondary">
+              <p class="text-sm text-theme-muted">
                 <span class="font-semibold">{{ filteredProducts().length }}</span> results for "{{ searchQuery }}"
               </p>
               <button 
                 (click)="clearSearch()" 
-                class="text-sm text-gray-700 hover:text-gray-900 font-medium flex items-center gap-1 min-h-[36px] px-2"
+                class="text-sm text-theme-fg hover:text-theme-fg font-medium flex items-center gap-1 min-h-[36px] px-2"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -94,16 +94,16 @@ import { Product } from '../../core/models';
         @if (filteredProducts().length === 0) {
           <div class="bg-gradient-to-br from-[#fff3d0] via-[#fff7e0] to-[#fffbeb] rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center">
             <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-white/80 rounded-full flex items-center justify-center mb-4 sm:mb-6">
-              <svg class="w-8 h-8 sm:w-10 sm:h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-8 h-8 sm:w-10 sm:h-10 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
             </div>
-            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">No products found</h3>
-            <p class="text-gray-600 text-sm sm:text-base mb-6">Try a different search term</p>
+            <h3 class="text-lg sm:text-xl font-bold text-theme-fg mb-2">No products found</h3>
+            <p class="text-theme-muted text-sm sm:text-base mb-6">Try a different search term</p>
             @if (searchQuery) {
               <button 
                 (click)="clearSearch()" 
-                class="px-6 sm:px-8 py-3 sm:py-3.5 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 active:bg-gray-950 transition-colors min-h-[48px]"
+                class="px-6 sm:px-8 py-3 sm:py-3.5 bg-theme-fg text-theme-bg rounded-xl font-semibold hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
               >
                 Show All Products
               </button>
@@ -120,7 +120,7 @@ import { Product } from '../../core/models';
             [getItemRatio]="getItemRatio"
           >
             <ng-template let-product>
-              <div class="bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group relative cursor-pointer border border-gray-100" (click)="navigateTo('/product/' + product.id)">
+              <div class="bg-theme-surface rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group relative cursor-pointer border border-theme-secondary" (click)="navigateTo('/product/' + product.id)">
                 <!-- Product Image -->
                 <div class="relative overflow-hidden">
                   @if (product.coverImageUrl) {
@@ -156,16 +156,16 @@ import { Product } from '../../core/models';
 
                 <!-- Mobile Product Info -->
                 <div class="md:hidden px-2.5 pt-2 pb-2.5">
-                  <h3 class="font-semibold text-gray-900 text-[13px] leading-snug line-clamp-2 mb-1.5">
+                  <h3 class="font-semibold text-theme-fg text-[13px] leading-snug line-clamp-2 mb-0.5">
                     {{ product.title }}
                   </h3>
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5 min-w-0">
-                      <span class="font-bold text-gray-900 text-[13px] whitespace-nowrap">
+                      <span class="font-bold text-theme-fg text-[13px] whitespace-nowrap">
                         ₹{{ product.price / 100 }}
                       </span>
                       @if (product.compareAtPrice && product.compareAtPrice > product.price) {
-                        <span class="text-[10px] text-gray-400 line-through whitespace-nowrap">
+                        <span class="text-[10px] text-theme-muted line-through whitespace-nowrap">
                           ₹{{ product.compareAtPrice / 100 }}
                         </span>
                       }
@@ -174,7 +174,7 @@ import { Product } from '../../core/models';
                       <button
                         (click)="cartService.isInCart(product.id) ? removeFromCart(product) : addToCart(product); $event.stopPropagation()"
                         class="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold transition-all active:scale-95 flex-shrink-0"
-                        [class]="cartService.isInCart(product.id) ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-600'"
+                        [class]="cartService.isInCart(product.id) ? 'bg-emerald-50 text-emerald-700' : 'bg-theme-secondary text-theme-muted'"
                       >
                         @if (cartService.isInCart(product.id)) {
                           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,7 +230,7 @@ import { Product } from '../../core/models';
                         </button>
                         <button
                           (click)="handleBuyNow(product); $event.stopPropagation()"
-                          class="px-3 py-1.5 bg-white text-gray-900 text-xs font-bold rounded-lg hover:bg-white/90 transition-all"
+                          class="px-3 py-1.5 bg-theme-surface text-theme-fg text-xs font-bold rounded-lg hover:bg-white/90 transition-all"
                         >
                           Buy Now
                         </button>
@@ -247,7 +247,7 @@ import { Product } from '../../core/models';
         <div class="mt-6 sm:mt-8 md:mt-10">
           <button 
             (click)="navigateTo('/')" 
-            class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-xl transition-colors font-medium min-h-[48px]"
+            class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 text-theme-fg hover:text-theme-fg bg-theme-secondary hover:bg-theme-secondary active:bg-theme-secondary rounded-xl transition-colors font-medium min-h-[48px]"
           >
             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>

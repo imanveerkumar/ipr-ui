@@ -25,3 +25,6 @@ export * from './wishlist.service';
 
 // Settings
 export * from './settings.service';
+
+// Theme
+export * from './theme.service';

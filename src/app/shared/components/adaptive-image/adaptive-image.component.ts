@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div
-      class="adaptive-image-wrapper relative overflow-hidden bg-[#F9F4EB]"
+      class="adaptive-image-wrapper relative overflow-hidden bg-theme-secondary"
       [ngClass]="wrapperClass"
       [style.aspect-ratio]="computedAspectRatio"
       [style.max-height]="maxHeight ? maxHeight + 'px' : null"
@@ -35,7 +35,7 @@ import { CommonModule } from '@angular/common';
       <!-- Fallback placeholder when no image -->
       <div
         *ngIf="!src || hasError()"
-        class="absolute inset-0 flex items-center justify-center bg-[#F9F4EB]"
+        class="absolute inset-0 flex items-center justify-center bg-theme-secondary"
         [class.rounded-lg]="rounded"
       >
         <svg class="w-8 h-8 md:w-12 md:h-12 text-[#111111]/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">

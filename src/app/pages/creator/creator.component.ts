@@ -13,10 +13,10 @@ import { ToasterService } from '../../core/services/toaster.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="min-h-screen bg-[#F9F4EB] font-sans antialiased">
+    <div class="min-h-screen bg-theme-secondary font-sans antialiased">
       @if (loading()) {
         <!-- Loading Skeleton -->
-        <div class="bg-[#F9F4EB] border-b-2 border-black">
+        <div class="bg-theme-secondary border-b-2 border-theme-border">
           <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="h-4 w-40 bg-[#111111]/10 rounded animate-pulse"></div>
           </div>
@@ -24,7 +24,7 @@ import { ToasterService } from '../../core/services/toaster.service';
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <!-- Avatar skeleton -->
           <div class="flex flex-col items-center">
-            <div class="w-28 h-28 md:w-36 md:h-36 rounded-full bg-white border-2 border-black animate-pulse"></div>
+            <div class="w-28 h-28 md:w-36 md:h-36 rounded-full bg-theme-surface border-2 border-theme-border animate-pulse"></div>
             <div class="h-7 w-48 bg-[#111111]/10 rounded animate-pulse mt-5"></div>
             <div class="h-4 w-24 bg-[#111111]/5 rounded animate-pulse mt-2"></div>
             <div class="h-4 w-64 bg-[#111111]/5 rounded animate-pulse mt-4"></div>
@@ -43,32 +43,32 @@ import { ToasterService } from '../../core/services/toaster.service';
           </div>
           <!-- Stores skeleton -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-12">
-            <div *ngFor="let i of [1,2,3]" class="h-48 bg-white border-2 border-black rounded-2xl animate-pulse"></div>
+            <div *ngFor="let i of [1,2,3]" class="h-48 bg-theme-surface border-2 border-theme-border rounded-2xl animate-pulse"></div>
           </div>
         </div>
       } @else if (creator()) {
         <!-- Breadcrumb -->
-        <div class="bg-[#F9F4EB] border-b-2 border-black">
+        <div class="bg-theme-secondary border-b-2 border-theme-border">
           <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4">
             <nav class="flex items-center gap-2 text-sm font-medium text-[#111111]/60 overflow-x-auto">
-              <a routerLink="/" class="hover:text-[#111111] transition-colors whitespace-nowrap">Home</a>
+              <a routerLink="/" class="hover:text-theme-fg transition-colors whitespace-nowrap">Home</a>
               <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-              <a routerLink="/explore" [queryParams]="{tab: 'creators'}" class="hover:text-[#111111] transition-colors whitespace-nowrap">Creators</a>
+              <a routerLink="/explore" [queryParams]="{tab: 'creators'}" class="hover:text-theme-fg transition-colors whitespace-nowrap">Creators</a>
               <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-              <span class="text-[#111111] truncate">{{ creator()?.displayName || creator()?.username }}</span>
+              <span class="text-theme-fg truncate">{{ creator()?.displayName || creator()?.username }}</span>
             </nav>
           </div>
         </div>
 
         <!-- Creator Profile Header -->
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          <div class="bg-white border-2 border-black rounded-[2rem] p-6 md:p-10 shadow-[6px_6px_0px_0px_#000] text-center relative overflow-hidden">
+          <div class="bg-theme-surface border-2 border-theme-border rounded-[2rem] p-6 md:p-10 shadow-[6px_6px_0px_0px_#000] text-center relative overflow-hidden">
             <!-- Decorative BG -->
             <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle, #111111 1px, transparent 1px); background-size: 20px 20px;"></div>
 
             <!-- Avatar -->
             <div class="relative z-10">
-              <div class="w-28 h-28 md:w-36 md:h-36 mx-auto rounded-full bg-gradient-to-br from-[#FFC60B] to-[#FA4B28] border-3 border-black overflow-hidden shadow-[4px_4px_0px_0px_#000]" style="border-width: 3px;">
+              <div class="w-28 h-28 md:w-36 md:h-36 mx-auto rounded-full bg-gradient-to-br from-[#FFC60B] to-[#FA4B28] border-3 border-theme-border overflow-hidden shadow-[4px_4px_0px_0px_#000]" style="border-width: 3px;">
                 @if (creator()?.avatarUrl) {
                   <img [src]="creator()?.avatarUrl" [alt]="creator()?.displayName || creator()?.username" class="w-full h-full object-cover" />
                 } @else {
@@ -79,7 +79,7 @@ import { ToasterService } from '../../core/services/toaster.service';
               </div>
 
               <!-- Name -->
-              <h1 class="font-display text-2xl md:text-3xl font-bold text-[#111111] mt-5">
+              <h1 class="font-display text-2xl md:text-3xl font-bold text-theme-fg mt-5">
                 {{ creator()?.displayName || creator()?.username }}
               </h1>
               <p class="text-sm md:text-base text-[#111111]/50 font-medium mt-1">&#64;{{ creator()?.username }}</p>
@@ -94,14 +94,14 @@ import { ToasterService } from '../../core/services/toaster.service';
                 <div class="flex items-center justify-center gap-3 mt-5">
                   @if (creator()?.websiteUrl) {
                     <a [href]="creator()?.websiteUrl" target="_blank" rel="noopener noreferrer"
-                      class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F9F4EB] border-2 border-black rounded-lg text-xs font-bold text-[#111111] hover:bg-[#2B57D6] hover:text-white transition-colors">
+                      class="flex items-center gap-1.5 px-3 py-1.5 bg-theme-secondary border-2 border-theme-border rounded-lg text-xs font-bold text-theme-fg hover:bg-theme-primary hover:text-white transition-colors">
                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                       Website
                     </a>
                   }
                   @if (creator()?.twitterHandle) {
                     <a [href]="'https://x.com/' + creator()?.twitterHandle" target="_blank" rel="noopener noreferrer"
-                      class="flex items-center gap-1.5 px-3 py-1.5 bg-[#F9F4EB] border-2 border-black rounded-lg text-xs font-bold text-[#111111] hover:bg-[#111111] hover:text-white transition-colors">
+                      class="flex items-center gap-1.5 px-3 py-1.5 bg-theme-secondary border-2 border-theme-border rounded-lg text-xs font-bold text-theme-fg hover:bg-theme-fg hover:text-white transition-colors">
                       <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                       &#64;{{ creator()?.twitterHandle }}
                     </a>
@@ -112,12 +112,12 @@ import { ToasterService } from '../../core/services/toaster.service';
               <!-- Stats -->
               <div class="flex justify-center gap-8 mt-6">
                 <div class="text-center">
-                  <div class="text-2xl md:text-3xl font-bold text-[#111111]">{{ creator()?.storeCount }}</div>
+                  <div class="text-2xl md:text-3xl font-bold text-theme-fg">{{ creator()?.storeCount }}</div>
                   <div class="text-xs md:text-sm text-[#111111]/50 font-medium">Stores</div>
                 </div>
                 <div class="w-px bg-black/15 self-stretch"></div>
                 <div class="text-center">
-                  <div class="text-2xl md:text-3xl font-bold text-[#111111]">{{ creator()?.productCount }}</div>
+                  <div class="text-2xl md:text-3xl font-bold text-theme-fg">{{ creator()?.productCount }}</div>
                   <div class="text-xs md:text-sm text-[#111111]/50 font-medium">Products</div>
                 </div>
               </div>
@@ -133,8 +133,8 @@ import { ToasterService } from '../../core/services/toaster.service';
         <!-- Stores Section -->
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-16">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="font-display text-xl md:text-2xl font-bold text-[#111111] flex items-center gap-2">
-              <div class="w-8 h-8 bg-[#FA4B28] border border-black rounded-lg flex items-center justify-center">
+            <h2 class="font-display text-xl md:text-2xl font-bold text-theme-fg flex items-center gap-2">
+              <div class="w-8 h-8 bg-theme-danger border border-theme-border rounded-lg flex items-center justify-center">
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
               </div>
               Stores
@@ -144,9 +144,9 @@ import { ToasterService } from '../../core/services/toaster.service';
 
           @if (storesLoading()) {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              <div *ngFor="let i of [1,2,3]" class="bg-white border-2 border-black rounded-2xl overflow-hidden">
-                <div class="h-24 md:h-32 bg-[#F9F4EB] animate-pulse relative">
-                  <div class="absolute -bottom-6 left-4 w-14 h-14 bg-white border-2 border-black rounded-xl animate-pulse"></div>
+              <div *ngFor="let i of [1,2,3]" class="bg-theme-surface border-2 border-theme-border rounded-2xl overflow-hidden">
+                <div class="h-24 md:h-32 bg-theme-secondary animate-pulse relative">
+                  <div class="absolute -bottom-6 left-4 w-14 h-14 bg-theme-surface border-2 border-theme-border rounded-xl animate-pulse"></div>
                 </div>
                 <div class="p-4 pt-10">
                   <div class="h-5 bg-[#111111]/10 rounded animate-pulse mb-2 w-1/2"></div>
@@ -156,8 +156,8 @@ import { ToasterService } from '../../core/services/toaster.service';
               </div>
             </div>
           } @else if (stores().length === 0) {
-            <div class="text-center py-12 bg-white border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_#000]">
-              <div class="w-16 h-16 mx-auto mb-4 bg-[#F9F4EB] border-2 border-black rounded-xl flex items-center justify-center">
+            <div class="text-center py-12 bg-theme-surface border-2 border-theme-border rounded-2xl shadow-[4px_4px_0px_0px_#000]">
+              <div class="w-16 h-16 mx-auto mb-4 bg-theme-secondary border-2 border-theme-border rounded-xl flex items-center justify-center">
                 <svg class="w-8 h-8 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
               </div>
               <p class="text-[#111111]/60 font-medium">This creator hasn't published any stores yet.</p>
@@ -166,7 +166,7 @@ import { ToasterService } from '../../core/services/toaster.service';
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               @for (store of stores(); track store.id) {
                 <a [routerLink]="['/store', store.slug]"
-                  class="group bg-white border-2 border-black rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300"
+                  class="group bg-theme-surface border-2 border-theme-border rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300"
                 >
                   <!-- Banner -->
                   <div class="bg-gradient-to-br from-[#2B57D6] to-[#FA4B28] relative" [style.aspect-ratio]="getStoreBannerRatio(store)" style="min-height: 80px; max-height: 160px;">
@@ -174,12 +174,12 @@ import { ToasterService } from '../../core/services/toaster.service';
                       <img [src]="store.bannerUrl" [alt]="store.name" class="w-full h-full object-cover" loading="lazy" />
                     }
                     <!-- Logo -->
-                    <div class="absolute -bottom-6 left-4 w-14 h-14 md:w-16 md:h-16 bg-white border-2 border-black rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000]">
+                    <div class="absolute -bottom-6 left-4 w-14 h-14 md:w-16 md:h-16 bg-theme-surface border-2 border-theme-border rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_#000]">
                       @if (store.logoUrl) {
                         <img [src]="store.logoUrl" [alt]="store.name" class="w-full h-full object-cover" />
                       } @else {
-                        <div class="w-full h-full bg-[#F9F4EB] flex items-center justify-center">
-                          <span class="text-lg md:text-xl font-bold text-[#111111]">{{ store.name.charAt(0) }}</span>
+                        <div class="w-full h-full bg-theme-secondary flex items-center justify-center">
+                          <span class="text-lg md:text-xl font-bold text-theme-fg">{{ store.name.charAt(0) }}</span>
                         </div>
                       }
                     </div>
@@ -187,7 +187,7 @@ import { ToasterService } from '../../core/services/toaster.service';
 
                   <!-- Info -->
                   <div class="p-4 pt-10">
-                    <h3 class="font-bold text-[#111111] text-base md:text-lg mb-1 group-hover:text-[#2B57D6] transition-colors truncate">
+                    <h3 class="font-bold text-theme-fg text-base md:text-lg mb-1 group-hover:text-theme-primary transition-colors truncate">
                       {{ store.name }}
                     </h3>
                     @if (store.tagline) {
@@ -206,13 +206,13 @@ import { ToasterService } from '../../core/services/toaster.service';
       } @else {
         <!-- Not Found -->
         <div class="min-h-[60vh] flex items-center justify-center px-4">
-          <div class="text-center bg-white border-2 border-black rounded-2xl p-8 md:p-12 shadow-[6px_6px_0px_0px_#000] max-w-md w-full">
-            <div class="w-20 h-20 mx-auto mb-6 bg-[#FA4B28]/10 border-2 border-black rounded-2xl flex items-center justify-center">
-              <svg class="w-10 h-10 text-[#FA4B28]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          <div class="text-center bg-theme-surface border-2 border-theme-border rounded-2xl p-8 md:p-12 shadow-[6px_6px_0px_0px_#000] max-w-md w-full">
+            <div class="w-20 h-20 mx-auto mb-6 bg-theme-danger/10 border-2 border-theme-border rounded-2xl flex items-center justify-center">
+              <svg class="w-10 h-10 text-theme-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
             </div>
-            <h1 class="text-2xl font-display font-bold text-[#111111] mb-2">Creator not found</h1>
+            <h1 class="text-2xl font-display font-bold text-theme-fg mb-2">Creator not found</h1>
             <p class="text-[#111111]/60 mb-6">The creator you're looking for doesn't exist or has been removed.</p>
-            <a routerLink="/explore" [queryParams]="{tab: 'creators'}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-xl font-bold shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+            <a routerLink="/explore" [queryParams]="{tab: 'creators'}" class="inline-flex items-center gap-2 px-6 py-3 bg-theme-accent text-theme-fg border-2 border-theme-border rounded-xl font-bold shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               Browse Creators
             </a>

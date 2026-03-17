@@ -121,7 +121,7 @@ export class CheckoutService {
         amount: paymentData.amount, // amount is already in paise from the API
         currency: paymentData.currency,
         order_id: paymentData.razorpayOrderId,
-        name: 'StoresCraft',
+        name: 'TheBlueMustard',
         description: 'Digital Product Purchase',
         prefill: {
           email: userEmail,

@@ -15,6 +15,7 @@ import {
 } from '../../../core/services/explore.service';
 import { SubdomainService } from '../../../core/services/subdomain.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
+import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -23,12 +24,12 @@ import { ConfirmService } from '../../../core/services/confirm.service';
   styles: [`
     :host {
       --bg-red: #FA4B28;
-      --bg-beige: #F9F4EB;
-      --btn-yellow: #FFC60B;
-      --ticket-green: #68E079;
-      --star-blue: #2B57D6;
-      --text-black: #111111;
-      --grid-line: rgba(0, 0, 0, 0.8);
+      --bg-beige: var(--secondary);
+      --btn-yellow: var(--accent);
+      --ticket-green: var(--success);
+      --star-blue: var(--primary);
+      --text-black: var(--foreground);
+      --grid-line: var(--border);
       display: block;
       font-family: 'Inter', sans-serif;
       width: 100%;
@@ -181,12 +182,13 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .nav-link:hover {
-      background-color: rgba(0,0,0,0.05);
+      background-color: var(--surface-hover);
     }
 
     .nav-link.active {
       background-color: var(--ticket-green);
-      border-color: var(--text-black);
+      border-color: #111111;
+      color: #111111;
     }
 
     /* === SEARCH SECTION === */
@@ -213,7 +215,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'DM Sans', sans-serif;
       font-size: 0.9375rem;
       color: var(--text-black);
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       outline: none;
@@ -221,7 +223,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .search-input::placeholder {
-      color: #888;
+      color: var(--muted);
     }
 
     .search-input:focus {
@@ -235,7 +237,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       transform: translateY(-50%);
       width: 20px;
       height: 20px;
-      color: #888;
+      color: var(--muted);
       pointer-events: none;
     }
 
@@ -260,7 +262,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       justify-content: center;
       width: 36px;
       height: 36px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 8px;
       cursor: pointer;
@@ -292,7 +294,8 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     .icon-btn.active {
       background: var(--ticket-green);
-      border-color: var(--text-black);
+      border-color: #111111;
+      color: #111111;
     }
 
     .icon-btn svg {
@@ -359,26 +362,26 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .btn-login:hover {
-      background: rgba(0,0,0,0.05);
+      background: var(--surface-hover);
     }
 
     .btn-signup {
       font-family: 'Caveat', cursive;
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--text-black);
+      color: var(--on-accent);
       padding: 8px 20px;
       background: var(--btn-yellow);
-      border: 2px solid var(--text-black);
+      border: 2px solid var(--on-accent);
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 4px 4px 0px var(--text-black);
+      box-shadow: 4px 4px 0px var(--on-accent);
     }
 
     .btn-signup:hover {
       transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--text-black);
+      box-shadow: 2px 2px 0px var(--on-accent);
     }
 
     /* === PROFILE BUTTON === */
@@ -398,7 +401,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       align-items: center;
       gap: 8px;
       padding: 4px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       cursor: pointer;
@@ -412,6 +415,18 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     .profile-btn.active {
       background: var(--ticket-green);
+      border-color: var(--on-success);
+      color: var(--on-success);
+    }
+
+    .profile-btn.active .profile-greeting {
+      color: var(--on-success);
+      opacity: 0.75;
+    }
+
+    .profile-btn.active .profile-name,
+    .profile-btn.active .profile-chevron {
+      color: var(--on-success);
     }
 
     .profile-avatar,
@@ -453,7 +468,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .profile-greeting {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.625rem;
-      color: #666;
+      color: var(--muted);
     }
 
     .profile-name {
@@ -616,7 +631,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .dropdown-user-email {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.8125rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
       word-break: break-word;
     }
@@ -641,7 +656,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .dropdown-item:hover {
-      background: var(--ticket-green);
+      background: var(--surface-hover);
     }
 
     .dropdown-item svg {
@@ -658,11 +673,11 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .dropdown-item.danger {
-      color: #dc2626;
+      color: var(--danger);
     }
 
     .dropdown-item.danger:hover {
-      background: #fecaca;
+      background: var(--danger-bg);
     }
 
     /* === MOBILE MENU === */
@@ -690,7 +705,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       bottom: 0;
       width: 300px;
       max-width: 90vw;
-      background: var(--bg-beige);
+      background: var(--background);
       z-index: 55;
       transform: translateX(100%);
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -721,7 +736,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       justify-content: space-between;
       padding: 1rem 1.25rem;
       border-bottom: 2px solid var(--text-black);
-      background: #fff;
+      background: var(--surface);
     }
 
     .mobile-menu-close {
@@ -763,7 +778,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
       color: var(--text-black);
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       outline: none;
@@ -827,7 +842,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
       font-weight: 600;
-      color: var(--text-black);
+      color: var(--foreground);
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -849,7 +864,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #888;
+      color: var(--muted);
       padding: 0.5rem 1rem;
       margin: 0;
     }
@@ -876,13 +891,14 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     .mobile-nav-link:hover,
     .mobile-nav-link:active {
-      background: rgba(0,0,0,0.05);
+      background: var(--surface-hover);
     }
 
     .mobile-nav-link.active {
       background: var(--btn-yellow);
-      border-color: var(--text-black);
-      box-shadow: 3px 3px 0px var(--text-black);
+      border-color: #111111;
+      box-shadow: 3px 3px 0px #111111;
+      color: #111111;
     }
 
     .mobile-nav-link svg {
@@ -910,11 +926,11 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .mobile-nav-link.danger {
-      color: #dc2626;
+      color: var(--danger);
     }
 
     .mobile-nav-link.danger:hover {
-      background: #fecaca;
+      background: var(--danger-bg);
     }
 
     /* === MOBILE AUTH === */
@@ -953,7 +969,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-weight: 600;
       color: var(--text-black);
       padding: 12px 24px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       cursor: pointer;
@@ -962,14 +978,14 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .mobile-auth-btn-secondary:hover {
-      background: rgba(0,0,0,0.05);
+      background: var(--surface-hover);
     }
 
     /* === SKELETON LOADER === */
     .skeleton-loader {
       width: 40px;
       height: 40px;
-      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background: linear-gradient(90deg, var(--secondary) 25%, var(--surface) 50%, var(--secondary) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
       border-radius: 50%;
@@ -1027,7 +1043,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #666;
+      color: var(--muted);
       margin: 0;
     }
 
@@ -1075,7 +1091,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     .search-item:hover,
     .search-item.active {
-      background: rgba(0, 0, 0, 0.05);
+      background: var(--surface-hover);
     }
 
     .search-item-image {
@@ -1085,7 +1101,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       border: 2px solid var(--text-black);
       object-fit: cover;
       flex-shrink: 0;
-      background: #fff;
+      background: var(--surface);
     }
 
     .search-item-avatar {
@@ -1116,7 +1132,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       height: 44px;
       border-radius: 8px;
       border: 2px solid var(--text-black);
-      background: #f0f0f0;
+      background: var(--secondary);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1148,7 +1164,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .search-item-subtitle {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.75rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -1184,7 +1200,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       width: 48px;
       height: 48px;
       margin: 0 auto 12px;
-      background: var(--bg-beige);
+      background: var(--secondary);
       border: 2px solid var(--text-black);
       border-radius: 50%;
       display: flex;
@@ -1195,20 +1211,20 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .search-empty-icon svg {
       width: 24px;
       height: 24px;
-      color: #666;
+      color: var(--muted);
     }
 
     .search-empty-text {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
-      color: #666;
+      color: var(--muted);
       margin: 0 0 4px;
     }
 
     .search-empty-hint {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.75rem;
-      color: #999;
+      color: var(--muted);
       margin: 0;
     }
 
@@ -1220,7 +1236,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .search-loading-spinner {
       width: 32px;
       height: 32px;
-      border: 3px solid #e0e0e0;
+      border: 3px solid var(--secondary);
       border-top-color: var(--btn-yellow);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
@@ -1234,14 +1250,14 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .search-loading-text {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
     }
 
     .search-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.3);
+      background: var(--overlay);
       z-index: 45;
       display: none;
     }
@@ -1254,7 +1270,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .mobile-search-overlay {
       position: fixed;
       inset: 0;
-      background: var(--bg-beige);
+      background: var(--background);
       z-index: 60;
       display: flex;
       flex-direction: column;
@@ -1278,7 +1294,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       gap: 12px;
       padding: 12px 16px;
       border-bottom: 2px solid var(--text-black);
-      background: #fff;
+      background: var(--surface);
     }
 
     .mobile-search-overlay-back {
@@ -1288,7 +1304,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       width: 40px;
       height: 40px;
       border: 2px solid var(--text-black);
-      background: #fff;
+      background: var(--surface);
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s;
@@ -1296,7 +1312,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .mobile-search-overlay-back:hover {
-      background: var(--bg-beige);
+      background: var(--secondary);
     }
 
     .mobile-search-overlay-back svg {
@@ -1316,7 +1332,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
       color: var(--text-black);
-      background: var(--bg-beige);
+      background: var(--secondary);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       outline: none;
@@ -1365,7 +1381,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-size: 0.875rem;
       font-weight: 600;
       color: var(--text-black);
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       cursor: pointer;
@@ -1396,7 +1412,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       width: 64px;
       height: 64px;
       margin: 0 auto 16px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50%;
       display: flex;
@@ -1407,7 +1423,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .mobile-search-results-empty-icon svg {
       width: 32px;
       height: 32px;
-      color: #999;
+      color: var(--muted);
     }
 
     .mobile-search-results-empty-title {
@@ -1421,7 +1437,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .mobile-search-results-empty-text {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
     }
 
@@ -1434,7 +1450,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       cursor: pointer;
       transition: all 0.15s;
       margin-bottom: 8px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
     }
 
@@ -1449,7 +1465,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       border: 2px solid var(--text-black);
       object-fit: cover;
       flex-shrink: 0;
-      background: #f0f0f0;
+      background: var(--secondary);
     }
 
     .mobile-search-item-avatar {
@@ -1494,7 +1510,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .mobile-search-item-subtitle {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -1526,6 +1542,155 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       border: 1px solid var(--text-black);
       color: var(--text-black);
     }
+
+    /* === THEME TOGGLE === */
+    .theme-toggle-container {
+      position: relative;
+      display: none;
+    }
+
+    @media (min-width: 640px) {
+      .theme-toggle-container {
+        display: block;
+      }
+    }
+
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border: 2px solid var(--text-black);
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--text-black);
+      transition: all 0.2s;
+    }
+
+    @media (min-width: 768px) {
+      .theme-toggle-btn {
+        width: 44px;
+        height: 44px;
+      }
+    }
+
+    .theme-toggle-btn:hover {
+      box-shadow: 3px 3px 0px var(--text-black);
+      transform: translate(-1px, -1px);
+    }
+
+    .theme-toggle-btn.active {
+      background: var(--accent);
+      border-color: var(--text-black);
+      color: var(--on-accent);
+    }
+
+    .theme-toggle-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .theme-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      width: 200px;
+      background: var(--background);
+      border: 2px solid var(--text-black);
+      border-radius: 12px;
+      box-shadow: 6px 6px 0px var(--text-black);
+      padding: 6px;
+      z-index: 1000;
+      animation: dropdown-enter 0.2s ease-out;
+    }
+
+    .theme-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--foreground);
+      background: none;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .theme-dropdown-item:hover {
+      background: var(--surface-hover);
+    }
+
+    .theme-dropdown-item.selected {
+      background: var(--accent);
+      color: var(--on-accent);
+      font-weight: 600;
+    }
+
+    .theme-dropdown-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .theme-dropdown-item .check-icon {
+      margin-left: auto;
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Mobile theme section */
+    .mobile-theme-section {
+      padding: 0.75rem 1rem;
+    }
+
+    .mobile-theme-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .mobile-theme-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--foreground);
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      text-align: left;
+    }
+
+    .mobile-theme-option:hover {
+      background: var(--surface-hover);
+    }
+
+    .mobile-theme-option.selected {
+      background: var(--accent);
+      color: var(--on-accent);
+      border-color: var(--on-accent);
+      box-shadow: 2px 2px 0px var(--on-accent);
+    }
+
+    .mobile-theme-option svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
   `],
   template: `
     <div class="header-wrapper">
@@ -1535,7 +1700,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
           <div class="header-inner">
             <!-- Logo -->
             <a class="logo" (click)="handleLogoClick()">
-              <span class="logo-text">StoresCraft.     </span>
+              <span class="logo-text">BlueMustard<span class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]">.</span></span>
 
             </a>
             
@@ -1752,6 +1917,88 @@ import { ConfirmService } from '../../../core/services/confirm.service';
                   </a>
                 }
 
+                <!-- Theme Toggle -->
+                <div class="theme-toggle-container">
+                  <button 
+                    class="theme-toggle-btn" 
+                    [class.active]="themeMenuOpen()"
+                    (click)="toggleThemeMenu($event)"
+                    title="Change theme">
+                    @switch (themeService.currentTheme) {
+                      @case ('light') {
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                        </svg>
+                      }
+                      @case ('dark') {
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                        </svg>
+                      }
+                      @case ('mustard-light') {
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                          <circle cx="12" cy="12" r="2" fill="currentColor" />
+                        </svg>
+                      }
+                      @case ('mustard-dark') {
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                          <circle cx="12" cy="12" r="2" fill="currentColor" />
+                        </svg>
+                      }
+                    }
+                  </button>
+
+                  @if (themeMenuOpen()) {
+                    <div class="dropdown-overlay" (click)="closeThemeMenu()"></div>
+                    <div class="theme-dropdown">
+                      <!-- Light -->
+                      <button class="theme-dropdown-item" [class.selected]="themeService.currentTheme === 'light'" (click)="selectTheme('light')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                        </svg>
+                        Light
+                        @if (themeService.currentTheme === 'light') {
+                          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        }
+                      </button>
+                      <!-- Dark -->
+                      <button class="theme-dropdown-item" [class.selected]="themeService.currentTheme === 'dark'" (click)="selectTheme('dark')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                        </svg>
+                        Dark
+                        @if (themeService.currentTheme === 'dark') {
+                          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        }
+                      </button>
+                      <!-- Mustard Light -->
+                      <button class="theme-dropdown-item" [class.selected]="themeService.currentTheme === 'mustard-light'" (click)="selectTheme('mustard-light')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                          <circle cx="12" cy="12" r="2" fill="currentColor" />
+                        </svg>
+                        Mustard Light
+                        @if (themeService.currentTheme === 'mustard-light') {
+                          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        }
+                      </button>
+                      <!-- Mustard Dark -->
+                      <button class="theme-dropdown-item" [class.selected]="themeService.currentTheme === 'mustard-dark'" (click)="selectTheme('mustard-dark')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                          <circle cx="12" cy="12" r="2" fill="currentColor" />
+                        </svg>
+                        Mustard Dark
+                        @if (themeService.currentTheme === 'mustard-dark') {
+                          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        }
+                      </button>
+                    </div>
+                  }
+                </div>
+
                 @if (auth.isSignedIn()) {
                   <!-- Profile -->
                   <div class="profile-container">
@@ -1851,7 +2098,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     <div class="mobile-menu" [class.active]="mobileMenuOpen()">
       <div class="mobile-menu-header">
         <a class="logo" (click)="handleLogoClick()">
-          <span class="logo-text">StoresCraft</span>
+          <span class="logo-text">BlueMustard</span>
         </a>
         <button class="mobile-menu-close" (click)="closeMobileMenu()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -1969,6 +2216,43 @@ import { ConfirmService } from '../../../core/services/confirm.service';
           </div>
           
           <div class="mobile-nav-divider"></div>
+
+          <!-- Theme Section (mobile) -->
+          <div class="mobile-nav-section">
+            <p class="mobile-nav-section-title">Theme</p>
+            <div class="mobile-theme-section">
+              <div class="mobile-theme-grid">
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'light'" (click)="selectTheme('light')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                  </svg>
+                  Light
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'dark'" (click)="selectTheme('dark')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                  </svg>
+                  Dark
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'mustard-light'" (click)="selectTheme('mustard-light')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  </svg>
+                  Mustard
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'mustard-dark'" (click)="selectTheme('mustard-dark')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  </svg>
+                  M. Dark
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mobile-nav-divider"></div>
           
           <button (click)="signOut()" class="mobile-nav-link danger">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -1977,6 +2261,41 @@ import { ConfirmService } from '../../../core/services/confirm.service';
             Sign Out
           </button>
         } @else {
+          <!-- Theme Section for guests -->
+          <div class="mobile-nav-section">
+            <p class="mobile-nav-section-title">Theme</p>
+            <div class="mobile-theme-section">
+              <div class="mobile-theme-grid">
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'light'" (click)="selectTheme('light')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                  </svg>
+                  Light
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'dark'" (click)="selectTheme('dark')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                  </svg>
+                  Dark
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'mustard-light'" (click)="selectTheme('mustard-light')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  </svg>
+                  Mustard
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'mustard-dark'" (click)="selectTheme('mustard-dark')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  </svg>
+                  M. Dark
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="mobile-auth-section">
             <button (click)="signUpMobile()" class="mobile-auth-btn-primary">Get Started Free</button>
             <button (click)="signInMobile()" class="mobile-auth-btn-secondary">Log in</button>
@@ -2068,7 +2387,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
             </div>
-            <p class="mobile-search-results-empty-title">Search StoresCraft</p>
+            <p class="mobile-search-results-empty-title">Search BlueMustard</p>
             <p class="mobile-search-results-empty-text">Find amazing products, stores, and creators</p>
           </div>
         } @else if (hasMobileNoResults()) {
@@ -2191,9 +2510,11 @@ export class NavbarComponent implements OnDestroy {
   cartService = inject(CartService);
   wishlistService = inject(WishlistService);
   confirmService = inject(ConfirmService);
+  themeService = inject(ThemeService);
   
   profileMenuOpen = signal(false);
   mobileMenuOpen = signal(false);
+  themeMenuOpen = signal(false);
   isScrolled = signal(false);
   
   // Desktop search state
@@ -2486,6 +2807,26 @@ export class NavbarComponent implements OnDestroy {
     this.closeMobileMenu();
     this.closeSearchDropdown();
     this.closeMobileSearch();
+    this.closeThemeMenu();
+  }
+
+  // === THEME METHODS ===
+
+  toggleThemeMenu(event: Event) {
+    event.stopPropagation();
+    this.themeMenuOpen.update(v => !v);
+    if (this.themeMenuOpen()) {
+      this.closeProfileMenu();
+    }
+  }
+
+  closeThemeMenu() {
+    this.themeMenuOpen.set(false);
+  }
+
+  selectTheme(theme: Theme) {
+    this.themeService.setTheme(theme);
+    this.closeThemeMenu();
   }
 
   handleLogoClick() {

@@ -30,23 +30,23 @@ import { UiBannerComponent } from './ui-banner.component';
       <div class="fixed bottom-4 right-4 z-50 flex flex-col gap-3 max-w-sm">
         @for (msg of uiMessages.toasts(); track msg.id) {
           <div
-            class="bg-white border border-black/10 rounded-2xl p-4 shadow-xl animate-slide-up backdrop-blur-sm"
+            class="bg-theme-surface border border-black/10 rounded-2xl p-4 shadow-xl animate-slide-up backdrop-blur-sm"
             [ngClass]="{
-              'border-l-4 border-l-[#FFC60B]': msg.type === 'SALE',
-              'border-l-4 border-l-[#111111]': msg.type === 'ANNOUNCEMENT',
-              'border-l-4 border-l-[#68E079]': msg.type === 'TIP',
+              'border-l-4 border-l-theme-accent': msg.type === 'SALE',
+              'border-l-4 border-l-theme-border': msg.type === 'ANNOUNCEMENT',
+              'border-l-4 border-l-theme-success': msg.type === 'TIP',
               'border-l-4 border-l-amber-500': msg.type === 'NOTE'
             }"
             role="alert"
           >
             <div class="flex items-start gap-3">
               <div class="flex-1 min-w-0">
-                <p class="font-bold text-sm text-[#111]">{{ msg.title }}</p>
-                <p *ngIf="msg.body" class="text-xs text-[#111]/60 mt-1 leading-relaxed">{{ msg.body }}</p>
+                <p class="font-bold text-sm text-theme-fg">{{ msg.title }}</p>
+                <p *ngIf="msg.body" class="text-xs text-theme-muted mt-1 leading-relaxed">{{ msg.body }}</p>
                 <a
                   *ngIf="msg.ctaUrl && msg.ctaText"
                   [routerLink]="msg.ctaUrl"
-                  class="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-[#111] hover:text-[#111]/70 transition-colors"
+                  class="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-theme-fg hover:text-theme-muted transition-colors"
                 >
                   {{ msg.ctaText }}
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
@@ -55,7 +55,7 @@ import { UiBannerComponent } from './ui-banner.component';
               <button
                 *ngIf="msg.dismissible"
                 (click)="onDismiss(msg.id)"
-                class="p-1 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0 text-gray-400 hover:text-gray-600"
+                class="p-1 rounded-full hover:bg-theme-secondary transition-colors flex-shrink-0 text-theme-muted hover:text-theme-muted"
                 aria-label="Close notification"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
