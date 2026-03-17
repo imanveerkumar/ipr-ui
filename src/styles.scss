@@ -19,6 +19,9 @@
   --danger: #dc2626;
   --danger-bg: #fecaca;
   --success: #68E079;
+  --on-primary: #FFFFFF;
+  --on-accent: #111111;
+  --on-success: #111111;
 }
 
 [data-theme="dark"] {
@@ -35,6 +38,9 @@
   --danger: #ef4444;
   --danger-bg: #451a1a;
   --success: #4ade80;
+  --on-primary: #FFFFFF;
+  --on-accent: #111111;
+  --on-success: #111111;
 }
 
 [data-theme="mustard-light"] {
@@ -51,6 +57,9 @@
   --danger: #dc2626;
   --danger-bg: #fecaca;
   --success: #68E079;
+  --on-primary: #111111;
+  --on-accent: #111111;
+  --on-success: #111111;
 }
 
 [data-theme="mustard-dark"] {
@@ -67,6 +76,9 @@
   --danger: #ef4444;
   --danger-bg: #451a1a;
   --success: #4ade80;
+  --on-primary: #111111;
+  --on-accent: #111111;
+  --on-success: #111111;
 }
 
 body {

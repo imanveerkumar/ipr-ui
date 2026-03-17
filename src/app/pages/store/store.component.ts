@@ -21,7 +21,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
         <!-- Loading Skeleton -->
         <div class="bg-theme-secondary border-b-2 border-theme-border">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="h-4 w-40 bg-[#111111]/10 rounded animate-pulse"></div>
+            <div class="h-4 w-40 bg-theme-surface-hover rounded animate-pulse"></div>
           </div>
         </div>
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,8 +29,8 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
           <div class="flex items-end gap-4 -mt-10 ml-6">
             <div class="w-20 h-20 md:w-24 md:h-24 bg-theme-surface border-2 border-theme-border rounded-xl animate-pulse"></div>
             <div class="pb-2 space-y-2">
-              <div class="h-6 w-48 bg-[#111111]/10 rounded animate-pulse"></div>
-              <div class="h-4 w-32 bg-[#111111]/5 rounded animate-pulse"></div>
+              <div class="h-6 w-48 bg-theme-surface-hover rounded animate-pulse"></div>
+              <div class="h-4 w-32 bg-theme-surface-hover rounded animate-pulse"></div>
             </div>
           </div>
           <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-10">
@@ -41,7 +41,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
         <!-- Breadcrumb -->
         <div class="bg-theme-secondary border-b-2 border-theme-border">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4">
-            <nav class="flex items-center gap-2 text-sm font-medium text-[#111111]/60 overflow-x-auto">
+            <nav class="flex items-center gap-2 text-sm font-medium text-theme-muted overflow-x-auto">
               <a routerLink="/" class="hover:text-theme-fg transition-colors whitespace-nowrap">Home</a>
               <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               <a routerLink="/explore" [queryParams]="{tab: 'stores'}" class="hover:text-theme-fg transition-colors whitespace-nowrap">Stores</a>
@@ -82,7 +82,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                 <div class="min-w-0">
                   <h1 class="font-display text-2xl md:text-3xl font-bold text-theme-fg leading-tight truncate">{{ store()?.name }}</h1>
                   @if (store()?.tagline) {
-                    <p class="text-sm md:text-base text-[#111111]/60 font-medium mt-1 line-clamp-2">{{ store()?.tagline }}</p>
+                    <p class="text-sm md:text-base text-theme-muted font-medium mt-1 line-clamp-2">{{ store()?.tagline }}</p>
                   }
                 </div>
 
@@ -90,7 +90,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                 <div class="flex gap-2 flex-shrink-0">
                   <button
                     (click)="copyUrl()"
-                    class="flex items-center gap-1.5 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg text-xs font-bold text-theme-fg hover:bg-theme-accent transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                    class="flex items-center gap-1.5 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg text-xs font-bold text-theme-fg hover:bg-theme-accent hover:text-black transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                   >
                     @if (copied()) {
                       <svg class="w-3.5 h-3.5 text-theme-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -102,7 +102,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                   </button>
                   <button
                     (click)="shareUrl()"
-                    class="flex items-center gap-1.5 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg text-xs font-bold text-theme-fg hover:bg-theme-primary hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
+                    class="flex items-center gap-1.5 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg text-xs font-bold text-theme-fg hover:bg-theme-primary hover:text-theme-bg transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]"
                   >
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
                     Share
@@ -112,7 +112,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                       [href]="getStorefrontUrl()"
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="flex items-center gap-1.5 px-3 py-2 bg-theme-success border-2 border-theme-border rounded-lg text-xs font-bold text-theme-fg shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                      class="flex items-center gap-1.5 px-3 py-2 bg-theme-success border-2 border-theme-border rounded-lg text-xs font-bold text-black shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                     >
                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                       Visit Storefront
@@ -134,14 +134,14 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                         </div>
                       }
                     </div>
-                    <span class="text-sm font-medium text-[#111111]/60 group-hover:text-theme-primary transition-colors">
+                    <span class="text-sm font-medium text-theme-muted group-hover:text-theme-primary transition-colors">
                       {{ store()?.user?.displayName || store()?.user?.username }}
                     </span>
                   </a>
                 }
                 <div class="flex items-center gap-1.5">
-                  <svg class="w-4 h-4 text-[#111111]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                  <span class="text-sm font-medium text-[#111111]/60">{{ products().length }} products</span>
+                  <svg class="w-4 h-4 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                  <span class="text-sm font-medium text-theme-muted">{{ products().length }} products</span>
                 </div>
               </div>
             </div>
@@ -150,7 +150,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
           <!-- Description -->
           @if (store()?.description) {
             <div class="mt-6 bg-theme-surface border-2 border-theme-border rounded-2xl p-5 md:p-6">
-              <div class="prose prose-sm max-w-none text-[#111111]/80 prose-headings:text-theme-fg prose-a:text-theme-primary" [innerHTML]="store()?.description"></div>
+              <div class="prose prose-sm max-w-none text-theme-fg prose-headings:text-theme-fg prose-a:text-theme-primary" [innerHTML]="store()?.description"></div>
             </div>
           }
         </div>
@@ -159,15 +159,15 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div class="flex items-center justify-between mb-6">
             <h2 class="font-display text-xl md:text-2xl font-bold text-theme-fg">Products</h2>
-            <span class="text-sm font-medium text-[#111111]/50">{{ products().length }} items</span>
+            <span class="text-sm font-medium text-theme-muted">{{ products().length }} items</span>
           </div>
 
           @if (products().length === 0) {
             <div class="text-center py-16 bg-theme-surface border-2 border-theme-border rounded-2xl">
               <div class="w-16 h-16 mx-auto mb-4 bg-theme-secondary border-2 border-theme-border rounded-xl flex items-center justify-center">
-                <svg class="w-8 h-8 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <svg class="w-8 h-8 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
               </div>
-              <p class="text-[#111111]/60 font-medium">No products available yet.</p>
+              <p class="text-theme-muted font-medium">No products available yet.</p>
             </div>
           } @else {
             <app-masonry-grid
@@ -189,7 +189,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                       </div>
                     } @else {
                       <div class="w-full h-full flex items-center justify-center">
-                        <svg class="w-12 h-12 text-[#111111]/15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        <svg class="w-12 h-12 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                       </div>
                     }
 
@@ -208,7 +208,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                       <div class="flex gap-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-200">
                         <button *ngIf="product.price > 0"
                           (click)="cartService.isInCart(product.id) ? removeFromCart(product, $event) : addToCart(product, $event); $event.stopPropagation()"
-                          class="px-3 py-2 border-2 border-theme-border rounded-lg text-xs font-bold text-theme-fg shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                          class="px-3 py-2 border-2 border-theme-border rounded-lg text-xs font-bold text-black shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                           [class.bg-theme-success]="cartService.isInCart(product.id)"
                           [class.bg-theme-accent]="!cartService.isInCart(product.id)"
                         >
@@ -216,7 +216,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                         </button>
                         <button *ngIf="product.price > 0"
                           (click)="buyNow(product, $event)"
-                          class="px-3 py-2 bg-theme-fg text-white border-2 border-theme-border rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_#FFC60B] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                          class="px-3 py-2 bg-theme-fg text-theme-bg border-2 border-theme-border rounded-lg text-xs font-bold shadow-[2px_2px_0px_0px_#FFC60B] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                         >
                           Buy Now
                         </button>
@@ -230,10 +230,10 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                       [class.bg-theme-success]="cartService.isInCart(product.id)"
                       [class.bg-theme-accent]="!cartService.isInCart(product.id)"
                     >
-                      <svg *ngIf="!cartService.isInCart(product.id)" class="w-4 h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg *ngIf="!cartService.isInCart(product.id)" class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                       </svg>
-                      <svg *ngIf="cartService.isInCart(product.id)" class="w-4 h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg *ngIf="cartService.isInCart(product.id)" class="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                       </svg>
                     </button>
@@ -245,7 +245,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                     <div class="flex items-center gap-1.5 mt-1 md:mt-2">
                       <span class="font-bold text-theme-fg text-xs md:text-base">₹{{ product.price / 100 }}</span>
                       @if (product.compareAtPrice && product.compareAtPrice > product.price) {
-                        <span class="text-[10px] md:text-xs text-[#111111]/40 line-through">₹{{ product.compareAtPrice / 100 }}</span>
+                        <span class="text-[10px] md:text-xs text-theme-muted line-through">₹{{ product.compareAtPrice / 100 }}</span>
                       }
                     </div>
                   </div>
@@ -262,8 +262,8 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
               <svg class="w-10 h-10 text-theme-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
             </div>
             <h1 class="text-2xl font-display font-bold text-theme-fg mb-2">Store not found</h1>
-            <p class="text-[#111111]/60 mb-6">The store you're looking for doesn't exist or has been removed.</p>
-            <a routerLink="/explore" [queryParams]="{tab: 'stores'}" class="inline-flex items-center gap-2 px-6 py-3 bg-theme-accent text-theme-fg border-2 border-theme-border rounded-xl font-bold shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+            <p class="text-theme-muted mb-6">The store you're looking for doesn't exist or has been removed.</p>
+            <a routerLink="/explore" [queryParams]="{tab: 'stores'}" class="inline-flex items-center gap-2 px-6 py-3 bg-theme-accent text-black border-2 border-theme-border rounded-xl font-bold shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               Browse Stores
             </a>

@@ -31,7 +31,7 @@ import { ToasterService } from '../../../core/services/toaster.service';
         'w-8 h-8': size === 'sm',
         'w-10 h-10': size === 'md',
         'bg-theme-danger text-white shadow-[2px_2px_0px_0px_#000]': isWishlisted(),
-        'bg-white/20 text-white hover:text-theme-danger hover:bg-white/40': !isWishlisted()
+        'bg-theme-secondary text-theme-fg hover:text-theme-danger hover:bg-theme-surface-hover': !isWishlisted()
       }">
       <svg
         [ngClass]="{ 'w-4 h-4': size === 'sm', 'w-5 h-5': size === 'md' }"
