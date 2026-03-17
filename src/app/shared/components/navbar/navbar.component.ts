@@ -415,6 +415,18 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
 
     .profile-btn.active {
       background: var(--ticket-green);
+      border-color: var(--on-success);
+      color: var(--on-success);
+    }
+
+    .profile-btn.active .profile-greeting {
+      color: var(--on-success);
+      opacity: 0.75;
+    }
+
+    .profile-btn.active .profile-name,
+    .profile-btn.active .profile-chevron {
+      color: var(--on-success);
     }
 
     .profile-avatar,

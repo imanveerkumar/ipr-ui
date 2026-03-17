@@ -43,7 +43,7 @@ interface SalesStats {
                     <!-- Stores stat -->
                     <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-theme-surface/50 md:bg-transparent border border-theme-border/20 md:border-0">
                       <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-primary border border-theme-border flex items-center justify-center">
-                        <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3 h-3 md:w-4 md:h-4 text-[var(--on-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                           <polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
@@ -76,7 +76,7 @@ interface SalesStats {
                     <!-- Revenue stat -->
                     <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-theme-surface/50 md:bg-transparent border border-theme-border/20 md:border-0">
                       <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-success border border-theme-border flex items-center justify-center">
-                        <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3 h-3 md:w-4 md:h-4 text-[var(--on-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                       </div>
@@ -99,8 +99,8 @@ interface SalesStats {
                       <div class="h-12 w-full sm:w-64 bg-theme-accent border-2 border-theme-border animate-pulse"></div>
                     </div>
 
-                    <div class="h-12 w-full sm:w-auto bg-[#111111]/10 border-2 border-theme-border animate-pulse"></div>
-                    <div class="h-12 w-full sm:w-auto bg-[#111111]/10 border-2 border-theme-border animate-pulse"></div>
+                    <div class="h-12 w-full sm:w-auto bg-theme-fg/10 border-2 border-theme-border animate-pulse"></div>
+                    <div class="h-12 w-full sm:w-auto bg-theme-fg/10 border-2 border-theme-border animate-pulse"></div>
                   </div>
                 } @else {
                   <div class="flex flex-col sm:flex-row justify-center lg:justify-end items-center gap-3">
@@ -112,12 +112,12 @@ interface SalesStats {
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                             </svg>
                           </div>
-                          <div class="text-sm font-bold text-theme-fg">Tip: Start by creating your store first.</div>
+                          <div class="text-sm font-bold text-[var(--on-accent)]">Tip: Start by creating your store first.</div>
                         </div>
                       </div>
                     }
 
-                    <a routerLink="/dashboard/stores/new" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-theme-accent text-[#111111] border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] hover:bg-[#ffdb4d] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] transition-all">
+                    <a routerLink="/dashboard/stores/new" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-theme-accent text-[var(--on-accent)] border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] hover:bg-[#ffdb4d] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] transition-all">
                       <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                       </svg>
@@ -151,7 +151,7 @@ interface SalesStats {
             <a routerLink="/dashboard/stores" class="group bg-theme-surface border-2 border-theme-border p-4 md:p-5 hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
               <div class="flex items-start justify-between mb-3">
                 <div class="w-10 h-10 md:w-12 md:h-12 bg-theme-primary border-2 border-theme-border flex items-center justify-center">
-                  <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5 md:w-6 md:h-6 text-[var(--on-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                     <polyline points="9 22 9 12 15 12 15 22"/>
                   </svg>
@@ -166,8 +166,8 @@ interface SalesStats {
               } @else {
                 <p class="text-2xl md:text-3xl font-bold text-theme-fg">{{ stores().length }}</p>
               }
-              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-theme-success border border-theme-border text-[10px] md:text-xs font-bold text-theme-fg">
-                <span class="w-1.5 h-1.5 bg-theme-fg rounded-full"></span>
+              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-theme-success border border-theme-border text-[10px] md:text-xs font-bold text-[var(--on-success)]">
+                <span class="w-1.5 h-1.5 bg-[var(--on-success)] rounded-full"></span>
                 Active
               </div>
             </a>
@@ -199,7 +199,7 @@ interface SalesStats {
             <a routerLink="/dashboard/sales" class="group bg-theme-surface border-2 border-theme-border p-4 md:p-5 hover:shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 transition-all duration-200 cursor-pointer">
               <div class="flex items-start justify-between mb-3">
                 <div class="w-10 h-10 md:w-12 md:h-12 bg-theme-accent border-2 border-theme-border flex items-center justify-center">
-                  <svg class="w-5 h-5 md:w-6 md:h-6 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5 md:w-6 md:h-6 text-[var(--on-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                   </svg>
                 </div>
@@ -213,7 +213,7 @@ interface SalesStats {
               } @else {
                 <p class="text-2xl md:text-3xl font-bold text-theme-fg">{{ totalSales() }}</p>
               }
-              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-theme-success border border-theme-border text-[10px] md:text-xs font-bold text-theme-fg">
+              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-theme-success border border-theme-border text-[10px] md:text-xs font-bold text-[var(--on-success)]">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
                 </svg>
@@ -225,7 +225,7 @@ interface SalesStats {
             <div class="bg-theme-surface border-2 border-theme-border p-4 md:p-5">
               <div class="flex items-start justify-between mb-3">
                 <div class="w-10 h-10 md:w-12 md:h-12 bg-theme-success border-2 border-theme-border flex items-center justify-center">
-                  <svg class="w-5 h-5 md:w-6 md:h-6 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5 md:w-6 md:h-6 text-[var(--on-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
                 </div>
@@ -236,7 +236,7 @@ interface SalesStats {
               } @else {
                 <p class="text-2xl md:text-3xl font-bold text-theme-fg">₹{{ formatRevenue(totalRevenue()) }}</p>
               }
-              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-theme-success border border-theme-border text-[10px] md:text-xs font-bold text-theme-fg">
+              <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-theme-success border border-theme-border text-[10px] md:text-xs font-bold text-[var(--on-success)]">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
                 </svg>
@@ -292,7 +292,7 @@ interface SalesStats {
               <!-- View Analytics Action -->
               <a routerLink="/dashboard/sales" class="group flex items-center gap-4 p-4 md:p-5 bg-theme-secondary border-2 border-theme-border hover:shadow-[4px_4px_0px_0px_#FFC60B] hover:-translate-y-1 transition-all duration-200">
                 <div class="w-12 h-12 md:w-14 md:h-14 bg-theme-accent border-2 border-theme-border flex items-center justify-center shrink-0">
-                  <svg class="w-6 h-6 md:w-7 md:h-7 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-6 h-6 md:w-7 md:h-7 text-[var(--on-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                   </svg>
                 </div>
@@ -314,7 +314,7 @@ interface SalesStats {
               <div class="flex items-center justify-between p-4 md:p-5 border-b-2 border-theme-border bg-theme-secondary">
                 <div class="flex items-center gap-3">
                   <div class="w-9 h-9 bg-theme-primary border-2 border-theme-border flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-[var(--on-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                       <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
@@ -350,7 +350,7 @@ interface SalesStats {
                     </div>
                     <h4 class="font-bold text-theme-fg mb-1">No stores yet</h4>
                     <p class="text-sm text-theme-muted mb-4">Create your first store to start selling!</p>
-                    <a routerLink="/dashboard/stores/new" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-accent border-2 border-theme-border font-bold text-sm text-theme-fg hover:bg-[#ffdb4d] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                    <a routerLink="/dashboard/stores/new" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-accent border-2 border-theme-border font-bold text-sm text-[var(--on-accent)] hover:bg-[#ffdb4d] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                       </svg>
@@ -361,7 +361,7 @@ interface SalesStats {
                   <div class="space-y-2">
                     @for (store of stores().slice(0, 5); track store.id) {
                       <a [routerLink]="['/dashboard/stores', store.id]" class="group flex items-center gap-3 p-3 border border-theme-border/30 hover:border-theme-border hover:bg-theme-secondary/50 transition-all">
-                        <div class="w-10 h-10 bg-theme-primary border border-theme-border flex items-center justify-center text-white font-bold text-lg shrink-0">
+                        <div class="w-10 h-10 bg-theme-primary border border-theme-border flex items-center justify-center text-[var(--on-primary)] font-bold text-lg shrink-0">
                           {{ getStoreInitial(store.name) }}
                         </div>
                         <div class="flex-1 min-w-0">
@@ -422,7 +422,7 @@ interface SalesStats {
                     </div>
                     <h4 class="font-bold text-theme-fg mb-1">No products yet</h4>
                     <p class="text-sm text-theme-muted mb-4">Add your first product to start earning!</p>
-                    <a routerLink="/dashboard/products/new" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-accent border-2 border-theme-border font-bold text-sm text-theme-fg hover:bg-[#ffdb4d] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                    <a routerLink="/dashboard/products/new" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-accent border-2 border-theme-border font-bold text-sm text-[var(--on-accent)] hover:bg-[#ffdb4d] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                       </svg>
@@ -474,10 +474,10 @@ interface SalesStats {
           @if (uiMessages.loading()) {
             <div class="border-2 border-theme-border p-4 md:p-5 bg-theme-secondary animate-pulse">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-[#111111]/10 border-2 border-theme-border shrink-0"></div>
+                <div class="w-10 h-10 bg-theme-fg/10 border-2 border-theme-border shrink-0"></div>
                 <div class="flex-1">
-                  <div class="h-4 w-32 bg-[#111111]/10 mb-2"></div>
-                  <div class="h-3 w-64 bg-[#111111]/10"></div>
+                  <div class="h-4 w-32 bg-theme-fg/10 mb-2"></div>
+                  <div class="h-3 w-64 bg-theme-fg/10"></div>
                 </div>
               </div>
             </div>
@@ -653,11 +653,25 @@ export class DashboardComponent implements OnInit {
   }
 
   getMessageTextClass(type: UiMessage['type']): string {
-    return type === 'ANNOUNCEMENT' || type === 'BANNER' ? 'text-white' : 'text-theme-fg';
+    const map: Record<string, string> = {
+      TIP: 'text-[var(--on-accent)]',
+      SALE: 'text-[var(--on-success)]',
+      ANNOUNCEMENT: 'text-[var(--on-primary)]',
+      BANNER: 'text-white',
+      NOTE: 'text-theme-fg',
+    };
+    return map[type] ?? 'text-theme-fg';
   }
 
   getMessageBodyClass(type: UiMessage['type']): string {
-    return type === 'ANNOUNCEMENT' || type === 'BANNER' ? 'text-white/80' : 'text-theme-muted';
+    const map: Record<string, string> = {
+      TIP: 'text-[var(--on-accent)] opacity-80',
+      SALE: 'text-[var(--on-success)] opacity-80',
+      ANNOUNCEMENT: 'text-[var(--on-primary)] opacity-80',
+      BANNER: 'text-white/80',
+      NOTE: 'text-theme-muted',
+    };
+    return map[type] ?? 'text-theme-muted';
   }
 
   navigateTo(path: string): void {

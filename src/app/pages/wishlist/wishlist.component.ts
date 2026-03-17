@@ -72,7 +72,7 @@ import { MasonryGridComponent } from '../../shared/components/masonry-grid/mason
               Save products you love by clicking the heart icon. They'll appear here for easy access.
             </p>
             <a routerLink="/explore"
-               class="inline-flex items-center px-6 py-3 bg-theme-accent text-theme-fg border-2 border-theme-border rounded-lg font-bold text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
+              class="inline-flex items-center px-6 py-3 bg-theme-accent text-black border-2 border-theme-border rounded-lg font-bold text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px]">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
