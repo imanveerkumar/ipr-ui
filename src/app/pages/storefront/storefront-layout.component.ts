@@ -56,7 +56,7 @@ type StorefrontPage = 'home' | 'products' | 'product' | 'purchases';
     } @else if (storeContext.hasStore()) {
       <div class="min-h-screen flex flex-col bg-theme-surface font-sans antialiased">
         <!-- Mobile-Optimized Header -->
-        <header class="bg-white/95 backdrop-blur-md border-b border-theme-secondary sticky top-0 z-40 safe-area-top">
+        <header class="bg-theme-surface/95 backdrop-blur-md border-b border-theme-secondary sticky top-0 z-40 safe-area-top">
           <div class="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
             <div class="flex items-center justify-between h-14 sm:h-16">
               <!-- Store Logo & Name - Touch friendly -->
