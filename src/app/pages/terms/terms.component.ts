@@ -87,7 +87,7 @@ import { RouterLink } from '@angular/router';
               <p>Refund requests must be submitted within 7 days of purchase.</p>
 
               <h2>8. Intellectual Property</h2>
-              <p>The TheBlueMustard platform, including its design, code, logos, and branding, is owned by TheBlueMustard and protected by intellectual property laws. Creators retain ownership of their digital products. Buyers receive only the usage rights granted by the product license.</p>
+              <p>TheBlueMustard platform, including its design, code, logos, and branding, is owned by TheBlueMustard and protected by intellectual property laws. Creators retain ownership of their digital products. Buyers receive only the usage rights granted by the product license.</p>
 
               <h2>9. Prohibited Conduct</h2>
               <p>You agree not to:</p>
