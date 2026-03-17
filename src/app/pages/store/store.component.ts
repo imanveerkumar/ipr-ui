@@ -9,11 +9,12 @@ import { AuthService } from '../../core/services/auth.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
 import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
+import { WishlistButtonComponent } from '../../shared/components/wishlist-button/wishlist-button.component';
 
 @Component({
   selector: 'app-store',
   standalone: true,
-  imports: [CommonModule, RouterLink, MasonryGridComponent],
+  imports: [CommonModule, RouterLink, MasonryGridComponent, WishlistButtonComponent],
   template: `
     <div class="min-h-screen bg-[#F9F4EB] font-sans antialiased">
       @if (loading()) {
@@ -65,7 +66,7 @@ import { MasonryGridComponent } from '../../shared/components/masonry-grid/mason
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 md:-mt-12 relative z-10">
           <div class="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
             <!-- Logo -->
-            <div class="w-20 h-20 md:w-24 md:h-24 bg-white border-2 border-black rounded-xl overflow-hidden shadow-[4px_4px_0px_0px_#000] flex-shrink-0">
+            <div class="w-20 h-20 md:w-24 md:h-24 bg-white border-2 border-black rounded-xl overflow-hidden flex-shrink-0">
               @if (store()?.logoUrl) {
                 <img [src]="store()?.logoUrl" [alt]="store()?.name" class="w-full h-full object-cover">
               } @else {
@@ -148,7 +149,7 @@ import { MasonryGridComponent } from '../../shared/components/masonry-grid/mason
 
           <!-- Description -->
           @if (store()?.description) {
-            <div class="mt-6 bg-white border-2 border-black rounded-2xl p-5 md:p-6 shadow-[4px_4px_0px_0px_#000]">
+            <div class="mt-6 bg-white border-2 border-black rounded-2xl p-5 md:p-6">
               <div class="prose prose-sm max-w-none text-[#111111]/80 prose-headings:text-[#111111] prose-a:text-[#2B57D6]" [innerHTML]="store()?.description"></div>
             </div>
           }
@@ -162,7 +163,7 @@ import { MasonryGridComponent } from '../../shared/components/masonry-grid/mason
           </div>
 
           @if (products().length === 0) {
-            <div class="text-center py-16 bg-white border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_#000]">
+            <div class="text-center py-16 bg-white border-2 border-black rounded-2xl">
               <div class="w-16 h-16 mx-auto mb-4 bg-[#F9F4EB] border-2 border-black rounded-xl flex items-center justify-center">
                 <svg class="w-8 h-8 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
               </div>
@@ -198,6 +199,9 @@ import { MasonryGridComponent } from '../../shared/components/masonry-grid/mason
                         -{{ getProductDiscount(product) }}%
                       </div>
                     }
+
+                    <!-- Wishlist button -->
+                    <app-wishlist-button [productId]="product.id" [product]="product" size="sm" class="absolute top-2 right-2 z-[5] md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200" />
 
                     <!-- Desktop hover overlay -->
                     <div *ngIf="product.price > 0" class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-200 hidden md:flex items-end justify-center opacity-0 group-hover:opacity-100 p-3">
@@ -253,7 +257,7 @@ import { MasonryGridComponent } from '../../shared/components/masonry-grid/mason
       } @else {
         <!-- Not Found -->
         <div class="min-h-[60vh] flex items-center justify-center px-4">
-          <div class="text-center bg-white border-2 border-black rounded-2xl p-8 md:p-12 shadow-[6px_6px_0px_0px_#000] max-w-md w-full">
+          <div class="text-center bg-white border-2 border-black rounded-2xl p-8 md:p-12 max-w-md w-full">
             <div class="w-20 h-20 mx-auto mb-6 bg-[#FA4B28]/10 border-2 border-black rounded-2xl flex items-center justify-center">
               <svg class="w-10 h-10 text-[#FA4B28]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
             </div>

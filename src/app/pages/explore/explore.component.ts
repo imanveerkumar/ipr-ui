@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy, inject, signal, ElementRef, ViewChild, AfterViewInit, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, ElementRef, ViewChild, AfterViewInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { UiMessageService } from '../../core/services/ui-message.service';
 import {
   ExploreService,
   ExploreProduct,
@@ -18,6 +19,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
 import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
+import { WishlistButtonComponent } from '../../shared/components/wishlist-button/wishlist-button.component';
 
 type ContentFilter = 'all' | 'products' | 'stores' | 'creators';
 type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
@@ -25,7 +27,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MasonryGridComponent],
+  imports: [CommonModule, FormsModule, RouterLink, MasonryGridComponent, WishlistButtonComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
 
@@ -506,6 +508,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                       >
                         -{{ exploreService.getDiscountPercentage(asProduct(item.data).price, asProduct(item.data).compareAtPrice!) }}%
                       </div>
+                      <!-- Wishlist button -->
+                      <app-wishlist-button [productId]="asProduct(item.data).id" [product]="asProduct(item.data)" size="sm" class="absolute top-2 right-2 z-[25] md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200" />
                     </div>
                     <!-- Desktop: minimal — title + price only -->
                     <div class="hidden md:block px-2.5 pt-2 pb-2.5">
@@ -795,26 +799,39 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </div>
           </div>
 
-          <!-- CTA Section -->
-          <section *ngIf="!isLoading() && feedItems().length > 0" class="px-3 sm:px-4 md:px-6 pb-8">
-            <div class="bg-[#68E079] border-2 border-black rounded-2xl p-6 md:p-10 text-center relative overflow-hidden shadow-[6px_6px_0px_0px_#000]">
-              <h2 class="font-dm-sans text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] mb-2 relative z-10">
-                Want to sell your products?
-              </h2>
-              <p class="text-sm md:text-base text-[#111111]/70 mb-5 font-medium relative z-10">
-                Join creators and start selling today
-              </p>
-              <a
-                routerLink="/become-creator"
-                (click)="handleCreatorCtaClick($event)"
-                class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
-              >
-                Start selling for free
-              </a>
-              <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/20 rounded-full border-2 border-black"></div>
-              <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/15 rounded-full border-2 border-black"></div>
-            </div>
-          </section>
+          <!-- CTA Section (from API) -->
+          <ng-container *ngIf="exploreCta() as cta">
+            <section *ngIf="!isLoading() && feedItems().length > 0" class="px-3 sm:px-4 md:px-6 pb-8">
+              <div class="bg-[#68E079] border-2 border-black rounded-2xl p-6 md:p-10 text-center relative overflow-hidden shadow-[6px_6px_0px_0px_#000]">
+                <h2 class="font-dm-sans text-xl md:text-2xl lg:text-3xl font-bold text-[#111111] mb-2 relative z-10">
+                  {{ cta.title }}
+                </h2>
+                <p *ngIf="cta.body" class="text-sm md:text-base text-[#111111]/70 mb-5 font-medium relative z-10">
+                  {{ cta.body }}
+                </p>
+                <a
+                  *ngIf="cta.ctaText && cta.ctaUrl && isExternalUrl(cta.ctaUrl)"
+                  [href]="cta.ctaUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  (click)="handleCreatorCtaClick($event)"
+                  class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
+                >
+                  {{ cta.ctaText }}
+                </a>
+                <a
+                  *ngIf="cta.ctaText && cta.ctaUrl && !isExternalUrl(cta.ctaUrl)"
+                  [routerLink]="cta.ctaUrl"
+                  (click)="handleCreatorCtaClick($event)"
+                  class="relative z-10 inline-flex items-center px-5 py-2.5 md:px-7 md:py-3 bg-[#111111] text-white border-2 border-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_#fff]"
+                >
+                  {{ cta.ctaText }}
+                </a>
+                <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/20 rounded-full border-2 border-black"></div>
+                <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/15 rounded-full border-2 border-black"></div>
+              </div>
+            </section>
+          </ng-container>
         </main>
       </div>
     </div>
@@ -1394,12 +1411,17 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   // sidebar state for desktop collapse
   sidebarCollapsed = signal(false);
 
+  // UI Messages
+  uiMessages = inject(UiMessageService);
+  exploreCta = computed(() => this.uiMessages.byPlacement('explore-cta')[0] ?? null);
+
   toggleSidebar() {
     this.sidebarCollapsed.set(!this.sidebarCollapsed());
   }
 
   // Lifecycle
   async ngOnInit() {
+    this.uiMessages.loadMessages('explore');
     this.route.queryParams.subscribe(async params => {
       const type = params['type'] as ContentFilter | undefined;
       if (type && ['all', 'products', 'stores', 'creators'].includes(type)) {
@@ -1905,6 +1927,10 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     this.cardStyleCache.set(id, { r: c.r, g: c.g, b: c.b, style });
     return style;
+  }
+
+  isExternalUrl(url: string): boolean {
+    return /^https?:\/\//i.test(url);
   }
 
   async handleCreatorCtaClick(event: Event) {

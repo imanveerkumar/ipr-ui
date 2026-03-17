@@ -9,11 +9,12 @@ import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { SubdomainService } from '../../core/services/subdomain.service';
+import { WishlistButtonComponent } from '../../shared/components/wishlist-button/wishlist-button.component';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, WishlistButtonComponent],
   template: `
     <div class="min-h-screen bg-[#F9F4EB] font-sans antialiased">
       @if (loading()) {
@@ -56,7 +57,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
           <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10">
             <!-- Left Column: Image -->
             <div class="lg:col-span-3">
-              <div class="bg-white border-2 border-black rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl overflow-hidden">
                 @if (product()?.coverImageUrl) {
                   <img [src]="product()?.coverImageUrl" [alt]="product()?.title" class="w-full object-cover" [style.aspect-ratio]="getCoverAspectRatio()">
                 } @else {
@@ -73,7 +74,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
             <!-- Right Column: Details -->
             <div class="lg:col-span-2 space-y-5">
               <!-- Title & Price Card -->
-              <div class="bg-white border-2 border-black rounded-2xl p-5 md:p-6 shadow-[4px_4px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl p-5 md:p-6">
                 <h1 class="font-display text-xl md:text-2xl font-bold text-[#111111] leading-tight">{{ product()?.title }}</h1>
 
                 <!-- Store & Creator -->
@@ -174,12 +175,18 @@ import { SubdomainService } from '../../core/services/subdomain.service';
                           <input
                             type="email"
                             [(ngModel)]="guestEmail"
+                            (ngModelChange)="guestEmailError = ''"
                             placeholder="your@email.com"
-                            class="w-full px-3 py-2.5 border-2 border-black rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
+                            class="w-full px-3 py-2.5 border-2 rounded-lg text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-[#2B57D6]/30"
+                            [class.border-red-500]="guestEmailError"
+                            [class.border-black]="!guestEmailError"
                           />
+                          @if (guestEmailError) {
+                            <p class="text-xs text-red-500">{{ guestEmailError }}</p>
+                          }
                           <button
                             (click)="confirmGuestFreeDownload()"
-                            [disabled]="purchasing() || !guestEmail"
+                            [disabled]="purchasing()"
                             class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#68E079] text-[#111111] border-2 border-black rounded-xl font-bold text-sm shadow-[3px_3px_0px_0px_#000] hover:shadow-[1px_1px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             @if (purchasing()) {
@@ -204,7 +211,6 @@ import { SubdomainService } from '../../core/services/subdomain.service';
                         <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                         Processing...
                       } @else {
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Buy Now — ₹{{ (product()?.price || 0) / 100 }}
                       }
                     </button>
@@ -231,8 +237,9 @@ import { SubdomainService } from '../../core/services/subdomain.service';
               </div>
 
               <!-- Share & Copy -->
-              <div class="bg-white border-2 border-black rounded-2xl p-4 shadow-[3px_3px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl p-4">
                 <div class="flex gap-2">
+                  <app-wishlist-button [productId]="product()!.id" [product]="product()!" size="md" />
                   <button
                     (click)="copyUrl()"
                     class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#F9F4EB] border-2 border-black rounded-lg text-sm font-bold text-[#111111] hover:bg-[#FFC60B] transition-colors"
@@ -257,7 +264,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
 
               <!-- Files Included -->
               @if (product()?.files && product()!.files!.length > 0) {
-                <div class="bg-white border-2 border-black rounded-2xl p-5 shadow-[3px_3px_0px_0px_#000]">
+                <div class="bg-white border-2 border-black rounded-2xl p-5">
                   <h3 class="font-display text-sm font-bold text-[#111111] mb-3 flex items-center gap-2">
                     <svg class="w-4 h-4 text-[#68E079]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     Files Included ({{ product()!.files!.length }})
@@ -279,7 +286,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
               }
 
               <!-- Trust Badges -->
-              <div class="bg-white border-2 border-black rounded-2xl p-5 shadow-[3px_3px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl p-5">
                 <div class="space-y-3">
                   <div class="flex items-center gap-3">
                     <div class="w-8 h-8 bg-[#68E079]/20 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -316,7 +323,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
           <!-- Description (full width) -->
           @if (product()?.description) {
             <div class="mt-8">
-              <div class="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_#000]">
+              <div class="bg-white border-2 border-black rounded-2xl p-6">
                 <h2 class="font-display text-lg font-bold text-[#111111] mb-4 flex items-center gap-2">
                   <svg class="w-5 h-5 text-[#2B57D6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   Description
@@ -329,7 +336,7 @@ import { SubdomainService } from '../../core/services/subdomain.service';
       } @else {
         <!-- Not Found -->
         <div class="min-h-[60vh] flex items-center justify-center px-4">
-          <div class="text-center bg-white border-2 border-black rounded-2xl p-8 md:p-12 shadow-[6px_6px_0px_0px_#000] max-w-md w-full">
+          <div class="text-center bg-white border-2 border-black rounded-2xl p-8 md:p-12 max-w-md w-full">
             <div class="w-20 h-20 mx-auto mb-6 bg-[#FA4B28]/10 border-2 border-black rounded-2xl flex items-center justify-center">
               <svg class="w-10 h-10 text-[#FA4B28]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
@@ -357,8 +364,13 @@ export class ProductComponent implements OnInit {
   // Free / pay-what-you-want state
   customAmount = 0;
   guestEmail = '';
+  guestEmailError = '';
   showGuestEmailInput = signal(false);
   selectedFreeOption = signal<'free' | 'custom' | null>(null);
+
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  }
 
   cartService = inject(CartService);
   private toaster = inject(ToasterService);
@@ -553,7 +565,17 @@ export class ProductComponent implements OnInit {
   /** Handle guest free download after email is entered */
   async confirmGuestFreeDownload() {
     const product = this.product();
-    if (!product || !this.guestEmail) return;
+    if (!product) return;
+
+    this.guestEmailError = '';
+    if (!this.guestEmail.trim()) {
+      this.guestEmailError = 'Email is required.';
+      return;
+    }
+    if (!this.isValidEmail(this.guestEmail)) {
+      this.guestEmailError = 'Please enter a valid email address.';
+      return;
+    }
 
     this.purchasing.set(true);
 

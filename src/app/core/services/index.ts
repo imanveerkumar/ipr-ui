@@ -16,3 +16,12 @@ export * from './request-manager.service';
 export * from './rate-limiter.service';
 export * from './loading-state.service';
 export * from './global-loader.service';
+
+// UI Messages
+export * from './ui-message.service';
+
+// Wishlist
+export * from './wishlist.service';
+
+// Settings
+export * from './settings.service';

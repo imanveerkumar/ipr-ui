@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MasonryGridComponent } from '../../shared/components/masonry-grid/masonry-grid.component';
+import { WishlistButtonComponent } from '../../shared/components/wishlist-button/wishlist-button.component';
 import { StoreContextService, CartService, CheckoutService, AuthService, SubdomainService } from '../../core/services';
 import { ToasterService } from '../../core/services/toaster.service';
 import { Product } from '../../core/models';
@@ -9,7 +10,7 @@ import { Product } from '../../core/models';
 @Component({
   selector: 'app-storefront-home',
   standalone: true,
-  imports: [CommonModule, MasonryGridComponent],
+  imports: [CommonModule, MasonryGridComponent, WishlistButtonComponent],
   template: `
     <div class="min-h-screen bg-white font-sans antialiased">
       <!-- Clean Hero Section -->
@@ -105,6 +106,9 @@ import { Product } from '../../core/models';
                         </span>
                       </div>
                     }
+
+                    <!-- Wishlist button -->
+                    <app-wishlist-button [productId]="product.id" size="sm" class="absolute top-2 right-2 z-[5]" />
                   </div>
 
                   <!-- Mobile Product Info -->

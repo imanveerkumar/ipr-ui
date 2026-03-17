@@ -41,6 +41,28 @@ export const routes: Routes = [
     path: 'profile/:id',
     loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
   },
+  // Footer pages
+  {
+    path: 'privacy',
+    loadComponent: () => import('./pages/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent),
+  },
+  {
+    path: 'about',
+    loadComponent: () => import('./pages/about/about.component').then(m => m.AboutComponent),
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent),
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./pages/terms/terms.component').then(m => m.TermsComponent),
+  },
+  {
+    path: 'faq',
+    loadComponent: () => import('./pages/faq/faq.component').then(m => m.FaqComponent),
+  },
+
   // Guest download access (no auth required)
   {
     path: 'guest/downloads/:token',
@@ -56,7 +78,6 @@ export const routes: Routes = [
   {
     path: 'wishlist',
     loadComponent: () => import('./pages/wishlist/wishlist.component').then(m => m.WishlistComponent),
-    canActivate: [authGuard],
   },
   {
     path: 'library',

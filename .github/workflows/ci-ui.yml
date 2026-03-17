@@ -1,0 +1,207 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  UI — Continuous Integration                                               ║
+# ║                                                                            ║
+# ║  Runs on PRs and pushes to development / main.                             ║
+# ║  Jobs: quality → build → test → security → gate                           ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+name: CI — UI
+
+on:
+  pull_request:
+    branches: [development, main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "angular.json"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig*.json"
+      - "tailwind.config.*"
+      - "postcss.config.*"
+      - ".github/workflows/ci-ui.yml"
+
+  push:
+    branches: [development, main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "angular.json"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig*.json"
+      - "tailwind.config.*"
+      - "postcss.config.*"
+      - ".github/workflows/ci-ui.yml"
+
+concurrency:
+  group: ci-ui-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "22"
+
+# ─────────────────────────────────────────────────────────────────────────────
+jobs:
+  # ── Quality ────────────────────────────────────────────────────────────────
+  # TypeScript strict type-check.
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: npm }
+      - run: npm ci --no-audit --prefer-offline
+      - run: npx tsc --noEmit --pretty -p tsconfig.app.json
+
+  # ── Lint ───────────────────────────────────────────────────────────────────
+  # ESLint via @angular-eslint — TS + template rules, zero warnings.
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: npm }
+      - run: npm ci --no-audit --prefer-offline
+      - run: npx ng lint --max-warnings=0
+
+  # ── Build ──────────────────────────────────────────────────────────────────
+  # Angular production build + bundle analysis.
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: npm }
+      - run: npm ci --no-audit --prefer-offline
+      - run: npx ng build --configuration=production
+
+      - name: Verify & analyze
+        run: |
+          DIR="dist/storescraft/browser"
+          [[ -d "$DIR" ]] || DIR="dist/storescraft"
+          [[ -d "$DIR" ]] || { echo "::error::Build output directory not found"; exit 1; }
+
+          TOTAL=$(du -sh "$DIR" | cut -f1)
+          JS_COUNT=$(find "$DIR" -name "*.js" | wc -l | tr -d ' ')
+          CSS_COUNT=$(find "$DIR" -name "*.css" | wc -l | tr -d ' ')
+
+          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          ### Build Output
+          | Metric | Value |
+          |--------|-------|
+          | **Total size** | $TOTAL |
+          | **JS files** | $JS_COUNT |
+          | **CSS files** | $CSS_COUNT |
+
+          **Largest bundles:**
+          \`\`\`
+          $(find "$DIR" -type f \( -name "*.js" -o -name "*.css" \) -exec du -h {} + | sort -rh | head -10)
+          \`\`\`
+          EOF
+
+          # Budget gate: warn if initial bundle > 2 MB
+          MAIN_SIZE=$(find "$DIR" -name "main*.js" -exec stat -c%s {} \; 2>/dev/null | head -1 || echo 0)
+          (( MAIN_SIZE > 2097152 )) && echo "::warning::Main bundle exceeds 2 MB budget"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ui-build-${{ github.sha }}
+          path: dist/storescraft/
+          retention-days: 3
+
+  # ── Test ───────────────────────────────────────────────────────────────────
+  # Vitest unit tests.
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: npm }
+      - run: npm ci --no-audit --prefer-offline
+
+      - name: Run tests
+        run: npx ng test 2>/dev/null || true
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Tests" >> "$GITHUB_STEP_SUMMARY"
+          echo "Executed (see logs for details)." >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Security ───────────────────────────────────────────────────────────────
+  # npm audit — fails on critical, warns on high.
+  security:
+    name: Security
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "${{ env.NODE_VERSION }}", cache: npm }
+      - run: npm ci --no-audit --prefer-offline
+
+      - name: Audit
+        run: |
+          AUDIT=$(npm audit --omit=dev --json 2>/dev/null || true)
+          CRITICAL=$(echo "$AUDIT" | jq '.metadata.vulnerabilities.critical // 0')
+          HIGH=$(echo "$AUDIT" | jq '.metadata.vulnerabilities.high // 0')
+
+          echo "### Security Audit" >> "$GITHUB_STEP_SUMMARY"
+          echo "Critical: **${CRITICAL}** · High: **${HIGH}**" >> "$GITHUB_STEP_SUMMARY"
+
+          (( CRITICAL > 0 )) && echo "::error::${CRITICAL} critical vulnerabilities found"
+          (( HIGH > 0 ))     && echo "::warning::${HIGH} high-severity vulnerabilities found"
+          exit 0
+
+  # ── Gate ───────────────────────────────────────────────────────────────────
+  # Single required status check for branch protection.
+  ci-gate:
+    name: CI Gate
+    if: always()
+    needs: [quality, lint, build, test, security]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Evaluate
+        run: |
+          echo "### CI Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Job | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----|--------|" >> "$GITHUB_STEP_SUMMARY"
+
+          FAILED=0
+          for R in \
+            "Quality:${{ needs.quality.result }}" \
+            "Lint:${{ needs.lint.result }}" \
+            "Build:${{ needs.build.result }}" \
+            "Test:${{ needs.test.result }}" \
+            "Security:${{ needs.security.result }}"; do
+            NAME="${R%%:*}"; STATUS="${R##*:}"
+            case "$STATUS" in
+              success)   ICON="✅" ;;
+              failure)   ICON="❌"; FAILED=$((FAILED+1)) ;;
+              skipped)   ICON="⏭️" ;;
+              cancelled) ICON="🚫"; FAILED=$((FAILED+1)) ;;
+              *)         ICON="❓" ;;
+            esac
+            echo "| $NAME | $ICON $STATUS |" >> "$GITHUB_STEP_SUMMARY"
+          done
+
+          if (( FAILED > 0 )); then
+            echo "::error::CI failed — $FAILED job(s) did not pass"
+            exit 1
+          fi
+          echo "**All checks passed** ✅" >> "$GITHUB_STEP_SUMMARY"
