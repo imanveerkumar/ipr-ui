@@ -1700,7 +1700,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
           <div class="header-inner">
             <!-- Logo -->
             <a class="logo" (click)="handleLogoClick()">
-              <span class="logo-text">BlueMustard.     </span>
+              <span class="logo-text">BlueMustard<span class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]">.</span></span>
 
             </a>
             

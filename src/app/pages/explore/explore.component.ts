@@ -77,12 +77,12 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 
         <!-- ==================== LEFT SIDEBAR (Desktop) ==================== -->
         <aside
-          class="sidebar-container hidden lg:block flex-shrink-0 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden scrollbar-hide bg-theme-secondary border-r-2 border-theme-border/20"
+          class="sidebar-container explore-panel-divider hidden lg:block flex-shrink-0 sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden scrollbar-hide bg-theme-secondary border-r-2"
           [class.sidebar-collapsed]="sidebarCollapsed()"
           [class.sidebar-expanded]="!sidebarCollapsed()"
         >
           <!-- Collapse / Expand toggle -->
-          <div class="flex items-center px-4 h-14 border-b-2 border-theme-border/20">
+          <div class="flex items-center px-4 h-14 border-b-2 explore-panel-divider">
             <button
               (click)="toggleSidebar()"
               class="sidebar-toggle group relative w-8 h-8 flex items-center justify-center rounded-lg text-fg-muted hover:text-theme-fg hover:bg-fg-faint transition-all duration-200"
@@ -445,7 +445,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <!-- Skeleton Loader -->
             <app-masonry-grid *ngIf="isLoading() && feedItems().length === 0" [items]="skeletonArray" [gap]="16" [colsMobile]="2" [colsTablet]="3" [colsDesktop]="3" [colsLargeDesktop]="4">
               <ng-template let-i>
-                <div class="bg-theme-surface border-2 border-theme-border/20 rounded-xl overflow-hidden">
+                <div class="bg-theme-surface border-2 explore-skeleton-border rounded-xl overflow-hidden">
                   <div class="bg-theme-secondary animate-pulse rounded-t-xl" [style.height.px]="getSkeletonHeight(i)"></div>
                   <div class="p-3">
                     <div class="h-4 bg-theme-fg/10 rounded animate-pulse mb-2 w-3/4"></div>
@@ -805,6 +805,14 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     .text-fg-subtle { color: color-mix(in srgb, var(--foreground) 38%, transparent); }
     .text-fg-ghost  { color: color-mix(in srgb, var(--foreground) 20%, transparent); }
     .bg-fg-faint    { background: color-mix(in srgb, var(--foreground) 5%, transparent); }
+
+    .explore-panel-divider {
+      border-color: color-mix(in srgb, var(--border) 30%, transparent);
+    }
+
+    .explore-skeleton-border {
+      border-color: color-mix(in srgb, var(--border) 26%, transparent);
+    }
 
     /* ========= SIDEBAR ========= */
     .sidebar-container {
