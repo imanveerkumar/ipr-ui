@@ -31,7 +31,7 @@ import { RouterLink } from '@angular/router';
 
               <h2>2. Definitions</h2>
               <ul>
-                <li><strong>"Platform"</strong> refers to the TheBlueMustard website, application, and all related services.</li>
+                <li><strong>"Platform"</strong> refers to TheBlueMustard website, application, and all related services.</li>
                 <li><strong>"Creator"</strong> refers to a user who creates a store and lists digital products for sale.</li>
                 <li><strong>"Buyer"</strong> refers to a user who purchases digital products on the platform.</li>
                 <li><strong>"Digital Product"</strong> refers to any digital asset listed for sale, including but not limited to templates, fonts, graphics, code, eBooks, and presets.</li>
