@@ -203,8 +203,26 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               </span>
             </label>
             <div class="slug-input-wrapper">
-              <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input slug-input" placeholder="my-store" pattern="[a-z0-9-]+" (input)="validateSlug()">
-              <span class="slug-suffix">.{{ baseDomain() }}</span>
+              <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input slug-input" 
+                [class.input-error]="slugError()" 
+                [class.input-success]="slugAvailability() === 'available'"
+                placeholder="my-store" pattern="[a-z0-9-]+" (input)="validateSlug()">
+              <span class="slug-suffix">
+                @if (slugAvailability() === 'checking') {
+                  <span class="slug-status-icon checking" title="Checking availability...">
+                    <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                  </span>
+                } @else if (slugAvailability() === 'available') {
+                  <span class="slug-status-icon available" title="Available!">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </span>
+                } @else if (slugAvailability() === 'taken') {
+                  <span class="slug-status-icon taken" title="Unavailable">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </span>
+                }
+                .{{ baseDomain() }}
+              </span>
             </div>
             <p class="form-hint">Only lowercase letters, numbers, and hyphens allowed.</p>
             <div class="info-note mt-2">
@@ -846,6 +864,42 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       white-space: nowrap;
       display: flex;
       align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-input.input-success {
+      border-color: var(--success);
+    }
+
+    .form-input.input-success:focus {
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+    }
+
+    .slug-status-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .slug-status-icon.checking {
+      color: var(--muted);
+    }
+
+    .slug-status-icon.available {
+      color: var(--success);
+    }
+
+    .slug-status-icon.taken {
+      color: var(--danger);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      animation: spin 0.8s linear infinite;
     }
 
     .info-note {
@@ -1068,6 +1122,9 @@ export class StoreFormComponent implements OnInit {
   deleting = signal(false);
   copied = signal(false);
   slugError = signal<string | null>(null);
+  slugAvailability = signal<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  private slugCheckTimer: ReturnType<typeof setTimeout> | null = null;
+  private slugCheckAbort: AbortController | null = null;
   nameError = signal<string | null>(null);
   taglineError = signal<string | null>(null);
   store = signal<Store | null>(null);
@@ -1167,7 +1224,9 @@ export class StoreFormComponent implements OnInit {
   isFormValid(): boolean {
     return !this.nameError() && !this.slugError() && !this.taglineError() 
       && this.form.name.trim().length >= this.MIN_NAME_LENGTH 
-      && this.form.slug.trim().length >= this.MIN_SLUG_LENGTH;
+      && this.form.slug.trim().length >= this.MIN_SLUG_LENGTH
+      && this.slugAvailability() !== 'checking'
+      && this.slugAvailability() !== 'taken';
   }
 
   async ngOnInit() {
@@ -1218,25 +1277,74 @@ export class StoreFormComponent implements OnInit {
   validateSlug() {
     this.formTouched.update(t => ({ ...t, slug: true }));
     const slug = this.form.slug.toLowerCase();
-    
+
+    // Cancel any in-flight async check
+    if (this.slugCheckTimer) { clearTimeout(this.slugCheckTimer); this.slugCheckTimer = null; }
+    if (this.slugCheckAbort) { this.slugCheckAbort.abort(); this.slugCheckAbort = null; }
+
+    // Client-side format validation first
     if (!slug) {
       this.slugError.set('Store URL is required');
+      this.slugAvailability.set('idle');
     } else if (slug.length < this.MIN_SLUG_LENGTH) {
       this.slugError.set(`Store URL must be at least ${this.MIN_SLUG_LENGTH} characters`);
+      this.slugAvailability.set('idle');
     } else if (slug.length > this.MAX_SLUG_LENGTH) {
       this.slugError.set(`Store URL must be less than ${this.MAX_SLUG_LENGTH} characters`);
+      this.slugAvailability.set('idle');
     } else if (!/^[a-z0-9-]*$/.test(slug)) {
       this.slugError.set('Only lowercase letters, numbers, and hyphens allowed');
+      this.slugAvailability.set('idle');
     } else if (slug.startsWith('-') || slug.endsWith('-')) {
       this.slugError.set('URL cannot start or end with a hyphen');
+      this.slugAvailability.set('idle');
     } else if (/--/.test(slug)) {
       this.slugError.set('URL cannot contain consecutive hyphens');
+      this.slugAvailability.set('idle');
     } else if (!this.storeService.isValidSlug(slug)) {
       this.slugError.set('This subdomain is reserved');
+      this.slugAvailability.set('taken');
     } else {
-      this.slugError.set(null);
+      // Client-side valid — skip API check if slug unchanged in edit mode
+      if (this.isEditing() && this.store()?.slug === slug) {
+        this.slugError.set(null);
+        this.slugAvailability.set('available');
+      } else {
+        // Debounced API availability check
+        this.slugError.set(null);
+        this.slugAvailability.set('checking');
+        this.slugCheckTimer = setTimeout(() => this.checkSlugAvailabilityAsync(slug), 300);
+      }
     }
+
     this.form.slug = slug.replace(/[^a-z0-9-]/g, '');
+  }
+
+  private async checkSlugAvailabilityAsync(slug: string) {
+    // Abort any previous in-flight request
+    if (this.slugCheckAbort) this.slugCheckAbort.abort();
+    const controller = new AbortController();
+    this.slugCheckAbort = controller;
+
+    try {
+      const excludeId = this.isEditing() ? this.storeId ?? undefined : undefined;
+      const result = await this.storeService.checkSlugAvailability(slug, excludeId);
+
+      // Ignore stale responses (user may have typed more)
+      if (controller.signal.aborted) return;
+
+      if (result.available) {
+        this.slugError.set(null);
+        this.slugAvailability.set('available');
+      } else {
+        this.slugError.set(result.reason || 'This URL is already taken');
+        this.slugAvailability.set('taken');
+      }
+    } catch {
+      if (controller.signal.aborted) return;
+      // On network error, don't block the user — clear error and reset status
+      this.slugAvailability.set('idle');
+    }
   }
 
   async save(publish: boolean = false) {

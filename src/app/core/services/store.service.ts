@@ -187,9 +187,21 @@ export class StoreService {
   }
 
   /**
-   * Check if a slug is valid for use as a store subdomain
+   * Check if a slug is valid for use as a store subdomain (client-side only)
    */
   isValidSlug(slug: string): boolean {
     return this.subdomainService.isValidSubdomain(slug);
+  }
+
+  /**
+   * Check slug availability against the API (includes DB uniqueness check).
+   * Pass excludeStoreId when editing so the store's own slug isn't flagged.
+   */
+  async checkSlugAvailability(slug: string, excludeStoreId?: string): Promise<{ available: boolean; reason?: string }> {
+    const params = excludeStoreId ? `?excludeStoreId=${encodeURIComponent(excludeStoreId)}` : '';
+    const response = await this.api.get<{ available: boolean; reason?: string }>(
+      `/stores/check-slug/${encodeURIComponent(slug)}${params}`,
+    );
+    return response.data || { available: false, reason: 'Unable to check availability' };
   }
 }
