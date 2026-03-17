@@ -1572,6 +1572,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
     .theme-toggle-btn.active {
       background: var(--accent);
       border-color: var(--text-black);
+      color: var(--on-accent);
     }
 
     .theme-toggle-btn svg {
@@ -1617,7 +1618,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
 
     .theme-dropdown-item.selected {
       background: var(--accent);
-      color: var(--foreground);
+      color: var(--on-accent);
       font-weight: 600;
     }
 
@@ -1668,8 +1669,9 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
 
     .mobile-theme-option.selected {
       background: var(--accent);
-      border-color: var(--foreground);
-      box-shadow: 2px 2px 0px var(--foreground);
+      color: var(--on-accent);
+      border-color: var(--on-accent);
+      box-shadow: 2px 2px 0px var(--on-accent);
     }
 
     .mobile-theme-option svg {

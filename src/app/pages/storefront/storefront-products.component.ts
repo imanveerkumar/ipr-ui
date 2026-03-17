@@ -103,7 +103,7 @@ import { Product } from '../../core/models';
             @if (searchQuery) {
               <button 
                 (click)="clearSearch()" 
-                class="px-6 sm:px-8 py-3 sm:py-3.5 bg-theme-fg text-white rounded-xl font-semibold hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
+                class="px-6 sm:px-8 py-3 sm:py-3.5 bg-theme-fg text-theme-bg rounded-xl font-semibold hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
               >
                 Show All Products
               </button>

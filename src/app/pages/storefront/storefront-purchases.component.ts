@@ -66,7 +66,7 @@ import { License } from '../../core/models';
             </p>
             <button 
               (click)="openAccessModal()"
-              class="w-full sm:w-auto px-8 py-3.5 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
+              class="w-full sm:w-auto px-8 py-3.5 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
             >
               Verify to Access
             </button>
@@ -101,7 +101,7 @@ import { License } from '../../core/models';
             </p>
             <button 
               (click)="goToProducts()"
-              class="w-full sm:w-auto px-8 py-3.5 bg-theme-fg text-white font-semibold rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
+              class="w-full sm:w-auto px-8 py-3.5 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
             >
               Browse Products
             </button>
@@ -219,7 +219,7 @@ import { License } from '../../core/models';
                           <button 
                             (click)="downloadFile(purchase, file.id)"
                             [disabled]="downloadingFile() === file.id || purchase.downloadCount >= purchase.maxDownloads"
-                            class="w-full sm:w-auto px-4 py-2.5 bg-theme-fg text-white text-sm font-medium rounded-lg hover:bg-theme-surface-hover active:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[44px]"
+                            class="w-full sm:w-auto px-4 py-2.5 bg-theme-fg text-theme-bg text-sm font-medium rounded-lg hover:bg-theme-surface-hover active:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[44px]"
                           >
                             @if (downloadingFile() === file.id) {
                               <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">

@@ -62,7 +62,7 @@ type ViewState = 'cart' | 'checkout';
               <div class="flex items-center gap-1.5 text-[10px]">
                 <span class="flex items-center gap-1" [class.text-theme-fg]="currentView() === 'cart'" [class.text-theme-muted]="currentView() !== 'cart'">
                   <span class="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold"
-                        [class.bg-theme-fg]="currentView() === 'cart'" [class.text-white]="currentView() === 'cart'"
+                        [class.bg-theme-fg]="currentView() === 'cart'" [class.text-theme-bg]="currentView() === 'cart'"
                         [class.bg-theme-secondary]="currentView() !== 'cart'">1</span>
                   <span class="hidden sm:inline">Cart</span>
                 </span>
@@ -71,7 +71,7 @@ type ViewState = 'cart' | 'checkout';
                 </svg>
                 <span class="flex items-center gap-1" [class.text-theme-fg]="currentView() === 'checkout'" [class.text-theme-muted]="currentView() !== 'checkout'">
                   <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
-                        [class.bg-theme-fg]="currentView() === 'checkout'" [class.text-white]="currentView() === 'checkout'"
+                        [class.bg-theme-fg]="currentView() === 'checkout'" [class.text-theme-bg]="currentView() === 'checkout'"
                         [class.bg-theme-secondary]="currentView() !== 'checkout'">2</span>
                   <span class="hidden sm:inline">Payment</span>
                 </span>
@@ -120,7 +120,7 @@ type ViewState = 'cart' | 'checkout';
                 <button 
                   (click)="cartService.close()" 
                   [routerLink]="authService.isSignedIn() ? '/explore' : '/products'"
-                  class="w-full px-5 py-3 bg-theme-fg text-white text-sm font-semibold rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-all min-h-[44px] shadow-lg shadow-gray-900/20"
+                  class="w-full px-5 py-3 bg-theme-fg text-theme-bg text-sm font-semibold rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-all min-h-[44px] shadow-lg shadow-gray-900/20"
                 >
                   Browse Products
                 </button>
@@ -323,7 +323,7 @@ type ViewState = 'cart' | 'checkout';
             }
 
             <!-- Order Summary Card -->
-            <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-theme-secondary p-3 mb-3">
+            <div class="bg-theme-bg rounded-xl border border-theme-secondary p-3 mb-3">
               <h3 class="text-xs font-semibold text-theme-muted uppercase tracking-wide mb-2.5">Order Summary</h3>
               
               <!-- Items compact list -->
@@ -359,7 +359,7 @@ type ViewState = 'cart' | 'checkout';
                 </div>
                 <div class="flex justify-between text-xs">
                   <span class="text-theme-muted">Platform fee</span>
-                  <span class="text-green-600 font-medium">Free</span>
+                  <span class="text-theme-success font-medium">Free</span>
                 </div>
                 <div class="flex justify-between text-xs">
                   <span class="text-theme-muted">Taxes</span>
@@ -381,28 +381,28 @@ type ViewState = 'cart' | 'checkout';
             </div>
 
             <!-- What you'll get -->
-            <div class="bg-blue-50 rounded-xl p-3 mb-3">
-              <h3 class="text-xs font-semibold text-blue-900 mb-2 flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-theme-bg border border-theme-secondary rounded-xl p-3 mb-3">
+              <h3 class="text-xs font-semibold text-theme-fg mb-2 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-theme-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 What you'll get
               </h3>
               <ul class="space-y-1.5">
-                <li class="flex items-start gap-1.5 text-xs text-blue-800">
-                  <svg class="w-3.5 h-3.5 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li class="flex items-start gap-1.5 text-xs text-theme-fg">
+                  <svg class="w-3.5 h-3.5 mt-0.5 text-theme-success flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                   </svg>
                   Instant access to download all files
                 </li>
-                <li class="flex items-start gap-1.5 text-xs text-blue-800">
-                  <svg class="w-3.5 h-3.5 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li class="flex items-start gap-1.5 text-xs text-theme-fg">
+                  <svg class="w-3.5 h-3.5 mt-0.5 text-theme-success flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                   </svg>
                   Lifetime access to your purchases
                 </li>
-                <li class="flex items-start gap-1.5 text-xs text-blue-800">
-                  <svg class="w-3.5 h-3.5 mt-0.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <li class="flex items-start gap-1.5 text-xs text-theme-fg">
+                  <svg class="w-3.5 h-3.5 mt-0.5 text-theme-success flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                   </svg>
                   Future updates included
@@ -507,15 +507,15 @@ type ViewState = 'cart' | 'checkout';
 
             <!-- Logged in user info -->
             @if (authService.isSignedIn()) {
-              <div class="bg-green-50 rounded-xl p-3 mb-3 flex items-center gap-2.5">
-                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="bg-theme-bg border border-theme-secondary rounded-xl p-3 mb-3 flex items-center gap-2.5">
+                <div class="w-8 h-8 bg-theme-surface rounded-full flex items-center justify-center border border-theme-secondary">
+                  <svg class="w-4 h-4 text-theme-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                   </svg>
                 </div>
                 <div>
-                  <p class="text-xs font-medium text-green-900">Signed in as</p>
-                  <p class="text-xs text-green-700">{{ authService.user()?.email }}</p>
+                  <p class="text-xs font-medium text-theme-fg">Signed in as</p>
+                  <p class="text-xs text-theme-muted">{{ authService.user()?.email }}</p>
                 </div>
               </div>
             }
@@ -562,7 +562,7 @@ type ViewState = 'cart' | 'checkout';
             <button 
               (click)="proceedToCheckout()"
               [disabled]="isValidating"
-              class="w-full py-3 text-sm font-semibold bg-theme-fg text-white rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[48px] shadow-lg shadow-gray-900/20 flex items-center justify-center gap-2"
+              class="w-full py-3 text-sm font-semibold bg-theme-fg text-theme-bg rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[48px] shadow-lg shadow-gray-900/20 flex items-center justify-center gap-2"
             >
               @if (isValidating) {
                 <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

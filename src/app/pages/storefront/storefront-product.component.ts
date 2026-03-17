@@ -144,7 +144,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                       <button
                         (click)="payCustomAmount()"
                         [disabled]="purchasing() || !customAmount || customAmount < 1"
-                        class="px-4 py-2.5 bg-theme-fg text-white border border-gray-900 rounded-lg font-semibold text-sm hover:bg-theme-surface-hover disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap transition-colors"
+                        class="px-4 py-2.5 bg-theme-fg text-theme-bg border border-gray-900 rounded-lg font-semibold text-sm hover:bg-theme-surface-hover disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap transition-colors"
                       >
                         @if (purchasing() && selectedFreeOption() === 'custom') {
                           <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
@@ -189,7 +189,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
                   <button 
                     (click)="handleBuy()"
                     [disabled]="purchasing()"
-                    class="w-full py-4 sm:py-5 text-base sm:text-lg font-semibold bg-theme-fg text-white rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors min-h-[56px]"
+                    class="w-full py-4 sm:py-5 text-base sm:text-lg font-semibold bg-theme-fg text-theme-bg rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors min-h-[56px]"
                   >
                     @if (purchasing()) {
                       <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">

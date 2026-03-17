@@ -448,12 +448,12 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                 <div class="bg-theme-surface border-2 border-theme-border/20 rounded-xl overflow-hidden">
                   <div class="bg-theme-secondary animate-pulse rounded-t-xl" [style.height.px]="getSkeletonHeight(i)"></div>
                   <div class="p-3">
-                    <div class="h-4 bg-[#111111]/10 rounded animate-pulse mb-2 w-3/4"></div>
+                    <div class="h-4 bg-theme-fg/10 rounded animate-pulse mb-2 w-3/4"></div>
                     <div class="flex items-center gap-2 mb-2">
-                      <div class="w-5 h-5 rounded-full bg-[#111111]/10 animate-pulse"></div>
-                      <div class="h-3 bg-[#111111]/5 rounded animate-pulse w-20"></div>
+                      <div class="w-5 h-5 rounded-full bg-theme-fg/10 animate-pulse"></div>
+                      <div class="h-3 bg-theme-fg/5 rounded animate-pulse w-20"></div>
                     </div>
-                    <div class="h-4 bg-[#111111]/10 rounded animate-pulse w-1/3"></div>
+                    <div class="h-4 bg-theme-fg/10 rounded animate-pulse w-1/3"></div>
                   </div>
                 </div>
               </ng-template>

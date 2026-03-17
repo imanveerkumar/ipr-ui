@@ -11,33 +11,33 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       <!-- Backdrop -->
       <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center" (click)="onCancel()">
         <!-- Modal -->
-        <div class="bg-theme-surface w-full sm:max-w-md border-2 border-theme-border shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto safe-area-bottom" (click)="$event.stopPropagation()" [ngStyle]="{'background-color': accent() === 'yellow' ? '#FFC60B' : (accent() === 'danger' ? '#ffffff' : '#ffffff')}">
+        <div class="w-full sm:max-w-md border-2 border-theme-border shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto safe-area-bottom bg-theme-surface" (click)="$event.stopPropagation()" [class.bg-theme-accent]="accent() === 'yellow'">
           <!-- Mobile drag handle -->
           <div class="sm:hidden flex justify-center pt-3 pb-1">
             <div class="w-10 h-1 bg-theme-secondary rounded-full"></div>
           </div>
 
           <!-- Header -->
-          <div class="px-6 py-5 border-b border-black/10">
+          <div class="px-6 py-5 border-b border-theme-border">
             <div class="flex items-center justify-between">
               <h2 class="text-lg font-dm-sans font-extrabold text-theme-fg">{{ title() }}</h2>
-              <button (click)="onCancel()" class="w-8 h-8 flex items-center justify-center border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all" [ngStyle]="{'background-color': accent() === 'yellow' ? '#FFC60B' : '#ffffff'}">
+              <button (click)="onCancel()" class="w-8 h-8 flex items-center justify-center border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all bg-theme-surface" [class.bg-theme-accent]="accent() === 'yellow'">
                 <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
             </div>
-            <p class="text-sm text-[#111111]/70 mt-1 font-semibold">{{ message() }}</p>
+            <p class="text-sm text-theme-muted mt-1 font-semibold">{{ message() }}</p>
           </div>
 
           <!-- Actions -->
           <div class="p-6 space-y-3">
             <div class="flex gap-3">
               <button (click)="onCancel()" [disabled]="confirm.pending()" [class]="accent() === 'yellow' ? 'flex-1 py-3 bg-theme-surface text-theme-fg border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0' : 'flex-1 py-3 bg-theme-surface text-theme-fg border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0'">{{ cancelText() }}</button>
-              <button (click)="onConfirm()" [disabled]="confirm.pending()" [class]="confirmClass() ? confirmClass() : (confirmColor() === 'yellow' ? 'flex-1 py-3 bg-theme-accent text-theme-fg border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0' : (confirmColor() === 'danger' ? 'flex-1 py-3 bg-theme-danger text-white border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0' : 'flex-1 py-3 bg-theme-fg text-white border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0'))">
+              <button (click)="onConfirm()" [disabled]="confirm.pending()" [class]="confirmClass() ? confirmClass() : (confirmColor() === 'yellow' ? 'flex-1 py-3 bg-theme-accent text-black border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0' : (confirmColor() === 'danger' ? 'flex-1 py-3 bg-theme-danger text-white border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0' : 'flex-1 py-3 bg-theme-fg text-theme-bg border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0'))">
                 @if (confirm.pending()) {
                   <span class="flex items-center justify-center">
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5" [ngClass]="confirmColor() === 'yellow' ? 'text-theme-fg' : 'text-white'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5" [ngClass]="confirmColor() === 'yellow' ? 'text-black' : (confirmColor() === 'danger' ? 'text-white' : 'text-theme-bg')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                     </svg>
