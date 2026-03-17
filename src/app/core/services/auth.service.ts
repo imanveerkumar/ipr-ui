@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { User } from '../models';
 import { ApiService } from './api.service';
 import { GlobalLoaderService } from './global-loader.service';
+import { ThemeService } from './theme.service';
 import { WishlistService } from './wishlist.service';
 
 @Injectable({
@@ -33,6 +34,7 @@ export class AuthService {
   readonly isAdmin = computed(() => this._user()?.role === 'ADMIN');
 
   private globalLoader = inject(GlobalLoaderService);
+  private themeService = inject(ThemeService);
   private wishlistService = inject(WishlistService);
 
   constructor(private apiService: ApiService, private router: Router) {}
@@ -49,6 +51,7 @@ export class AuthService {
     try {
       this.clerk = new Clerk(environment.clerkPublishableKey);
       await this.clerk.load({
+        appearance: this.getClerkAppearance(),
         // Use custom router functions to prevent page reloads
         routerPush: (to: string) => {
           // Don't navigate - just stay on current page
@@ -146,7 +149,9 @@ export class AuthService {
   async signIn() {
     if (!this.clerk) return;
     // Open sign-in modal - custom router prevents redirects
-    await this.clerk.openSignIn();
+    await this.clerk.openSignIn({
+      appearance: this.getClerkAppearance(),
+    });
   }
 
   async openCreatorSignup() {
@@ -157,7 +162,9 @@ export class AuthService {
   async signUp() {
     if (!this.clerk) return;
     // Open sign-up modal - custom router prevents redirects
-    await this.clerk.openSignUp();
+    await this.clerk.openSignUp({
+      appearance: this.getClerkAppearance(),
+    });
   }
 
   async signOut() {
@@ -251,5 +258,54 @@ export class AuthService {
     } catch (err) {
       // ignore navigation errors
     }
+  }
+
+  private getClerkAppearance() {
+    const isDarkTheme = this.themeService.currentTheme === 'dark' || this.themeService.currentTheme === 'mustard-dark';
+    const socialButtonsVariant: 'iconButton' | 'blockButton' = isDarkTheme ? 'iconButton' : 'blockButton';
+
+    return {
+      variables: {
+        colorPrimary: 'var(--primary)',
+        colorText: 'var(--foreground)',
+        colorTextSecondary: 'var(--muted)',
+        colorBackground: 'var(--surface)',
+        colorInputBackground: 'var(--background)',
+        colorInputText: 'var(--foreground)',
+        colorDanger: 'var(--danger)',
+        colorSuccess: 'var(--success)',
+        borderRadius: '0.75rem',
+      },
+      elements: {
+        card: {
+          backgroundColor: 'var(--surface)',
+          border: '1px solid var(--border)',
+          boxShadow: 'none',
+        },
+        headerTitle: {
+          color: 'var(--foreground)',
+        },
+        headerSubtitle: {
+          color: 'var(--muted)',
+        },
+        formFieldLabel: {
+          color: 'var(--foreground)',
+        },
+        formFieldInput: {
+          backgroundColor: 'var(--background)',
+          borderColor: 'var(--border)',
+          color: 'var(--foreground)',
+        },
+        footerActionText: {
+          color: 'var(--muted)',
+        },
+        footerActionLink: {
+          color: 'var(--primary)',
+        },
+      },
+      layout: {
+        socialButtonsVariant,
+      },
+    };
   }
 }
