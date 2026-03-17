@@ -369,19 +369,19 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
       font-family: 'Caveat', cursive;
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--text-black);
+      color: var(--on-accent);
       padding: 8px 20px;
       background: var(--btn-yellow);
-      border: 2px solid var(--text-black);
+      border: 2px solid var(--on-accent);
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 4px 4px 0px var(--text-black);
+      box-shadow: 4px 4px 0px var(--on-accent);
     }
 
     .btn-signup:hover {
       transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--text-black);
+      box-shadow: 2px 2px 0px var(--on-accent);
     }
 
     /* === PROFILE BUTTON === */

@@ -102,32 +102,32 @@ export class UiTipCardComponent {
 
   get iconBoxClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'bg-white/10 border-white/20'
+      ? 'bg-theme-bg/10 border-theme-bg/20'
       : 'bg-theme-surface border-theme-border';
   }
 
   get labelClasses(): string {
     return this.message.type === 'BANNER'
       ? 'text-theme-accent'
-      : 'text-[#111111]/40';
+      : 'text-theme-muted';
   }
 
   get titleClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'text-white'
+      ? 'text-theme-bg'
       : 'text-theme-fg';
   }
 
   get bodyClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'text-white/50'
-      : 'text-[#111111]/60';
+      ? 'text-theme-bg/70'
+      : 'text-theme-muted';
   }
 
   get dismissClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'text-white/30 hover:bg-white/10 hover:text-white'
-      : 'text-[#111111]/30 hover:bg-black/5 hover:text-theme-fg';
+      ? 'text-theme-bg/60 hover:bg-theme-bg/10 hover:text-theme-bg'
+      : 'text-theme-muted hover:bg-theme-fg/10 hover:text-theme-fg';
   }
 
   /**
@@ -137,8 +137,8 @@ export class UiTipCardComponent {
    */
   get ctaClasses(): string {
     return this.message.type === 'BANNER'
-      ? 'bg-theme-accent text-theme-fg shadow-[3px_3px_0px_0px_#000]'
-      : 'bg-theme-fg text-white shadow-[3px_3px_0px_0px_rgb(104_224_121)]';
+      ? 'bg-theme-bg text-theme-fg shadow-[3px_3px_0px_0px_#000]'
+      : 'bg-theme-fg text-theme-bg shadow-[3px_3px_0px_0px_rgb(104_224_121)]';
   }
 
   get icon(): LucideIconData {
@@ -153,7 +153,7 @@ export class UiTipCardComponent {
   }
 
   get iconColor(): string {
-    return this.message.type === 'BANNER' ? '#FFC60B' : '#111111';
+    return this.message.type === 'BANNER' ? 'var(--background)' : 'var(--foreground)';
   }
 
   get badgeLabel(): string {

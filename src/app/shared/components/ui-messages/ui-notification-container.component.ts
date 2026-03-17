@@ -42,11 +42,11 @@ import { UiBannerComponent } from './ui-banner.component';
             <div class="flex items-start gap-3">
               <div class="flex-1 min-w-0">
                 <p class="font-bold text-sm text-theme-fg">{{ msg.title }}</p>
-                <p *ngIf="msg.body" class="text-xs text-[#111]/60 mt-1 leading-relaxed">{{ msg.body }}</p>
+                <p *ngIf="msg.body" class="text-xs text-theme-muted mt-1 leading-relaxed">{{ msg.body }}</p>
                 <a
                   *ngIf="msg.ctaUrl && msg.ctaText"
                   [routerLink]="msg.ctaUrl"
-                  class="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-theme-fg hover:text-[#111]/70 transition-colors"
+                  class="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-theme-fg hover:text-theme-muted transition-colors"
                 >
                   {{ msg.ctaText }}
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>

@@ -462,15 +462,15 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <!-- Empty State -->
             <div *ngIf="!isLoading() && feedItems().length === 0" class="py-20 text-center">
               <div class="w-24 h-24 mx-auto mb-6 bg-theme-secondary border-2 border-theme-border rounded-2xl flex items-center justify-center">
-                <svg class="w-12 h-12 text-fg-ghost" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-fg-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
               </div>
               <h3 class="text-xl font-bold text-theme-fg mb-2 font-dm-sans">Nothing found</h3>
-              <p class="text-fg-muted font-medium mb-6">Try adjusting your search or filters</p>
+              <p class="text-theme-fg/80 font-medium mb-6">Try adjusting your search or filters</p>
               <button
                 (click)="clearAllFilters()"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-theme-accent border-2 border-theme-border rounded-xl text-sm font-bold text-theme-fg shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-theme-accent border-2 border-theme-border rounded-xl text-sm font-bold text-black shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
               >
                 Clear all filters
               </button>

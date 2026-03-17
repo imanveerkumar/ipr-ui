@@ -73,7 +73,7 @@ import {
               </span>
               <div class="flex-1 min-w-0">
                 <p class="text-sm md:text-base font-bold text-theme-fg">{{ msg.title }}</p>
-                <p *ngIf="msg.body" class="text-sm font-medium text-[#111111]/70 mt-1">{{ msg.body }}</p>
+                <p *ngIf="msg.body" class="text-sm font-medium text-theme-muted mt-1">{{ msg.body }}</p>
               </div>
               <button *ngIf="msg.dismissible" (click)="onDismissMessage(msg.id)" class="flex-shrink-0 text-theme-fg hover:text-theme-danger transition-colors p-1" aria-label="Dismiss">
                 <lucide-icon [img]="XIcon" [size]="20" [strokeWidth]="3"></lucide-icon>
