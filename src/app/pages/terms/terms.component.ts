@@ -128,7 +128,7 @@ import { RouterLink } from '@angular/router';
     :host {
       display: block;
       min-height: 100vh;
-      background: #F9F4EB;
+      background: var(--background);
     }
 
     .container {
@@ -140,7 +140,7 @@ import { RouterLink } from '@angular/router';
     /* Hero */
     .hero-section {
       padding: 2rem 0 1.5rem;
-      border-bottom: 2px solid #111;
+      border-bottom: 2px solid var(--border);
     }
 
     .breadcrumb {
@@ -153,31 +153,30 @@ import { RouterLink } from '@angular/router';
     .breadcrumb-link {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #111;
+      color: var(--foreground);
       text-decoration: none;
     }
 
-    .breadcrumb-link:hover { color: #2B57D6; }
-    .breadcrumb-sep { color: #111; opacity: 0.4; }
+    .breadcrumb-link:hover { color: var(--primary); }
+    .breadcrumb-sep { color: var(--foreground); opacity: 0.4; }
 
     .breadcrumb-current {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111;
+      color: var(--foreground);
     }
 
     .page-title {
       font-size: 2.5rem;
       font-weight: 900;
-      color: #111;
+      color: var(--foreground);
       letter-spacing: -0.03em;
       margin: 0 0 0.5rem;
     }
 
     .page-subtitle {
       font-size: 1rem;
-      color: #111;
-      opacity: 0.6;
+      color: var(--muted);
       margin: 0;
     }
 
@@ -187,9 +186,9 @@ import { RouterLink } from '@angular/router';
     }
 
     .card {
-      background: #fff;
-      border: 2px solid #111;
-      box-shadow: 4px 4px 0px 0px #111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       padding: 2.5rem 2rem;
     }
 
@@ -197,7 +196,7 @@ import { RouterLink } from '@angular/router';
     .prose h2 {
       font-size: 1.375rem;
       font-weight: 800;
-      color: #111;
+      color: var(--foreground);
       margin: 2rem 0 0.75rem;
       letter-spacing: -0.02em;
     }
@@ -207,15 +206,14 @@ import { RouterLink } from '@angular/router';
     .prose h3 {
       font-size: 1.1rem;
       font-weight: 700;
-      color: #111;
+      color: var(--foreground);
       margin: 1.5rem 0 0.5rem;
     }
 
     .prose p {
       font-size: 1rem;
       line-height: 1.7;
-      color: #111;
-      opacity: 0.85;
+      color: var(--muted);
       margin: 0 0 1rem;
     }
 
@@ -227,18 +225,17 @@ import { RouterLink } from '@angular/router';
     .prose li {
       font-size: 1rem;
       line-height: 1.7;
-      color: #111;
-      opacity: 0.85;
+      color: var(--muted);
       margin-bottom: 0.35rem;
     }
 
     .prose a {
-      color: #2B57D6;
+      color: var(--primary);
       text-decoration: underline;
       font-weight: 600;
     }
 
-    .prose a:hover { color: #FA4B28; }
+    .prose a:hover { color: var(--foreground); }
 
     .prose strong { font-weight: 700; opacity: 1; }
 

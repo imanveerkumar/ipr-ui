@@ -25,13 +25,13 @@ export interface ApiRequestOptions {
 
 /** Default rate limit configs for different request types */
 const DEFAULT_RATE_LIMITS = {
-  GET: { maxRequests: 30, windowMs: 10000, algorithm: 'sliding-window' as const },
-  POST: { maxRequests: 15, windowMs: 10000, algorithm: 'sliding-window' as const },
-  PUT: { maxRequests: 15, windowMs: 10000, algorithm: 'sliding-window' as const },
-  PATCH: { maxRequests: 15, windowMs: 10000, algorithm: 'sliding-window' as const },
-  DELETE: { maxRequests: 10, windowMs: 10000, algorithm: 'sliding-window' as const },
-  SEARCH: { maxRequests: 10, windowMs: 1000, algorithm: 'sliding-window' as const },
-  UPLOAD: { maxRequests: 5, windowMs: 60000, algorithm: 'fixed-window' as const },
+  GET: { maxRequests: 120, windowMs: 10000, algorithm: 'sliding-window' as const },
+  POST: { maxRequests: 60, windowMs: 10000, algorithm: 'sliding-window' as const },
+  PUT: { maxRequests: 60, windowMs: 10000, algorithm: 'sliding-window' as const },
+  PATCH: { maxRequests: 60, windowMs: 10000, algorithm: 'sliding-window' as const },
+  DELETE: { maxRequests: 30, windowMs: 10000, algorithm: 'sliding-window' as const },
+  SEARCH: { maxRequests: 40, windowMs: 1000, algorithm: 'sliding-window' as const },
+  UPLOAD: { maxRequests: 20, windowMs: 60000, algorithm: 'fixed-window' as const },
 };
 
 @Injectable({

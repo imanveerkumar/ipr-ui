@@ -32,7 +32,7 @@ import { FormsModule } from '@angular/forms';
 
               @if (submitted) {
                 <div class="success-msg">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                   <div>
                     <strong>Message sent!</strong>
                     <p>Thank you for reaching out. We'll get back to you as soon as possible.</p>
@@ -109,7 +109,7 @@ import { FormsModule } from '@angular/forms';
     :host {
       display: block;
       min-height: 100vh;
-      background: #F9F4EB;
+      background: var(--background);
     }
 
     .container {
@@ -121,7 +121,7 @@ import { FormsModule } from '@angular/forms';
     /* Hero */
     .hero-section {
       padding: 2rem 0 1.5rem;
-      border-bottom: 2px solid #111;
+      border-bottom: 2px solid var(--border);
     }
 
     .breadcrumb {
@@ -134,31 +134,30 @@ import { FormsModule } from '@angular/forms';
     .breadcrumb-link {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #111;
+      color: var(--foreground);
       text-decoration: none;
     }
 
-    .breadcrumb-link:hover { color: #2B57D6; }
-    .breadcrumb-sep { color: #111; opacity: 0.4; }
+    .breadcrumb-link:hover { color: var(--primary); }
+    .breadcrumb-sep { color: var(--foreground); opacity: 0.4; }
 
     .breadcrumb-current {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111;
+      color: var(--foreground);
     }
 
     .page-title {
       font-size: 2.5rem;
       font-weight: 900;
-      color: #111;
+      color: var(--foreground);
       letter-spacing: -0.03em;
       margin: 0 0 0.5rem;
     }
 
     .page-subtitle {
       font-size: 1.1rem;
-      color: #111;
-      opacity: 0.7;
+      color: var(--muted);
       margin: 0;
       font-weight: 500;
     }
@@ -179,16 +178,16 @@ import { FormsModule } from '@angular/forms';
     }
 
     .card {
-      background: #fff;
-      border: 2px solid #111;
-      box-shadow: 4px 4px 0px 0px #111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       padding: 2rem;
     }
 
     .section-heading {
       font-size: 1.375rem;
       font-weight: 800;
-      color: #111;
+      color: var(--foreground);
       margin: 0 0 1.5rem;
     }
 
@@ -208,22 +207,26 @@ import { FormsModule } from '@angular/forms';
     .label {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111;
+      color: var(--foreground);
     }
 
     .input {
       padding: 0.75rem;
-      border: 2px solid #111;
-      background: #F9F4EB;
+      border: 2px solid var(--border);
+      background: var(--secondary);
       font-size: 1rem;
       font-family: inherit;
-      color: #111;
+      color: var(--foreground);
       outline: none;
       transition: box-shadow 0.15s;
     }
 
+    .input::placeholder {
+      color: var(--muted);
+    }
+
     .input:focus {
-      box-shadow: 3px 3px 0px 0px #2B57D6;
+      box-shadow: 3px 3px 0px 0px var(--primary);
     }
 
     .textarea {
@@ -234,12 +237,12 @@ import { FormsModule } from '@angular/forms';
     .btn-submit {
       align-self: flex-start;
       padding: 0.875rem 2rem;
-      background: #FFC60B;
-      color: #111;
+      background: var(--accent);
+      color: var(--on-accent);
       font-size: 1rem;
       font-weight: 800;
-      border: 2px solid #111;
-      box-shadow: 4px 4px 0px 0px #111;
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       cursor: pointer;
       transition: transform 0.1s, box-shadow 0.1s;
       font-family: inherit;
@@ -247,7 +250,7 @@ import { FormsModule } from '@angular/forms';
 
     .btn-submit:hover:not(:disabled) {
       transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0px 0px #111;
+      box-shadow: 6px 6px 0px 0px var(--border);
     }
 
     .btn-submit:active:not(:disabled) {
@@ -266,8 +269,9 @@ import { FormsModule } from '@angular/forms';
       gap: 1rem;
       align-items: flex-start;
       padding: 1.25rem;
-      background: #68E079;
-      border: 2px solid #111;
+      background: var(--success);
+      border: 2px solid var(--border);
+      color: var(--on-success);
     }
 
     .success-msg strong {
@@ -279,7 +283,7 @@ import { FormsModule } from '@angular/forms';
     .success-msg p {
       margin: 0;
       font-size: 0.95rem;
-      opacity: 0.85;
+      opacity: 0.95;
     }
 
     /* Sidebar */
@@ -296,25 +300,25 @@ import { FormsModule } from '@angular/forms';
     .info-icon {
       width: 44px;
       height: 44px;
-      background: #FFC60B;
-      border: 2px solid #111;
+      background: var(--accent);
+      border: 2px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 0.75rem;
+      color: var(--on-accent);
     }
 
     .info-card h3 {
       font-size: 1rem;
       font-weight: 800;
-      color: #111;
+      color: var(--foreground);
       margin: 0 0 0.5rem;
     }
 
     .info-card p {
       font-size: 0.925rem;
-      color: #111;
-      opacity: 0.8;
+      color: var(--muted);
       margin: 0;
       line-height: 1.5;
     }
@@ -326,13 +330,13 @@ import { FormsModule } from '@angular/forms';
     }
 
     .social-links a {
-      color: #2B57D6;
+      color: var(--primary);
       font-size: 0.925rem;
       font-weight: 600;
       text-decoration: underline;
     }
 
-    .social-links a:hover { color: #FA4B28; }
+    .social-links a:hover { color: var(--foreground); }
 
     @media (max-width: 640px) {
       .container { padding: 0 1rem; }

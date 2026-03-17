@@ -96,7 +96,7 @@ import { RouterLink } from '@angular/router';
     :host {
       display: block;
       min-height: 100vh;
-      background: #F9F4EB;
+      background: var(--background);
     }
 
     .container {
@@ -108,7 +108,7 @@ import { RouterLink } from '@angular/router';
     /* Hero */
     .hero-section {
       padding: 2rem 0 1.5rem;
-      border-bottom: 2px solid #111;
+      border-bottom: 2px solid var(--border);
     }
 
     .breadcrumb {
@@ -121,31 +121,30 @@ import { RouterLink } from '@angular/router';
     .breadcrumb-link {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #111;
+      color: var(--foreground);
       text-decoration: none;
     }
 
-    .breadcrumb-link:hover { color: #2B57D6; }
-    .breadcrumb-sep { color: #111; opacity: 0.4; }
+    .breadcrumb-link:hover { color: var(--primary); }
+    .breadcrumb-sep { color: var(--foreground); opacity: 0.4; }
 
     .breadcrumb-current {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111;
+      color: var(--foreground);
     }
 
     .page-title {
       font-size: 2.5rem;
       font-weight: 900;
-      color: #111;
+      color: var(--foreground);
       letter-spacing: -0.03em;
       margin: 0 0 0.5rem;
     }
 
     .page-subtitle {
       font-size: 1.1rem;
-      color: #111;
-      opacity: 0.7;
+      color: var(--muted);
       margin: 0;
       font-weight: 500;
     }
@@ -156,8 +155,8 @@ import { RouterLink } from '@angular/router';
     }
 
     .card {
-      background: #fff;
-      border: 2px solid #111;
+      background: var(--surface);
+      border: 2px solid var(--border);
       /* shadow removed per request */
       box-shadow: none;
       padding: 2.5rem 2rem;
@@ -165,25 +164,34 @@ import { RouterLink } from '@angular/router';
     }
 
     .highlight-card {
-      background: #FFC60B;
+      background: var(--accent);
+      border-color: var(--on-accent);
+      color: var(--on-accent);
+    }
+
+    .highlight-card .card-heading,
+    .highlight-card .card-text {
+      color: var(--on-accent);
+      opacity: 1;
     }
 
     .badge {
       display: inline-block;
-      background: #111;
-      color: #FFC60B;
+      background: var(--on-accent);
+      color: var(--accent);
       font-size: 0.75rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       padding: 0.35rem 0.75rem;
       margin-bottom: 1rem;
+      border: 2px solid var(--on-accent);
     }
 
     .card-heading {
       font-size: 1.75rem;
       font-weight: 900;
-      color: #111;
+      color: var(--foreground);
       margin: 0 0 1rem;
       letter-spacing: -0.02em;
     }
@@ -191,15 +199,14 @@ import { RouterLink } from '@angular/router';
     .card-text {
       font-size: 1.05rem;
       line-height: 1.75;
-      color: #111;
-      opacity: 0.85;
+      color: var(--muted);
       margin: 0 0 1rem;
     }
 
     .section-heading {
       font-size: 1.5rem;
       font-weight: 800;
-      color: #111;
+      color: var(--foreground);
       margin: 0 0 1.5rem;
       letter-spacing: -0.02em;
     }
@@ -217,55 +224,55 @@ import { RouterLink } from '@angular/router';
 
     .feature {
       padding: 1.25rem;
-      border: 2px solid #111;
-      background: #F9F4EB;
+      border: 2px solid var(--border);
+      background: var(--secondary);
     }
 
     .feature-icon {
       width: 48px;
       height: 48px;
-      background: #FFC60B;
-      border: 2px solid #111;
+      background: var(--accent);
+      border: 2px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 0.75rem;
+      color: var(--on-accent);
     }
 
     .feature h3 {
       font-size: 1.1rem;
       font-weight: 800;
-      color: #111;
+      color: var(--foreground);
       margin: 0 0 0.5rem;
     }
 
     .feature p {
       font-size: 0.925rem;
       line-height: 1.6;
-      color: #111;
-      opacity: 0.8;
+      color: var(--muted);
       margin: 0;
     }
 
     /* CTA Card */
     .cta-card {
       text-align: center;
-      background: #FA4B28;
-      border-color: #111;
+      background: var(--primary);
+      border-color: var(--border);
     }
 
     .cta-heading {
       font-size: 1.75rem;
       font-weight: 900;
-      color: #111;
+      color: var(--on-primary);
       margin: 0 0 0.75rem;
     }
 
     .cta-text {
       font-size: 1.05rem;
       line-height: 1.6;
-      color: #111;
-      opacity: 0.9;
+      color: var(--on-primary);
+      opacity: 0.95;
       margin: 0 0 1.5rem;
     }
 
@@ -273,12 +280,12 @@ import { RouterLink } from '@angular/router';
       display: inline-flex;
       align-items: center;
       padding: 0.875rem 2.5rem;
-      background: #FFC60B;
-      color: #111;
+      background: var(--surface);
+      color: var(--foreground);
       font-size: 1.05rem;
       font-weight: 800;
-      border: 2px solid #111;
-      box-shadow: 4px 4px 0px 0px #111;
+      border: 2px solid var(--foreground);
+      box-shadow: 4px 4px 0px 0px var(--foreground);
       text-decoration: none;
       cursor: pointer;
       transition: transform 0.1s, box-shadow 0.1s;
@@ -286,7 +293,7 @@ import { RouterLink } from '@angular/router';
 
     .btn-cta:hover {
       transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0px 0px #111;
+      box-shadow: 6px 6px 0px 0px var(--foreground);
     }
 
     .btn-cta:active {

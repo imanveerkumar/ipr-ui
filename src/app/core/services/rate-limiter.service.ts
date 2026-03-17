@@ -72,19 +72,19 @@ export class RateLimiterService {
   static readonly PRESETS = {
     /** For search/autocomplete requests */
     SEARCH: {
-      maxRequests: 10,
+      maxRequests: 40,
       windowMs: 1000,
       algorithm: 'sliding-window' as RateLimitAlgorithm
     },
     /** For standard API calls */
     STANDARD: {
-      maxRequests: 30,
+      maxRequests: 120,
       windowMs: 10000,
       algorithm: 'sliding-window' as RateLimitAlgorithm
     },
     /** For expensive operations (payments, uploads) */
     STRICT: {
-      maxRequests: 5,
+      maxRequests: 20,
       windowMs: 60000,
       algorithm: 'fixed-window' as RateLimitAlgorithm
     },
