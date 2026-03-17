@@ -31,7 +31,7 @@ type SortOrder = 'desc' | 'asc';
                 <!-- Total Orders stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-primary border border-theme-border rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                     </svg>
                   </div>
@@ -41,13 +41,13 @@ type SortOrder = 'desc' | 'asc';
                     } @else {
                       <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Total Orders</div>
+                    <div class="text-[10px] md:text-xs text-theme-muted font-medium">Total Orders</div>
                   </div>
                 </div>
                 <!-- Completed stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-success border border-theme-border rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
@@ -57,13 +57,13 @@ type SortOrder = 'desc' | 'asc';
                     } @else {
                       <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Completed</div>
+                    <div class="text-[10px] md:text-xs text-theme-muted font-medium">Completed</div>
                   </div>
                 </div>
                 <!-- Total Spent stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
                   <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-accent border border-theme-border rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
@@ -73,7 +73,7 @@ type SortOrder = 'desc' | 'asc';
                     } @else {
                       <div class="h-4 md:h-6 w-10 md:w-16 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Total Spent</div>
+                    <div class="text-[10px] md:text-xs text-theme-muted font-medium">Total Spent</div>
                   </div>
                 </div>
               </div>
@@ -82,7 +82,7 @@ type SortOrder = 'desc' | 'asc';
               <div class="mt-4 max-w-xl mx-auto md:mx-0 mb-8 md:mb-12">
                 <div class="relative">
                   <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
-                    <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 md:w-5 md:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                   </div>
@@ -92,11 +92,11 @@ type SortOrder = 'desc' | 'asc';
                     (input)="onSearchInput()"
                     (keyup.enter)="performSearch()"
                     placeholder="Search orders by product name..."
-                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-fg placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-fg placeholder:text-theme-muted focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
                   />
                   <button
                     (click)="performSearch()"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-theme-accent text-theme-fg border-2 border-theme-border rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-theme-accent text-theme-surface border-2 border-theme-border rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
                   >
                     Search
                   </button>
@@ -120,7 +120,7 @@ type SortOrder = 'desc' | 'asc';
                     (click)="filterByStatus(status.value)"
                     class="flex items-center gap-1.5 px-2.5 py-2 md:px-4 md:py-2.5 rounded-lg font-bold text-xs md:text-sm whitespace-nowrap transition-all duration-200"
                     [class.bg-theme-fg]="currentStatus() === status.value"
-                    [class.text-white]="currentStatus() === status.value"
+                    [class.text-theme-surface]="currentStatus() === status.value"
                     [class.shadow-[2px_2px_0px_0px_#FFC60B]]="currentStatus() === status.value"
                     [class.text-theme-fg]="currentStatus() !== status.value"
                     [class.hover:bg-theme-surface]="currentStatus() !== status.value"
@@ -153,15 +153,19 @@ type SortOrder = 'desc' | 'asc';
                   <div class="absolute top-full right-0 mt-2 w-40 bg-theme-surface border-2 border-theme-border rounded-xl shadow-[4px_4px_0px_0px_#000] z-20 overflow-hidden">
                     <button
                       (click)="setSortOrder('desc')"
-                      class="w-full px-4 py-3 text-left text-sm font-medium text-theme-fg hover:bg-theme-secondary transition-colors border-b border-black/10"
+                      class="w-full px-4 py-3 text-left text-sm font-medium hover:bg-theme-secondary transition-colors border-b border-black/10"
                       [class.bg-theme-accent]="currentSortOrder() === 'desc'"
+                      [class.text-theme-surface]="currentSortOrder() === 'desc'"
+                      [class.text-theme-fg]="currentSortOrder() !== 'desc'"
                     >
                       Newest First
                     </button>
                     <button
                       (click)="setSortOrder('asc')"
-                      class="w-full px-4 py-3 text-left text-sm font-medium text-theme-fg hover:bg-theme-secondary transition-colors"
+                      class="w-full px-4 py-3 text-left text-sm font-medium hover:bg-theme-secondary transition-colors"
                       [class.bg-theme-accent]="currentSortOrder() === 'asc'"
+                      [class.text-theme-surface]="currentSortOrder() === 'asc'"
+                      [class.text-theme-fg]="currentSortOrder() !== 'asc'"
                     >
                       Oldest First
                     </button>
@@ -193,16 +197,16 @@ type SortOrder = 'desc' | 'asc';
                     <div class="flex items-start gap-4">
                       <div class="w-16 h-16 md:w-20 md:h-20 bg-theme-secondary rounded-lg animate-pulse shrink-0"></div>
                       <div class="flex-1 min-w-0">
-                        <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse w-3/4 mb-2"></div>
-                        <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-1/2 mb-3"></div>
+                        <div class="h-4 md:h-5 bg-theme-fg/10 rounded animate-pulse w-3/4 mb-2"></div>
+                        <div class="h-3 md:h-4 bg-theme-fg/5 rounded animate-pulse w-1/2 mb-3"></div>
                         <div class="flex items-center gap-2">
                           <div class="h-6 w-16 bg-theme-accent/30 rounded animate-pulse"></div>
-                          <div class="h-3 w-24 bg-[#111111]/5 rounded animate-pulse"></div>
+                          <div class="h-3 w-24 bg-theme-fg/5 rounded animate-pulse"></div>
                         </div>
                       </div>
                       <div class="text-right shrink-0">
-                        <div class="h-5 w-20 bg-[#111111]/10 rounded animate-pulse mb-2"></div>
-                        <div class="h-3 w-16 bg-[#111111]/5 rounded animate-pulse"></div>
+                        <div class="h-5 w-20 bg-theme-fg/10 rounded animate-pulse mb-2"></div>
+                        <div class="h-3 w-16 bg-theme-fg/5 rounded animate-pulse"></div>
                       </div>
                     </div>
                   </div>
@@ -213,18 +217,18 @@ type SortOrder = 'desc' | 'asc';
             <!-- Empty State -->
             <div class="text-center py-12 md:py-16 transition-opacity duration-200">
               <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 bg-theme-secondary border-2 border-theme-border rounded-2xl flex items-center justify-center transform rotate-3">
-                <svg class="w-10 h-10 md:w-12 md:h-12 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-10 h-10 md:w-12 md:h-12 text-theme-fg/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                 </svg>
               </div>
               <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-theme-fg mb-2">
                 {{ searchQuery || currentStatus() !== 'ALL' ? 'No orders found' : 'No orders yet' }}
               </h2>
-              <p class="text-sm md:text-base text-[#111111]/60 max-w-md mx-auto mb-8 font-medium">
+              <p class="text-sm md:text-base text-theme-muted max-w-md mx-auto mb-8 font-medium">
                 {{ searchQuery || currentStatus() !== 'ALL' ? 'Try adjusting your search or filters' : 'Start shopping and your orders will appear here.' }}
               </p>
               @if (!searchQuery && currentStatus() === 'ALL') {
-                <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-theme-accent border-2 border-theme-border rounded-lg font-bold text-theme-fg hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-theme-accent border-2 border-theme-border rounded-lg font-bold text-theme-surface hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                   Start Shopping
                 </a>
               }
@@ -257,14 +261,14 @@ type SortOrder = 'desc' | 'asc';
                             </svg>
                           </div>
                         <div>
-                          <p class="text-xs md:text-sm text-[#111111]/60 font-medium">Order ID</p>
+                          <p class="text-xs md:text-sm text-theme-muted font-medium">Order ID</p>
                           <p class="font-bold text-sm md:text-base text-theme-fg font-mono">{{ formatId(order.id) }}</p>
                         </div>
                       </div>
                       
                       <div class="flex items-center gap-3 sm:gap-4">
                         <div class="text-left sm:text-right">
-                          <p class="text-xs md:text-sm text-[#111111]/60 font-medium">Date</p>
+                          <p class="text-xs md:text-sm text-theme-muted font-medium">Date</p>
                           <p class="font-bold text-sm md:text-base text-theme-fg">{{ order.createdAt | date:'mediumDate' }}</p>
                         </div>
                         <span [class]="getStatusClass(order.status)" class="px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg border-2 border-theme-border">
@@ -285,7 +289,7 @@ type SortOrder = 'desc' | 'asc';
                               <img [src]="item.product.coverImageUrl" [alt]="item.titleSnapshot" class="w-full h-full object-cover"/>
                             } @else {
                               <div class="w-full h-full flex items-center justify-center">
-                                <svg class="w-6 h-6 text-[#111111]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-theme-fg/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                 </svg>
                               </div>
@@ -296,7 +300,7 @@ type SortOrder = 'desc' | 'asc';
                           <div class="flex-1 min-w-0">
                             <h4 class="font-bold text-sm md:text-base text-theme-fg truncate">{{ item.titleSnapshot }}</h4>
                             @if (item.product.store?.name) {
-                              <p class="text-xs text-[#111111]/60 font-medium truncate">by {{ item.product!.store!.name }}</p>
+                              <p class="text-xs text-theme-muted font-medium truncate">by {{ item.product!.store!.name }}</p>
                             }
                           </div>
                           
@@ -314,7 +318,7 @@ type SortOrder = 'desc' | 'asc';
                         <span class="text-sm font-bold text-theme-fg">{{ order.items.length }} {{ order.items.length === 1 ? 'item' : 'items' }}</span>
                       </div>
                       <div class="flex items-center gap-2">
-                        <span class="text-sm text-[#111111]/60 font-medium">Total:</span>
+                        <span class="text-sm text-theme-muted font-medium">Total:</span>
                         <span class="text-lg md:text-xl font-bold text-theme-fg">₹{{ order.totalAmount / 100 }}</span>
                       </div>
                     </div>
@@ -322,7 +326,7 @@ type SortOrder = 'desc' | 'asc';
                     <!-- Action Buttons -->
                     @if (order.status === 'PAID' || order.status === 'FULFILLED') {
                       <div class="mt-4 pt-4 border-t border-black/10">
-                        <a routerLink="/library" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-success border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-[#5cd46d] transition-all shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                        <a routerLink="/library" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-success border-2 border-theme-border rounded-lg font-bold text-sm text-theme-surface hover:bg-[#5cd46d] transition-all shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                           </svg>
@@ -339,7 +343,7 @@ type SortOrder = 'desc' | 'asc';
             <!-- Pagination -->
             @if (meta().totalPages > 1) {
               <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p class="text-sm text-[#111111]/60 font-medium">
+                <p class="text-sm text-theme-muted font-medium">
                   Showing {{ ((meta().page - 1) * meta().limit) + 1 }} - {{ Math.min(meta().page * meta().limit, meta().total) }} of {{ meta().total }} orders
                 </p>
                 
@@ -358,13 +362,15 @@ type SortOrder = 'desc' | 'asc';
                   <div class="flex items-center gap-1">
                     @for (page of getVisiblePages(); track page) {
                       @if (page === '...') {
-                        <span class="px-2 py-1 text-sm text-[#111111]/60">...</span>
+                        <span class="px-2 py-1 text-sm text-theme-muted">...</span>
                       } @else {
                         <button
                           (click)="goToPage(+page)"
                           class="w-10 h-10 flex items-center justify-center border-2 border-theme-border rounded-lg font-bold text-sm transition-all"
                           [class.bg-theme-accent]="meta().page === +page"
                           [class.bg-theme-surface]="meta().page !== +page"
+                          [class.text-theme-surface]="meta().page === +page"
+                          [class.text-theme-fg]="meta().page !== +page"
                           [class.hover:bg-theme-secondary]="meta().page !== +page"
                         >
                           {{ page }}
@@ -587,16 +593,16 @@ export class OrdersComponent implements OnInit {
     switch (status) {
       case 'PAID':
       case 'FULFILLED':
-        return 'bg-theme-success text-theme-fg';
+        return 'bg-theme-success text-theme-surface';
       case 'PENDING':
-        return 'bg-theme-accent text-theme-fg';
+        return 'bg-theme-accent text-theme-surface';
       case 'FAILED':
       case 'CANCELLED':
         return 'bg-theme-danger text-white';
       case 'REFUNDED':
-        return 'bg-theme-primary text-white';
+        return 'bg-theme-primary text-theme-surface';
       default:
-        return 'bg-theme-secondary text-theme-fg';
+        return 'bg-theme-secondary text-theme-surface';
     }
   }
 
