@@ -31,7 +31,7 @@ import { RouterLink } from '@angular/router';
 
               <h2>2. Definitions</h2>
               <ul>
-                <li><strong>"Platform"</strong> refers to the TheBlueMustard website, application, and all related services.</li>
+                <li><strong>"Platform"</strong> refers to TheBlueMustard website, application, and all related services.</li>
                 <li><strong>"Creator"</strong> refers to a user who creates a store and lists digital products for sale.</li>
                 <li><strong>"Buyer"</strong> refers to a user who purchases digital products on the platform.</li>
                 <li><strong>"Digital Product"</strong> refers to any digital asset listed for sale, including but not limited to templates, fonts, graphics, code, eBooks, and presets.</li>
@@ -87,7 +87,7 @@ import { RouterLink } from '@angular/router';
               <p>Refund requests must be submitted within 7 days of purchase.</p>
 
               <h2>8. Intellectual Property</h2>
-              <p>The TheBlueMustard platform, including its design, code, logos, and branding, is owned by TheBlueMustard and protected by intellectual property laws. Creators retain ownership of their digital products. Buyers receive only the usage rights granted by the product license.</p>
+              <p>TheBlueMustard platform, including its design, code, logos, and branding, is owned by TheBlueMustard and protected by intellectual property laws. Creators retain ownership of their digital products. Buyers receive only the usage rights granted by the product license.</p>
 
               <h2>9. Prohibited Conduct</h2>
               <p>You agree not to:</p>
