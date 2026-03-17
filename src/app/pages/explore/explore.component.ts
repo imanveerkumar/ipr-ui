@@ -600,8 +600,6 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     [style]="getCardCssVarsStyle(item)"
                     (click)="navigateToStore(asStore(item.data).slug)"
                   >
-                    <!-- Store badge — direct child of card so overflow-hidden clips it correctly -->
-                    <span class="absolute top-2 right-2 px-2 py-0.5 bg-theme-primary border border-white/30 rounded text-[9px] font-bold text-white uppercase tracking-wider z-[4] group-hover:opacity-0 transition-opacity duration-200">Store</span>
                     <div class="bg-gradient-to-br from-[#2B57D6] to-[#7C3AED] relative rounded-t-xl" [style.aspect-ratio]="getStoreBannerAspectRatio(asStore(item.data))" style="min-height: 80px; max-height: 160px;">
                       <div class="absolute inset-0 overflow-hidden rounded-t-xl">
                         <img *ngIf="asStore(item.data).bannerUrl" [src]="asStore(item.data).bannerUrl" [alt]="asStore(item.data).name" loading="lazy" class="w-full h-full object-cover" />
@@ -613,31 +611,28 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                         </div>
                       </div>
                     </div>
-                    <!-- Desktop: minimal — name only -->
                     <div class="hidden md:block p-3 pt-8">
                       <h3 class="card-dyn-title font-bold text-theme-fg text-sm sm:text-base transition-colors truncate">
                         {{ asStore(item.data).name }}
                       </h3>
+                      <div class="mt-2 flex items-center gap-3 text-xs text-fg-muted font-medium">
+                        <span class="flex items-center gap-1">
+                          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                          {{ asStore(item.data).productCount }}
+                        </span>
+                        <span class="truncate">{{ asStore(item.data).creator.displayName || asStore(item.data).creator.username }}</span>
+                      </div>
                     </div>
-                    <!-- Mobile: full info (no hover on touch) -->
                     <div class="md:hidden p-3 pt-8">
                       <h3 class="card-dyn-title font-bold text-theme-fg text-sm sm:text-base mb-0.5 transition-colors">
                         {{ asStore(item.data).name }}
                       </h3>
-                      <p *ngIf="asStore(item.data).tagline" class="text-xs text-fg-muted font-medium line-clamp-2 mb-3">
-                        {{ asStore(item.data).tagline }}
-                      </p>
                       <div class="flex items-center gap-3 text-xs text-fg-muted font-medium">
                         <span class="flex items-center gap-1">
                           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                          {{ asStore(item.data).productCount }} products
+                          {{ asStore(item.data).productCount }}
                         </span>
-                        <span class="flex items-center gap-1">
-                          <div class="w-4 h-4 rounded-full bg-theme-success border border-theme-border overflow-hidden flex-shrink-0">
-                            <img *ngIf="asStore(item.data).creator.avatarUrl" [src]="asStore(item.data).creator.avatarUrl" class="w-full h-full object-cover" />
-                          </div>
-                          {{ asStore(item.data).creator.displayName || asStore(item.data).creator.username }}
-                        </span>
+                        <span class="truncate">{{ asStore(item.data).creator.displayName || asStore(item.data).creator.username }}</span>
                       </div>
                     </div>
                     <!-- Store Hover Overlay (Desktop) -->
@@ -652,26 +647,14 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                           </div>
                           <div class="min-w-0">
                             <h3 class="font-bold text-white text-sm leading-tight truncate">{{ asStore(item.data).name }}</h3>
-                            <span class="text-[10px] text-white/50 font-medium">by {{ asStore(item.data).creator.displayName || asStore(item.data).creator.username }}</span>
                           </div>
                         </div>
-                        <p *ngIf="asStore(item.data).tagline" class="text-[11px] text-white/60 line-clamp-2 mb-3 leading-relaxed">
-                          {{ asStore(item.data).tagline }}
-                        </p>
-                        <p *ngIf="asStore(item.data).description && !asStore(item.data).tagline" class="text-[11px] text-white/60 line-clamp-2 mb-3 leading-relaxed">
-                          {{ asStore(item.data).description }}
-                        </p>
                         <div class="flex items-center gap-4 pt-2 border-t border-white/10">
                           <div class="flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                             <span class="text-[11px] text-white/70 font-semibold">{{ asStore(item.data).productCount }} products</span>
                           </div>
-                          <div class="ml-auto">
-                            <span class="hover-btn hover-btn-acc inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all">
-                              Visit Store
-                              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                            </span>
-                          </div>
+                          <span class="text-[11px] text-white/70 font-semibold truncate">{{ asStore(item.data).creator.displayName || asStore(item.data).creator.username }}</span>
                         </div>
                       </div>
                     </div>
@@ -684,7 +667,6 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     [style]="getCardCssVarsStyle(item)"
                     (click)="navigateToCreator(asCreator(item.data).id)"
                   >
-                    <span class="inline-block px-2 py-0.5 bg-theme-accent/20 border border-[#FFC60B] rounded text-[9px] font-bold text-theme-fg uppercase tracking-wider mb-3">Creator</span>
                     <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-[#FFC60B] to-[#FA4B28] border-2 border-theme-border overflow-hidden shadow-[3px_3px_0px_0px_#000]">
                       <img *ngIf="asCreator(item.data).avatarUrl" [src]="asCreator(item.data).avatarUrl" [alt]="asCreator(item.data).displayName || asCreator(item.data).username" loading="lazy" class="w-full h-full object-cover" />
                       <div *ngIf="!asCreator(item.data).avatarUrl" class="w-full h-full flex items-center justify-center">
@@ -694,11 +676,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     <h3 class="card-dyn-title font-bold text-theme-fg text-sm sm:text-base mb-0.5 transition-colors">
                       {{ asCreator(item.data).displayName || asCreator(item.data).username }}
                     </h3>
-                    <!-- Desktop: minimal — avatar + name only, rest on hover -->
-                    <!-- Mobile: full info (no hover on touch) -->
-                    <p class="md:hidden text-xs text-fg-muted font-medium mb-2">&#64;{{ asCreator(item.data).username }}</p>
-                    <p *ngIf="asCreator(item.data).bio" class="md:hidden text-xs text-fg-muted line-clamp-2 mb-3">{{ asCreator(item.data).bio }}</p>
-                    <div class="md:hidden flex justify-center gap-4">
+                    <div class="mt-3 flex justify-center gap-4">
                       <div class="text-center">
                         <div class="text-base font-bold text-theme-fg">{{ asCreator(item.data).storeCount }}</div>
                         <div class="text-[10px] text-fg-subtle font-medium">Stores</div>
@@ -721,8 +699,6 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                         <h3 class="font-bold text-white text-sm leading-tight mb-0.5">
                           {{ asCreator(item.data).displayName || asCreator(item.data).username }}
                         </h3>
-                        <p class="text-[10px] text-white/50 font-medium mb-2">&#64;{{ asCreator(item.data).username }}</p>
-                        <p *ngIf="asCreator(item.data).bio" class="text-[11px] text-white/60 line-clamp-3 mb-3 leading-relaxed px-2">{{ asCreator(item.data).bio }}</p>
                         <div class="flex justify-center gap-5 mb-3 pt-2 border-t border-white/10">
                           <div class="text-center">
                             <div class="text-lg font-bold text-white">{{ asCreator(item.data).storeCount }}</div>
@@ -734,10 +710,6 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                             <div class="text-[9px] text-white/40 font-semibold uppercase tracking-wider">Products</div>
                           </div>
                         </div>
-                        <span class="hover-btn hover-btn-acc inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg text-[10px] font-bold transition-all">
-                          View Profile
-                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                        </span>
                       </div>
                     </div>
                   </div>
