@@ -4,7 +4,8 @@ export const environment = {
   clerkPublishableKey: 'pk_test_ZmFuY3ktc3RhZy0xOS5jbGVyay5hY2NvdW50cy5kZXYk',
   razorpayKeyId: 'rzp_live_your_key_here',
   subdomain: true,
-  baseDomain: 'imanveer.com',
+  // baseDomain: 'imanveer.com',
+  baseDomain: 'thebluemustard.com',
   reservedSubdomains: [
     'api', 'www', 'app', 'admin', 'auth', 'cdn', 'static', 'assets', 'media',
     'files', 'upload', 'uploads', 'img', 'images', 'js', 'css', 'fonts',
@@ -16,6 +17,6 @@ export const environment = {
     'privacy', 'terms', 'billing', 'payments', 'checkout', 'account',
     'accounts', 'settings', 'profile', 'profiles', 'system', 'internal',
     'root', 'null', 'undefined', 'localhost', 'whatsapp', 'instagram',
-    'meta', 'mcp', 'ai', 'auto'
+    'meta', 'mcp', 'ai', 'auto', 'quick'
   ]
 };
