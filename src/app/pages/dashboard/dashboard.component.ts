@@ -471,7 +471,7 @@ interface SalesStats {
                           <p class="text-xs text-theme-muted truncate">{{ product.store?.name }}</p>
                         </div>
                         <div class="flex flex-col items-end gap-1 shrink-0">
-                          <span class="font-bold text-sm text-theme-fg">₹{{ product.price }}</span>
+                          <span class="font-bold text-sm text-theme-fg">₹{{ product.price / 100 }}</span>
                           <span class="px-2 py-0.5 text-[10px] font-bold uppercase"
                             [class.bg-theme-success]="product.status === 'PUBLISHED'"
                             [class.text-theme-fg]="product.status === 'PUBLISHED'"
