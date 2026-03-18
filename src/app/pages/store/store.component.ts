@@ -55,7 +55,7 @@ import { WishlistButtonComponent } from '../../shared/components/wishlist-button
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="relative rounded-b-2xl overflow-hidden border-2 border-t-0 border-theme-border">
             @if (store()?.bannerUrl) {
-              <div class="bg-cover bg-center" [style.aspect-ratio]="getBannerAspectRatio()" style="min-height: 120px; max-height: 320px;" [style.background-image]="'url(' + store()?.bannerUrl + ')'"></div>
+              <div class="w-full bg-cover bg-center bg-no-repeat" [style.aspect-ratio]="getBannerAspectRatio()" style="min-height: 120px;" [style.background-image]="'url(' + store()?.bannerUrl + ')'"></div>
             } @else {
               <div class="h-40 md:h-56 bg-gradient-to-br from-[#2B57D6] to-[#FA4B28]"></div>
             }
