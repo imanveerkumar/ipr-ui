@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { UiMessageService } from '../../core/services/ui-message.service';
+import { ThemeService } from '../../core/services/theme.service';
 import {
   ExploreService,
   ExploreProduct,
@@ -32,7 +33,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     <div class="min-h-screen bg-theme-surface font-sans antialiased">
 
       <!-- TOP BAR (Filters summary) -->
-      <div class="sticky top-14 sm:top-16 z-40 bg-theme-secondary/95 backdrop-blur-sm border-b-2 border-theme-border/20" [class.lg:hidden]="!hasActiveFilters()">
+      <div class="sticky top-14 sm:top-16 z-40 bg-theme-secondary/95 backdrop-blur-sm border-b-2 separator-border-20" [class.lg:hidden]="!hasActiveFilters()">
         <div class="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div class="flex items-center gap-2 sm:gap-3 h-12 sm:h-14">
             <!-- Mobile filter toggle -->
@@ -42,7 +43,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               [class.mobile-filter-toggle-inactive]="!showMobileFilters()"
               [class.border-theme-border]="showMobileFilters()"
               [class.bg-theme-fg]="showMobileFilters()"
-              [class.mobile-filter-btn-active-text]="showMobileFilters()"
+              [class.text-white]="showMobileFilters() && !isDarkTheme()"
+              [class.text-black]="showMobileFilters() && isDarkTheme()"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
@@ -55,14 +57,14 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <div class="flex-1 flex items-center gap-1.5 min-w-0 overflow-hidden">
               <ng-container *ngIf="hasActiveFilters()">
                 <ng-container *ngFor="let chip of getActiveFilterChips().slice(0, 3)">
-                  <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-theme-accent/20 border border-theme-border/15 rounded-lg text-[11px] font-bold text-theme-fg flex-shrink-0 hover:bg-theme-accent/30 transition-colors font-dm-sans">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-theme-accent/20 border separator-border-15 rounded-lg text-[11px] font-bold text-theme-fg flex-shrink-0 hover:bg-theme-accent/30 transition-colors font-dm-sans">
                     {{ chip.label }}
                     <button (click)="chip.remove()" class="ml-0.5 text-fg-subtle hover:text-theme-danger transition-colors leading-none">
                       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                   </span>
                 </ng-container>
-                <span *ngIf="getActiveFilterChips().length > 3" class="inline-flex items-center px-2 py-1 bg-theme-accent/10 border border-theme-border/10 rounded-lg text-[11px] font-bold text-fg-muted flex-shrink-0">
+                <span *ngIf="getActiveFilterChips().length > 3" class="inline-flex items-center px-2 py-1 bg-theme-accent/10 border separator-border-10 rounded-lg text-[11px] font-bold text-fg-muted flex-shrink-0">
                   +{{ getActiveFilterChips().length - 3 }}
                 </span>
                 <button (click)="clearAllFilters()" class="ml-auto flex-shrink-0 text-[11px] font-bold text-theme-danger hover:text-[#d63a1a] transition-colors whitespace-nowrap font-dm-sans">Clear all</button>
@@ -251,14 +253,14 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             </div>
 
             <!-- Stats Panel -->
-            <div *ngIf="stats()" class="mx-4 mb-4 p-3.5 bg-theme-surface border-2 border-theme-border/20 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)]">
+            <div *ngIf="stats()" class="mx-4 mb-4 p-3.5 bg-theme-surface border-2 separator-border-20 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)]">
               <div class="text-[10px] font-bold text-fg-subtle uppercase tracking-[0.08em] mb-3 font-dm-sans">Marketplace</div>
               <div class="grid grid-cols-3 gap-2">
                 <div class="text-center">
                   <div class="text-base font-bold text-theme-fg">{{ stats()!.totalProducts }}</div>
                   <div class="text-[10px] text-fg-subtle font-medium mt-0.5">Products</div>
                 </div>
-                <div class="text-center border-x border-theme-border/20">
+                <div class="text-center border-x separator-border-20">
                   <div class="text-base font-bold text-theme-fg">{{ stats()!.totalStores }}</div>
                   <div class="text-[10px] text-fg-subtle font-medium mt-0.5">Stores</div>
                 </div>
@@ -317,11 +319,11 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <div class="flex justify-center pt-3 pb-1 flex-shrink-0">
               <div class="w-10 h-1 bg-black/15 rounded-full"></div>
             </div>
-            <div class="flex-shrink-0 bg-theme-secondary border-b-2 border-theme-border/20 px-5 py-3.5 flex items-center justify-between">
+            <div class="flex-shrink-0 bg-theme-secondary border-b-2 separator-border-20 px-5 py-3.5 flex items-center justify-between">
               <span class="text-[15px] font-bold text-theme-fg font-dm-sans">Filters</span>
               <div class="flex items-center gap-3">
                 <button *ngIf="hasActiveFilters()" (click)="clearAllFilters()" class="text-xs text-theme-danger font-bold font-dm-sans">Reset</button>
-                <button (click)="showMobileFilters.set(false)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-fg-faint hover:bg-theme-border/20 active:bg-theme-border/30 transition-colors border border-theme-border/20">
+                <button (click)="showMobileFilters.set(false)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-fg-faint hover:bg-theme-border/20 active:bg-theme-border/30 transition-colors border separator-border-20">
                   <svg class="w-4 h-4 text-fg-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                   </svg>
@@ -339,6 +341,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     class="px-4 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-200 border-2 font-dm-sans min-h-[44px] active:scale-95"
                     [class.mobile-filter-btn-active]="activeFilter() === filter.value"
                     [class.mobile-filter-btn-inactive]="activeFilter() !== filter.value"
+                    [class.text-white]="activeFilter() === filter.value && !isDarkTheme()"
+                    [class.text-black]="activeFilter() === filter.value && isDarkTheme()"
                   >
                     {{ filter.label }}
                   </button>
@@ -354,6 +358,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     class="px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 border-2 min-h-[44px] active:scale-95"
                     [class.mobile-filter-btn-active]="currentSort().value === option.value && currentSort().order === option.order"
                     [class.mobile-filter-btn-inactive]="!(currentSort().value === option.value && currentSort().order === option.order)"
+                    [class.text-white]="currentSort().value === option.value && currentSort().order === option.order && !isDarkTheme()"
+                    [class.text-black]="currentSort().value === option.value && currentSort().order === option.order && isDarkTheme()"
                   >
                     {{ option.label }}
                   </button>
@@ -369,6 +375,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     class="px-4 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-200 border-2 font-dm-sans min-h-[44px] active:scale-95"
                     [class.mobile-filter-btn-active]="activePricing() === option.value"
                     [class.mobile-filter-btn-inactive]="activePricing() !== option.value"
+                    [class.text-white]="activePricing() === option.value && !isDarkTheme()"
+                    [class.text-black]="activePricing() === option.value && isDarkTheme()"
                   >
                     {{ option.label }}
                   </button>
@@ -391,10 +399,10 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
               </div>
             </div>
             <!-- Sticky footer -->
-            <div class="flex-shrink-0 border-t border-theme-border/20 px-5 pt-3 pb-4 bg-theme-secondary">
+            <div class="flex-shrink-0 border-t separator-border-20 px-5 pt-3 pb-4 bg-theme-secondary">
               <button
                 (click)="applyMobileFilters()"
-                class="w-full py-3.5 bg-theme-accent border-2 border-theme-border rounded-lg text-[15px] font-bold text-theme-fg hover:bg-[#ffdb4d] active:scale-[0.98] transition-all duration-200 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] font-dm-sans min-h-[52px]"
+                class="w-full py-3.5 bg-theme-accent border-2 border-theme-border rounded-lg text-[15px] font-bold text-black hover:bg-[#ffdb4d] active:scale-[0.98] transition-all duration-200 shadow-[3px_3px_0px_0px_#000] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] font-dm-sans min-h-[52px]"
               >
                 Show Results
               </button>
@@ -406,14 +414,15 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
         <!-- ==================== MASONRY GRID ==================== -->
         <main class="flex-1 min-w-0">
           <!-- Mobile content type pills -->
-          <div class="lg:hidden overflow-x-auto scrollbar-hide border-b border-theme-border/20 bg-theme-secondary">
+          <div class="lg:hidden overflow-x-auto scrollbar-hide border-b separator-border-20 bg-theme-secondary">
             <div class="flex gap-2 px-3 py-2.5">
               <button
                 *ngFor="let filter of contentFilters"
                 (click)="setContentFilter(filter.value)"
                 class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 border-2 font-dm-sans min-h-[36px] active:scale-95"
                 [class.bg-theme-fg]="activeFilter() === filter.value"
-                [class.mobile-filter-btn-active-text]="activeFilter() === filter.value"
+                [class.text-white]="activeFilter() === filter.value && !isDarkTheme()"
+                [class.text-black]="activeFilter() === filter.value && isDarkTheme()"
                 [class.border-theme-border]="activeFilter() === filter.value"
                 [class.mobile-content-pill-inactive]="activeFilter() !== filter.value"
               >
@@ -1087,13 +1096,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     .mobile-filter-btn-active {
       border-color: var(--border);
       background: var(--foreground);
-      color: black;
       box-shadow: 2px 2px 0px 0px #000;
-    }
-
-    /* Active button text color for semantic consistency */
-    .mobile-filter-btn-active-text {
-      color: black;
     }
 
     /* Mobile filter toggle button inactive state */
@@ -1124,6 +1127,22 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     .mobile-price-input:focus {
       border-color: var(--border);
       box-shadow: 0 0 0 3px color-mix(in srgb, var(--border) 20%, transparent);
+    }
+
+    /* ========= THEME-AWARE SEPARATOR LINES ========= */
+    /* Separator line with 20% border opacity */
+    .separator-border-20 {
+      border-color: color-mix(in srgb, var(--border) 20%, transparent);
+    }
+
+    /* Separator line with 15% border opacity */
+    .separator-border-15 {
+      border-color: color-mix(in srgb, var(--border) 15%, transparent);
+    }
+
+    /* Separator line with 10% border opacity */
+    .separator-border-10 {
+      border-color: color-mix(in srgb, var(--border) 10%, transparent);
     }
 
     /* Fade in animation */
@@ -1331,6 +1350,7 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 })
 export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   exploreService = inject(ExploreService);
+  themeService = inject(ThemeService);
   private subdomainService = inject(SubdomainService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -1373,6 +1393,12 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   currentSort = signal<SortOption>({ label: 'Newest', value: 'createdAt', order: 'desc' });
   expandedSections = signal<Set<string>>(new Set(['sort', 'type', 'price', 'pricing']));
   activePricing = signal<string>('all');
+
+  // Theme-aware helper to determine if active button should have white text
+  isDarkTheme = computed(() => {
+    const theme = this.themeService.currentTheme;
+    return theme === 'dark' || theme === 'mustard-dark';
+  });
 
   // Dynamic filter sections from API
   filterSections = signal<FilterSection[]>([]);
