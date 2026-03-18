@@ -256,7 +256,7 @@ type StorefrontPage = 'home' | 'products' | 'product' | 'purchases';
                   [href]="subdomainService.getMainSiteUrl()" 
                   class="text-sm text-theme-muted hover:text-theme-fg active:text-theme-fg transition-colors font-medium py-2"
                 >
-                  Powered by IPR
+                  Powered by TheBlueMustard
                 </a>
               </div>
             </div>
