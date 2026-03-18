@@ -250,7 +250,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     .actions-section {
       display: flex;
       align-items: center;
-      gap: 0.375rem;
+      gap: 0.15rem;
       flex-shrink: 0;
     }
 
