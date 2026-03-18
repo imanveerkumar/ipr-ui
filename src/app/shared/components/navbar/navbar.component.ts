@@ -196,12 +196,16 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     .search-section {
       flex: 1;
       max-width: 400px;
+      height: 100%;
       display: none;
+      align-items: center;
+      position: relative;
+      z-index: 46;
     }
 
     @media (min-width: 768px) {
       .search-section {
-        display: block;
+        display: flex;
       }
     }
 
@@ -1004,8 +1008,17 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 
     /* === SEARCH DROPDOWN === */
     .search-dropdown-wrapper {
-      position: relative;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       width: 100%;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .search-section.expanded .search-dropdown-wrapper {
+      width: 600px;
+      max-width: calc(100vw - 40px);
     }
 
     .search-dropdown {
@@ -1262,13 +1275,18 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     .search-overlay {
       position: fixed;
       inset: 0;
-      background: var(--overlay);
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       z-index: 45;
-      display: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
     .search-overlay.active {
-      display: block;
+      opacity: 1;
+      visibility: visible;
     }
 
     /* === MOBILE SEARCH OVERLAY === */
@@ -1769,7 +1787,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
             
             <!-- Search Section -->
             @if (showSearchBar()) {
-              <div class="search-section">
+              <div class="search-section" [class.expanded]="showSearchDropdown()">
                 <div class="search-dropdown-wrapper">
                   <div class="search-container">
                     <input 
