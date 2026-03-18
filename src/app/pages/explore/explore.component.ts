@@ -1380,6 +1380,7 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Signals
   activeFilter = signal<ContentFilter>('all');
+  searchQuery = signal<string>('');
   isLoading = signal(true);
   isLoadingMore = signal(false);
   showMobileFilters = signal(false);
@@ -1442,6 +1443,12 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
       const type = params['type'] as ContentFilter | undefined;
       if (type && ['all', 'products', 'stores', 'creators'].includes(type)) {
         this.activeFilter.set(type);
+      }
+      const q = params['q'];
+      if (q !== undefined) {
+        this.searchQuery.set(q);
+      } else {
+        this.searchQuery.set('');
       }
       await Promise.all([this.loadFilters(), this.loadStats(), this.loadFeed(true)]);
     });
@@ -1558,6 +1565,10 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
         sortOrder: this.currentSort().order,
       };
 
+      if (this.searchQuery().trim()) {
+        params.q = this.searchQuery().trim();
+      }
+
       if (this.appliedMinPrice !== null) params.minPrice = this.appliedMinPrice * 100;
       if (this.appliedMaxPrice !== null) params.maxPrice = this.appliedMaxPrice * 100;
       if (this.activePricing() !== 'all') params.pricing = this.activePricing() as 'free' | 'premium';
@@ -1660,7 +1671,8 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
       this.appliedMaxPrice !== null ||
       this.activePricing() !== 'all' ||
       this.currentSort().value !== 'createdAt' ||
-      this.currentSort().order !== 'desc';
+      this.currentSort().order !== 'desc' ||
+      this.searchQuery().trim().length > 0;
   }
 
   clearAllFilters() {
@@ -1670,7 +1682,9 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     this.appliedMinPrice = null;
     this.appliedMaxPrice = null;
     this.activePricing.set('all');
+    this.searchQuery.set('');
     this.currentSort.set({ label: 'Newest', value: 'createdAt', order: 'desc' });
+    this.router.navigate([], { relativeTo: this.route, queryParams: { q: null }, queryParamsHandling: 'merge' });
     this.loadFilters().then(() => this.loadFeed(true));
   }
 
@@ -1992,6 +2006,17 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
         label: pLabel,
         color: 'yellow',
         remove: () => this.setPricing('all'),
+      });
+    }
+    if (this.searchQuery().trim().length > 0) {
+      chips.push({
+        label: `Search: "${this.searchQuery().trim()}"`,
+        color: 'blue',
+        remove: () => {
+          this.searchQuery.set('');
+          this.router.navigate([], { relativeTo: this.route, queryParams: { q: null }, queryParamsHandling: 'merge' });
+          this.loadFilters().then(() => this.loadFeed(true));
+        },
       });
     }
     return chips;

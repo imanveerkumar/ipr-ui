@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, signal, inject, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
@@ -2424,6 +2424,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
             placeholder="Search products, stores, creators..."
             [(ngModel)]="mobileSearchQuery"
             (input)="onMobileSearchInput()"
+            (keydown)="onMobileSearchKeydown($event)"
             #mobileSearchInput
           >
           <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -2612,6 +2613,7 @@ export class NavbarComponent implements OnDestroy {
   private exploreService = inject(ExploreService);
   private subdomainService = inject(SubdomainService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   cartService = inject(CartService);
   wishlistService = inject(WishlistService);
   confirmService = inject(ConfirmService);
@@ -2641,6 +2643,18 @@ export class NavbarComponent implements OnDestroy {
     public auth: AuthService,
     private elementRef: ElementRef
   ) {
+    // Handle syncing the search bar with route query params
+    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(params => {
+      const q = params['q'];
+      if (q !== undefined) {
+        this.searchQuery = q;
+        this.mobileSearchQuery = q;
+      } else {
+        this.searchQuery = '';
+        this.mobileSearchQuery = '';
+      }
+    });
+
     // when the user navigates, make sure any open search UI is closed
     this.router.events.pipe(takeUntilDestroyed()).subscribe(e => {
       if (e instanceof NavigationEnd) {
@@ -2693,9 +2707,12 @@ export class NavbarComponent implements OnDestroy {
   }
   
   onSearchKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter' && this.searchQuery.trim()) {
-      this.closeSearchDropdown();
-      this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery.trim() } });
+    if (event.key === 'Enter') {
+      (event.target as HTMLElement).blur();
+      if (this.searchQuery.trim()) {
+        this.closeSearchDropdown();
+        this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery.trim() } });
+      }
     }
   }
   
@@ -2758,6 +2775,16 @@ export class NavbarComponent implements OnDestroy {
     }, 50);
   }
   
+  onMobileSearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      (event.target as HTMLElement).blur();
+      if (this.mobileSearchQuery.trim()) {
+        this.closeMobileSearch();
+        this.router.navigate(['/explore'], { queryParams: { q: this.mobileSearchQuery.trim() } });
+      }
+    }
+  }
+
   onMobileSearchInput() {
     if (this.mobileSearchTimeout) {
       clearTimeout(this.mobileSearchTimeout);
@@ -2844,22 +2871,22 @@ export class NavbarComponent implements OnDestroy {
     this.closeSearchDropdown();
     this.closeMobileSearch();
     // Navigate to explore with creator filter (for now)
-    this.router.navigate(['/explore'], { queryParams: { q: creator.username, tab: 'creators' } });
+    this.router.navigate(['/explore'], { queryParams: { q: creator.username, type: 'creators' } });
   }
   
   seeAllProducts() {
     this.closeSearchDropdown();
-    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'products' } });
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, type: 'products' } });
   }
   
   seeAllStores() {
     this.closeSearchDropdown();
-    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'stores' } });
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, type: 'stores' } });
   }
   
   seeAllCreators() {
     this.closeSearchDropdown();
-    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'creators' } });
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, type: 'creators' } });
   }
   
   // === UTILITY METHODS ===
