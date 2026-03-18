@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SettingsService } from '../../core/services/settings.service';
+import { FileUploadService } from '../../core/services/file-upload.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { AuthService } from '../../core/services/auth.service';
 import { User, UserSettings } from '../../core/models';
@@ -77,12 +78,34 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
                         </div>
                         <div class="avatar-actions">
                           <input
-                            type="url"
-                            class="form-input"
-                            placeholder="https://example.com/photo.jpg"
-                            [(ngModel)]="profileForm.avatarUrl"
+                            #avatarFileInput
+                            type="file"
+                            accept="image/*"
+                            class="avatar-file-input"
+                            (change)="onAvatarFileSelected($event)"
                           />
-                          <span class="form-hint">Enter a URL for your profile photo</span>
+                          <div class="avatar-upload-row">
+                            <button
+                              type="button"
+                              class="btn btn-secondary btn-sm"
+                              [disabled]="avatarUploading() || saving()"
+                              (click)="avatarFileInput.click()">
+                              {{ avatarUploading() ? 'Uploading...' : 'Upload Photo' }}
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-secondary btn-sm"
+                              [disabled]="avatarUploading() || !profileForm.avatarUrl"
+                              (click)="clearAvatar()">
+                              Remove
+                            </button>
+                          </div>
+                          @if (avatarUploading()) {
+                            <span class="form-hint">Uploading image to S3... {{ avatarUploadProgress() }}%</span>
+                          } @else {
+                            <span class="form-hint">Upload a JPG, PNG, WebP, GIF, SVG, or AVIF image</span>
+                          }
+                          <span class="form-hint">Tip: click Save Profile after upload to sync this image to your account</span>
                         </div>
                       </div>
                     </div>
@@ -160,7 +183,7 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
                   </div>
 
                   <div class="card-actions">
-                    <button class="btn btn-primary" (click)="saveProfile()" [disabled]="saving()">
+                    <button class="btn btn-primary" (click)="saveProfile()" [disabled]="saving() || avatarUploading()">
                       {{ saving() ? 'Saving...' : 'Save Profile' }}
                     </button>
                   </div>
@@ -543,6 +566,8 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     .avatar-img { width: 100%; height: 100%; object-fit: cover; }
     .avatar-placeholder { font-size: 1.25rem; font-weight: 800; color: var(--foreground); opacity: 0.4; }
     .avatar-actions { flex: 1; display: flex; flex-direction: column; gap: 0.375rem; }
+    .avatar-file-input { display: none; }
+    .avatar-upload-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
     @media (max-width: 480px) {
       .avatar-row { flex-direction: column; }
       .avatar-preview { width: 56px; height: 56px; min-width: 56px; }
@@ -643,6 +668,7 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
 })
 export class SettingsComponent implements OnInit {
   private settingsService = inject(SettingsService);
+  private fileUpload = inject(FileUploadService);
   private toaster = inject(ToasterService);
   auth = inject(AuthService);
 
@@ -650,6 +676,8 @@ export class SettingsComponent implements OnInit {
   loading = signal(true);
   saving = signal(false);
   exporting = signal(false);
+  avatarUploading = signal(false);
+  avatarUploadProgress = signal(0);
   activeTab = signal<SettingsTab>('profile');
   showDeleteModal = signal(false);
   deleteConfirmation = '';
@@ -813,6 +841,47 @@ export class SettingsComponent implements OnInit {
   getInitials(): string {
     const name = this.profileForm.displayName || this.profileForm.username || '';
     return name.slice(0, 2).toUpperCase();
+  }
+
+  async onAvatarFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.toaster.error('Please choose a valid image file');
+      if (input) input.value = '';
+      return;
+    }
+
+    this.avatarUploading.set(true);
+    this.avatarUploadProgress.set(0);
+
+    try {
+      const uploaded = await this.fileUpload.uploadImage(file, 'logo', {
+        onProgress: (percent) => {
+          if (percent !== null) {
+            this.avatarUploadProgress.set(Math.max(0, Math.min(100, percent)));
+          }
+        },
+      });
+
+      this.profileForm.avatarUrl = uploaded.imageUrl;
+      this.toaster.success('Photo uploaded. Click Save Profile to apply it.');
+    } catch (err: any) {
+      this.toaster.error(err?.message || 'Failed to upload profile photo');
+    } finally {
+      this.avatarUploading.set(false);
+      this.avatarUploadProgress.set(0);
+      if (input) input.value = '';
+    }
+  }
+
+  clearAvatar() {
+    this.profileForm.avatarUrl = '';
   }
 
   async saveProfile() {
