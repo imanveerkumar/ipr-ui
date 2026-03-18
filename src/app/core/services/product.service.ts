@@ -197,4 +197,25 @@ export class ProductService {
   async attachUploadedFile(productId: string, fileId: string): Promise<void> {
     await this.fileUpload.attachToProduct(fileId, productId);
   }
+
+  // ── Quick Create ──────────────────────────────────────────────
+
+  async quickCreateProduct(data: { fileId: string; price: number }): Promise<Product & { productUrl: string }> {
+    const response = await this.api.post<Product & { productUrl: string }>('/products/quick-create', data);
+    return response.data!;
+  }
+
+  async getMyQuickProducts(params?: { page?: number; limit?: number; search?: string; sortOrder?: 'asc' | 'desc' }): Promise<PaginatedResponse<Product & { productUrl: string }>> {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/products/my/quick?${queryString}` : '/products/my/quick';
+    
+    const response = await this.api.get<PaginatedResponse<Product & { productUrl: string }>>(url);
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
+  }
 }
