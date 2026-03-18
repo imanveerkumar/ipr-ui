@@ -1730,7 +1730,9 @@ export class ProductFormComponent implements OnInit {
         }
       }
 
-      this.router.navigate(['/dashboard/products']);
+      if (!this.isEditing()) {
+        this.router.navigate(['/dashboard/products']);
+      }
     } catch (error) {
       console.error('Failed to save product:', error);
       this.toaster.handleError(error, 'Failed to save product. Please try again.');
