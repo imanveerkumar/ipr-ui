@@ -38,10 +38,11 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
             <!-- Mobile filter toggle -->
             <button
               (click)="toggleMobileFilters()"
-              class="lg:hidden flex items-center justify-center gap-1.5 h-9 px-3.5 bg-theme-secondary border-2 border-theme-border/30 rounded-lg text-fg-muted hover:border-theme-border hover:bg-theme-accent/10 active:scale-95 transition-all duration-200 flex-shrink-0 font-dm-sans min-w-[44px]"
+              class="lg:hidden flex items-center justify-center gap-1.5 h-9 px-3.5 bg-theme-secondary border-2 rounded-lg active:scale-95 transition-all duration-200 flex-shrink-0 font-dm-sans min-w-[44px]"
+              [class.mobile-filter-toggle-inactive]="!showMobileFilters()"
               [class.border-theme-border]="showMobileFilters()"
               [class.bg-theme-fg]="showMobileFilters()"
-              [class.text-white]="showMobileFilters()"
+              [class.mobile-filter-btn-active-text]="showMobileFilters()"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
@@ -336,15 +337,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     *ngFor="let filter of contentFilters"
                     (click)="setContentFilter(filter.value)"
                     class="px-4 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-200 border-2 font-dm-sans min-h-[44px] active:scale-95"
-                    [class.bg-theme-fg]="activeFilter() === filter.value"
-                    [class.text-white]="activeFilter() === filter.value"
-                    [class.border-theme-border]="activeFilter() === filter.value"
-                    [class.shadow-[2px_2px_0px_0px_#000]]="activeFilter() === filter.value"
-                    [class.bg-theme-surface]="activeFilter() !== filter.value"
-                    [class.text-fg-muted]="activeFilter() !== filter.value"
-                    [class.border-theme-border/30]="activeFilter() !== filter.value"
-                    [class.hover:border-theme-border]="activeFilter() !== filter.value"
-                    [class.hover:bg-theme-surface]="activeFilter() !== filter.value"
+                    [class.mobile-filter-btn-active]="activeFilter() === filter.value"
+                    [class.mobile-filter-btn-inactive]="activeFilter() !== filter.value"
                   >
                     {{ filter.label }}
                   </button>
@@ -358,14 +352,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     *ngFor="let option of sortOptions"
                     (click)="selectSort(option)"
                     class="px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 border-2 min-h-[44px] active:scale-95"
-                    [class.bg-theme-fg]="currentSort().value === option.value && currentSort().order === option.order"
-                    [class.text-white]="currentSort().value === option.value && currentSort().order === option.order"
-                    [class.border-theme-border]="currentSort().value === option.value && currentSort().order === option.order"
-                    [class.shadow-[2px_2px_0px_0px_#000]]="currentSort().value === option.value && currentSort().order === option.order"
-                    [class.bg-theme-surface]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                    [class.text-fg-muted]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                    [class.border-theme-border/30]="!(currentSort().value === option.value && currentSort().order === option.order)"
-                    [class.hover:bg-theme-surface]="!(currentSort().value === option.value && currentSort().order === option.order)"
+                    [class.mobile-filter-btn-active]="currentSort().value === option.value && currentSort().order === option.order"
+                    [class.mobile-filter-btn-inactive]="!(currentSort().value === option.value && currentSort().order === option.order)"
                   >
                     {{ option.label }}
                   </button>
@@ -379,13 +367,8 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                     *ngFor="let option of pricingOptions"
                     (click)="setPricing(option.value)"
                     class="px-4 py-2.5 rounded-lg text-[13px] font-bold transition-all duration-200 border-2 font-dm-sans min-h-[44px] active:scale-95"
-                    [class.bg-theme-fg]="activePricing() === option.value"
-                    [class.text-white]="activePricing() === option.value"
-                    [class.border-theme-border]="activePricing() === option.value"
-                    [class.shadow-[2px_2px_0px_0px_#000]]="activePricing() === option.value"
-                    [class.bg-theme-surface]="activePricing() !== option.value"
-                    [class.text-fg-muted]="activePricing() !== option.value"
-                    [class.border-theme-border/30]="activePricing() !== option.value"
+                    [class.mobile-filter-btn-active]="activePricing() === option.value"
+                    [class.mobile-filter-btn-inactive]="activePricing() !== option.value"
                   >
                     {{ option.label }}
                   </button>
@@ -397,12 +380,12 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                 <div class="flex items-center gap-2">
                   <div class="flex-1 relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle text-sm">\u20B9</span>
-                    <input type="number" [(ngModel)]="minPrice" placeholder="Min" class="w-full pl-7 pr-3 py-3 bg-theme-surface border-2 border-theme-border/30 rounded-lg text-sm text-theme-fg focus:outline-none focus:ring-2 focus:ring-theme-border/20 focus:border-theme-border transition-all min-h-[48px]" />
+                    <input type="number" [(ngModel)]="minPrice" placeholder="Min" class="mobile-price-input w-full pl-7 pr-3 py-3 bg-theme-surface border-2 rounded-lg text-sm text-theme-fg focus:outline-none min-h-[48px]" />
                   </div>
                   <span class="text-fg-ghost text-sm select-none">–</span>
                   <div class="flex-1 relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle text-sm">\u20B9</span>
-                    <input type="number" [(ngModel)]="maxPrice" placeholder="Max" class="w-full pl-7 pr-3 py-3 bg-theme-surface border-2 border-theme-border/30 rounded-lg text-sm text-theme-fg focus:outline-none focus:ring-2 focus:ring-theme-border/20 focus:border-theme-border transition-all min-h-[48px]" />
+                    <input type="number" [(ngModel)]="maxPrice" placeholder="Max" class="mobile-price-input w-full pl-7 pr-3 py-3 bg-theme-surface border-2 rounded-lg text-sm text-theme-fg focus:outline-none min-h-[48px]" />
                   </div>
                 </div>
               </div>
@@ -430,11 +413,9 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
                 (click)="setContentFilter(filter.value)"
                 class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 border-2 font-dm-sans min-h-[36px] active:scale-95"
                 [class.bg-theme-fg]="activeFilter() === filter.value"
-                [class.text-white]="activeFilter() === filter.value"
+                [class.mobile-filter-btn-active-text]="activeFilter() === filter.value"
                 [class.border-theme-border]="activeFilter() === filter.value"
-                [class.bg-theme-surface]="activeFilter() !== filter.value"
-                [class.text-fg-muted]="activeFilter() !== filter.value"
-                [class.border-theme-border/30]="activeFilter() !== filter.value"
+                [class.mobile-content-pill-inactive]="activeFilter() !== filter.value"
               >
                 {{ filter.label }}
               </button>
@@ -1088,6 +1069,61 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     @keyframes overlayFadeIn {
       from { opacity: 0; }
       to   { opacity: 1; }
+    }
+
+    /* ========= MOBILE FILTER BUTTONS ========= */
+    /* Inactive filter buttons use color-mix for reliable theme border updates */
+    .mobile-filter-btn-inactive {
+      border-color: color-mix(in srgb, var(--border) 30%, transparent);
+      background: var(--surface);
+      color: color-mix(in srgb, var(--foreground) 55%, transparent);
+      transition: all 200ms ease;
+    }
+    .mobile-filter-btn-inactive:hover {
+      border-color: var(--border);
+    }
+
+    /* Active filter buttons */
+    .mobile-filter-btn-active {
+      border-color: var(--border);
+      background: var(--foreground);
+      color: black;
+      box-shadow: 2px 2px 0px 0px #000;
+    }
+
+    /* Active button text color for semantic consistency */
+    .mobile-filter-btn-active-text {
+      color: black;
+    }
+
+    /* Mobile filter toggle button inactive state */
+    .mobile-filter-toggle-inactive {
+      border-color: color-mix(in srgb, var(--border) 30%, transparent);
+      color: color-mix(in srgb, var(--foreground) 55%, transparent);
+    }
+    .mobile-filter-toggle-inactive:hover {
+      border-color: var(--border);
+    }
+
+    /* Mobile content type pills inactive state */
+    .mobile-content-pill-inactive {
+      border-color: color-mix(in srgb, var(--border) 30%, transparent);
+      background: var(--surface);
+      color: color-mix(in srgb, var(--foreground) 55%, transparent);
+      transition: all 200ms ease;
+    }
+
+    /* Mobile price range inputs */
+    .mobile-price-input {
+      border-color: color-mix(in srgb, var(--border) 30%, transparent);
+      transition: all 200ms ease;
+    }
+    .mobile-price-input:hover {
+      border-color: var(--border);
+    }
+    .mobile-price-input:focus {
+      border-color: var(--border);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--border) 20%, transparent);
     }
 
     /* Fade in animation */
