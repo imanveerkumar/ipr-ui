@@ -12,6 +12,7 @@ export interface ProductsQueryParams {
   sortOrder?: 'asc' | 'desc';
   sortField?: string;
   storeIds?: string[];
+  isQuickSell?: boolean;
 }
 
 @Injectable({
@@ -107,6 +108,7 @@ export class ProductService {
     if (params.storeIds && params.storeIds.length > 0) {
       params.storeIds.forEach(id => queryParams.append('storeIds', id));
     }
+    if (params.isQuickSell) queryParams.append('isQuickStore', 'true');
 
     const queryString = queryParams.toString();
     const url = queryString ? `/products/my?${queryString}` : '/products/my';
@@ -130,6 +132,7 @@ export class ProductService {
     if (params.storeIds && params.storeIds.length > 0) {
       params.storeIds.forEach(id => queryParams.append('storeIds', id));
     }
+    if (params.isQuickSell) queryParams.append('isQuickStore', 'true');
 
     const queryString = queryParams.toString();
     const url = queryString ? `/products/my/archived?${queryString}` : '/products/my/archived';
@@ -153,6 +156,7 @@ export class ProductService {
     if (params.storeIds && params.storeIds.length > 0) {
       params.storeIds.forEach(id => queryParams.append('storeIds', id));
     }
+    if (params.isQuickSell) queryParams.append('isQuickStore', 'true');
 
     const queryString = queryParams.toString();
     const url = queryString ? `/products/my/deleted?${queryString}` : '/products/my/deleted';
@@ -167,6 +171,7 @@ export class ProductService {
     if (params?.search) queryParams.append('search', params.search);
     if (params?.status && params.status !== 'ALL') queryParams.append('status', params.status);
     if (params?.storeIds && params.storeIds.length > 0) params.storeIds.forEach(id => queryParams.append('storeIds', id));
+    if (params?.isQuickSell) queryParams.append('isQuickStore', 'true');
 
     const queryString = queryParams.toString();
     const url = queryString ? `/products/my/stats?${queryString}` : '/products/my/stats';
