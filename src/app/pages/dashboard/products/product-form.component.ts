@@ -263,7 +263,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
             <app-image-upload
               imageType="thumbnail"
               label="Cover Image"
-              hint="Displayed on explore, storefront, and cards"
+              hint="Displayed on explore, storefront, and cards. Suggested size: 800 x 800 px (1:1)."
               [imageUrl]="form.coverImageUrl"
               placeholderText="Upload product thumbnail"
               (imageUploaded)="onThumbnailUploaded($event)"

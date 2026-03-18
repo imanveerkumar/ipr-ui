@@ -272,7 +272,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
             <app-image-upload
               imageType="banner"
               label="Banner Image"
-              hint="Displayed at the top of your storefront"
+              hint="Displayed at the top of your storefront. Suggested size: 1920 x 600 px (16:5)."
               [imageUrl]="form.bannerUrl"
               placeholderText="Upload store banner"
               (imageUploaded)="onBannerUploaded($event)"
@@ -283,7 +283,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
             <app-image-upload
               imageType="logo"
               label="Store Logo"
-              hint="Shown on cards and navigation"
+              hint="Shown on cards and navigation. Suggested size: 400 x 400 px (1:1)."
               [imageUrl]="form.logoUrl"
               placeholderText="Upload logo"
               (imageUploaded)="onLogoUploaded($event)"
