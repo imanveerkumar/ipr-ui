@@ -12,6 +12,7 @@ export interface ProductsQueryParams {
   sortOrder?: 'asc' | 'desc';
   sortField?: string;
   storeIds?: string[];
+  isQuickSell?: boolean;
 }
 
 @Injectable({
@@ -107,6 +108,7 @@ export class ProductService {
     if (params.storeIds && params.storeIds.length > 0) {
       params.storeIds.forEach(id => queryParams.append('storeIds', id));
     }
+    if (params.isQuickSell) queryParams.append('isQuickStore', 'true');
 
     const queryString = queryParams.toString();
     const url = queryString ? `/products/my?${queryString}` : '/products/my';
@@ -130,6 +132,7 @@ export class ProductService {
     if (params.storeIds && params.storeIds.length > 0) {
       params.storeIds.forEach(id => queryParams.append('storeIds', id));
     }
+    if (params.isQuickSell) queryParams.append('isQuickStore', 'true');
 
     const queryString = queryParams.toString();
     const url = queryString ? `/products/my/archived?${queryString}` : '/products/my/archived';
@@ -153,6 +156,7 @@ export class ProductService {
     if (params.storeIds && params.storeIds.length > 0) {
       params.storeIds.forEach(id => queryParams.append('storeIds', id));
     }
+    if (params.isQuickSell) queryParams.append('isQuickStore', 'true');
 
     const queryString = queryParams.toString();
     const url = queryString ? `/products/my/deleted?${queryString}` : '/products/my/deleted';
@@ -167,6 +171,7 @@ export class ProductService {
     if (params?.search) queryParams.append('search', params.search);
     if (params?.status && params.status !== 'ALL') queryParams.append('status', params.status);
     if (params?.storeIds && params.storeIds.length > 0) params.storeIds.forEach(id => queryParams.append('storeIds', id));
+    if (params?.isQuickSell) queryParams.append('isQuickStore', 'true');
 
     const queryString = queryParams.toString();
     const url = queryString ? `/products/my/stats?${queryString}` : '/products/my/stats';
@@ -196,5 +201,26 @@ export class ProductService {
 
   async attachUploadedFile(productId: string, fileId: string): Promise<void> {
     await this.fileUpload.attachToProduct(fileId, productId);
+  }
+
+  // ── Quick Create ──────────────────────────────────────────────
+
+  async quickCreateProduct(data: { fileId: string; price: number }): Promise<Product & { productUrl: string }> {
+    const response = await this.api.post<Product & { productUrl: string }>('/products/quick-create', data);
+    return response.data!;
+  }
+
+  async getMyQuickProducts(params?: { page?: number; limit?: number; search?: string; sortOrder?: 'asc' | 'desc' }): Promise<PaginatedResponse<Product & { productUrl: string }>> {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/products/my/quick?${queryString}` : '/products/my/quick';
+    
+    const response = await this.api.get<PaginatedResponse<Product & { productUrl: string }>>(url);
+    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
   }
 }

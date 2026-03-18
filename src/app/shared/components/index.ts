@@ -11,6 +11,7 @@ export * from './global-loader';
 export * from './skeleton';
 export * from './adaptive-image';
 export * from './masonry-grid';
+export * from './tooltip/tooltip.component';
 export type { GridColumn, GridPagination, GridDataRequest } from './data-grid/data-grid.component';
 
 // UI Messages

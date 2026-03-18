@@ -250,7 +250,7 @@ interface SalesStats {
             <h2 class="font-dm-sans text-lg md:text-xl font-bold text-theme-fg mb-1">Quick Actions</h2>
             <p class="text-sm text-theme-muted font-medium mb-4 md:mb-6">Get started with these common tasks</p>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               <!-- Create Store Action -->
               <a routerLink="/dashboard/stores/new" class="group flex items-center gap-4 p-4 md:p-5 bg-theme-secondary border-2 border-theme-border hover:shadow-[4px_4px_0px_0px_#68E079] hover:-translate-y-1 transition-all duration-200">
                 <div class="w-12 h-12 md:w-14 md:h-14 bg-theme-success border-2 border-theme-border flex items-center justify-center shrink-0">
@@ -304,11 +304,31 @@ interface SalesStats {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
               </a>
+
+              <!-- Quick Sell Action -->
+              <a routerLink="/dashboard/quick-sell/new" class="group flex items-center gap-4 p-4 md:p-5 bg-theme-secondary border-2 border-theme-border hover:shadow-[4px_4px_0px_0px_#7C3AED] hover:-translate-y-1 transition-all duration-200">
+                <div class="w-12 h-12 md:w-14 md:h-14 bg-[#7C3AED] border-2 border-theme-border flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6 md:w-7 md:h-7 text-white" fill="currentColor" viewBox="0 0 200 200">
+                    <ellipse cx="100" cy="90" rx="60" ry="60"/>
+                    <rect x="130" y="130" width="40" height="15" rx="10" transform="rotate(45 150 137.5)"/>
+                    <circle cx="80" cy="85" r="5" opacity="0.4"/>
+                    <circle cx="120" cy="85" r="5" opacity="0.4"/>
+                    <path d="M 90 105 Q 100 115 110 105" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-bold text-theme-fg text-sm md:text-base mb-0.5">Quick Sell</h3>
+                  <p class="text-xs md:text-sm text-theme-muted truncate">Sell in seconds — file + price</p>
+                </div>
+                <svg class="w-5 h-5 text-theme-fg/30 group-hover:text-theme-fg group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </a>
             </div>
           </div>
 
           <!-- Content Grid: Stores and Products -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-4">
             <!-- Stores Section -->
             <div class="bg-theme-surface border-2 border-theme-border">
               <div class="flex items-center justify-between p-4 md:p-5 border-b-2 border-theme-border bg-theme-secondary">
@@ -451,7 +471,7 @@ interface SalesStats {
                           <p class="text-xs text-theme-muted truncate">{{ product.store?.name }}</p>
                         </div>
                         <div class="flex flex-col items-end gap-1 shrink-0">
-                          <span class="font-bold text-sm text-theme-fg">₹{{ product.price }}</span>
+                          <span class="font-bold text-sm text-theme-fg">₹{{ product.price / 100 }}</span>
                           <span class="px-2 py-0.5 text-[10px] font-bold uppercase"
                             [class.bg-theme-success]="product.status === 'PUBLISHED'"
                             [class.text-theme-fg]="product.status === 'PUBLISHED'"
@@ -469,6 +489,56 @@ interface SalesStats {
               </div>
             </div>
           </div>
+
+          <!-- Quick Sell Products Section -->
+          @if (!loading() && quickProducts().length > 0) {
+            <div class="bg-theme-surface border-2 border-theme-border mb-8">
+              <div class="flex items-center justify-between p-4 md:p-5 border-b-2 border-theme-border bg-theme-secondary">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 bg-[#7C3AED] border-2 border-theme-border flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 200 200">
+                      <ellipse cx="100" cy="90" rx="60" ry="60"/>
+                      <rect x="130" y="130" width="40" height="15" rx="10" transform="rotate(45 150 137.5)"/>
+                      <circle cx="80" cy="85" r="5" opacity="0.4"/>
+                      <circle cx="120" cy="85" r="5" opacity="0.4"/>
+                      <path d="M 90 105 Q 100 115 110 105" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+                    </svg>
+                  </div>
+                  <h3 class="font-bold text-theme-fg text-base md:text-lg">Quick Sell Products</h3>
+                </div>
+                <a routerLink="/dashboard/quick-sell" class="flex items-center gap-1 text-sm font-bold text-theme-muted hover:text-theme-fg transition-colors">
+                  View All
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              </div>
+              <div class="p-3 md:p-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  @for (qp of quickProducts().slice(0, 6); track qp.id) {
+                    <div class="flex items-center gap-3 p-3 border border-theme-border/30 hover:border-theme-border hover:bg-theme-secondary/50 transition-all">
+                      <div class="w-10 h-10 bg-[#7C3AED]/10 border border-theme-border flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5 text-[#7C3AED]" fill="currentColor" viewBox="0 0 200 200">
+                          <ellipse cx="100" cy="90" rx="60" ry="60"/>
+                          <rect x="130" y="130" width="40" height="15" rx="10" transform="rotate(45 150 137.5)"/>
+                          <circle cx="80" cy="85" r="5" opacity="0.4"/>
+                          <circle cx="120" cy="85" r="5" opacity="0.4"/>
+                          <path d="M 90 105 Q 100 115 110 105" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+                        </svg>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-theme-fg text-sm truncate">{{ qp.title }}</h4>
+                        <p class="text-xs text-theme-muted">₹{{ (qp.price / 100).toFixed(qp.price % 100 === 0 ? 0 : 2) }}</p>
+                      </div>
+                      <button type="button" (click)="copyQuickUrl(qp.productUrl, qp.id)" class="px-2 py-1 bg-theme-surface border border-theme-border text-[10px] font-bold text-theme-fg hover:bg-theme-secondary transition-colors shrink-0">
+                        {{ copiedQuickId() === qp.id ? '✓ Copied' : 'Copy link' }}
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
 
           <!-- Dynamic UI Messages Section -->
           @if (uiMessages.loading()) {
@@ -559,10 +629,12 @@ export class DashboardComponent implements OnInit {
   uiMessages = inject(UiMessageService);
   stores = signal<Store[]>([]);
   products = signal<Product[]>([]);
+  quickProducts = signal<(Product & { productUrl: string })[]>([]);
   loading = signal(true);
   totalProducts = signal(0);
   totalSales = signal(0);
   totalRevenue = signal(0);
+  copiedQuickId = signal<string | null>(null);
 
   constructor(
     private storeService: StoreService,
@@ -595,6 +667,11 @@ export class DashboardComponent implements OnInit {
         this.totalSales.set(stats.totalSales);
         this.totalRevenue.set(stats.totalRevenue);
       }
+
+      // Load quick sell products (non-blocking)
+      this.productService.getMyQuickProducts({ page: 1, limit: 6 }).then(result => {
+        this.quickProducts.set(result.data || []);
+      }).catch(() => {});
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
     } finally {
@@ -607,6 +684,16 @@ export class DashboardComponent implements OnInit {
       this.toaster.warning('No store is created. Please create a store first to add products.');
     }
     this.router.navigate(['/dashboard/products/new']);
+  }
+
+  async copyQuickUrl(url: string, productId: string) {
+    try {
+      await navigator.clipboard.writeText(url);
+      this.copiedQuickId.set(productId);
+      setTimeout(() => this.copiedQuickId.set(null), 2000);
+    } catch {
+      this.toaster.error('Failed to copy');
+    }
   }
 
   formatRevenue(value: number): string {

@@ -98,7 +98,7 @@ type TabType = 'active' | 'archived' | 'bin';
 
             <div class="space-y-6">
               <!-- Status Filter -->
-              <div>
+              <div [class.opacity-40]="filterQuickSell()" [class.pointer-events-none]="filterQuickSell()">
                 <label class="block text-sm font-bold text-theme-fg mb-3">Status</label>
                 <div class="space-y-2">
                   <label class="flex items-center gap-3 cursor-pointer">
@@ -107,6 +107,7 @@ type TabType = 'active' | 'archived' | 'bin';
                       name="status"
                       value="ALL"
                       [(ngModel)]="filterStatus"
+                      [disabled]="filterQuickSell()"
                       class="w-4 h-4 text-theme-accent border-2 border-theme-border focus:ring-[#FFC60B]"
                     />
                     <span class="text-sm font-medium text-theme-fg">All Products</span>
@@ -117,6 +118,7 @@ type TabType = 'active' | 'archived' | 'bin';
                       name="status"
                       value="PUBLISHED"
                       [(ngModel)]="filterStatus"
+                      [disabled]="filterQuickSell()"
                       class="w-4 h-4 text-theme-accent border-2 border-theme-border focus:ring-[#FFC60B]"
                     />
                     <span class="text-sm font-medium text-theme-fg">Live</span>
@@ -127,6 +129,7 @@ type TabType = 'active' | 'archived' | 'bin';
                       name="status"
                       value="DRAFT"
                       [(ngModel)]="filterStatus"
+                      [disabled]="filterQuickSell()"
                       class="w-4 h-4 text-theme-accent border-2 border-theme-border focus:ring-[#FFC60B]"
                     />
                     <span class="text-sm font-medium text-theme-fg">Draft</span>
@@ -135,7 +138,7 @@ type TabType = 'active' | 'archived' | 'bin';
               </div>
 
               <!-- Store Filter -->
-              <div class="relative">
+              <div class="relative" [class.opacity-40]="filterQuickSell()" [class.pointer-events-none]="filterQuickSell()">
                 <label class="block text-sm font-bold text-theme-fg mb-3">Store</label>
                 <!-- Dropdown Trigger -->
                 <div
@@ -212,8 +215,22 @@ type TabType = 'active' | 'archived' | 'bin';
               </div>
 
               <!-- Future filters can be added here -->
-              <div class="border-t border-black/20 pt-4">
-                <p class="text-xs text-theme-muted font-medium">More filters coming soon...</p>
+              <div>
+                <label class="block text-sm font-bold text-theme-fg mb-3">Quick Sell</label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <div
+                    (click)="filterQuickSell.set(!filterQuickSell())"
+                    class="w-5 h-5 border-2 border-theme-border flex items-center justify-center cursor-pointer shrink-0"
+                    [class.bg-\[#FFC60B\]]="filterQuickSell()"
+                  >
+                    @if (filterQuickSell()) {
+                      <svg class="w-3 h-3 text-theme-fg" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    }
+                  </div>
+                  <span class="text-sm font-medium text-theme-fg">Quick Sell only</span>
+                </label>
               </div>
             </div>
 
@@ -810,6 +827,7 @@ export class ProductsListComponent implements OnInit {
   showStoreDropdown = signal(false);
   filterStatus = signal<'ALL' | 'PUBLISHED' | 'DRAFT'>('ALL');
   filterStoreIds = signal<string[]>([]);
+  filterQuickSell = signal<boolean>(false);
   stores = signal<any[]>([]);
   storesLoading = signal(false);
 
@@ -842,8 +860,9 @@ export class ProductsListComponent implements OnInit {
     try {
       const params: any = {
         search: this.searchQuery() || undefined,
-        status: this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
-        storeIds: this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined,
+        status: !this.filterQuickSell() && this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
+        storeIds: !this.filterQuickSell() && this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined,
+        isQuickSell: this.filterQuickSell() || undefined,
       };
 
       const result = await this.productService.getMyStats(params);
@@ -878,8 +897,9 @@ export class ProductsListComponent implements OnInit {
         search: this.searchQuery(),
         sortField: this.sortField(),
         sortOrder: this.sortOrder(),
-        status: this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
-        storeIds: this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined
+        status: !this.filterQuickSell() && this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
+        storeIds: !this.filterQuickSell() && this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined,
+        isQuickSell: this.filterQuickSell() || undefined,
       };
 
       let response: PaginatedResponse<Product>;
@@ -981,6 +1001,7 @@ export class ProductsListComponent implements OnInit {
   resetFilters() {
     this.filterStatus.set('ALL');
     this.filterStoreIds.set([]);
+    this.filterQuickSell.set(false);
     this.currentPage.set(1);
     this.loadProducts();
     this.showFilters.set(false);

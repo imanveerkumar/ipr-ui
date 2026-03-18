@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, signal, inject, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
@@ -16,11 +16,12 @@ import {
 import { SubdomainService } from '../../../core/services/subdomain.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
 import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme.service';
+import { TooltipComponent } from '../tooltip/tooltip.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule],
+  imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule, TooltipComponent],
   styles: [`
     :host {
       --bg-red: #FA4B28;
@@ -195,12 +196,16 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
     .search-section {
       flex: 1;
       max-width: 400px;
+      height: 100%;
       display: none;
+      align-items: center;
+      position: relative;
+      z-index: 46;
     }
 
     @media (min-width: 768px) {
       .search-section {
-        display: block;
+        display: flex;
       }
     }
 
@@ -505,12 +510,12 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
       width: 36px;
       height: 36px;
       padding: 0;
-      border: 2px solid var(--text-black);
+      border: 2px solid var(--on-accent);
       background: var(--btn-yellow);
       cursor: pointer;
       border-radius: 8px;
       transition: all 0.2s;
-      box-shadow: 2px 2px 0px var(--text-black);
+      box-shadow: 2px 2px 0px var(--on-accent);
       flex-shrink: 0;
     }
 
@@ -519,7 +524,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        box-shadow: 3px 3px 0px var(--text-black);
+        box-shadow: 3px 3px 0px var(--on-accent);
       }
     }
 
@@ -531,12 +536,12 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
 
     .hamburger-btn:hover {
       transform: translate(-1px, -1px);
-      box-shadow: 4px 4px 0px var(--text-black);
+      box-shadow: 4px 4px 0px var(--on-accent);
     }
 
     .hamburger-btn:active {
       transform: translate(1px, 1px);
-      box-shadow: 1px 1px 0px var(--text-black);
+      box-shadow: 1px 1px 0px var(--on-accent);
     }
 
     .hamburger-btn.active {
@@ -562,10 +567,14 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
     .hamburger-line {
       width: 100%;
       height: 2px;
-      background: var(--text-black);
+      background: var(--on-accent);
       border-radius: 2px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       transform-origin: center;
+    }
+
+    .hamburger-btn.active .hamburger-line {
+      background: #ffffff;
     }
 
     .hamburger-btn.active .hamburger-line:nth-child(1) {
@@ -795,8 +804,8 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
     /* === MOBILE USER INFO === */
     .mobile-user-info {
       padding: 1.25rem;
-      background: linear-gradient(135deg, var(--ticket-green), #a8f0b0);
-      border-bottom: 2px solid var(--text-black);
+      background: linear-gradient(135deg, #68E079, #a8f0b0);
+      border-bottom: 2px solid #000000;
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -807,7 +816,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
       height: 48px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid var(--text-black);
+      border: 2px solid #000000;
     }
 
     .mobile-user-avatar-placeholder {
@@ -822,7 +831,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
       font-family: 'DM Sans', sans-serif;
       font-size: 1.25rem;
       font-weight: 700;
-      border: 2px solid var(--text-black);
+      border: 2px solid #000000;
       flex-shrink: 0;
     }
 
@@ -834,7 +843,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
     .mobile-user-greeting {
       font-family: 'Caveat', cursive;
       font-size: 1rem;
-      color: var(--text-black);
+      color: #000000;
       margin: 0 0 2px;
     }
 
@@ -842,7 +851,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
       font-weight: 600;
-      color: var(--foreground);
+      color: #000000;
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -947,20 +956,20 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
       font-family: 'Caveat', cursive;
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--text-black);
+      color: var(--on-accent);
       padding: 12px 24px;
       background: var(--btn-yellow);
-      border: 2px solid var(--text-black);
+      border: 2px solid var(--border);
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 4px 4px 0px var(--text-black);
+      box-shadow: 4px 4px 0px var(--border);
       text-align: center;
     }
 
     .mobile-auth-btn-primary:hover {
       transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--text-black);
+      box-shadow: 2px 2px 0px var(--border);
     }
 
     .mobile-auth-btn-secondary {
@@ -999,8 +1008,17 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
 
     /* === SEARCH DROPDOWN === */
     .search-dropdown-wrapper {
-      position: relative;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       width: 100%;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .search-section.expanded .search-dropdown-wrapper {
+      width: 600px;
+      max-width: calc(100vw - 40px);
     }
 
     .search-dropdown {
@@ -1257,13 +1275,18 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
     .search-overlay {
       position: fixed;
       inset: 0;
-      background: var(--overlay);
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       z-index: 45;
-      display: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
     .search-overlay.active {
-      display: block;
+      opacity: 1;
+      visibility: visible;
     }
 
     /* === MOBILE SEARCH OVERLAY === */
@@ -1691,6 +1714,42 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
       height: 16px;
       flex-shrink: 0;
     }
+
+    :host-context([data-theme="dark"]) .mobile-menu,
+    :host-context([data-theme="mustard-dark"]) .mobile-menu {
+      background: var(--secondary);
+      border-left-color: var(--border);
+    }
+
+    :host-context([data-theme="dark"]) .mobile-menu-header,
+    :host-context([data-theme="mustard-dark"]) .mobile-menu-header,
+    :host-context([data-theme="dark"]) .mobile-search,
+    :host-context([data-theme="mustard-dark"]) .mobile-search,
+    :host-context([data-theme="dark"]) .mobile-auth-section,
+    :host-context([data-theme="mustard-dark"]) .mobile-auth-section {
+      border-color: var(--border);
+    }
+
+    :host-context([data-theme="dark"]) .mobile-nav-link,
+    :host-context([data-theme="mustard-dark"]) .mobile-nav-link {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--foreground);
+    }
+
+    :host-context([data-theme="dark"]) .mobile-nav-link.active,
+    :host-context([data-theme="mustard-dark"]) .mobile-nav-link.active {
+      background: var(--accent);
+      color: var(--on-accent);
+      border-color: var(--on-accent);
+      box-shadow: 3px 3px 0px var(--on-accent);
+    }
+
+    :host-context([data-theme="dark"]) .mobile-theme-option.selected,
+    :host-context([data-theme="mustard-dark"]) .mobile-theme-option.selected {
+      border-color: var(--border);
+      box-shadow: 2px 2px 0px var(--border);
+    }
   `],
   template: `
     <div class="header-wrapper">
@@ -1706,15 +1765,20 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
             
             <!-- Desktop Navigation -->
             <nav class="nav-desktop">
-              <a routerLink="/explore" routerLinkActive="active" class="nav-link">
+              <a routerLink="/explore" routerLinkActive="active" class="nav-link" aria-label="Explore">
                 Explore
               </a>
               @if (auth.isSignedIn()) {
-                <a routerLink="/library" routerLinkActive="active" class="nav-link">
+                <a routerLink="/library" routerLinkActive="active" class="nav-link" aria-label="Library">
                   Library
                 </a>
                 @if (auth.isCreator()) {
-                  <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+                  <a
+                    routerLink="/dashboard"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    class="nav-link"
+                    aria-label="Dashboard">
                     Dashboard
                   </a>
                 }
@@ -1723,7 +1787,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
             
             <!-- Search Section -->
             @if (showSearchBar()) {
-              <div class="search-section">
+              <div class="search-section" [class.expanded]="showSearchDropdown()">
                 <div class="search-dropdown-wrapper">
                   <div class="search-container">
                     <input 
@@ -1885,70 +1949,96 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
             <div class="actions-section">
               <!-- Mobile Search Button -->
               @if (showSearchBar()) {
-                <button class="icon-btn mobile-search-btn" (click)="openMobileSearch()">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                  </svg>
-                </button>
+                <app-tooltip text="Search" placement="bottom">
+                  <button class="icon-btn mobile-search-btn" (click)="openMobileSearch()" aria-label="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                  </button>
+                </app-tooltip>
               }
               
               @if (auth.isLoaded()) {
                 <!-- Cart - visible on all pages except home, for all users -->
                 @if (!isHomePage()) {
-                  <button class="icon-btn" (click)="openCart()">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                    </svg>
-                    @if (cartService.itemCount() > 0) {
-                      <span class="icon-btn-badge">{{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}</span>
-                    }
-                  </button>
+                  <app-tooltip text="Cart" placement="bottom">
+                    <button class="icon-btn" (click)="openCart()" aria-label="Cart">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                      </svg>
+                      @if (cartService.itemCount() > 0) {
+                        <span class="icon-btn-badge">{{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}</span>
+                      }
+                    </button>
+                  </app-tooltip>
                 }
 
                 <!-- Wishlist (all users, hidden on homepage) -->
                 @if (!isHomePage()) {
-                  <a class="icon-btn" routerLink="/wishlist" routerLinkActive="active">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                    </svg>
-                    @if (wishlistService.count() > 0) {
-                      <span class="icon-btn-badge">{{ wishlistService.count() > 99 ? '99+' : wishlistService.count() }}</span>
-                    }
-                  </a>
+                  <app-tooltip text="Wishlist" placement="bottom">
+                    <a class="icon-btn" routerLink="/wishlist" routerLinkActive="active" aria-label="Wishlist">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                      </svg>
+                      @if (wishlistService.count() > 0) {
+                        <span class="icon-btn-badge">{{ wishlistService.count() > 99 ? '99+' : wishlistService.count() }}</span>
+                      }
+                    </a>
+                  </app-tooltip>
                 }
+
+                <!-- Quick Sell (all users) -->
+                <app-tooltip text="Sell your file quickly" placement="bottom">
+                  <button
+                    type="button"
+                    class="icon-btn"
+                    [class.active]="isQuickSellRoute()"
+                    (click)="openQuickSell()"
+                    aria-label="Quick Sell">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 200 200">
+                      <ellipse cx="100" cy="90" rx="60" ry="60"/>
+                      <rect x="130" y="130" width="40" height="15" rx="10" transform="rotate(45 150 137.5)"/>
+                      <circle cx="80" cy="85" r="5" opacity="0.4"/>
+                      <circle cx="120" cy="85" r="5" opacity="0.4"/>
+                      <path d="M 90 105 Q 100 115 110 105" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+                    </svg>
+                  </button>
+                </app-tooltip>
 
                 <!-- Theme Toggle -->
                 <div class="theme-toggle-container">
-                  <button 
-                    class="theme-toggle-btn" 
-                    [class.active]="themeMenuOpen()"
-                    (click)="toggleThemeMenu($event)"
-                    title="Change theme">
-                    @switch (themeService.currentTheme) {
-                      @case ('light') {
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-                        </svg>
+                  <app-tooltip text="Change theme" placement="bottom">
+                    <button 
+                      class="theme-toggle-btn" 
+                      [class.active]="themeMenuOpen()"
+                      (click)="toggleThemeMenu($event)"
+                      aria-label="Change theme">
+                      @switch (themeService.currentTheme) {
+                        @case ('light') {
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                          </svg>
+                        }
+                        @case ('dark') {
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                          </svg>
+                        }
+                        @case ('mustard-light') {
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                            <circle cx="12" cy="12" r="2" fill="currentColor" />
+                          </svg>
+                        }
+                        @case ('mustard-dark') {
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                            <circle cx="12" cy="12" r="2" fill="currentColor" />
+                          </svg>
+                        }
                       }
-                      @case ('dark') {
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-                        </svg>
-                      }
-                      @case ('mustard-light') {
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-                          <circle cx="12" cy="12" r="2" fill="currentColor" />
-                        </svg>
-                      }
-                      @case ('mustard-dark') {
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-                          <circle cx="12" cy="12" r="2" fill="currentColor" />
-                        </svg>
-                      }
-                    }
-                  </button>
+                    </button>
+                  </app-tooltip>
 
                   @if (themeMenuOpen()) {
                     <div class="dropdown-overlay" (click)="closeThemeMenu()"></div>
@@ -2168,6 +2258,16 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
               Wishlist
             </a>
           }
+          <button class="mobile-nav-link" [class.active]="isQuickSellRoute()" (click)="openQuickSellFromMobileMenu()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 200 200">
+              <ellipse cx="100" cy="90" rx="60" ry="60"/>
+              <rect x="130" y="130" width="40" height="15" rx="10" transform="rotate(45 150 137.5)"/>
+              <circle cx="80" cy="85" r="5" opacity="0.4"/>
+              <circle cx="120" cy="85" r="5" opacity="0.4"/>
+              <path d="M 90 105 Q 100 115 110 105" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+            </svg>
+            Quick Sell
+          </button>
           @if (auth.isSignedIn()) {
             <a routerLink="/library" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -2176,7 +2276,12 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
               My Library
             </a>
             @if (auth.isCreator()) {
-              <a routerLink="/dashboard" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+              <a
+                routerLink="/dashboard"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="mobile-nav-link"
+                (click)="closeMobileMenu()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
                 </svg>
@@ -2319,6 +2424,7 @@ import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme
             placeholder="Search products, stores, creators..."
             [(ngModel)]="mobileSearchQuery"
             (input)="onMobileSearchInput()"
+            (keydown)="onMobileSearchKeydown($event)"
             #mobileSearchInput
           >
           <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -2507,6 +2613,7 @@ export class NavbarComponent implements OnDestroy {
   private exploreService = inject(ExploreService);
   private subdomainService = inject(SubdomainService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   cartService = inject(CartService);
   wishlistService = inject(WishlistService);
   confirmService = inject(ConfirmService);
@@ -2536,6 +2643,18 @@ export class NavbarComponent implements OnDestroy {
     public auth: AuthService,
     private elementRef: ElementRef
   ) {
+    // Handle syncing the search bar with route query params
+    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(params => {
+      const q = params['q'];
+      if (q !== undefined) {
+        this.searchQuery = q;
+        this.mobileSearchQuery = q;
+      } else {
+        this.searchQuery = '';
+        this.mobileSearchQuery = '';
+      }
+    });
+
     // when the user navigates, make sure any open search UI is closed
     this.router.events.pipe(takeUntilDestroyed()).subscribe(e => {
       if (e instanceof NavigationEnd) {
@@ -2588,9 +2707,12 @@ export class NavbarComponent implements OnDestroy {
   }
   
   onSearchKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter' && this.searchQuery.trim()) {
-      this.closeSearchDropdown();
-      this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery.trim() } });
+    if (event.key === 'Enter') {
+      (event.target as HTMLElement).blur();
+      if (this.searchQuery.trim()) {
+        this.closeSearchDropdown();
+        this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery.trim() } });
+      }
     }
   }
   
@@ -2653,6 +2775,16 @@ export class NavbarComponent implements OnDestroy {
     }, 50);
   }
   
+  onMobileSearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      (event.target as HTMLElement).blur();
+      if (this.mobileSearchQuery.trim()) {
+        this.closeMobileSearch();
+        this.router.navigate(['/explore'], { queryParams: { q: this.mobileSearchQuery.trim() } });
+      }
+    }
+  }
+
   onMobileSearchInput() {
     if (this.mobileSearchTimeout) {
       clearTimeout(this.mobileSearchTimeout);
@@ -2739,22 +2871,22 @@ export class NavbarComponent implements OnDestroy {
     this.closeSearchDropdown();
     this.closeMobileSearch();
     // Navigate to explore with creator filter (for now)
-    this.router.navigate(['/explore'], { queryParams: { q: creator.username, tab: 'creators' } });
+    this.router.navigate(['/explore'], { queryParams: { q: creator.username, type: 'creators' } });
   }
   
   seeAllProducts() {
     this.closeSearchDropdown();
-    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'products' } });
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, type: 'products' } });
   }
   
   seeAllStores() {
     this.closeSearchDropdown();
-    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'stores' } });
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, type: 'stores' } });
   }
   
   seeAllCreators() {
     this.closeSearchDropdown();
-    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'creators' } });
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, type: 'creators' } });
   }
   
   // === UTILITY METHODS ===
@@ -2878,9 +3010,24 @@ export class NavbarComponent implements OnDestroy {
     this.cartService.open();
   }
 
+  async openQuickSell() {
+    this.closeAllMenus();
+    await this.auth.openQuickSellEntry();
+  }
+
+  async openQuickSellFromMobileMenu() {
+    this.closeMobileMenu();
+    await this.auth.openQuickSellEntry();
+  }
+
   isHomePage(): boolean {
     const url = this.router.url.split('?')[0];
     return url === '/';
+  }
+
+  isQuickSellRoute(): boolean {
+    const url = this.router.url.split('?')[0];
+    return url === '/dashboard/quick-sell' || url === '/dashboard/quick-sell/new';
   }
 
   /**

@@ -1,10 +1,44 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
   <defs>
-    <filter id="buttonShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="2" dy="2" stdDeviation="0" flood-color="#000"/>
+    <filter id="logo-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="4" dy="6" stdDeviation="4" flood-color="#000000" flood-opacity="0.8" />
     </filter>
   </defs>
-  <rect x="2" y="2" width="28" height="28" rx="6" fill="#FFC60B" stroke="#000" stroke-width="2" filter="url(#buttonShadow)"/>
-  
-  <text x="16" y="27" font-family="Arial Black, sans-serif" font-weight="900" font-size="30" fill="#111111" text-anchor="middle">S</text>
+
+  <!-- Background -->
+  <rect x="50" y="50" width="300" height="300" rx="28"
+        fill="#FFC800" stroke="#000000" stroke-width="12"
+        filter="url(#logo-shadow)" />
+
+  <!-- Bold handwritten-style m -->
+  <path d="
+    M 70 215
+    Q 70 175 110 175
+    Q 150 175 150 230
+    Q 150 245 135 245
+    Q 150 245 165 245
+    Q 150 245 150 230
+
+    Q 150 155 190 155
+    Q 230 155 230 230
+    Q 230 245 215 245
+    Q 230 245 245 245
+    Q 230 245 230 230
+
+    Q 230 155 270 155
+    Q 310 155 310 230
+    Q 310 245 295 245
+    Q 310 245 325 245
+    Q 310 245 310 230
+  "
+  fill="none"
+  stroke="#000000"
+  stroke-width="22"
+  stroke-linecap="round"
+  stroke-linejoin="round" />
+
+  <!-- Blue dots above inner arches -->
+  <circle cx="190" cy="135" r="14" fill="#0011FF"/>
+  <circle cx="270" cy="135" r="14" fill="#0011FF"/>
+
 </svg>

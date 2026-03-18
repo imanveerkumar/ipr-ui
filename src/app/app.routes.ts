@@ -137,6 +137,16 @@ export const routes: Routes = [
     canActivate: [creatorGuard],
   },
   {
+    path: 'dashboard/quick-sell',
+    loadComponent: () => import('./pages/dashboard/quick-sell/quick-sell-list.component').then(m => m.QuickSellListComponent),
+    canActivate: [creatorGuard],
+  },
+  {
+    path: 'dashboard/quick-sell/new',
+    loadComponent: () => import('./pages/dashboard/quick-sell/quick-create.component').then(m => m.QuickCreateComponent),
+    canActivate: [creatorGuard],
+  },
+  {
     path: 'dashboard/sales',
     loadComponent: () => import('./pages/dashboard/sales/sales.component').then(m => m.SalesComponent),
     canActivate: [creatorGuard],
