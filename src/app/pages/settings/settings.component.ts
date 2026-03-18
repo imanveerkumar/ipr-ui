@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -101,7 +101,7 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
                             </button>
                           </div>
                           @if (avatarUploading()) {
-                            <span class="form-hint">Uploading image to S3... {{ avatarUploadProgress() }}%</span>
+                            <span class="form-hint">Uploading image... {{ avatarUploadProgress() }}%</span>
                           } @else {
                             <span class="form-hint">Upload a JPG, PNG, WebP, GIF, SVG, or AVIF image</span>
                           }
@@ -121,9 +121,27 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
                       <label class="form-label">Username</label>
                       <div class="input-with-prefix">
                         <span class="input-prefix">&#64;</span>
-                        <input type="text" class="form-input prefix" placeholder="username" [(ngModel)]="profileForm.username" maxlength="30" />
+                        <input
+                          type="text"
+                          class="form-input prefix"
+                          [class.input-valid]="usernameStatus() === 'available' || usernameStatus() === 'unchanged'"
+                          [class.input-invalid]="usernameStatus() === 'invalid' || usernameStatus() === 'unavailable'"
+                          placeholder="username"
+                          [(ngModel)]="profileForm.username"
+                          (ngModelChange)="onUsernameInputChange($event)"
+                          maxlength="30"
+                        />
                       </div>
                       <span class="form-hint">Lowercase letters, numbers, and underscores only</span>
+                      @if (usernameStatus() !== 'idle') {
+                        <span
+                          class="form-hint username-status"
+                          [class.status-checking]="usernameStatus() === 'checking'"
+                          [class.status-available]="usernameStatus() === 'available' || usernameStatus() === 'unchanged'"
+                          [class.status-unavailable]="usernameStatus() === 'invalid' || usernameStatus() === 'unavailable'">
+                          {{ usernameStatusMessage() }}
+                        </span>
+                      }
                     </div>
 
                     <!-- Bio -->
@@ -183,7 +201,7 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
                   </div>
 
                   <div class="card-actions">
-                    <button class="btn btn-primary" (click)="saveProfile()" [disabled]="saving() || avatarUploading()">
+                    <button class="btn btn-primary" (click)="saveProfile()" [disabled]="!canSaveProfile()">
                       {{ saving() ? 'Saving...' : 'Save Profile' }}
                     </button>
                   </div>
@@ -533,6 +551,10 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     .form-label-sm { font-size: 0.8125rem; font-weight: 600; color: var(--foreground); }
     .section-label { font-size: 1rem; font-weight: 800; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--surface-hover); }
     .form-hint { font-size: 0.75rem; color: var(--muted); }
+    .username-status { font-weight: 600; }
+    .status-checking { color: var(--primary); }
+    .status-available { color: var(--success); }
+    .status-unavailable { color: var(--danger); }
     .hint-text { font-size: 0.875rem; color: var(--muted); margin: 0; line-height: 1.5; }
 
     .form-input {
@@ -542,6 +564,8 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
       font-family: inherit; box-sizing: border-box;
     }
     .form-input:focus { box-shadow: 3px 3px 0 var(--border); }
+    .form-input.input-valid { border-color: var(--success); }
+    .form-input.input-invalid { border-color: var(--danger); }
     .form-input.readonly { background: var(--secondary); opacity: 0.7; cursor: not-allowed; }
     .form-input.textarea { resize: vertical; min-height: 80px; }
     .form-input.select { cursor: pointer; appearance: auto; }
@@ -666,11 +690,15 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     .modal-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
   `],
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
   private settingsService = inject(SettingsService);
   private fileUpload = inject(FileUploadService);
   private toaster = inject(ToasterService);
   auth = inject(AuthService);
+  private readonly usernamePattern = /^[a-z0-9_]+$/;
+  private usernameCheckTimer: ReturnType<typeof setTimeout> | null = null;
+  private usernameCheckRequestId = 0;
+  private originalUsername = '';
 
   // State
   loading = signal(true);
@@ -681,6 +709,8 @@ export class SettingsComponent implements OnInit {
   activeTab = signal<SettingsTab>('profile');
   showDeleteModal = signal(false);
   deleteConfirmation = '';
+  usernameStatus = signal<'idle' | 'unchanged' | 'invalid' | 'checking' | 'available' | 'unavailable'>('idle');
+  usernameStatusMessage = signal('');
 
   profile = signal<User | null>(null);
   settings = signal<UserSettings | null>(null);
@@ -785,6 +815,11 @@ export class SettingsComponent implements OnInit {
     this.loadSettings();
   }
 
+  ngOnDestroy() {
+    this.clearUsernameCheckTimer();
+    this.usernameCheckRequestId += 1;
+  }
+
   async loadSettings() {
     this.loading.set(true);
     try {
@@ -803,6 +838,8 @@ export class SettingsComponent implements OnInit {
   }
 
   private populateForms(profile: User, settings: UserSettings) {
+    this.originalUsername = profile.username || '';
+
     this.profileForm = {
       displayName: profile.displayName || '',
       username: profile.username || '',
@@ -836,6 +873,8 @@ export class SettingsComponent implements OnInit {
       hideContactEmail: settings.hideContactEmail ?? false,
       twoFactorEnabled: settings.twoFactorEnabled ?? false,
     };
+
+    this.setUsernameStatus('unchanged', 'This is your current username');
   }
 
   getInitials(): string {
@@ -884,11 +923,112 @@ export class SettingsComponent implements OnInit {
     this.profileForm.avatarUrl = '';
   }
 
+  onUsernameInputChange(value: string) {
+    this.profileForm.username = value || '';
+    this.triggerUsernameAvailabilityCheck();
+  }
+
+  canSaveProfile(): boolean {
+    if (this.saving() || this.avatarUploading()) return false;
+
+    const username = this.profileForm.username?.trim() || '';
+    if (!username || username === this.originalUsername) return true;
+
+    return this.usernameStatus() === 'available';
+  }
+
+  private setUsernameStatus(
+    status: 'idle' | 'unchanged' | 'invalid' | 'checking' | 'available' | 'unavailable',
+    message: string,
+  ) {
+    this.usernameStatus.set(status);
+    this.usernameStatusMessage.set(message);
+  }
+
+  private clearUsernameCheckTimer() {
+    if (this.usernameCheckTimer) {
+      clearTimeout(this.usernameCheckTimer);
+      this.usernameCheckTimer = null;
+    }
+  }
+
+  private triggerUsernameAvailabilityCheck() {
+    this.clearUsernameCheckTimer();
+
+    const username = this.profileForm.username?.trim() || '';
+    if (!username) {
+      this.setUsernameStatus('idle', '');
+      return;
+    }
+
+    if (username === this.originalUsername) {
+      this.setUsernameStatus('unchanged', 'This is your current username');
+      return;
+    }
+
+    if (username.length < 3 || username.length > 30 || !this.usernamePattern.test(username)) {
+      this.setUsernameStatus(
+        'invalid',
+        'Username must be 3-30 characters and use lowercase letters, numbers, and underscores only',
+      );
+      return;
+    }
+
+    this.setUsernameStatus('checking', 'Checking username availability...');
+    const requestId = ++this.usernameCheckRequestId;
+
+    this.usernameCheckTimer = setTimeout(async () => {
+      try {
+        const response = await this.settingsService.checkUsernameAvailability(username);
+
+        if (requestId !== this.usernameCheckRequestId) {
+          return;
+        }
+
+        if (!response.success || !response.data) {
+          this.setUsernameStatus('unavailable', 'Unable to verify username right now');
+          return;
+        }
+
+        if (response.data.reason === 'unchanged') {
+          this.setUsernameStatus('unchanged', 'This is your current username');
+          return;
+        }
+
+        if (response.data.available) {
+          this.setUsernameStatus('available', 'Username is available');
+        } else {
+          this.setUsernameStatus('unavailable', 'Username is already taken');
+        }
+      } catch {
+        if (requestId !== this.usernameCheckRequestId) {
+          return;
+        }
+        this.setUsernameStatus('unavailable', 'Unable to verify username right now');
+      }
+    }, 350);
+  }
+
   async saveProfile() {
     if (this.saving()) return;
-    if (this.profileForm.username && !/^[a-z0-9_]+$/.test(this.profileForm.username)) {
+    const username = this.profileForm.username?.trim() || '';
+    const isUsernameChanged = !!username && username !== this.originalUsername;
+
+    if (username && !this.usernamePattern.test(username)) {
       this.toaster.error('Username can only contain lowercase letters, numbers, and underscores');
       return;
+    }
+
+    if (isUsernameChanged) {
+      if (this.usernameStatus() === 'checking') {
+        this.toaster.error('Please wait until username availability check completes');
+        return;
+      }
+
+      if (this.usernameStatus() !== 'available') {
+        this.toaster.error('Please choose an available username before saving');
+        return;
+      }
     }
 
     this.saving.set(true);
@@ -896,15 +1036,17 @@ export class SettingsComponent implements OnInit {
       const data: Record<string, any> = {};
       Object.entries(this.profileForm).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          data[key] = value || undefined;
+          data[key] = typeof value === 'string' ? value.trim() || undefined : value;
         }
       });
-      if (this.profileForm.username) data['username'] = this.profileForm.username;
+      if (username) data['username'] = username;
 
       const response = await this.settingsService.updateProfile(data);
       if (response.success) {
         this.toaster.success('Profile updated successfully');
         this.profile.set(response.data);
+        this.originalUsername = response.data?.username || this.originalUsername;
+        this.triggerUsernameAvailabilityCheck();
         // Refresh the global user state so navbar/avatar updates immediately
         this.auth.refreshUser();
       }
