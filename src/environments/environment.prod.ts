@@ -17,6 +17,6 @@ export const environment = {
     'privacy', 'terms', 'billing', 'payments', 'checkout', 'account',
     'accounts', 'settings', 'profile', 'profiles', 'system', 'internal',
     'root', 'null', 'undefined', 'localhost', 'whatsapp', 'instagram',
-    'meta', 'mcp', 'ai', 'auto', 'quick'
+    'meta', 'mcp', 'ai', 'auto', 'quick', 'quick-sell', 'quick-sells', 'dashboard', 'manage', 'management'
   ]
 };
