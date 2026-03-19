@@ -78,30 +78,6 @@ type SortOrder = 'desc' | 'asc';
                 </div>
               </div>
 
-              <!-- Search Bar (below stats) -->
-              <div class="mt-4 max-w-xl mx-auto md:mx-0 mb-8 md:mb-12">
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
-                    <svg class="w-4 h-4 md:w-5 md:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    [(ngModel)]="searchQuery"
-                    (input)="onSearchInput()"
-                    (keyup.enter)="performSearch()"
-                    placeholder="Search orders by product name..."
-                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-fg placeholder:text-theme-muted focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
-                  />
-                  <button
-                    (click)="performSearch()"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-theme-accent text-theme-surface border-2 border-theme-border rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
-                  >
-                    Search
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -111,80 +87,103 @@ type SortOrder = 'desc' | 'asc';
       <section class="py-6 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8">
         <div class="max-w-5xl mx-auto">
           <!-- Filters Row -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 md:mb-8 sticky top-0 z-20 bg-theme-surface pt-2 pb-2 sm:relative sm:top-auto sm:z-auto sm:bg-transparent sm:pt-0 sm:pb-0">
-            <!-- Status Filter Tabs -->
-            <div class="flex overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-              <div class="flex gap-1.5 md:gap-2 p-1 bg-theme-secondary border-2 border-theme-border rounded-xl">
-                @for (status of statusFilters; track status.value) {
+          <div class="orders-filter-shell mb-6 md:mb-8 sticky top-0 z-40 sm:relative sm:top-auto sm:z-auto">
+            <div class="orders-filter-row">
+              <div class="orders-search-panel orders-search-panel-embedded">
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 md:w-5 md:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                  </div>
+                  <input
+                    id="orders-search"
+                    type="text"
+                    [(ngModel)]="searchQuery"
+                    (input)="onSearchInput()"
+                    aria-label="Find orders"
+                    placeholder="Product name or order id"
+                    class="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2.5 md:py-3 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-fg placeholder:text-theme-muted focus:outline-none focus:ring-2 focus:ring-theme-fg/20 focus:border-theme-fg text-sm md:text-base font-medium transition-all"
+                  />
+                </div>
+              </div>
+
+              <div class="orders-status-sort-row scrollbar-hide">
+                <div class="relative orders-status-wrap min-w-[9.5rem] md:min-w-[12rem] flex-1 md:flex-none">
                   <button
-                    (click)="filterByStatus(status.value)"
-                    class="flex items-center gap-1.5 px-2.5 py-2 md:px-4 md:py-2.5 rounded-lg font-bold text-xs md:text-sm whitespace-nowrap transition-all duration-200"
-                    [class.bg-theme-fg]="currentStatus() === status.value"
-                    [class.text-theme-surface]="currentStatus() === status.value"
-                    [class.shadow-[2px_2px_0px_0px_#FFC60B]]="currentStatus() === status.value"
-                    [class.text-theme-fg]="currentStatus() !== status.value"
-                    [class.hover:bg-theme-surface]="currentStatus() !== status.value"
+                    (click)="toggleStatusDropdown()"
+                    class="orders-sort-trigger"
+                    aria-label="Order status filter"
                   >
-                    {{ status.label }}
+                    <span class="orders-sort-value">{{ getCurrentStatusLabel() }}</span>
+                    <svg class="w-4 h-4 transition-transform" [class.rotate-180]="showStatusDropdown()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+
+                  @if (showStatusDropdown()) {
+                    <div class="absolute top-full right-0 mt-2 w-full sm:w-44 bg-theme-surface border-2 border-theme-border rounded-xl shadow-[4px_4px_0px_0px_#000] z-[70] overflow-hidden">
+                      @for (status of statusFilters; track status.value) {
+                        <button
+                          (click)="setStatusFilter(status.value)"
+                          class="w-full px-3 md:px-4 py-2.5 md:py-3 text-left text-xs md:text-sm font-medium hover:bg-theme-secondary transition-colors"
+                          [class.border-b]="status !== statusFilters[statusFilters.length - 1]"
+                          [class.border-black/10]="status !== statusFilters[statusFilters.length - 1]"
+                          [class.bg-theme-accent]="currentStatus() === status.value"
+                          [class.text-black]="currentStatus() === status.value"
+                          [class.text-theme-fg]="currentStatus() !== status.value"
+                        >
+                          {{ status.label }}
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <div class="relative orders-sort-wrap">
+                  <button
+                    (click)="toggleSortDropdown()"
+                    class="orders-sort-trigger"
+                  >
+                    <span class="orders-sort-value">{{ currentSortOrder() === 'desc' ? 'Newest first' : 'Oldest first' }}</span>
+                    <svg class="w-4 h-4 transition-transform" [class.rotate-180]="showSortDropdown()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+
+                  @if (showSortDropdown()) {
+                    <div class="absolute top-full right-0 mt-2 w-full sm:w-44 bg-theme-surface border-2 border-theme-border rounded-xl shadow-[4px_4px_0px_0px_#000] z-[70] overflow-hidden">
+                      <button
+                        (click)="setSortOrder('desc')"
+                        class="w-full px-3 md:px-4 py-2.5 md:py-3 text-left text-xs md:text-sm font-medium hover:bg-theme-secondary transition-colors border-b border-black/10"
+                        [class.bg-theme-accent]="currentSortOrder() === 'desc'"
+                        [class.text-black]="currentSortOrder() === 'desc'"
+                        [class.text-theme-fg]="currentSortOrder() !== 'desc'"
+                      >
+                        Newest First
+                      </button>
+                      <button
+                        (click)="setSortOrder('asc')"
+                        class="w-full px-3 md:px-4 py-2.5 md:py-3 text-left text-xs md:text-sm font-medium hover:bg-theme-secondary transition-colors"
+                        [class.bg-theme-accent]="currentSortOrder() === 'asc'"
+                        [class.text-black]="currentSortOrder() === 'asc'"
+                        [class.text-theme-fg]="currentSortOrder() !== 'asc'"
+                      >
+                        Oldest First
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                @if (hasActiveFilters()) {
+                  <button
+                    (click)="clearFilters()"
+                    class="orders-clear-btn orders-clear-btn-mobile"
+                  >
+                    Clear X
                   </button>
                 }
               </div>
-            </div>
-
-            <!-- Sort & Clear -->
-            <div class="flex items-center gap-2">
-              <!-- Sort Dropdown -->
-              <div class="relative">
-                <button
-                  (click)="toggleSortDropdown()"
-                  class="flex items-center gap-2 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-medium text-xs md:text-sm text-theme-fg hover:bg-theme-secondary transition-colors"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
-                  </svg>
-                  {{ currentSortOrder() === 'desc' ? 'Newest First' : 'Oldest First' }}
-                  <svg class="w-4 h-4 transition-transform" [class.rotate-180]="showSortDropdown()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                </button>
-                
-                <!-- Sort Options -->
-                @if (showSortDropdown()) {
-                  <div class="absolute top-full right-0 mt-2 w-40 bg-theme-surface border-2 border-theme-border rounded-xl shadow-[4px_4px_0px_0px_#000] z-20 overflow-hidden">
-                    <button
-                      (click)="setSortOrder('desc')"
-                      class="w-full px-4 py-3 text-left text-sm font-medium hover:bg-theme-secondary transition-colors border-b border-black/10"
-                      [class.bg-theme-accent]="currentSortOrder() === 'desc'"
-                      [class.text-theme-surface]="currentSortOrder() === 'desc'"
-                      [class.text-theme-fg]="currentSortOrder() !== 'desc'"
-                    >
-                      Newest First
-                    </button>
-                    <button
-                      (click)="setSortOrder('asc')"
-                      class="w-full px-4 py-3 text-left text-sm font-medium hover:bg-theme-secondary transition-colors"
-                      [class.bg-theme-accent]="currentSortOrder() === 'asc'"
-                      [class.text-theme-surface]="currentSortOrder() === 'asc'"
-                      [class.text-theme-fg]="currentSortOrder() !== 'asc'"
-                    >
-                      Oldest First
-                    </button>
-                  </div>
-                }
-              </div>
-
-              <!-- Clear Filters -->
-              @if (hasActiveFilters()) {
-                <button
-                  (click)="clearFilters()"
-                  class="flex items-center gap-1.5 px-3 py-2 bg-theme-danger border-2 border-theme-border rounded-lg font-medium text-xs md:text-sm text-white hover:bg-[#e8421f] transition-colors"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                  </svg>
-                  Clear
-                </button>
-              }
             </div>
           </div>
 
@@ -411,6 +410,135 @@ type SortOrder = 'desc' | 'asc';
     .scrollbar-hide::-webkit-scrollbar {
       display: none;
     }
+    .orders-search-panel {
+      display: grid;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      border: 2px solid var(--border);
+      border-radius: 0.9rem;
+      background: color-mix(in srgb, var(--surface) 75%, var(--background));
+      box-shadow: 3px 3px 0 0 #000;
+    }
+    .orders-search-panel-embedded {
+      box-shadow: none;
+      background: transparent;
+      border: 0;
+      padding: 0;
+    }
+    .orders-field-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-left: 0.25rem;
+    }
+    .orders-filter-shell {
+      display: grid;
+      gap: 0.75rem;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+    }
+    .orders-clear-btn {
+      border: 1px solid var(--border);
+      border-radius: 0.6rem;
+      background: var(--danger);
+      color: var(--background);
+      padding: 0.45rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .orders-filter-row {
+      display: grid;
+      gap: 0.65rem;
+    }
+    .orders-status-sort-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: nowrap;
+      overflow-x: visible;
+      overflow-y: visible;
+      padding-bottom: 0.15rem;
+    }
+    .orders-status-wrap {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .orders-sort-wrap {
+      position: relative;
+      flex: 1 1 0;
+      min-width: 0;
+      z-index: 50;
+    }
+    .orders-sort-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem;
+      border: 2px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 0.45rem 0.6rem;
+      min-width: 0;
+      color: var(--foreground);
+      background: var(--surface);
+      font-size: 0.74rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .orders-clear-btn-mobile {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0.35rem 0.55rem;
+      font-size: 0.74rem;
+      line-height: 1;
+    }
+    .orders-sort-value {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: left;
+      flex: 1 1 auto;
+    }
+    @media (min-width: 768px) {
+      .orders-filter-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .orders-status-sort-row {
+        overflow-x: visible;
+      }
+      .orders-status-wrap,
+      .orders-sort-wrap {
+        flex: 0 0 auto;
+        min-width: max-content;
+      }
+      .orders-sort-trigger {
+        width: auto;
+        gap: 0.5rem;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.82rem;
+      }
+      .orders-sort-label {
+        font-size: 0.68rem;
+      }
+      .orders-clear-btn-mobile {
+        flex: 0 0 auto;
+        min-height: 0;
+        padding: 0.45rem 0.65rem;
+        font-size: 0.75rem;
+      }
+      .orders-filter-shell {
+        padding: 0;
+      }
+    }
   `]
 })
 export class OrdersComponent implements OnInit {
@@ -422,6 +550,7 @@ export class OrdersComponent implements OnInit {
   
   currentStatus = signal<StatusFilter>('ALL');
   currentSortOrder = signal<SortOrder>('desc');
+  showStatusDropdown = signal(false);
   showSortDropdown = signal(false);
   
   meta = signal({
@@ -459,11 +588,7 @@ export class OrdersComponent implements OnInit {
   constructor(private checkoutService: CheckoutService) {}
 
   async ngOnInit() {
-    // Load orders and stats in parallel
-    await Promise.all([
-      this.loadOrders(),
-      this.loadOverallStats(),
-    ]);
+    await this.loadOrders();
   }
 
   async loadOrders(showFullLoader = true) {
@@ -483,33 +608,12 @@ export class OrdersComponent implements OnInit {
       
       this.orders.set(result.data);
       this.meta.set(result.meta);
+      this.overallStats.set(result.overallStats);
     } catch (error) {
       console.error('Failed to load orders:', error);
     } finally {
       this.loading.set(false);
       this.isFiltering.set(false);
-    }
-  }
-
-  async loadOverallStats() {
-    try {
-      // Fetch all orders without pagination to calculate accurate stats
-      const allOrdersResult = await this.checkoutService.getMyOrdersPaginated({
-        page: 1,
-        limit: 1000, // Get a large number to cover all orders
-      });
-      
-      const allOrders = allOrdersResult.data;
-      const completedOrders = allOrders.filter(o => o.status === 'PAID' || o.status === 'FULFILLED');
-      const totalSpent = completedOrders.reduce((sum, order) => sum + order.totalAmount, 0);
-      
-      this.overallStats.set({
-        totalOrders: allOrdersResult.meta.total,
-        completedOrders: completedOrders.length,
-        totalSpent: totalSpent,
-      });
-    } catch (error) {
-      console.error('Failed to load overall stats:', error);
     }
   }
 
@@ -532,11 +636,30 @@ export class OrdersComponent implements OnInit {
     await this.loadOrders(false);
   }
 
+  toggleStatusDropdown() {
+    this.showStatusDropdown.update(v => !v);
+  }
+
+  async setStatusFilter(status: StatusFilter) {
+    if (this.currentStatus() === status) {
+      this.showStatusDropdown.set(false);
+      return;
+    }
+    this.currentStatus.set(status);
+    this.showStatusDropdown.set(false);
+    this.meta.update(m => ({ ...m, page: 1 }));
+    await this.loadOrders(false);
+  }
+
   toggleSortDropdown() {
     this.showSortDropdown.update(v => !v);
   }
 
   async setSortOrder(order: SortOrder) {
+    if (this.currentSortOrder() === order) {
+      this.showSortDropdown.set(false);
+      return;
+    }
     this.currentSortOrder.set(order);
     this.showSortDropdown.set(false);
     await this.loadOrders(false);
@@ -546,10 +669,16 @@ export class OrdersComponent implements OnInit {
     return this.searchQuery.length > 0 || this.currentStatus() !== 'ALL';
   }
 
+  getCurrentStatusLabel(): string {
+    return this.statusFilters.find(s => s.value === this.currentStatus())?.label ?? 'All';
+  }
+
   async clearFilters() {
     this.searchQuery = '';
     this.currentStatus.set('ALL');
     this.currentSortOrder.set('desc');
+    this.showStatusDropdown.set(false);
+    this.showSortDropdown.set(false);
     this.meta.update(m => ({ ...m, page: 1 }));
     await this.loadOrders(false);
   }
