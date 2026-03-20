@@ -15,14 +15,14 @@ import { License } from '../../core/models';
   standalone: true,
   imports: [CommonModule, PurchasesAuthModalComponent],
   template: `
-    <div class="min-h-screen bg-gray-50 pb-8">
+    <div class="min-h-screen bg-theme-bg pb-8">
       <!-- Header -->
-      <div class="bg-white border-b border-gray-100">
+      <div class="bg-theme-surface border-b border-theme-secondary">
         <div class="max-w-4xl mx-auto px-4 py-5 sm:py-6 sm:px-6 lg:px-8">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 class="text-xl sm:text-2xl font-bold text-gray-900">My Purchases</h1>
-              <p class="text-sm text-gray-500 mt-0.5">
+              <h1 class="text-xl sm:text-2xl font-bold text-theme-fg">My Purchases</h1>
+              <p class="text-sm text-theme-muted mt-0.5">
                 @if (isAuthenticated()) {
                   @if (guestAccess.isAuthenticated()) {
                     {{ guestAccess.identifier() }}
@@ -39,7 +39,7 @@ import { License } from '../../core/models';
                 @if (guestAccess.isAuthenticated()) {
                   <button 
                     (click)="logout()"
-                    class="text-sm text-gray-500 hover:text-gray-700 font-medium px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    class="text-sm text-theme-muted hover:text-theme-fg font-medium px-3 py-2 rounded-lg hover:bg-theme-secondary transition-colors"
                   >
                     Sign Out
                   </button>
@@ -54,19 +54,19 @@ import { License } from '../../core/models';
       <div class="max-w-4xl mx-auto px-4 py-6 sm:py-8 sm:px-6 lg:px-8">
         @if (!isAuthenticated()) {
           <!-- Not Authenticated State -->
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 text-center">
+          <div class="bg-theme-surface rounded-2xl shadow-sm border border-theme-secondary p-6 sm:p-8 text-center">
             <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 bg-gradient-to-br from-[#b8e6c9] to-[#d8f8e0] rounded-full flex items-center justify-center">
-              <svg class="w-8 h-8 sm:w-10 sm:h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-8 h-8 sm:w-10 sm:h-10 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
               </svg>
             </div>
-            <h2 class="text-xl font-bold text-gray-900 mb-2">Access Your Purchases</h2>
-            <p class="text-gray-600 mb-6 max-w-sm mx-auto text-sm sm:text-base">
+            <h2 class="text-xl font-bold text-theme-fg mb-2">Access Your Purchases</h2>
+            <p class="text-theme-muted mb-6 max-w-sm mx-auto text-sm sm:text-base">
               Enter the email or phone number you used during checkout to access your purchased products from {{ storeContext.storeName() }}.
             </p>
             <button 
               (click)="openAccessModal()"
-              class="w-full sm:w-auto px-8 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-colors min-h-[48px]"
+              class="w-full sm:w-auto px-8 py-3.5 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
             >
               Verify to Access
             </button>
@@ -75,13 +75,13 @@ import { License } from '../../core/models';
           <!-- Loading State -->
           <div class="space-y-4">
             @for (i of [1, 2, 3]; track i) {
-              <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 animate-pulse">
+              <div class="bg-theme-surface rounded-2xl shadow-sm border border-theme-secondary p-5 sm:p-6 animate-pulse">
                 <div class="flex gap-4">
-                  <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gray-200 rounded-xl"></div>
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 bg-theme-secondary rounded-xl"></div>
                   <div class="flex-1">
-                    <div class="h-5 bg-gray-200 rounded w-1/3 mb-2"></div>
-                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                    <div class="h-8 bg-gray-200 rounded w-24"></div>
+                    <div class="h-5 bg-theme-secondary rounded w-1/3 mb-2"></div>
+                    <div class="h-4 bg-theme-secondary rounded w-1/2 mb-4"></div>
+                    <div class="h-8 bg-theme-secondary rounded w-24"></div>
                   </div>
                 </div>
               </div>
@@ -89,19 +89,19 @@ import { License } from '../../core/models';
           </div>
         } @else if (purchases().length === 0) {
           <!-- Empty State -->
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 text-center">
+          <div class="bg-theme-surface rounded-2xl shadow-sm border border-theme-secondary p-6 sm:p-8 text-center">
             <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 bg-gradient-to-br from-[#fff3d0] to-[#fffbeb] rounded-full flex items-center justify-center">
-              <svg class="w-8 h-8 sm:w-10 sm:h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-8 h-8 sm:w-10 sm:h-10 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
               </svg>
             </div>
-            <h2 class="text-xl font-bold text-gray-900 mb-2">No Purchases Found</h2>
-            <p class="text-gray-600 mb-6 text-sm sm:text-base">
+            <h2 class="text-xl font-bold text-theme-fg mb-2">No Purchases Found</h2>
+            <p class="text-theme-muted mb-6 text-sm sm:text-base">
               We couldn't find any purchases from this store associated with your account.
             </p>
             <button 
               (click)="goToProducts()"
-              class="w-full sm:w-auto px-8 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-colors min-h-[48px]"
+              class="w-full sm:w-auto px-8 py-3.5 bg-theme-fg text-theme-bg font-semibold rounded-xl hover:bg-theme-surface-hover active:bg-theme-surface-hover transition-colors min-h-[48px]"
             >
               Browse Products
             </button>
@@ -111,19 +111,19 @@ import { License } from '../../core/models';
           <div class="mb-6 p-4 bg-gradient-to-br from-[#b8e6c9]/30 to-[#d8f8e0]/30 rounded-2xl border border-[#b8e6c9]/50">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm">
-                  <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-10 h-10 rounded-xl bg-theme-surface flex items-center justify-center shadow-sm">
+                  <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                   </svg>
                 </div>
                 <div>
-                  <p class="font-medium text-gray-900 text-sm">Want to see all your purchases?</p>
-                  <p class="text-xs text-gray-600">Access products from all stores in one place</p>
+                  <p class="font-medium text-theme-fg text-sm">Want to see all your purchases?</p>
+                  <p class="text-xs text-theme-muted">Access products from all stores in one place</p>
                 </div>
               </div>
               <button 
                 (click)="viewAllPurchases()"
-                class="w-full sm:w-auto px-4 py-2.5 bg-white text-gray-900 font-medium rounded-xl hover:bg-gray-50 border border-gray-200 transition-colors text-sm flex items-center justify-center gap-2 min-h-[44px]"
+                class="w-full sm:w-auto px-4 py-2.5 bg-theme-surface text-theme-fg font-medium rounded-xl hover:bg-theme-bg border border-theme-secondary transition-colors text-sm flex items-center justify-center gap-2 min-h-[44px]"
               >
                 <span>View All Purchases</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,10 +135,10 @@ import { License } from '../../core/models';
 
           <!-- Store-specific purchases header -->
           <div class="flex items-center gap-2 mb-4">
-            <h2 class="text-sm font-medium text-gray-500">
+            <h2 class="text-sm font-medium text-theme-muted">
               Purchases from {{ storeContext.storeName() }}
             </h2>
-            <span class="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">
+            <span class="text-xs px-2 py-0.5 bg-theme-secondary text-theme-muted rounded-full">
               {{ purchases().length }} item{{ purchases().length > 1 ? 's' : '' }}
             </span>
           </div>
@@ -146,12 +146,12 @@ import { License } from '../../core/models';
           <!-- Purchases List -->
           <div class="space-y-4">
             @for (purchase of purchases(); track purchase.id) {
-              <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div class="bg-theme-surface rounded-2xl shadow-sm border border-theme-secondary overflow-hidden">
                 <!-- Product Info -->
                 <div class="p-4 sm:p-6">
                   <div class="flex gap-3 sm:gap-4">
                     <!-- Thumbnail -->
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-theme-secondary overflow-hidden flex-shrink-0">
                       @if (purchase.product.thumbnailUrl) {
                         <img 
                           [src]="purchase.product.thumbnailUrl" 
@@ -171,10 +171,10 @@ import { License } from '../../core/models';
                     <div class="flex-1 min-w-0">
                       <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4">
                         <div class="min-w-0">
-                          <h3 class="font-bold text-gray-900 text-sm sm:text-base truncate">{{ purchase.product.title }}</h3>
+                          <h3 class="font-bold text-theme-fg text-sm sm:text-base truncate">{{ purchase.product.title }}</h3>
                         </div>
                         <div class="sm:text-right flex-shrink-0 mt-0.5 sm:mt-0">
-                          <p class="text-xs text-gray-500">
+                          <p class="text-xs text-theme-muted">
                             {{ formatDate(purchase.order.paidAt) }}
                           </p>
                         </div>
@@ -188,7 +188,7 @@ import { License } from '../../core/models';
                           </svg>
                           Active
                         </span>
-                        <span class="text-gray-500 text-xs">
+                        <span class="text-theme-muted text-xs">
                           {{ purchase.downloadCount }}/{{ purchase.maxDownloads }} downloads
                         </span>
                       </div>
@@ -198,28 +198,28 @@ import { License } from '../../core/models';
 
                 <!-- Files Section -->
                 @if (purchase.product.files.length > 0) {
-                  <div class="border-t border-gray-100 bg-gray-50/50 p-3 sm:p-4">
-                    <p class="text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">
+                  <div class="border-t border-theme-secondary bg-gray-50/50 p-3 sm:p-4">
+                    <p class="text-xs sm:text-sm font-medium text-theme-fg mb-2 sm:mb-3">
                       {{ purchase.product.files.length }} file{{ purchase.product.files.length > 1 ? 's' : '' }} included
                     </p>
                     <div class="space-y-2">
                       @for (file of purchase.product.files; track file.id) {
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white rounded-xl p-3 border border-gray-100 gap-2 sm:gap-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-theme-surface rounded-xl p-3 border border-theme-secondary gap-2 sm:gap-3">
                           <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-theme-secondary flex items-center justify-center flex-shrink-0">
+                              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                               </svg>
                             </div>
                             <div class="min-w-0">
-                              <p class="text-xs sm:text-sm font-medium text-gray-900 truncate">{{ file.filename }}</p>
-                              <p class="text-xs text-gray-500">{{ formatFileSize(file.size) }}</p>
+                              <p class="text-xs sm:text-sm font-medium text-theme-fg truncate">{{ file.filename }}</p>
+                              <p class="text-xs text-theme-muted">{{ formatFileSize(file.size) }}</p>
                             </div>
                           </div>
                           <button 
                             (click)="downloadFile(purchase, file.id)"
                             [disabled]="downloadingFile() === file.id || purchase.downloadCount >= purchase.maxDownloads"
-                            class="w-full sm:w-auto px-4 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 active:bg-gray-950 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[44px]"
+                            class="w-full sm:w-auto px-4 py-2.5 bg-theme-fg text-theme-bg text-sm font-medium rounded-lg hover:bg-theme-surface-hover active:bg-theme-surface-hover disabled:bg-theme-secondary disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 min-h-[44px]"
                           >
                             @if (downloadingFile() === file.id) {
                               <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">

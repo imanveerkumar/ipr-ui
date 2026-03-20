@@ -2,6 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { ApiService } from './api.service';
 import { AllSettings, UserSettings } from '../models';
 
+interface UsernameAvailabilityResponse {
+  username: string;
+  available: boolean;
+  reason?: 'unchanged';
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -16,6 +22,15 @@ export class SettingsService {
     return this.api.patch<any>('/settings/profile', data, {
       skipDeduplication: true,
     });
+  }
+
+  async checkUsernameAvailability(username: string) {
+    return this.api.get<UsernameAvailabilityResponse>(
+      `/settings/username-availability?username=${encodeURIComponent(username)}`,
+      {
+        skipDeduplication: true,
+      },
+    );
   }
 
   async updateAccountSettings(data: Record<string, any>) {

@@ -138,7 +138,7 @@ export interface ImageUploadResult {
       gap: 0.5rem;
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
       margin-bottom: 0.5rem;
     }
 
@@ -155,21 +155,22 @@ export interface ImageUploadResult {
     /* Upload Zone */
     .upload-zone {
       position: relative;
-      border: 2px dashed #111111;
-      background: #ffffff;
+      border: 2px dashed var(--border);
+      background: var(--surface);
       cursor: pointer;
       transition: all 0.2s ease;
       overflow: hidden;
     }
 
     .upload-zone:hover {
-      background: #F9F4EB;
+      background: var(--secondary);
       border-style: solid;
     }
 
     .upload-zone--dragover {
-      background: #FFC60B20;
-      border-color: #FFC60B;
+      background: var(--primary);
+      background: rgba(255, 198, 11, 0.13);
+      border-color: var(--primary);
       border-style: solid;
     }
 
@@ -177,16 +178,16 @@ export interface ImageUploadResult {
       cursor: default;
       pointer-events: none;
       border-style: solid;
-      border-color: #2B57D6;
+      border-color: var(--primary);
     }
 
     .upload-zone--has-image {
       border-style: solid;
-      border-color: #111111;
+      border-color: var(--border);
     }
 
     .upload-zone--has-image:hover {
-      border-color: #2B57D6;
+      border-color: var(--primary);
     }
 
     /* Type-specific sizes */
@@ -284,7 +285,7 @@ export interface ImageUploadResult {
       padding: 0.5rem 0.875rem;
       font-size: 0.8125rem;
       font-weight: 700;
-      border: 2px solid #ffffff;
+      border: 2px solid var(--surface);
       cursor: pointer;
       font-family: inherit;
       transition: all 0.15s ease;
@@ -292,22 +293,22 @@ export interface ImageUploadResult {
     }
 
     .preview-btn--change {
-      background: #ffffff;
-      color: #111111;
+      background: var(--surface);
+      color: var(--foreground);
     }
 
     .preview-btn--change:hover {
-      background: #FFC60B;
+      background: var(--primary);
     }
 
     .preview-btn--remove {
       background: transparent;
-      color: #ffffff;
+      color: white;
     }
 
     .preview-btn--remove:hover {
-      background: #FA4B28;
-      border-color: #FA4B28;
+      background: var(--danger);
+      border-color: var(--danger);
     }
 
     /* Upload Progress */

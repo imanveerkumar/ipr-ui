@@ -28,9 +28,9 @@ import { RouterLink } from '@angular/router';
           <!-- Logo and Social Row -->
           <div class="logo-row">
             <div class="logo-container">
-              <span class="logo-text">StoresCraft</span>
+              <span class="logo-text">BlueMustard</span>
               <div class="mascot">
-                <svg fill="#000000" width="60" height="60" viewBox="96.631 514.201 32.951 32.951" xmlns="http://www.w3.org/2000/svg">
+                <svg class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]" fill="currentColor" width="60" height="60" viewBox="96.631 514.201 32.951 32.951" xmlns="http://www.w3.org/2000/svg">
                   <g>
                     <path d="M113.107,547.151a16.475,16.475,0,1,1,16.475-16.475A16.494,16.494,0,0,1,113.107,547.151Zm0-30.95a14.475,14.475,0,1,0,14.475,14.475A14.492,14.492,0,0,0,113.107,516.2Z"/>
                     
@@ -64,9 +64,9 @@ import { RouterLink } from '@angular/router';
   styles: [`
     /* === CSS Variables === */
     :host {
-      --bg-red: #FA4B28;
-      --bg-beige: #F9F4EB;
-      --text-black: #111111;
+      --bg-red: var(--danger);
+      --bg-beige: var(--secondary);
+      --text-black: var(--foreground);
       
       display: block;
       font-family: 'Inter', sans-serif;

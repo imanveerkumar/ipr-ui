@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { User } from '../models';
 import { ApiService } from './api.service';
 import { GlobalLoaderService } from './global-loader.service';
+import { ThemeService } from './theme.service';
 import { WishlistService } from './wishlist.service';
 
 @Injectable({
@@ -14,6 +15,8 @@ export class AuthService {
   private clerk: Clerk | null = null;
   private postAuthRedirectUrl: string | null = null;
   private readonly postAuthStorageKey = 'post_auth_redirect_url';
+  private postAuthUpgradeToCreator = false;
+  private readonly postAuthUpgradeStorageKey = 'post_auth_upgrade_to_creator';
   
   // Signals for reactive state
   private _isLoaded = signal(false);
@@ -33,6 +36,7 @@ export class AuthService {
   readonly isAdmin = computed(() => this._user()?.role === 'ADMIN');
 
   private globalLoader = inject(GlobalLoaderService);
+  private themeService = inject(ThemeService);
   private wishlistService = inject(WishlistService);
 
   constructor(private apiService: ApiService, private router: Router) {}
@@ -49,6 +53,7 @@ export class AuthService {
     try {
       this.clerk = new Clerk(environment.clerkPublishableKey);
       await this.clerk.load({
+        appearance: this.getClerkAppearance(),
         // Use custom router functions to prevent page reloads
         routerPush: (to: string) => {
           // Don't navigate - just stay on current page
@@ -70,7 +75,7 @@ export class AuthService {
         await this.fetchCurrentUser();
         // Sync anonymous wishlist & hydrate server state
         this.wishlistService.syncAfterLogin().catch(() => {});
-        this.handlePostAuthRedirect();
+        await this.handlePostAuthRedirect();
       }
 
       this._isLoaded.set(true); // Now auth is fully loaded including user data
@@ -94,7 +99,7 @@ export class AuthService {
             await this.fetchCurrentUser();
             // Sync anonymous wishlist & hydrate server state
             this.wishlistService.syncAfterLogin().catch(() => {});
-            this.handlePostAuthRedirect();
+            await this.handlePostAuthRedirect();
             
             // Hide loader after a brief delay
             setTimeout(() => {
@@ -146,7 +151,9 @@ export class AuthService {
   async signIn() {
     if (!this.clerk) return;
     // Open sign-in modal - custom router prevents redirects
-    await this.clerk.openSignIn();
+    await this.clerk.openSignIn({
+      appearance: this.getClerkAppearance(),
+    });
   }
 
   async openCreatorSignup() {
@@ -154,10 +161,31 @@ export class AuthService {
     await this.signUp();
   }
 
+  async openQuickSellEntry() {
+    // Already authenticated users should go directly to quick sell,
+    // upgrading to creator automatically when needed.
+    if (this.isSignedIn()) {
+      const upgraded = await this.ensureCreatorForQuickSell();
+      if (!upgraded) {
+        await this.router.navigateByUrl('/become-creator', { replaceUrl: true });
+        return;
+      }
+      await this.router.navigateByUrl('/dashboard/quick-sell/new', { replaceUrl: true });
+      return;
+    }
+
+    // Guests should sign up first, then auto-upgrade and redirect to quick sell.
+    this.setPostAuthRedirect('/dashboard/quick-sell/new');
+    this.setPostAuthUpgradeToCreator(true);
+    await this.signUp();
+  }
+
   async signUp() {
     if (!this.clerk) return;
     // Open sign-up modal - custom router prevents redirects
-    await this.clerk.openSignUp();
+    await this.clerk.openSignUp({
+      appearance: this.getClerkAppearance(),
+    });
   }
 
   async signOut() {
@@ -221,6 +249,20 @@ export class AuthService {
     await this.fetchCurrentUser();
   }
 
+  private async ensureCreatorForQuickSell(): Promise<boolean> {
+    if (this.isCreator()) {
+      return true;
+    }
+
+    const result = await this.upgradeToCreator();
+    if (!result.success) {
+      return false;
+    }
+
+    await this.refreshUser();
+    return this.isCreator();
+  }
+
   private setPostAuthRedirect(url: string) {
     this.postAuthRedirectUrl = url;
     try {
@@ -243,13 +285,103 @@ export class AuthService {
     return url;
   }
 
-  private handlePostAuthRedirect() {
+  private setPostAuthUpgradeToCreator(shouldUpgrade: boolean) {
+    this.postAuthUpgradeToCreator = shouldUpgrade;
+    try {
+      if (shouldUpgrade) {
+        sessionStorage.setItem(this.postAuthUpgradeStorageKey, '1');
+      } else {
+        sessionStorage.removeItem(this.postAuthUpgradeStorageKey);
+      }
+    } catch (err) {
+      // ignore storage failures
+    }
+  }
+
+  private consumePostAuthUpgradeToCreator(): boolean {
+    const shouldUpgrade =
+      this.postAuthUpgradeToCreator ||
+      sessionStorage.getItem(this.postAuthUpgradeStorageKey) === '1';
+
+    this.postAuthUpgradeToCreator = false;
+    try {
+      sessionStorage.removeItem(this.postAuthUpgradeStorageKey);
+    } catch (err) {
+      // ignore storage failures
+    }
+
+    return shouldUpgrade;
+  }
+
+  private async handlePostAuthRedirect() {
+    const shouldUpgrade = this.consumePostAuthUpgradeToCreator();
+    if (shouldUpgrade) {
+      const upgraded = await this.ensureCreatorForQuickSell();
+      if (!upgraded) {
+        try {
+          await this.router.navigateByUrl('/become-creator', { replaceUrl: true });
+        } catch (err) {
+          // ignore navigation errors
+        }
+        return;
+      }
+    }
+
     const url = this.consumePostAuthRedirect();
     if (!url) return;
     try {
-      this.router.navigateByUrl(url, { replaceUrl: true });
+      await this.router.navigateByUrl(url, { replaceUrl: true });
     } catch (err) {
       // ignore navigation errors
     }
+  }
+
+  private getClerkAppearance() {
+    const isDarkTheme = this.themeService.currentTheme === 'dark' || this.themeService.currentTheme === 'mustard-dark';
+    const socialButtonsVariant: 'iconButton' | 'blockButton' = isDarkTheme ? 'iconButton' : 'blockButton';
+
+    return {
+      variables: {
+        colorPrimary: 'var(--primary)',
+        colorText: 'var(--foreground)',
+        colorTextSecondary: 'var(--muted)',
+        colorBackground: 'var(--surface)',
+        colorInputBackground: 'var(--background)',
+        colorInputText: 'var(--foreground)',
+        colorDanger: 'var(--danger)',
+        colorSuccess: 'var(--success)',
+        borderRadius: '0.75rem',
+      },
+      elements: {
+        card: {
+          backgroundColor: 'var(--surface)',
+          border: '1px solid var(--border)',
+          boxShadow: 'none',
+        },
+        headerTitle: {
+          color: 'var(--foreground)',
+        },
+        headerSubtitle: {
+          color: 'var(--muted)',
+        },
+        formFieldLabel: {
+          color: 'var(--foreground)',
+        },
+        formFieldInput: {
+          backgroundColor: 'var(--background)',
+          borderColor: 'var(--border)',
+          color: 'var(--foreground)',
+        },
+        footerActionText: {
+          color: 'var(--muted)',
+        },
+        footerActionLink: {
+          color: 'var(--primary)',
+        },
+      },
+      layout: {
+        socialButtonsVariant,
+      },
+    };
   }
 }

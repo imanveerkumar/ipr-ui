@@ -89,8 +89,8 @@ jobs:
 
       - name: Verify & analyze
         run: |
-          DIR="dist/storescraft/browser"
-          [[ -d "$DIR" ]] || DIR="dist/storescraft"
+          DIR="dist/thebluemustard/browser"
+          [[ -d "$DIR" ]] || DIR="dist/thebluemustard"
           [[ -d "$DIR" ]] || { echo "::error::Build output directory not found"; exit 1; }
 
           TOTAL=$(du -sh "$DIR" | cut -f1)
@@ -118,7 +118,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ui-build-${{ github.sha }}
-          path: dist/storescraft/
+          path: dist/thebluemustard/
           retention-days: 3
 
   # ── Test ───────────────────────────────────────────────────────────────────

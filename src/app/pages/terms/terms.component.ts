@@ -27,11 +27,11 @@ import { RouterLink } from '@angular/router';
           <div class="card">
             <div class="prose">
               <h2>1. Acceptance of Terms</h2>
-              <p>By accessing or using StoresCraft ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our platform. These terms apply to all users, including buyers, creators (sellers), and visitors.</p>
+              <p>By accessing or using TheBlueMustard ("the Platform"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our platform. These terms apply to all users, including buyers, creators (sellers), and visitors.</p>
 
               <h2>2. Definitions</h2>
               <ul>
-                <li><strong>"Platform"</strong> refers to the StoresCraft website, application, and all related services.</li>
+                <li><strong>"Platform"</strong> refers to TheBlueMustard website, application, and all related services.</li>
                 <li><strong>"Creator"</strong> refers to a user who creates a store and lists digital products for sale.</li>
                 <li><strong>"Buyer"</strong> refers to a user who purchases digital products on the platform.</li>
                 <li><strong>"Digital Product"</strong> refers to any digital asset listed for sale, including but not limited to templates, fonts, graphics, code, eBooks, and presets.</li>
@@ -87,7 +87,7 @@ import { RouterLink } from '@angular/router';
               <p>Refund requests must be submitted within 7 days of purchase.</p>
 
               <h2>8. Intellectual Property</h2>
-              <p>The StoresCraft platform, including its design, code, logos, and branding, is owned by StoresCraft and protected by intellectual property laws. Creators retain ownership of their digital products. Buyers receive only the usage rights granted by the product license.</p>
+              <p>TheBlueMustard platform, including its design, code, logos, and branding, is owned by TheBlueMustard and protected by intellectual property laws. Creators retain ownership of their digital products. Buyers receive only the usage rights granted by the product license.</p>
 
               <h2>9. Prohibited Conduct</h2>
               <p>You agree not to:</p>
@@ -105,10 +105,10 @@ import { RouterLink } from '@angular/router';
               <p>We reserve the right to review, reject, or remove any product listing or store that violates these terms. Stores may be suspended, and accounts may be terminated for repeated violations.</p>
 
               <h2>11. Limitation of Liability</h2>
-              <p>StoresCraft is provided "as is" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the platform. Our total liability for any claim shall not exceed the amount you paid to us in the 12 months preceding the claim.</p>
+              <p>TheBlueMustard is provided "as is" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the platform. Our total liability for any claim shall not exceed the amount you paid to us in the 12 months preceding the claim.</p>
 
               <h2>12. Indemnification</h2>
-              <p>You agree to indemnify and hold harmless StoresCraft, its operators, and affiliates from any claims, damages, or expenses arising from your use of the platform or violation of these terms.</p>
+              <p>You agree to indemnify and hold harmless TheBlueMustard, its operators, and affiliates from any claims, damages, or expenses arising from your use of the platform or violation of these terms.</p>
 
               <h2>13. Changes to Terms</h2>
               <p>We may update these Terms of Service at any time. Continued use of the platform after changes constitutes acceptance of the updated terms. We will notify users of significant changes via email or platform notifications.</p>
@@ -128,7 +128,7 @@ import { RouterLink } from '@angular/router';
     :host {
       display: block;
       min-height: 100vh;
-      background: #F9F4EB;
+      background: var(--background);
     }
 
     .container {
@@ -140,7 +140,7 @@ import { RouterLink } from '@angular/router';
     /* Hero */
     .hero-section {
       padding: 2rem 0 1.5rem;
-      border-bottom: 2px solid #111;
+      border-bottom: 2px solid var(--border);
     }
 
     .breadcrumb {
@@ -153,31 +153,30 @@ import { RouterLink } from '@angular/router';
     .breadcrumb-link {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #111;
+      color: var(--foreground);
       text-decoration: none;
     }
 
-    .breadcrumb-link:hover { color: #2B57D6; }
-    .breadcrumb-sep { color: #111; opacity: 0.4; }
+    .breadcrumb-link:hover { color: var(--primary); }
+    .breadcrumb-sep { color: var(--foreground); opacity: 0.4; }
 
     .breadcrumb-current {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111;
+      color: var(--foreground);
     }
 
     .page-title {
       font-size: 2.5rem;
       font-weight: 900;
-      color: #111;
+      color: var(--foreground);
       letter-spacing: -0.03em;
       margin: 0 0 0.5rem;
     }
 
     .page-subtitle {
       font-size: 1rem;
-      color: #111;
-      opacity: 0.6;
+      color: var(--muted);
       margin: 0;
     }
 
@@ -187,9 +186,9 @@ import { RouterLink } from '@angular/router';
     }
 
     .card {
-      background: #fff;
-      border: 2px solid #111;
-      box-shadow: 4px 4px 0px 0px #111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       padding: 2.5rem 2rem;
     }
 
@@ -197,7 +196,7 @@ import { RouterLink } from '@angular/router';
     .prose h2 {
       font-size: 1.375rem;
       font-weight: 800;
-      color: #111;
+      color: var(--foreground);
       margin: 2rem 0 0.75rem;
       letter-spacing: -0.02em;
     }
@@ -207,15 +206,14 @@ import { RouterLink } from '@angular/router';
     .prose h3 {
       font-size: 1.1rem;
       font-weight: 700;
-      color: #111;
+      color: var(--foreground);
       margin: 1.5rem 0 0.5rem;
     }
 
     .prose p {
       font-size: 1rem;
       line-height: 1.7;
-      color: #111;
-      opacity: 0.85;
+      color: var(--muted);
       margin: 0 0 1rem;
     }
 
@@ -227,18 +225,17 @@ import { RouterLink } from '@angular/router';
     .prose li {
       font-size: 1rem;
       line-height: 1.7;
-      color: #111;
-      opacity: 0.85;
+      color: var(--muted);
       margin-bottom: 0.35rem;
     }
 
     .prose a {
-      color: #2B57D6;
+      color: var(--primary);
       text-decoration: underline;
       font-weight: 600;
     }
 
-    .prose a:hover { color: #FA4B28; }
+    .prose a:hover { color: var(--foreground); }
 
     .prose strong { font-weight: 700; opacity: 1; }
 

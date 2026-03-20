@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, signal, inject, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
@@ -15,20 +15,22 @@ import {
 } from '../../../core/services/explore.service';
 import { SubdomainService } from '../../../core/services/subdomain.service';
 import { ConfirmService } from '../../../core/services/confirm.service';
+import { ThemeService, THEME_OPTIONS, Theme } from '../../../core/services/theme.service';
+import { TooltipComponent } from '../tooltip/tooltip.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule],
+  imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule, TooltipComponent],
   styles: [`
     :host {
       --bg-red: #FA4B28;
-      --bg-beige: #F9F4EB;
-      --btn-yellow: #FFC60B;
-      --ticket-green: #68E079;
-      --star-blue: #2B57D6;
-      --text-black: #111111;
-      --grid-line: rgba(0, 0, 0, 0.8);
+      --bg-beige: var(--secondary);
+      --btn-yellow: var(--accent);
+      --ticket-green: var(--success);
+      --star-blue: var(--primary);
+      --text-black: var(--foreground);
+      --grid-line: var(--border);
       display: block;
       font-family: 'Inter', sans-serif;
       width: 100%;
@@ -181,24 +183,29 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .nav-link:hover {
-      background-color: rgba(0,0,0,0.05);
+      background-color: var(--surface-hover);
     }
 
     .nav-link.active {
       background-color: var(--ticket-green);
-      border-color: var(--text-black);
+      border-color: #111111;
+      color: #111111;
     }
 
     /* === SEARCH SECTION === */
     .search-section {
       flex: 1;
       max-width: 400px;
+      height: 100%;
       display: none;
+      align-items: center;
+      position: relative;
+      z-index: 46;
     }
 
     @media (min-width: 768px) {
       .search-section {
-        display: block;
+        display: flex;
       }
     }
 
@@ -213,7 +220,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'DM Sans', sans-serif;
       font-size: 0.9375rem;
       color: var(--text-black);
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       outline: none;
@@ -221,7 +228,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .search-input::placeholder {
-      color: #888;
+      color: var(--muted);
     }
 
     .search-input:focus {
@@ -235,7 +242,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       transform: translateY(-50%);
       width: 20px;
       height: 20px;
-      color: #888;
+      color: var(--muted);
       pointer-events: none;
     }
 
@@ -243,7 +250,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .actions-section {
       display: flex;
       align-items: center;
-      gap: 0.375rem;
+      gap: 0.15rem;
       flex-shrink: 0;
     }
 
@@ -260,7 +267,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       justify-content: center;
       width: 36px;
       height: 36px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 8px;
       cursor: pointer;
@@ -292,7 +299,8 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     .icon-btn.active {
       background: var(--ticket-green);
-      border-color: var(--text-black);
+      border-color: #111111;
+      color: #111111;
     }
 
     .icon-btn svg {
@@ -359,26 +367,26 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .btn-login:hover {
-      background: rgba(0,0,0,0.05);
+      background: var(--surface-hover);
     }
 
     .btn-signup {
       font-family: 'Caveat', cursive;
       font-size: 1.25rem;
       font-weight: 700;
-      color: var(--text-black);
+      color: var(--on-accent);
       padding: 8px 20px;
       background: var(--btn-yellow);
-      border: 2px solid var(--text-black);
+      border: 2px solid var(--on-accent);
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 4px 4px 0px var(--text-black);
+      box-shadow: 4px 4px 0px var(--on-accent);
     }
 
     .btn-signup:hover {
       transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--text-black);
+      box-shadow: 2px 2px 0px var(--on-accent);
     }
 
     /* === PROFILE BUTTON === */
@@ -398,7 +406,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       align-items: center;
       gap: 8px;
       padding: 4px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       cursor: pointer;
@@ -412,6 +420,18 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     .profile-btn.active {
       background: var(--ticket-green);
+      border-color: var(--on-success);
+      color: var(--on-success);
+    }
+
+    .profile-btn.active .profile-greeting {
+      color: var(--on-success);
+      opacity: 0.75;
+    }
+
+    .profile-btn.active .profile-name,
+    .profile-btn.active .profile-chevron {
+      color: var(--on-success);
     }
 
     .profile-avatar,
@@ -453,7 +473,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .profile-greeting {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.625rem;
-      color: #666;
+      color: var(--muted);
     }
 
     .profile-name {
@@ -490,12 +510,12 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       width: 36px;
       height: 36px;
       padding: 0;
-      border: 2px solid var(--text-black);
+      border: 2px solid var(--on-accent);
       background: var(--btn-yellow);
       cursor: pointer;
       border-radius: 8px;
       transition: all 0.2s;
-      box-shadow: 2px 2px 0px var(--text-black);
+      box-shadow: 2px 2px 0px var(--on-accent);
       flex-shrink: 0;
     }
 
@@ -504,7 +524,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        box-shadow: 3px 3px 0px var(--text-black);
+        box-shadow: 3px 3px 0px var(--on-accent);
       }
     }
 
@@ -516,12 +536,12 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     .hamburger-btn:hover {
       transform: translate(-1px, -1px);
-      box-shadow: 4px 4px 0px var(--text-black);
+      box-shadow: 4px 4px 0px var(--on-accent);
     }
 
     .hamburger-btn:active {
       transform: translate(1px, 1px);
-      box-shadow: 1px 1px 0px var(--text-black);
+      box-shadow: 1px 1px 0px var(--on-accent);
     }
 
     .hamburger-btn.active {
@@ -547,10 +567,14 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .hamburger-line {
       width: 100%;
       height: 2px;
-      background: var(--text-black);
+      background: var(--on-accent);
       border-radius: 2px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       transform-origin: center;
+    }
+
+    .hamburger-btn.active .hamburger-line {
+      background: #ffffff;
     }
 
     .hamburger-btn.active .hamburger-line:nth-child(1) {
@@ -616,7 +640,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .dropdown-user-email {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.8125rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
       word-break: break-word;
     }
@@ -641,7 +665,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .dropdown-item:hover {
-      background: var(--ticket-green);
+      background: var(--surface-hover);
     }
 
     .dropdown-item svg {
@@ -658,11 +682,11 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .dropdown-item.danger {
-      color: #dc2626;
+      color: var(--danger);
     }
 
     .dropdown-item.danger:hover {
-      background: #fecaca;
+      background: var(--danger-bg);
     }
 
     /* === MOBILE MENU === */
@@ -690,7 +714,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       bottom: 0;
       width: 300px;
       max-width: 90vw;
-      background: var(--bg-beige);
+      background: var(--background);
       z-index: 55;
       transform: translateX(100%);
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -721,7 +745,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       justify-content: space-between;
       padding: 1rem 1.25rem;
       border-bottom: 2px solid var(--text-black);
-      background: #fff;
+      background: var(--surface);
     }
 
     .mobile-menu-close {
@@ -763,7 +787,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
       color: var(--text-black);
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       outline: none;
@@ -780,8 +804,8 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     /* === MOBILE USER INFO === */
     .mobile-user-info {
       padding: 1.25rem;
-      background: linear-gradient(135deg, var(--ticket-green), #a8f0b0);
-      border-bottom: 2px solid var(--text-black);
+      background: linear-gradient(135deg, #68E079, #a8f0b0);
+      border-bottom: 2px solid #000000;
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -792,7 +816,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       height: 48px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid var(--text-black);
+      border: 2px solid #000000;
     }
 
     .mobile-user-avatar-placeholder {
@@ -807,7 +831,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'DM Sans', sans-serif;
       font-size: 1.25rem;
       font-weight: 700;
-      border: 2px solid var(--text-black);
+      border: 2px solid #000000;
       flex-shrink: 0;
     }
 
@@ -819,7 +843,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .mobile-user-greeting {
       font-family: 'Caveat', cursive;
       font-size: 1rem;
-      color: var(--text-black);
+      color: #000000;
       margin: 0 0 2px;
     }
 
@@ -827,7 +851,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
       font-weight: 600;
-      color: var(--text-black);
+      color: #000000;
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -849,7 +873,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #888;
+      color: var(--muted);
       padding: 0.5rem 1rem;
       margin: 0;
     }
@@ -876,13 +900,14 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     .mobile-nav-link:hover,
     .mobile-nav-link:active {
-      background: rgba(0,0,0,0.05);
+      background: var(--surface-hover);
     }
 
     .mobile-nav-link.active {
       background: var(--btn-yellow);
-      border-color: var(--text-black);
-      box-shadow: 3px 3px 0px var(--text-black);
+      border-color: #111111;
+      box-shadow: 3px 3px 0px #111111;
+      color: #111111;
     }
 
     .mobile-nav-link svg {
@@ -910,11 +935,11 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .mobile-nav-link.danger {
-      color: #dc2626;
+      color: var(--danger);
     }
 
     .mobile-nav-link.danger:hover {
-      background: #fecaca;
+      background: var(--danger-bg);
     }
 
     /* === MOBILE AUTH === */
@@ -931,20 +956,20 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'Caveat', cursive;
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--text-black);
+      color: var(--on-accent);
       padding: 12px 24px;
       background: var(--btn-yellow);
-      border: 2px solid var(--text-black);
+      border: 2px solid var(--border);
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 4px 4px 0px var(--text-black);
+      box-shadow: 4px 4px 0px var(--border);
       text-align: center;
     }
 
     .mobile-auth-btn-primary:hover {
       transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--text-black);
+      box-shadow: 2px 2px 0px var(--border);
     }
 
     .mobile-auth-btn-secondary {
@@ -953,7 +978,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-weight: 600;
       color: var(--text-black);
       padding: 12px 24px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       cursor: pointer;
@@ -962,14 +987,14 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .mobile-auth-btn-secondary:hover {
-      background: rgba(0,0,0,0.05);
+      background: var(--surface-hover);
     }
 
     /* === SKELETON LOADER === */
     .skeleton-loader {
       width: 40px;
       height: 40px;
-      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background: linear-gradient(90deg, var(--secondary) 25%, var(--surface) 50%, var(--secondary) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
       border-radius: 50%;
@@ -983,8 +1008,17 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     /* === SEARCH DROPDOWN === */
     .search-dropdown-wrapper {
-      position: relative;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       width: 100%;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .search-section.expanded .search-dropdown-wrapper {
+      width: 600px;
+      max-width: calc(100vw - 40px);
     }
 
     .search-dropdown {
@@ -1027,7 +1061,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #666;
+      color: var(--muted);
       margin: 0;
     }
 
@@ -1075,7 +1109,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
 
     .search-item:hover,
     .search-item.active {
-      background: rgba(0, 0, 0, 0.05);
+      background: var(--surface-hover);
     }
 
     .search-item-image {
@@ -1085,7 +1119,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       border: 2px solid var(--text-black);
       object-fit: cover;
       flex-shrink: 0;
-      background: #fff;
+      background: var(--surface);
     }
 
     .search-item-avatar {
@@ -1116,7 +1150,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       height: 44px;
       border-radius: 8px;
       border: 2px solid var(--text-black);
-      background: #f0f0f0;
+      background: var(--secondary);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1148,7 +1182,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .search-item-subtitle {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.75rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -1184,7 +1218,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       width: 48px;
       height: 48px;
       margin: 0 auto 12px;
-      background: var(--bg-beige);
+      background: var(--secondary);
       border: 2px solid var(--text-black);
       border-radius: 50%;
       display: flex;
@@ -1195,20 +1229,20 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .search-empty-icon svg {
       width: 24px;
       height: 24px;
-      color: #666;
+      color: var(--muted);
     }
 
     .search-empty-text {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
-      color: #666;
+      color: var(--muted);
       margin: 0 0 4px;
     }
 
     .search-empty-hint {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.75rem;
-      color: #999;
+      color: var(--muted);
       margin: 0;
     }
 
@@ -1220,7 +1254,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .search-loading-spinner {
       width: 32px;
       height: 32px;
-      border: 3px solid #e0e0e0;
+      border: 3px solid var(--secondary);
       border-top-color: var(--btn-yellow);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
@@ -1234,27 +1268,32 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .search-loading-text {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
     }
 
     .search-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       z-index: 45;
-      display: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
 
     .search-overlay.active {
-      display: block;
+      opacity: 1;
+      visibility: visible;
     }
 
     /* === MOBILE SEARCH OVERLAY === */
     .mobile-search-overlay {
       position: fixed;
       inset: 0;
-      background: var(--bg-beige);
+      background: var(--background);
       z-index: 60;
       display: flex;
       flex-direction: column;
@@ -1278,7 +1317,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       gap: 12px;
       padding: 12px 16px;
       border-bottom: 2px solid var(--text-black);
-      background: #fff;
+      background: var(--surface);
     }
 
     .mobile-search-overlay-back {
@@ -1288,7 +1327,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       width: 40px;
       height: 40px;
       border: 2px solid var(--text-black);
-      background: #fff;
+      background: var(--surface);
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s;
@@ -1296,7 +1335,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     }
 
     .mobile-search-overlay-back:hover {
-      background: var(--bg-beige);
+      background: var(--secondary);
     }
 
     .mobile-search-overlay-back svg {
@@ -1316,7 +1355,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
       color: var(--text-black);
-      background: var(--bg-beige);
+      background: var(--secondary);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       outline: none;
@@ -1365,7 +1404,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       font-size: 0.875rem;
       font-weight: 600;
       color: var(--text-black);
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50px;
       cursor: pointer;
@@ -1396,7 +1435,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       width: 64px;
       height: 64px;
       margin: 0 auto 16px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
       border-radius: 50%;
       display: flex;
@@ -1407,7 +1446,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .mobile-search-results-empty-icon svg {
       width: 32px;
       height: 32px;
-      color: #999;
+      color: var(--muted);
     }
 
     .mobile-search-results-empty-title {
@@ -1421,7 +1460,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .mobile-search-results-empty-text {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
     }
 
@@ -1434,7 +1473,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       cursor: pointer;
       transition: all 0.15s;
       margin-bottom: 8px;
-      background: #fff;
+      background: var(--surface);
       border: 2px solid var(--text-black);
     }
 
@@ -1449,7 +1488,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       border: 2px solid var(--text-black);
       object-fit: cover;
       flex-shrink: 0;
-      background: #f0f0f0;
+      background: var(--secondary);
     }
 
     .mobile-search-item-avatar {
@@ -1494,7 +1533,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     .mobile-search-item-subtitle {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
-      color: #666;
+      color: var(--muted);
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -1526,6 +1565,191 @@ import { ConfirmService } from '../../../core/services/confirm.service';
       border: 1px solid var(--text-black);
       color: var(--text-black);
     }
+
+    /* === THEME TOGGLE === */
+    .theme-toggle-container {
+      position: relative;
+      display: none;
+    }
+
+    @media (min-width: 640px) {
+      .theme-toggle-container {
+        display: block;
+      }
+    }
+
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border: 2px solid var(--text-black);
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--text-black);
+      transition: all 0.2s;
+    }
+
+    @media (min-width: 768px) {
+      .theme-toggle-btn {
+        width: 44px;
+        height: 44px;
+      }
+    }
+
+    .theme-toggle-btn:hover {
+      box-shadow: 3px 3px 0px var(--text-black);
+      transform: translate(-1px, -1px);
+    }
+
+    .theme-toggle-btn.active {
+      background: var(--accent);
+      border-color: var(--text-black);
+      color: var(--on-accent);
+    }
+
+    .theme-toggle-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .theme-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      width: 200px;
+      background: var(--background);
+      border: 2px solid var(--text-black);
+      border-radius: 12px;
+      box-shadow: 6px 6px 0px var(--text-black);
+      padding: 6px;
+      z-index: 1000;
+      animation: dropdown-enter 0.2s ease-out;
+    }
+
+    .theme-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--foreground);
+      background: none;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .theme-dropdown-item:hover {
+      background: var(--surface-hover);
+    }
+
+    .theme-dropdown-item.selected {
+      background: var(--accent);
+      color: var(--on-accent);
+      font-weight: 600;
+    }
+
+    .theme-dropdown-item svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .theme-dropdown-item .check-icon {
+      margin-left: auto;
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Mobile theme section */
+    .mobile-theme-section {
+      padding: 0.75rem 1rem;
+    }
+
+    .mobile-theme-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .mobile-theme-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--foreground);
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      text-align: left;
+    }
+
+    .mobile-theme-option:hover {
+      background: var(--surface-hover);
+    }
+
+    .mobile-theme-option.selected {
+      background: var(--accent);
+      color: var(--on-accent);
+      border-color: var(--on-accent);
+      box-shadow: 2px 2px 0px var(--on-accent);
+    }
+
+    .mobile-theme-option svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    :host-context([data-theme="dark"]) .mobile-menu,
+    :host-context([data-theme="mustard-dark"]) .mobile-menu {
+      background: var(--secondary);
+      border-left-color: var(--border);
+    }
+
+    :host-context([data-theme="dark"]) .mobile-menu-header,
+    :host-context([data-theme="mustard-dark"]) .mobile-menu-header,
+    :host-context([data-theme="dark"]) .mobile-search,
+    :host-context([data-theme="mustard-dark"]) .mobile-search,
+    :host-context([data-theme="dark"]) .mobile-auth-section,
+    :host-context([data-theme="mustard-dark"]) .mobile-auth-section {
+      border-color: var(--border);
+    }
+
+    :host-context([data-theme="dark"]) .mobile-nav-link,
+    :host-context([data-theme="mustard-dark"]) .mobile-nav-link {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--foreground);
+    }
+
+    :host-context([data-theme="dark"]) .mobile-nav-link.active,
+    :host-context([data-theme="mustard-dark"]) .mobile-nav-link.active {
+      background: var(--accent);
+      color: var(--on-accent);
+      border-color: var(--on-accent);
+      box-shadow: 3px 3px 0px var(--on-accent);
+    }
+
+    :host-context([data-theme="dark"]) .mobile-theme-option.selected,
+    :host-context([data-theme="mustard-dark"]) .mobile-theme-option.selected {
+      border-color: var(--border);
+      box-shadow: 2px 2px 0px var(--border);
+    }
   `],
   template: `
     <div class="header-wrapper">
@@ -1535,21 +1759,26 @@ import { ConfirmService } from '../../../core/services/confirm.service';
           <div class="header-inner">
             <!-- Logo -->
             <a class="logo" (click)="handleLogoClick()">
-              <span class="logo-text">StoresCraft.     </span>
+              <span class="logo-text">BlueMustard<span class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]">.</span></span>
 
             </a>
             
             <!-- Desktop Navigation -->
             <nav class="nav-desktop">
-              <a routerLink="/explore" routerLinkActive="active" class="nav-link">
+              <a routerLink="/explore" routerLinkActive="active" class="nav-link" aria-label="Explore">
                 Explore
               </a>
               @if (auth.isSignedIn()) {
-                <a routerLink="/library" routerLinkActive="active" class="nav-link">
+                <a routerLink="/library" routerLinkActive="active" class="nav-link" aria-label="Library">
                   Library
                 </a>
                 @if (auth.isCreator()) {
-                  <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+                  <a
+                    routerLink="/dashboard"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    class="nav-link"
+                    aria-label="Dashboard">
                     Dashboard
                   </a>
                 }
@@ -1558,7 +1787,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
             
             <!-- Search Section -->
             @if (showSearchBar()) {
-              <div class="search-section">
+              <div class="search-section" [class.expanded]="showSearchDropdown()">
                 <div class="search-dropdown-wrapper">
                   <div class="search-container">
                     <input 
@@ -1720,37 +1949,145 @@ import { ConfirmService } from '../../../core/services/confirm.service';
             <div class="actions-section">
               <!-- Mobile Search Button -->
               @if (showSearchBar()) {
-                <button class="icon-btn mobile-search-btn" (click)="openMobileSearch()">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                  </svg>
-                </button>
+                <app-tooltip text="Search" placement="bottom">
+                  <button class="icon-btn mobile-search-btn" (click)="openMobileSearch()" aria-label="Search">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                  </button>
+                </app-tooltip>
               }
               
               @if (auth.isLoaded()) {
                 <!-- Cart - visible on all pages except home, for all users -->
                 @if (!isHomePage()) {
-                  <button class="icon-btn" (click)="openCart()">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                    </svg>
-                    @if (cartService.itemCount() > 0) {
-                      <span class="icon-btn-badge">{{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}</span>
-                    }
-                  </button>
+                  <app-tooltip text="Cart" placement="bottom">
+                    <button class="icon-btn" (click)="openCart()" aria-label="Cart">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                      </svg>
+                      @if (cartService.itemCount() > 0) {
+                        <span class="icon-btn-badge">{{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}</span>
+                      }
+                    </button>
+                  </app-tooltip>
                 }
 
                 <!-- Wishlist (all users, hidden on homepage) -->
                 @if (!isHomePage()) {
-                  <a class="icon-btn" routerLink="/wishlist" routerLinkActive="active">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                    </svg>
-                    @if (wishlistService.count() > 0) {
-                      <span class="icon-btn-badge">{{ wishlistService.count() > 99 ? '99+' : wishlistService.count() }}</span>
-                    }
-                  </a>
+                  <app-tooltip text="Wishlist" placement="bottom">
+                    <a class="icon-btn" routerLink="/wishlist" routerLinkActive="active" aria-label="Wishlist">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                      </svg>
+                      @if (wishlistService.count() > 0) {
+                        <span class="icon-btn-badge">{{ wishlistService.count() > 99 ? '99+' : wishlistService.count() }}</span>
+                      }
+                    </a>
+                  </app-tooltip>
                 }
+
+                <!-- Quick Sell (all users) -->
+                <app-tooltip text="Sell your file quickly" placement="bottom">
+                  <button
+                    type="button"
+                    class="icon-btn"
+                    [class.active]="isQuickSellRoute()"
+                    (click)="openQuickSell()"
+                    aria-label="Quick Sell">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 200 200">
+                      <ellipse cx="100" cy="90" rx="60" ry="60"/>
+                      <rect x="130" y="130" width="40" height="15" rx="10" transform="rotate(45 150 137.5)"/>
+                      <circle cx="80" cy="85" r="5" opacity="0.4"/>
+                      <circle cx="120" cy="85" r="5" opacity="0.4"/>
+                      <path d="M 90 105 Q 100 115 110 105" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+                    </svg>
+                  </button>
+                </app-tooltip>
+
+                <!-- Theme Toggle -->
+                <div class="theme-toggle-container">
+                  <app-tooltip text="Change theme" placement="bottom">
+                    <button 
+                      class="theme-toggle-btn" 
+                      [class.active]="themeMenuOpen()"
+                      (click)="toggleThemeMenu($event)"
+                      aria-label="Change theme">
+                      @switch (themeService.currentTheme) {
+                        @case ('light') {
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                          </svg>
+                        }
+                        @case ('dark') {
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                          </svg>
+                        }
+                        @case ('mustard-light') {
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                            <circle cx="12" cy="12" r="2" fill="currentColor" />
+                          </svg>
+                        }
+                        @case ('mustard-dark') {
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                            <circle cx="12" cy="12" r="2" fill="currentColor" />
+                          </svg>
+                        }
+                      }
+                    </button>
+                  </app-tooltip>
+
+                  @if (themeMenuOpen()) {
+                    <div class="dropdown-overlay" (click)="closeThemeMenu()"></div>
+                    <div class="theme-dropdown">
+                      <!-- Light -->
+                      <button class="theme-dropdown-item" [class.selected]="themeService.currentTheme === 'light'" (click)="selectTheme('light')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                        </svg>
+                        Light
+                        @if (themeService.currentTheme === 'light') {
+                          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        }
+                      </button>
+                      <!-- Dark -->
+                      <button class="theme-dropdown-item" [class.selected]="themeService.currentTheme === 'dark'" (click)="selectTheme('dark')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                        </svg>
+                        Dark
+                        @if (themeService.currentTheme === 'dark') {
+                          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        }
+                      </button>
+                      <!-- Mustard Light -->
+                      <button class="theme-dropdown-item" [class.selected]="themeService.currentTheme === 'mustard-light'" (click)="selectTheme('mustard-light')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                          <circle cx="12" cy="12" r="2" fill="currentColor" />
+                        </svg>
+                        Mustard Light
+                        @if (themeService.currentTheme === 'mustard-light') {
+                          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        }
+                      </button>
+                      <!-- Mustard Dark -->
+                      <button class="theme-dropdown-item" [class.selected]="themeService.currentTheme === 'mustard-dark'" (click)="selectTheme('mustard-dark')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                          <circle cx="12" cy="12" r="2" fill="currentColor" />
+                        </svg>
+                        Mustard Dark
+                        @if (themeService.currentTheme === 'mustard-dark') {
+                          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                        }
+                      </button>
+                    </div>
+                  }
+                </div>
 
                 @if (auth.isSignedIn()) {
                   <!-- Profile -->
@@ -1851,7 +2188,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
     <div class="mobile-menu" [class.active]="mobileMenuOpen()">
       <div class="mobile-menu-header">
         <a class="logo" (click)="handleLogoClick()">
-          <span class="logo-text">StoresCraft</span>
+          <span class="logo-text">BlueMustard</span>
         </a>
         <button class="mobile-menu-close" (click)="closeMobileMenu()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -1921,6 +2258,16 @@ import { ConfirmService } from '../../../core/services/confirm.service';
               Wishlist
             </a>
           }
+          <button class="mobile-nav-link" [class.active]="isQuickSellRoute()" (click)="openQuickSellFromMobileMenu()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 200 200">
+              <ellipse cx="100" cy="90" rx="60" ry="60"/>
+              <rect x="130" y="130" width="40" height="15" rx="10" transform="rotate(45 150 137.5)"/>
+              <circle cx="80" cy="85" r="5" opacity="0.4"/>
+              <circle cx="120" cy="85" r="5" opacity="0.4"/>
+              <path d="M 90 105 Q 100 115 110 105" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+            </svg>
+            Quick Sell
+          </button>
           @if (auth.isSignedIn()) {
             <a routerLink="/library" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -1929,7 +2276,12 @@ import { ConfirmService } from '../../../core/services/confirm.service';
               My Library
             </a>
             @if (auth.isCreator()) {
-              <a routerLink="/dashboard" routerLinkActive="active" class="mobile-nav-link" (click)="closeMobileMenu()">
+              <a
+                routerLink="/dashboard"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="mobile-nav-link"
+                (click)="closeMobileMenu()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
                 </svg>
@@ -1969,6 +2321,43 @@ import { ConfirmService } from '../../../core/services/confirm.service';
           </div>
           
           <div class="mobile-nav-divider"></div>
+
+          <!-- Theme Section (mobile) -->
+          <div class="mobile-nav-section">
+            <p class="mobile-nav-section-title">Theme</p>
+            <div class="mobile-theme-section">
+              <div class="mobile-theme-grid">
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'light'" (click)="selectTheme('light')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                  </svg>
+                  Light
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'dark'" (click)="selectTheme('dark')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                  </svg>
+                  Dark
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'mustard-light'" (click)="selectTheme('mustard-light')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  </svg>
+                  Mustard
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'mustard-dark'" (click)="selectTheme('mustard-dark')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  </svg>
+                  M. Dark
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mobile-nav-divider"></div>
           
           <button (click)="signOut()" class="mobile-nav-link danger">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -1977,6 +2366,41 @@ import { ConfirmService } from '../../../core/services/confirm.service';
             Sign Out
           </button>
         } @else {
+          <!-- Theme Section for guests -->
+          <div class="mobile-nav-section">
+            <p class="mobile-nav-section-title">Theme</p>
+            <div class="mobile-theme-section">
+              <div class="mobile-theme-grid">
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'light'" (click)="selectTheme('light')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                  </svg>
+                  Light
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'dark'" (click)="selectTheme('dark')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                  </svg>
+                  Dark
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'mustard-light'" (click)="selectTheme('mustard-light')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  </svg>
+                  Mustard
+                </button>
+                <button class="mobile-theme-option" [class.selected]="themeService.currentTheme === 'mustard-dark'" (click)="selectTheme('mustard-dark')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    <circle cx="12" cy="12" r="2" fill="currentColor" />
+                  </svg>
+                  M. Dark
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="mobile-auth-section">
             <button (click)="signUpMobile()" class="mobile-auth-btn-primary">Get Started Free</button>
             <button (click)="signInMobile()" class="mobile-auth-btn-secondary">Log in</button>
@@ -2000,6 +2424,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
             placeholder="Search products, stores, creators..."
             [(ngModel)]="mobileSearchQuery"
             (input)="onMobileSearchInput()"
+            (keydown)="onMobileSearchKeydown($event)"
             #mobileSearchInput
           >
           <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -2068,7 +2493,7 @@ import { ConfirmService } from '../../../core/services/confirm.service';
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
             </div>
-            <p class="mobile-search-results-empty-title">Search StoresCraft</p>
+            <p class="mobile-search-results-empty-title">Search BlueMustard</p>
             <p class="mobile-search-results-empty-text">Find amazing products, stores, and creators</p>
           </div>
         } @else if (hasMobileNoResults()) {
@@ -2188,12 +2613,15 @@ export class NavbarComponent implements OnDestroy {
   private exploreService = inject(ExploreService);
   private subdomainService = inject(SubdomainService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   cartService = inject(CartService);
   wishlistService = inject(WishlistService);
   confirmService = inject(ConfirmService);
+  themeService = inject(ThemeService);
   
   profileMenuOpen = signal(false);
   mobileMenuOpen = signal(false);
+  themeMenuOpen = signal(false);
   isScrolled = signal(false);
   
   // Desktop search state
@@ -2215,6 +2643,18 @@ export class NavbarComponent implements OnDestroy {
     public auth: AuthService,
     private elementRef: ElementRef
   ) {
+    // Handle syncing the search bar with route query params
+    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(params => {
+      const q = params['q'];
+      if (q !== undefined) {
+        this.searchQuery = q;
+        this.mobileSearchQuery = q;
+      } else {
+        this.searchQuery = '';
+        this.mobileSearchQuery = '';
+      }
+    });
+
     // when the user navigates, make sure any open search UI is closed
     this.router.events.pipe(takeUntilDestroyed()).subscribe(e => {
       if (e instanceof NavigationEnd) {
@@ -2267,9 +2707,12 @@ export class NavbarComponent implements OnDestroy {
   }
   
   onSearchKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter' && this.searchQuery.trim()) {
-      this.closeSearchDropdown();
-      this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery.trim() } });
+    if (event.key === 'Enter') {
+      (event.target as HTMLElement).blur();
+      if (this.searchQuery.trim()) {
+        this.closeSearchDropdown();
+        this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery.trim() } });
+      }
     }
   }
   
@@ -2332,6 +2775,16 @@ export class NavbarComponent implements OnDestroy {
     }, 50);
   }
   
+  onMobileSearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      (event.target as HTMLElement).blur();
+      if (this.mobileSearchQuery.trim()) {
+        this.closeMobileSearch();
+        this.router.navigate(['/explore'], { queryParams: { q: this.mobileSearchQuery.trim() } });
+      }
+    }
+  }
+
   onMobileSearchInput() {
     if (this.mobileSearchTimeout) {
       clearTimeout(this.mobileSearchTimeout);
@@ -2418,22 +2871,22 @@ export class NavbarComponent implements OnDestroy {
     this.closeSearchDropdown();
     this.closeMobileSearch();
     // Navigate to explore with creator filter (for now)
-    this.router.navigate(['/explore'], { queryParams: { q: creator.username, tab: 'creators' } });
+    this.router.navigate(['/explore'], { queryParams: { q: creator.username, type: 'creators' } });
   }
   
   seeAllProducts() {
     this.closeSearchDropdown();
-    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'products' } });
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, type: 'products' } });
   }
   
   seeAllStores() {
     this.closeSearchDropdown();
-    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'stores' } });
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, type: 'stores' } });
   }
   
   seeAllCreators() {
     this.closeSearchDropdown();
-    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, tab: 'creators' } });
+    this.router.navigate(['/explore'], { queryParams: { q: this.searchQuery, type: 'creators' } });
   }
   
   // === UTILITY METHODS ===
@@ -2486,6 +2939,26 @@ export class NavbarComponent implements OnDestroy {
     this.closeMobileMenu();
     this.closeSearchDropdown();
     this.closeMobileSearch();
+    this.closeThemeMenu();
+  }
+
+  // === THEME METHODS ===
+
+  toggleThemeMenu(event: Event) {
+    event.stopPropagation();
+    this.themeMenuOpen.update(v => !v);
+    if (this.themeMenuOpen()) {
+      this.closeProfileMenu();
+    }
+  }
+
+  closeThemeMenu() {
+    this.themeMenuOpen.set(false);
+  }
+
+  selectTheme(theme: Theme) {
+    this.themeService.setTheme(theme);
+    this.closeThemeMenu();
   }
 
   handleLogoClick() {
@@ -2537,9 +3010,24 @@ export class NavbarComponent implements OnDestroy {
     this.cartService.open();
   }
 
+  async openQuickSell() {
+    this.closeAllMenus();
+    await this.auth.openQuickSellEntry();
+  }
+
+  async openQuickSellFromMobileMenu() {
+    this.closeMobileMenu();
+    await this.auth.openQuickSellEntry();
+  }
+
   isHomePage(): boolean {
     const url = this.router.url.split('?')[0];
     return url === '/';
+  }
+
+  isQuickSellRoute(): boolean {
+    const url = this.router.url.split('?')[0];
+    return url === '/dashboard/quick-sell' || url === '/dashboard/quick-sell/new';
   }
 
   /**

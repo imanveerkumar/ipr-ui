@@ -13,16 +13,16 @@ type SortOrder = 'desc' | 'asc';
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   template: `
-    <div class="min-h-screen bg-white font-sans antialiased">
+    <div class="min-h-screen bg-theme-surface font-sans antialiased">
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
-        <div class="bg-[#F9F4EB] border-b-2 border-black">
+        <div class="bg-theme-secondary border-b-2 border-theme-border">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
             <div class="text-left">
 
               
               <!-- Main Heading -->
-              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-[#111111] mb-0 md:mb-1 leading-tight">
+              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-theme-fg mb-0 md:mb-1 leading-tight">
                 Order History
               </h1>
 
@@ -30,78 +30,54 @@ type SortOrder = 'desc' | 'asc';
               <div class="mt-4 md:mt-6 grid grid-cols-3 gap-2 md:flex md:justify-start md:gap-8 max-w-2xl mx-auto md:mx-0">
                 <!-- Total Orders stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#2B57D6] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-primary border border-theme-border rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
                     @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ overallStats().totalOrders }}</div>
+                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ overallStats().totalOrders }}</div>
                     } @else {
                       <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Total Orders</div>
+                    <div class="text-[10px] md:text-xs text-theme-muted font-medium">Total Orders</div>
                   </div>
                 </div>
                 <!-- Completed stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#68E079] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-success border border-theme-border rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
                     @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getCompletedCount() }}</div>
+                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getCompletedCount() }}</div>
                     } @else {
                       <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Completed</div>
+                    <div class="text-[10px] md:text-xs text-theme-muted font-medium">Completed</div>
                   </div>
                 </div>
                 <!-- Total Spent stat -->
                 <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-[#FFC60B] border border-black rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-accent border border-theme-border rounded-lg flex items-center justify-center">
+                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
                   <div class="text-center md:text-left">
                     @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-[#111111] leading-none">{{ getTotalSpent() }}</div>
+                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getTotalSpent() }}</div>
                     } @else {
                       <div class="h-4 md:h-6 w-10 md:w-16 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
                     }
-                    <div class="text-[10px] md:text-xs text-[#111111]/60 font-medium">Total Spent</div>
+                    <div class="text-[10px] md:text-xs text-theme-muted font-medium">Total Spent</div>
                   </div>
                 </div>
               </div>
 
-              <!-- Search Bar (below stats) -->
-              <div class="mt-4 max-w-xl mx-auto md:mx-0 mb-8 md:mb-12">
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
-                    <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    [(ngModel)]="searchQuery"
-                    (input)="onSearchInput()"
-                    (keyup.enter)="performSearch()"
-                    placeholder="Search orders by product name..."
-                    class="w-full pl-10 md:pl-12 pr-24 py-3 md:py-3.5 bg-white border-2 border-black rounded-xl text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
-                  />
-                  <button
-                    (click)="performSearch()"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 bg-[#FFC60B] text-[#111111] border-2 border-black rounded-lg font-bold text-xs sm:text-sm hover:bg-[#ffdb4d] transition-all duration-200 shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px]"
-                  >
-                    Search
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -111,76 +87,103 @@ type SortOrder = 'desc' | 'asc';
       <section class="py-6 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8">
         <div class="max-w-5xl mx-auto">
           <!-- Filters Row -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 md:mb-8 sticky top-0 z-20 bg-white pt-2 pb-2 sm:relative sm:top-auto sm:z-auto sm:bg-transparent sm:pt-0 sm:pb-0">
-            <!-- Status Filter Tabs -->
-            <div class="flex overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-              <div class="flex gap-1.5 md:gap-2 p-1 bg-[#F9F4EB] border-2 border-black rounded-xl">
-                @for (status of statusFilters; track status.value) {
+          <div class="orders-filter-shell mb-6 md:mb-8 sticky top-0 z-40 sm:relative sm:top-auto sm:z-auto">
+            <div class="orders-filter-row">
+              <div class="orders-search-panel orders-search-panel-embedded">
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
+                    <svg class="w-4 h-4 md:w-5 md:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                  </div>
+                  <input
+                    id="orders-search"
+                    type="text"
+                    [(ngModel)]="searchQuery"
+                    (input)="onSearchInput()"
+                    aria-label="Find orders"
+                    placeholder="Product name or order id"
+                    class="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2.5 md:py-3 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-fg placeholder:text-theme-muted focus:outline-none focus:ring-2 focus:ring-theme-fg/20 focus:border-theme-fg text-sm md:text-base font-medium transition-all"
+                  />
+                </div>
+              </div>
+
+              <div class="orders-status-sort-row scrollbar-hide">
+                <div class="relative orders-status-wrap min-w-[9.5rem] md:min-w-[12rem] flex-1 md:flex-none">
                   <button
-                    (click)="filterByStatus(status.value)"
-                    class="flex items-center gap-1.5 px-2.5 py-2 md:px-4 md:py-2.5 rounded-lg font-bold text-xs md:text-sm whitespace-nowrap transition-all duration-200"
-                    [class.bg-[#111111]]="currentStatus() === status.value"
-                    [class.text-white]="currentStatus() === status.value"
-                    [class.shadow-[2px_2px_0px_0px_#FFC60B]]="currentStatus() === status.value"
-                    [class.text-[#111111]]="currentStatus() !== status.value"
-                    [class.hover:bg-white]="currentStatus() !== status.value"
+                    (click)="toggleStatusDropdown()"
+                    class="orders-sort-trigger"
+                    aria-label="Order status filter"
                   >
-                    {{ status.label }}
+                    <span class="orders-sort-value">{{ getCurrentStatusLabel() }}</span>
+                    <svg class="w-4 h-4 transition-transform" [class.rotate-180]="showStatusDropdown()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+
+                  @if (showStatusDropdown()) {
+                    <div class="absolute top-full right-0 mt-2 w-full sm:w-44 bg-theme-surface border-2 border-theme-border rounded-xl shadow-[4px_4px_0px_0px_#000] z-[70] overflow-hidden">
+                      @for (status of statusFilters; track status.value) {
+                        <button
+                          (click)="setStatusFilter(status.value)"
+                          class="w-full px-3 md:px-4 py-2.5 md:py-3 text-left text-xs md:text-sm font-medium hover:bg-theme-secondary transition-colors"
+                          [class.border-b]="status !== statusFilters[statusFilters.length - 1]"
+                          [class.border-black/10]="status !== statusFilters[statusFilters.length - 1]"
+                          [class.bg-theme-accent]="currentStatus() === status.value"
+                          [class.text-black]="currentStatus() === status.value"
+                          [class.text-theme-fg]="currentStatus() !== status.value"
+                        >
+                          {{ status.label }}
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <div class="relative orders-sort-wrap">
+                  <button
+                    (click)="toggleSortDropdown()"
+                    class="orders-sort-trigger"
+                  >
+                    <span class="orders-sort-value">{{ currentSortOrder() === 'desc' ? 'Newest first' : 'Oldest first' }}</span>
+                    <svg class="w-4 h-4 transition-transform" [class.rotate-180]="showSortDropdown()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+
+                  @if (showSortDropdown()) {
+                    <div class="absolute top-full right-0 mt-2 w-full sm:w-44 bg-theme-surface border-2 border-theme-border rounded-xl shadow-[4px_4px_0px_0px_#000] z-[70] overflow-hidden">
+                      <button
+                        (click)="setSortOrder('desc')"
+                        class="w-full px-3 md:px-4 py-2.5 md:py-3 text-left text-xs md:text-sm font-medium hover:bg-theme-secondary transition-colors border-b border-black/10"
+                        [class.bg-theme-accent]="currentSortOrder() === 'desc'"
+                        [class.text-black]="currentSortOrder() === 'desc'"
+                        [class.text-theme-fg]="currentSortOrder() !== 'desc'"
+                      >
+                        Newest First
+                      </button>
+                      <button
+                        (click)="setSortOrder('asc')"
+                        class="w-full px-3 md:px-4 py-2.5 md:py-3 text-left text-xs md:text-sm font-medium hover:bg-theme-secondary transition-colors"
+                        [class.bg-theme-accent]="currentSortOrder() === 'asc'"
+                        [class.text-black]="currentSortOrder() === 'asc'"
+                        [class.text-theme-fg]="currentSortOrder() !== 'asc'"
+                      >
+                        Oldest First
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                @if (hasActiveFilters()) {
+                  <button
+                    (click)="clearFilters()"
+                    class="orders-clear-btn orders-clear-btn-mobile"
+                  >
+                    Clear X
                   </button>
                 }
               </div>
-            </div>
-
-            <!-- Sort & Clear -->
-            <div class="flex items-center gap-2">
-              <!-- Sort Dropdown -->
-              <div class="relative">
-                <button
-                  (click)="toggleSortDropdown()"
-                  class="flex items-center gap-2 px-3 py-2 bg-white border-2 border-black rounded-lg font-medium text-xs md:text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
-                  </svg>
-                  {{ currentSortOrder() === 'desc' ? 'Newest First' : 'Oldest First' }}
-                  <svg class="w-4 h-4 transition-transform" [class.rotate-180]="showSortDropdown()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                </button>
-                
-                <!-- Sort Options -->
-                @if (showSortDropdown()) {
-                  <div class="absolute top-full right-0 mt-2 w-40 bg-white border-2 border-black rounded-xl shadow-[4px_4px_0px_0px_#000] z-20 overflow-hidden">
-                    <button
-                      (click)="setSortOrder('desc')"
-                      class="w-full px-4 py-3 text-left text-sm font-medium text-[#111111] hover:bg-[#F9F4EB] transition-colors border-b border-black/10"
-                      [class.bg-[#FFC60B]]="currentSortOrder() === 'desc'"
-                    >
-                      Newest First
-                    </button>
-                    <button
-                      (click)="setSortOrder('asc')"
-                      class="w-full px-4 py-3 text-left text-sm font-medium text-[#111111] hover:bg-[#F9F4EB] transition-colors"
-                      [class.bg-[#FFC60B]]="currentSortOrder() === 'asc'"
-                    >
-                      Oldest First
-                    </button>
-                  </div>
-                }
-              </div>
-
-              <!-- Clear Filters -->
-              @if (hasActiveFilters()) {
-                <button
-                  (click)="clearFilters()"
-                  class="flex items-center gap-1.5 px-3 py-2 bg-[#FA4B28] border-2 border-black rounded-lg font-medium text-xs md:text-sm text-white hover:bg-[#e8421f] transition-colors"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                  </svg>
-                  Clear
-                </button>
-              }
             </div>
           </div>
 
@@ -188,21 +191,21 @@ type SortOrder = 'desc' | 'asc';
           @if (loading()) {
             <div class="space-y-4">
               @for (i of [1,2,3,4]; track i) {
-                <div class="bg-white border-2 border-black rounded-xl overflow-hidden">
+                <div class="bg-theme-surface border-2 border-theme-border rounded-xl overflow-hidden">
                   <div class="p-4 md:p-5">
                     <div class="flex items-start gap-4">
-                      <div class="w-16 h-16 md:w-20 md:h-20 bg-[#F9F4EB] rounded-lg animate-pulse shrink-0"></div>
+                      <div class="w-16 h-16 md:w-20 md:h-20 bg-theme-secondary rounded-lg animate-pulse shrink-0"></div>
                       <div class="flex-1 min-w-0">
-                        <div class="h-4 md:h-5 bg-[#111111]/10 rounded animate-pulse w-3/4 mb-2"></div>
-                        <div class="h-3 md:h-4 bg-[#111111]/5 rounded animate-pulse w-1/2 mb-3"></div>
+                        <div class="h-4 md:h-5 bg-theme-fg/10 rounded animate-pulse w-3/4 mb-2"></div>
+                        <div class="h-3 md:h-4 bg-theme-fg/5 rounded animate-pulse w-1/2 mb-3"></div>
                         <div class="flex items-center gap-2">
-                          <div class="h-6 w-16 bg-[#FFC60B]/30 rounded animate-pulse"></div>
-                          <div class="h-3 w-24 bg-[#111111]/5 rounded animate-pulse"></div>
+                          <div class="h-6 w-16 bg-theme-accent/30 rounded animate-pulse"></div>
+                          <div class="h-3 w-24 bg-theme-fg/5 rounded animate-pulse"></div>
                         </div>
                       </div>
                       <div class="text-right shrink-0">
-                        <div class="h-5 w-20 bg-[#111111]/10 rounded animate-pulse mb-2"></div>
-                        <div class="h-3 w-16 bg-[#111111]/5 rounded animate-pulse"></div>
+                        <div class="h-5 w-20 bg-theme-fg/10 rounded animate-pulse mb-2"></div>
+                        <div class="h-3 w-16 bg-theme-fg/5 rounded animate-pulse"></div>
                       </div>
                     </div>
                   </div>
@@ -212,19 +215,19 @@ type SortOrder = 'desc' | 'asc';
           } @else if (orders().length === 0 && !isFiltering()) {
             <!-- Empty State -->
             <div class="text-center py-12 md:py-16 transition-opacity duration-200">
-              <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 bg-[#F9F4EB] border-2 border-black rounded-2xl flex items-center justify-center transform rotate-3">
-                <svg class="w-10 h-10 md:w-12 md:h-12 text-[#111111]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 bg-theme-secondary border-2 border-theme-border rounded-2xl flex items-center justify-center transform rotate-3">
+                <svg class="w-10 h-10 md:w-12 md:h-12 text-theme-fg/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                 </svg>
               </div>
-              <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-[#111111] mb-2">
+              <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-theme-fg mb-2">
                 {{ searchQuery || currentStatus() !== 'ALL' ? 'No orders found' : 'No orders yet' }}
               </h2>
-              <p class="text-sm md:text-base text-[#111111]/60 max-w-md mx-auto mb-8 font-medium">
+              <p class="text-sm md:text-base text-theme-muted max-w-md mx-auto mb-8 font-medium">
                 {{ searchQuery || currentStatus() !== 'ALL' ? 'Try adjusting your search or filters' : 'Start shopping and your orders will appear here.' }}
               </p>
               @if (!searchQuery && currentStatus() === 'ALL') {
-                <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-[#FFC60B] border-2 border-black rounded-lg font-bold text-[#111111] hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-theme-accent border-2 border-theme-border rounded-lg font-bold text-theme-surface hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                   Start Shopping
                 </a>
               }
@@ -235,9 +238,9 @@ type SortOrder = 'desc' | 'asc';
               <!-- Subtle Loading Overlay for Tab Switching -->
               @if (isFiltering()) {
                 <div class="absolute inset-0 bg-white/60 z-10 flex items-start justify-center pt-16 backdrop-blur-[1px] transition-opacity duration-150">
-                  <div class="flex items-center gap-3 px-4 py-2 bg-white border-2 border-black rounded-full shadow-[2px_2px_0px_0px_#000]">
+                  <div class="flex items-center gap-3 px-4 py-2 bg-theme-surface border-2 border-theme-border rounded-full shadow-[2px_2px_0px_0px_#000]">
                     <div class="w-5 h-5 border-2 border-[#FFC60B] border-t-transparent rounded-full animate-spin"></div>
-                    <span class="text-sm font-medium text-[#111111]">Updating...</span>
+                    <span class="text-sm font-medium text-theme-fg">Updating...</span>
                   </div>
                 </div>
               }
@@ -245,29 +248,29 @@ type SortOrder = 'desc' | 'asc';
               <!-- Orders List -->
               <div class="space-y-4 md:space-y-6 transition-opacity duration-200" [class.opacity-50]="isFiltering()">
                 @for (order of orders(); track order.id) {
-                  <div class="group bg-white border-2 border-black rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300">
+                  <div class="group bg-theme-surface border-2 border-theme-border rounded-xl md:rounded-2xl overflow-hidden hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1 transition-all duration-300">
                     <!-- Order Header -->
-                    <div class="p-4 md:p-6 bg-[#F9F4EB] border-b-2 border-black">
+                    <div class="p-4 md:p-6 bg-theme-secondary border-b-2 border-theme-border">
                       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div class="flex items-center gap-3">
                           <!-- Order Icon -->
-                          <div class="w-10 h-10 md:w-12 md:h-12 bg-white border-2 border-black rounded-lg flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5 md:w-6 md:h-6 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div class="w-10 h-10 md:w-12 md:h-12 bg-theme-surface border-2 border-theme-border rounded-lg flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 md:w-6 md:h-6 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                             </svg>
                           </div>
                         <div>
-                          <p class="text-xs md:text-sm text-[#111111]/60 font-medium">Order ID</p>
-                          <p class="font-bold text-sm md:text-base text-[#111111] font-mono">{{ formatId(order.id) }}</p>
+                          <p class="text-xs md:text-sm text-theme-muted font-medium">Order ID</p>
+                          <p class="font-bold text-sm md:text-base text-theme-fg font-mono">{{ formatId(order.id) }}</p>
                         </div>
                       </div>
                       
                       <div class="flex items-center gap-3 sm:gap-4">
                         <div class="text-left sm:text-right">
-                          <p class="text-xs md:text-sm text-[#111111]/60 font-medium">Date</p>
-                          <p class="font-bold text-sm md:text-base text-[#111111]">{{ order.createdAt | date:'mediumDate' }}</p>
+                          <p class="text-xs md:text-sm text-theme-muted font-medium">Date</p>
+                          <p class="font-bold text-sm md:text-base text-theme-fg">{{ order.createdAt | date:'mediumDate' }}</p>
                         </div>
-                        <span [class]="getStatusClass(order.status)" class="px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg border-2 border-black">
+                        <span [class]="getStatusClass(order.status)" class="px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg border-2 border-theme-border">
                           {{ getStatusLabel(order.status) }}
                         </span>
                       </div>
@@ -278,14 +281,14 @@ type SortOrder = 'desc' | 'asc';
                   <div class="p-4 md:p-6">
                     <div class="space-y-3">
                       @for (item of order.items; track item.id) {
-                        <div class="flex items-center gap-3 md:gap-4 p-3 bg-[#F9F4EB]/50 rounded-lg border border-black/10">
+                        <div class="flex items-center gap-3 md:gap-4 p-3 bg-theme-secondary/50 rounded-lg border border-black/10">
                           <!-- Product Image -->
-                          <div class="w-12 h-12 md:w-16 md:h-16 bg-[#F9F4EB] border-2 border-black rounded-lg overflow-hidden shrink-0">
+                          <div class="w-12 h-12 md:w-16 md:h-16 bg-theme-secondary border-2 border-theme-border rounded-lg overflow-hidden shrink-0">
                             @if (item.product.coverImageUrl) {
                               <img [src]="item.product.coverImageUrl" [alt]="item.titleSnapshot" class="w-full h-full object-cover"/>
                             } @else {
                               <div class="w-full h-full flex items-center justify-center">
-                                <svg class="w-6 h-6 text-[#111111]/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-theme-fg/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                 </svg>
                               </div>
@@ -294,15 +297,15 @@ type SortOrder = 'desc' | 'asc';
                           
                           <!-- Product Info -->
                           <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-sm md:text-base text-[#111111] truncate">{{ item.titleSnapshot }}</h4>
+                            <h4 class="font-bold text-sm md:text-base text-theme-fg truncate">{{ item.titleSnapshot }}</h4>
                             @if (item.product.store?.name) {
-                              <p class="text-xs text-[#111111]/60 font-medium truncate">by {{ item.product!.store!.name }}</p>
+                              <p class="text-xs text-theme-muted font-medium truncate">by {{ item.product!.store!.name }}</p>
                             }
                           </div>
                           
                           <!-- Price -->
                           <div class="text-right shrink-0">
-                            <span class="font-bold text-sm md:text-base text-[#111111]">₹{{ item.priceAtPurchase / 100 }}</span>
+                            <span class="font-bold text-sm md:text-base text-theme-fg">₹{{ item.priceAtPurchase / 100 }}</span>
                           </div>
                         </div>
                       }
@@ -311,18 +314,18 @@ type SortOrder = 'desc' | 'asc';
                     <!-- Order Total -->
                     <div class="flex items-center justify-between mt-4 pt-4 border-t-2 border-dashed border-black/20">
                       <div class="flex items-center gap-2">
-                        <span class="text-sm font-bold text-[#111111]">{{ order.items.length }} {{ order.items.length === 1 ? 'item' : 'items' }}</span>
+                        <span class="text-sm font-bold text-theme-fg">{{ order.items.length }} {{ order.items.length === 1 ? 'item' : 'items' }}</span>
                       </div>
                       <div class="flex items-center gap-2">
-                        <span class="text-sm text-[#111111]/60 font-medium">Total:</span>
-                        <span class="text-lg md:text-xl font-bold text-[#111111]">₹{{ order.totalAmount / 100 }}</span>
+                        <span class="text-sm text-theme-muted font-medium">Total:</span>
+                        <span class="text-lg md:text-xl font-bold text-theme-fg">₹{{ order.totalAmount / 100 }}</span>
                       </div>
                     </div>
 
                     <!-- Action Buttons -->
                     @if (order.status === 'PAID' || order.status === 'FULFILLED') {
                       <div class="mt-4 pt-4 border-t border-black/10">
-                        <a routerLink="/library" class="inline-flex items-center gap-2 px-4 py-2 bg-[#68E079] border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#5cd46d] transition-all shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                        <a routerLink="/library" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-success border-2 border-theme-border rounded-lg font-bold text-sm text-theme-surface hover:bg-[#5cd46d] transition-all shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                           </svg>
@@ -339,7 +342,7 @@ type SortOrder = 'desc' | 'asc';
             <!-- Pagination -->
             @if (meta().totalPages > 1) {
               <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p class="text-sm text-[#111111]/60 font-medium">
+                <p class="text-sm text-theme-muted font-medium">
                   Showing {{ ((meta().page - 1) * meta().limit) + 1 }} - {{ Math.min(meta().page * meta().limit, meta().total) }} of {{ meta().total }} orders
                 </p>
                 
@@ -347,7 +350,7 @@ type SortOrder = 'desc' | 'asc';
                   <button
                     (click)="goToPage(meta().page - 1)"
                     [disabled]="!meta().hasPreviousPage"
-                    class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="flex items-center gap-1 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -358,14 +361,16 @@ type SortOrder = 'desc' | 'asc';
                   <div class="flex items-center gap-1">
                     @for (page of getVisiblePages(); track page) {
                       @if (page === '...') {
-                        <span class="px-2 py-1 text-sm text-[#111111]/60">...</span>
+                        <span class="px-2 py-1 text-sm text-theme-muted">...</span>
                       } @else {
                         <button
                           (click)="goToPage(+page)"
-                          class="w-10 h-10 flex items-center justify-center border-2 border-black rounded-lg font-bold text-sm transition-all"
-                          [class.bg-[#FFC60B]]="meta().page === +page"
-                          [class.bg-white]="meta().page !== +page"
-                          [class.hover:bg-[#F9F4EB]]="meta().page !== +page"
+                          class="w-10 h-10 flex items-center justify-center border-2 border-theme-border rounded-lg font-bold text-sm transition-all"
+                          [class.bg-theme-accent]="meta().page === +page"
+                          [class.bg-theme-surface]="meta().page !== +page"
+                          [class.text-theme-surface]="meta().page === +page"
+                          [class.text-theme-fg]="meta().page !== +page"
+                          [class.hover:bg-theme-secondary]="meta().page !== +page"
                         >
                           {{ page }}
                         </button>
@@ -376,7 +381,7 @@ type SortOrder = 'desc' | 'asc';
                   <button
                     (click)="goToPage(meta().page + 1)"
                     [disabled]="!meta().hasNextPage"
-                    class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="flex items-center gap-1 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -405,6 +410,135 @@ type SortOrder = 'desc' | 'asc';
     .scrollbar-hide::-webkit-scrollbar {
       display: none;
     }
+    .orders-search-panel {
+      display: grid;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      border: 2px solid var(--border);
+      border-radius: 0.9rem;
+      background: color-mix(in srgb, var(--surface) 75%, var(--background));
+      box-shadow: 3px 3px 0 0 #000;
+    }
+    .orders-search-panel-embedded {
+      box-shadow: none;
+      background: transparent;
+      border: 0;
+      padding: 0;
+    }
+    .orders-field-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding-left: 0.25rem;
+    }
+    .orders-filter-shell {
+      display: grid;
+      gap: 0.75rem;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+    }
+    .orders-clear-btn {
+      border: 1px solid var(--border);
+      border-radius: 0.6rem;
+      background: var(--danger);
+      color: var(--background);
+      padding: 0.45rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .orders-filter-row {
+      display: grid;
+      gap: 0.65rem;
+    }
+    .orders-status-sort-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: nowrap;
+      overflow-x: visible;
+      overflow-y: visible;
+      padding-bottom: 0.15rem;
+    }
+    .orders-status-wrap {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .orders-sort-wrap {
+      position: relative;
+      flex: 1 1 0;
+      min-width: 0;
+      z-index: 50;
+    }
+    .orders-sort-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem;
+      border: 2px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 0.45rem 0.6rem;
+      min-width: 0;
+      color: var(--foreground);
+      background: var(--surface);
+      font-size: 0.74rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .orders-clear-btn-mobile {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0.35rem 0.55rem;
+      font-size: 0.74rem;
+      line-height: 1;
+    }
+    .orders-sort-value {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: left;
+      flex: 1 1 auto;
+    }
+    @media (min-width: 768px) {
+      .orders-filter-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .orders-status-sort-row {
+        overflow-x: visible;
+      }
+      .orders-status-wrap,
+      .orders-sort-wrap {
+        flex: 0 0 auto;
+        min-width: max-content;
+      }
+      .orders-sort-trigger {
+        width: auto;
+        gap: 0.5rem;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.82rem;
+      }
+      .orders-sort-label {
+        font-size: 0.68rem;
+      }
+      .orders-clear-btn-mobile {
+        flex: 0 0 auto;
+        min-height: 0;
+        padding: 0.45rem 0.65rem;
+        font-size: 0.75rem;
+      }
+      .orders-filter-shell {
+        padding: 0;
+      }
+    }
   `]
 })
 export class OrdersComponent implements OnInit {
@@ -416,6 +550,7 @@ export class OrdersComponent implements OnInit {
   
   currentStatus = signal<StatusFilter>('ALL');
   currentSortOrder = signal<SortOrder>('desc');
+  showStatusDropdown = signal(false);
   showSortDropdown = signal(false);
   
   meta = signal({
@@ -453,11 +588,7 @@ export class OrdersComponent implements OnInit {
   constructor(private checkoutService: CheckoutService) {}
 
   async ngOnInit() {
-    // Load orders and stats in parallel
-    await Promise.all([
-      this.loadOrders(),
-      this.loadOverallStats(),
-    ]);
+    await this.loadOrders();
   }
 
   async loadOrders(showFullLoader = true) {
@@ -477,33 +608,12 @@ export class OrdersComponent implements OnInit {
       
       this.orders.set(result.data);
       this.meta.set(result.meta);
+      this.overallStats.set(result.overallStats);
     } catch (error) {
       console.error('Failed to load orders:', error);
     } finally {
       this.loading.set(false);
       this.isFiltering.set(false);
-    }
-  }
-
-  async loadOverallStats() {
-    try {
-      // Fetch all orders without pagination to calculate accurate stats
-      const allOrdersResult = await this.checkoutService.getMyOrdersPaginated({
-        page: 1,
-        limit: 1000, // Get a large number to cover all orders
-      });
-      
-      const allOrders = allOrdersResult.data;
-      const completedOrders = allOrders.filter(o => o.status === 'PAID' || o.status === 'FULFILLED');
-      const totalSpent = completedOrders.reduce((sum, order) => sum + order.totalAmount, 0);
-      
-      this.overallStats.set({
-        totalOrders: allOrdersResult.meta.total,
-        completedOrders: completedOrders.length,
-        totalSpent: totalSpent,
-      });
-    } catch (error) {
-      console.error('Failed to load overall stats:', error);
     }
   }
 
@@ -526,11 +636,30 @@ export class OrdersComponent implements OnInit {
     await this.loadOrders(false);
   }
 
+  toggleStatusDropdown() {
+    this.showStatusDropdown.update(v => !v);
+  }
+
+  async setStatusFilter(status: StatusFilter) {
+    if (this.currentStatus() === status) {
+      this.showStatusDropdown.set(false);
+      return;
+    }
+    this.currentStatus.set(status);
+    this.showStatusDropdown.set(false);
+    this.meta.update(m => ({ ...m, page: 1 }));
+    await this.loadOrders(false);
+  }
+
   toggleSortDropdown() {
     this.showSortDropdown.update(v => !v);
   }
 
   async setSortOrder(order: SortOrder) {
+    if (this.currentSortOrder() === order) {
+      this.showSortDropdown.set(false);
+      return;
+    }
     this.currentSortOrder.set(order);
     this.showSortDropdown.set(false);
     await this.loadOrders(false);
@@ -540,10 +669,16 @@ export class OrdersComponent implements OnInit {
     return this.searchQuery.length > 0 || this.currentStatus() !== 'ALL';
   }
 
+  getCurrentStatusLabel(): string {
+    return this.statusFilters.find(s => s.value === this.currentStatus())?.label ?? 'All';
+  }
+
   async clearFilters() {
     this.searchQuery = '';
     this.currentStatus.set('ALL');
     this.currentSortOrder.set('desc');
+    this.showStatusDropdown.set(false);
+    this.showSortDropdown.set(false);
     this.meta.update(m => ({ ...m, page: 1 }));
     await this.loadOrders(false);
   }
@@ -587,16 +722,16 @@ export class OrdersComponent implements OnInit {
     switch (status) {
       case 'PAID':
       case 'FULFILLED':
-        return 'bg-[#68E079] text-[#111111]';
+        return 'bg-theme-success text-theme-surface';
       case 'PENDING':
-        return 'bg-[#FFC60B] text-[#111111]';
+        return 'bg-theme-accent text-theme-surface';
       case 'FAILED':
       case 'CANCELLED':
-        return 'bg-[#FA4B28] text-white';
+        return 'bg-theme-danger text-white';
       case 'REFUNDED':
-        return 'bg-[#2B57D6] text-white';
+        return 'bg-theme-primary text-theme-surface';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-theme-secondary text-theme-surface';
     }
   }
 

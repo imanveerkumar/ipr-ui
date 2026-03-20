@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "storescraft": {
+    "thebluemustard": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -23,7 +23,7 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "outputPath": "dist/storescraft",
+            "outputPath": "dist/thebluemustard",
             "assets": [
               {
                 "glob": "**/*",
@@ -83,13 +83,13 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "storescraft:build:production"
+              "buildTarget": "thebluemustard:build:production"
             },
             "development": {
-              "buildTarget": "storescraft:build:development"
+              "buildTarget": "thebluemustard:build:development"
             },
             "local": {
-              "buildTarget": "storescraft:build:local"
+              "buildTarget": "thebluemustard:build:local"
             }
           },
           "defaultConfiguration": "local"

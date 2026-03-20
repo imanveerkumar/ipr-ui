@@ -17,21 +17,21 @@ type TabType = 'active' | 'archived' | 'bin';
   imports: [CommonModule, RouterLink, FormsModule],
   template: `
     <!-- Hero Section -->
-    <section class="bg-[#F9F4EB] border-b-2 border-black">
+    <section class="bg-theme-secondary border-b-2 border-theme-border">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div class="grid sm:grid-cols-3 grid-cols-1 items-center gap-4">
           <div class="flex items-center gap-2">
-            <a routerLink="/dashboard" class="text-sm font-medium text-black/70 hover:text-black transition-colors">
+            <a routerLink="/dashboard" class="text-sm font-medium text-theme-muted hover:text-theme-fg transition-colors">
               Dashboard
             </a>
-            <svg class="w-4 h-4 text-black/40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-theme-muted opacity-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M9 18l6-6-6-6"/>
             </svg>
-            <span class="text-sm font-bold text-black">Products</span>
+            <span class="text-sm font-bold text-theme-fg">Products</span>
           </div>
 
           <div class="flex justify-center">
-            <h1 class="text-2xl sm:text-3xl font-black text-[#111111] tracking-tight mb-0">My Products</h1>
+            <h1 class="text-2xl sm:text-3xl font-black text-theme-fg tracking-tight mb-0">My Products</h1>
           </div>
 
           <div class="flex justify-end">
@@ -43,7 +43,7 @@ type TabType = 'active' | 'archived' | 'bin';
         <div class="mt-6 flex items-center gap-3 flex-wrap">
           <div class="relative flex-1 min-w-0 max-w-full">
             <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
-              <svg class="w-4 h-4 md:w-5 md:h-5 text-[#111111]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 md:w-5 md:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
             </div>
@@ -53,13 +53,13 @@ type TabType = 'active' | 'archived' | 'bin';
               (input)="onSearchInput()"
               (keyup.enter)="performSearch()"
               placeholder="Search products..."
-              class="w-full pl-10 md:pl-12 pr-3 py-2 md:py-3 bg-white border-2 border-black rounded-none text-[#111111] placeholder-[#111111]/50 focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-black shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
+              class="w-full pl-10 md:pl-12 pr-3 py-2 md:py-3 bg-theme-surface border-2 border-theme-border rounded-none text-theme-fg placeholder-theme-muted focus:outline-none focus:ring-2 focus:ring-[#FFC60B] focus:border-theme-border shadow-[4px_4px_0px_0px_#000] text-sm md:text-base font-medium transition-all"
             />
           </div>
 
           <button
             (click)="toggleFilters()"
-            class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-white text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap"
+            class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-theme-surface text-theme-fg font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap"
             aria-label="Toggle filters"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -69,7 +69,7 @@ type TabType = 'active' | 'archived' | 'bin';
           </button>
 
           <a routerLink="/dashboard/products/new" 
-             class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
+             class="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-theme-accent text-black font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all whitespace-nowrap">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path d="M12 5v14M5 12h14"/>
             </svg>
@@ -82,13 +82,13 @@ type TabType = 'active' | 'archived' | 'bin';
     <!-- Filter Modal -->
     @if (showFilters()) {
       <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" (click)="closeFiltersOnBackdrop($event)">
-        <div class="bg-white border-2 border-black shadow-[8px_8px_0px_0px_#000] max-w-md w-full max-h-[80vh] overflow-y-auto" (click)="$event.stopPropagation()">
+        <div class="bg-theme-surface border-2 border-theme-border shadow-[8px_8px_0px_0px_#000] max-w-md w-full max-h-[80vh] overflow-y-auto" (click)="$event.stopPropagation()">
           <div class="p-6">
             <div class="flex items-center justify-between mb-6">
-              <h3 class="text-xl font-black text-[#111111]">Filters</h3>
+              <h3 class="text-xl font-black text-theme-fg">Filters</h3>
               <button
                 (click)="toggleFilters()"
-                class="w-8 h-8 flex items-center justify-center border-2 border-black hover:bg-[#F9F4EB] transition-colors"
+                class="w-8 h-8 flex items-center justify-center border-2 border-theme-border hover:bg-theme-secondary transition-colors"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -98,8 +98,8 @@ type TabType = 'active' | 'archived' | 'bin';
 
             <div class="space-y-6">
               <!-- Status Filter -->
-              <div>
-                <label class="block text-sm font-bold text-[#111111] mb-3">Status</label>
+              <div [class.opacity-40]="filterQuickSell()" [class.pointer-events-none]="filterQuickSell()">
+                <label class="block text-sm font-bold text-theme-fg mb-3">Status</label>
                 <div class="space-y-2">
                   <label class="flex items-center gap-3 cursor-pointer">
                     <input
@@ -107,9 +107,10 @@ type TabType = 'active' | 'archived' | 'bin';
                       name="status"
                       value="ALL"
                       [(ngModel)]="filterStatus"
-                      class="w-4 h-4 text-[#FFC60B] border-2 border-black focus:ring-[#FFC60B]"
+                      [disabled]="filterQuickSell()"
+                      class="w-4 h-4 text-theme-accent border-2 border-theme-border focus:ring-[#FFC60B]"
                     />
-                    <span class="text-sm font-medium text-[#111111]">All Products</span>
+                    <span class="text-sm font-medium text-theme-fg">All Products</span>
                   </label>
                   <label class="flex items-center gap-3 cursor-pointer">
                     <input
@@ -117,9 +118,10 @@ type TabType = 'active' | 'archived' | 'bin';
                       name="status"
                       value="PUBLISHED"
                       [(ngModel)]="filterStatus"
-                      class="w-4 h-4 text-[#FFC60B] border-2 border-black focus:ring-[#FFC60B]"
+                      [disabled]="filterQuickSell()"
+                      class="w-4 h-4 text-theme-accent border-2 border-theme-border focus:ring-[#FFC60B]"
                     />
-                    <span class="text-sm font-medium text-[#111111]">Live</span>
+                    <span class="text-sm font-medium text-theme-fg">Live</span>
                   </label>
                   <label class="flex items-center gap-3 cursor-pointer">
                     <input
@@ -127,29 +129,30 @@ type TabType = 'active' | 'archived' | 'bin';
                       name="status"
                       value="DRAFT"
                       [(ngModel)]="filterStatus"
-                      class="w-4 h-4 text-[#FFC60B] border-2 border-black focus:ring-[#FFC60B]"
+                      [disabled]="filterQuickSell()"
+                      class="w-4 h-4 text-theme-accent border-2 border-theme-border focus:ring-[#FFC60B]"
                     />
-                    <span class="text-sm font-medium text-[#111111]">Draft</span>
+                    <span class="text-sm font-medium text-theme-fg">Draft</span>
                   </label>
                 </div>
               </div>
 
               <!-- Store Filter -->
-              <div class="relative">
-                <label class="block text-sm font-bold text-[#111111] mb-3">Store</label>
+              <div class="relative" [class.opacity-40]="filterQuickSell()" [class.pointer-events-none]="filterQuickSell()">
+                <label class="block text-sm font-bold text-theme-fg mb-3">Store</label>
                 <!-- Dropdown Trigger -->
                 <div
                   (click)="toggleStoreDropdown()"
-                  class="w-full px-3 py-2 bg-white border-2 border-black text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] text-sm font-medium cursor-pointer min-h-[40px] flex items-center justify-between"
+                  class="w-full px-3 py-2 bg-theme-surface border-2 border-theme-border text-theme-fg focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] text-sm font-medium cursor-pointer min-h-[40px] flex items-center justify-between"
                   [class.focus\:ring-2]="showStoreDropdown()"
                   [class.focus\:ring-\[#FFC60B\]]="showStoreDropdown()"
                 >
                   <div class="flex flex-wrap gap-1">
                     @if (filterStoreIds().length === 0) {
-                      <span class="text-[#111111]/50">Select stores...</span>
+                      <span class="text-theme-muted">Select stores...</span>
                     } @else {
                       @for (store of getSelectedStores(); track store.id) {
-                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-[#FFC60B] text-[#111111] text-xs font-bold border border-black">
+                        <span class="inline-flex items-center gap-1 px-2 py-1 bg-theme-accent text-theme-fg text-xs font-bold border border-theme-border">
                           {{ store.name }}
                           <button
                             (click)="removeStore(store.id); $event.stopPropagation()"
@@ -164,7 +167,7 @@ type TabType = 'active' | 'archived' | 'bin';
                     }
                   </div>
                   <svg
-                    class="w-4 h-4 text-[#111111] transition-transform"
+                    class="w-4 h-4 text-theme-fg transition-transform"
                     [class.rotate-180]="showStoreDropdown()"
                     fill="none"
                     stroke="currentColor"
@@ -176,34 +179,34 @@ type TabType = 'active' | 'archived' | 'bin';
 
                 <!-- Dropdown Options -->
                 @if (showStoreDropdown()) {
-                  <div class="absolute z-10 w-full mt-1 bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] max-h-48 overflow-y-auto">
+                  <div class="absolute z-10 w-full mt-1 bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] max-h-48 overflow-y-auto">
                     @if (storesLoading()) {
                       <!-- Skeleton Loading -->
                       @for (i of [1,2,3]; track i) {
                         <div class="px-3 py-2 flex items-center gap-3 border-b border-black/10 last:border-b-0">
-                          <div class="w-4 h-4 bg-[#F9F4EB] border-2 border-black rounded animate-shimmer" aria-hidden="true"></div>
-                          <div class="flex-1 h-4 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                          <div class="w-4 h-4 bg-theme-secondary border-2 border-theme-border rounded animate-shimmer" aria-hidden="true"></div>
+                          <div class="flex-1 h-4 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
                         </div>
                       }
                     } @else if (stores().length === 0) {
-                      <div class="px-3 py-2 text-sm text-[#111111]/60 font-medium">
+                      <div class="px-3 py-2 text-sm text-theme-muted font-medium">
                         No stores found
                       </div>
                     } @else {
                       @for (store of stores(); track store.id) {
                         <div
                           (click)="toggleStoreSelection(store.id)"
-                          class="px-3 py-2 hover:bg-[#F9F4EB] cursor-pointer flex items-center gap-3 border-b border-black/10 last:border-b-0"
+                          class="px-3 py-2 hover:bg-theme-secondary cursor-pointer flex items-center gap-3 border-b border-black/10 last:border-b-0"
                         >
-                          <div class="w-4 h-4 border-2 border-black flex items-center justify-center"
+                          <div class="w-4 h-4 border-2 border-theme-border flex items-center justify-center"
                                [class.bg-\[#FFC60B\]]="isStoreSelected(store.id)">
                             @if (isStoreSelected(store.id)) {
-                              <svg class="w-3 h-3 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                              <svg class="w-3 h-3 text-theme-fg" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                 <polyline points="20 6 9 17 4 12"/>
                               </svg>
                             }
                           </div>
-                          <span class="text-sm font-medium text-[#111111]">{{ store.name }}</span>
+                          <span class="text-sm font-medium text-theme-fg">{{ store.name }}</span>
                         </div>
                       }
                     }
@@ -212,21 +215,35 @@ type TabType = 'active' | 'archived' | 'bin';
               </div>
 
               <!-- Future filters can be added here -->
-              <div class="border-t border-black/20 pt-4">
-                <p class="text-xs text-[#111111]/60 font-medium">More filters coming soon...</p>
+              <div>
+                <label class="block text-sm font-bold text-theme-fg mb-3">Quick Sell</label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <div
+                    (click)="filterQuickSell.set(!filterQuickSell())"
+                    class="w-5 h-5 border-2 border-theme-border flex items-center justify-center cursor-pointer shrink-0"
+                    [class.bg-\[#FFC60B\]]="filterQuickSell()"
+                  >
+                    @if (filterQuickSell()) {
+                      <svg class="w-3 h-3 text-theme-fg" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    }
+                  </div>
+                  <span class="text-sm font-medium text-theme-fg">Quick Sell only</span>
+                </label>
               </div>
             </div>
 
             <div class="flex gap-3 mt-8">
               <button
                 (click)="resetFilters()"
-                class="flex-1 px-4 py-2 bg-white border-2 border-black text-[#111111] font-bold hover:bg-[#F9F4EB] transition-colors"
+                class="flex-1 px-4 py-2 bg-theme-surface border-2 border-theme-border text-theme-fg font-bold hover:bg-theme-secondary transition-colors"
               >
                 Reset
               </button>
               <button
                 (click)="applyFilters()"
-                class="flex-1 px-4 py-2 bg-[#FFC60B] border-2 border-black text-[#111111] font-bold hover:bg-[#ffdb4d] transition-colors"
+                class="flex-1 px-4 py-2 bg-theme-accent border-2 border-theme-border text-black font-bold hover:bg-[#ffdb4d] transition-colors"
               >
                 Apply
               </button>
@@ -237,45 +254,45 @@ type TabType = 'active' | 'archived' | 'bin';
     }
 
     <!-- Tabs Section -->
-    <section class="bg-white border-b-2 border-black">
+    <section class="bg-theme-surface border-b-2 border-theme-border">
       <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="flex items-center gap-0 overflow-x-auto -mb-[2px]">
           <button 
             (click)="switchTab('active')"
             [class]="currentTab() === 'active' 
-              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#68E079] text-[#111111] whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
+              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#68E079] text-theme-fg whitespace-nowrap' 
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-theme-muted hover:text-theme-fg whitespace-nowrap transition-colors'">
             Active
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#68E079] text-[#111111]">{{ tabCounts().active }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-success text-black">{{ tabCounts().active }}</span>
             } @else {
-              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
           </button>
           
           <button 
             (click)="switchTab('archived')"
             [class]="currentTab() === 'archived' 
-              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FFC60B] text-[#111111] whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
+              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FFC60B] text-theme-fg whitespace-nowrap' 
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-theme-muted hover:text-theme-fg whitespace-nowrap transition-colors'">
             Archived
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FFC60B] text-[#111111]">{{ tabCounts().archived }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-accent text-black">{{ tabCounts().archived }}</span>
             } @else {
-              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
           </button>
           
           <button 
             (click)="switchTab('bin')"
             [class]="currentTab() === 'bin' 
-              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FA4B28] text-[#111111] whitespace-nowrap' 
-              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-[#111111]/60 hover:text-[#111111] whitespace-nowrap transition-colors'">
+              ? 'px-4 sm:px-6 py-3 sm:py-4 font-bold text-sm sm:text-base border-b-4 border-[#FA4B28] text-theme-fg whitespace-nowrap' 
+              : 'px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base text-theme-muted hover:text-theme-fg whitespace-nowrap transition-colors'">
             Bin
             @if (!statsLoading()) {
-              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#FA4B28] text-white">{{ tabCounts().bin }}</span>
+              <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-theme-danger text-white">{{ tabCounts().bin }}</span>
             } @else {
-              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></span>
+              <span class="ml-1.5 inline-block w-6 h-4 rounded-full bg-theme-secondary animate-shimmer" aria-hidden="true"></span>
             }
           </button>
         </div>
@@ -284,43 +301,43 @@ type TabType = 'active' | 'archived' | 'bin';
 
     @if (currentTab() === 'active') {
       @if (statsLoading()) {
-        <section class="bg-white border-b-2 border-black">
+        <section class="bg-theme-surface border-b-2 border-theme-border">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
               <div class="flex items-center gap-2 shrink-0">
-                <div class="w-8 h-8 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
-                <div class="w-24 h-5 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                <div class="w-8 h-8 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
+                <div class="w-24 h-5 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <div class="w-8 h-8 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
-                <div class="w-20 h-5 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                <div class="w-8 h-8 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
+                <div class="w-20 h-5 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <div class="w-8 h-8 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
-                <div class="w-16 h-5 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                <div class="w-8 h-8 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
+                <div class="w-16 h-5 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
               </div>
             </div>
           </div>
         </section>
       } @else {
-        <section class="bg-white border-b-2 border-black">
+        <section class="bg-theme-surface border-b-2 border-theme-border">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
             <div class="flex items-center gap-4 sm:gap-8 overflow-x-auto">
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xl sm:text-2xl font-black text-[#111111]">{{ stats().total }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Total Products</span>
+                <span class="text-xl sm:text-2xl font-black text-theme-fg">{{ stats().total }}</span>
+                <span class="text-sm font-medium text-theme-muted">Total Products</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xl sm:text-2xl font-black text-[#68E079]">{{ stats().published }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Published</span>
+                <span class="text-xl sm:text-2xl font-black text-theme-success">{{ stats().published }}</span>
+                <span class="text-sm font-medium text-theme-muted">Published</span>
               </div>
               <div class="w-0.5 h-6 bg-black/20 shrink-0"></div>
               <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xl sm:text-2xl font-black text-[#FFC60B]">{{ stats().drafts }}</span>
-                <span class="text-sm font-medium text-[#111111]/70">Drafts</span>
+                <span class="text-xl sm:text-2xl font-black text-theme-accent">{{ stats().drafts }}</span>
+                <span class="text-sm font-medium text-theme-muted">Drafts</span>
               </div>
             </div>
           </div>
@@ -332,42 +349,42 @@ type TabType = 'active' | 'archived' | 'bin';
     @if (selectedIds().length > 0) {
       <section class="fixed bottom-4 left-0 right-0 z-50 pointer-events-none">
         <div class="max-w-4xl mx-auto px-4 sm:px-6">
-          <div class="bg-[#FFC60B] text-[#111111] shadow-[4px_4px_0px_0px_#000] px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto relative">
+          <div class="bg-theme-accent text-theme-fg shadow-[4px_4px_0px_0px_#000] px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto relative">
             <div class="flex items-center gap-3">
               <!-- Desktop clear button -->
-              <button (click)="clearSelection()" class="hidden sm:inline-flex w-8 h-8 flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_#000] bg-white text-[#111111] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
+              <button (click)="clearSelection()" class="hidden sm:inline-flex w-8 h-8 flex items-center justify-center border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] bg-theme-surface text-theme-fg hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
               <!-- Mobile absolute clear button (top-right) -->
-              <button (click)="clearSelection()" class="sm:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_0px_#000] bg-white text-[#111111] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
+              <button (click)="clearSelection()" class="sm:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] bg-theme-surface text-theme-fg hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
-              <span class="text-[#111111] font-bold">{{ selectedIds().length }} selected</span>
+              <span class="text-theme-fg font-bold">{{ selectedIds().length }} selected</span>
             </div>
             
             <div class="flex items-center gap-2 flex-wrap">
               @if (currentTab() === 'active') {
-                <button (click)="bulkArchive()" class="px-3 py-1.5 text-sm font-bold bg-[#FFC60B] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#e5b00a] transition-all">
+                <button (click)="bulkArchive()" class="px-3 py-1.5 text-sm font-bold bg-theme-accent text-theme-fg border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#e5b00a] transition-all">
                   Archive
                 </button>
-                <button (click)="bulkDelete()" class="px-3 py-1.5 text-sm font-bold bg-[#fa4b28] text-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#e63d1e] transition-all">
+                <button (click)="bulkDelete()" class="px-3 py-1.5 text-sm font-bold bg-[#fa4b28] text-white border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#e63d1e] transition-all">
                   Delete
                 </button>
               }
               @if (currentTab() === 'archived') {
-                <button (click)="bulkUnarchive()" class="px-3 py-1.5 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#52c963] transition-all">
+                <button (click)="bulkUnarchive()" class="px-3 py-1.5 text-sm font-bold bg-theme-success text-theme-fg border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#52c963] transition-all">
                   Unarchive
                 </button>
-                <button (click)="bulkDelete()" class="px-3 py-1.5 text-sm font-bold bg-[#fa4b28] text-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#e63d1e] transition-all">
+                <button (click)="bulkDelete()" class="px-3 py-1.5 text-sm font-bold bg-[#fa4b28] text-white border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#e63d1e] transition-all">
                   Delete
                 </button>
               }
               @if (currentTab() === 'bin') {
-                <button (click)="bulkRestore()" class="px-3 py-1.5 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#52c963] transition-all">
+                <button (click)="bulkRestore()" class="px-3 py-1.5 text-sm font-bold bg-theme-success text-theme-fg border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] hover:bg-[#52c963] transition-all">
                   Restore
                 </button>
               }
@@ -378,20 +395,20 @@ type TabType = 'active' | 'archived' | 'bin';
     }
 
     <!-- Content Section -->
-    <section class="bg-[#F9F4EB] min-h-[60vh]">
+    <section class="bg-theme-secondary min-h-[60vh]">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         
         @if (loading()) {
           <!-- Controls Skeleton (Select all + Sort) -->
           <div class="mb-4 flex items-center justify-between flex-wrap gap-3">
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
-              <div class="h-4 w-28 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+              <div class="w-8 h-8 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
+              <div class="h-4 w-28 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
             </div>
 
             <div class="flex items-center gap-2">
-              <div class="h-10 w-36 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
-              <div class="h-10 w-10 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+              <div class="h-10 w-36 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
+              <div class="h-10 w-10 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
             </div>
           </div>
 
@@ -399,42 +416,42 @@ type TabType = 'active' | 'archived' | 'bin';
           @if (viewMode() === 'gallery') {
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-                <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+                <div class="relative bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000]">
                   <!-- Reserve checkbox space to avoid layout shift when items load -->
                   <div class="absolute top-3 left-3 z-10">
-                    <div class="w-5 h-5 bg-[#F9F4EB] border-2 border-black animate-shimmer" aria-hidden="true"></div>
+                    <div class="w-5 h-5 bg-theme-secondary border-2 border-theme-border animate-shimmer" aria-hidden="true"></div>
                   </div>
 
-                  <div class="h-44 sm:h-48 bg-[#F9F4EB] animate-shimmer" aria-hidden="true"></div>
+                  <div class="h-44 sm:h-48 bg-theme-secondary animate-shimmer" aria-hidden="true"></div>
                   <div class="p-4 sm:p-5">
-                    <div class="h-5 w-3/4 bg-[#F9F4EB] animate-shimmer rounded mb-2" aria-hidden="true"></div>
-                    <div class="h-4 w-1/2 bg-[#F9F4EB] animate-shimmer rounded mb-4" aria-hidden="true"></div>
+                    <div class="h-5 w-3/4 bg-theme-secondary animate-shimmer rounded mb-2" aria-hidden="true"></div>
+                    <div class="h-4 w-1/2 bg-theme-secondary animate-shimmer rounded mb-4" aria-hidden="true"></div>
                     <div class="flex justify-between items-center">
-                      <div class="h-6 w-20 bg-[#F9F4EB] animate-shimmer rounded" aria-hidden="true"></div>
-                      <div class="h-4 w-12 bg-[#F9F4EB] animate-shimmer rounded" aria-hidden="true"></div>
+                      <div class="h-6 w-20 bg-theme-secondary animate-shimmer rounded" aria-hidden="true"></div>
+                      <div class="h-4 w-12 bg-theme-secondary animate-shimmer rounded" aria-hidden="true"></div>
                     </div>
                   </div>
                 </div>
               }
             </div>
           } @else {
-            <div class="bg-white border-2 border-black">
+            <div class="bg-theme-surface border-2 border-theme-border">
               @for (i of [1,2,3,4,5,6]; track i) {
-                <div class="flex items-center gap-4 px-3 py-3 border-b border-black last:border-b-0">
+                <div class="flex items-center gap-4 px-3 py-3 border-b border-theme-border last:border-b-0">
                   <div class="flex-shrink-0 ml-1">
-                    <div class="w-5 h-5 bg-[#F9F4EB] border-2 border-black animate-shimmer" aria-hidden="true"></div>
+                    <div class="w-5 h-5 bg-theme-secondary border-2 border-theme-border animate-shimmer" aria-hidden="true"></div>
                   </div>
 
-                  <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#F9F4EB] flex items-center justify-center overflow-hidden rounded-sm flex-shrink-0 animate-shimmer" aria-hidden="true"></div>
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 bg-theme-secondary flex items-center justify-center overflow-hidden rounded-sm flex-shrink-0 animate-shimmer" aria-hidden="true"></div>
 
                   <div class="flex-1 min-w-0 py-1">
-                    <div class="h-5 w-1/3 bg-[#F9F4EB] rounded mb-2 animate-shimmer" aria-hidden="true"></div>
-                    <div class="h-4 w-1/4 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                    <div class="h-5 w-1/3 bg-theme-secondary rounded mb-2 animate-shimmer" aria-hidden="true"></div>
+                    <div class="h-4 w-1/4 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
                   </div>
 
                   <div class="flex items-center gap-4 ml-4">
-                    <div class="h-5 w-12 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
-                    <div class="h-4 w-12 bg-[#F9F4EB] rounded animate-shimmer" aria-hidden="true"></div>
+                    <div class="h-5 w-12 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
+                    <div class="h-4 w-12 bg-theme-secondary rounded animate-shimmer" aria-hidden="true"></div>
                   </div>
                 </div>
               }
@@ -442,26 +459,26 @@ type TabType = 'active' | 'archived' | 'bin';
           }
         } @else if (currentProducts().length === 0) {
           <!-- Empty State -->
-          <div class="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] p-8 sm:p-12 flex flex-col items-center text-center">
-            <div class="w-24 h-24 bg-[#F9F4EB] border-2 border-black flex items-center justify-center mb-6">
+          <div class="bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] p-8 sm:p-12 flex flex-col items-center text-center">
+            <div class="w-24 h-24 bg-theme-secondary border-2 border-theme-border flex items-center justify-center mb-6">
               @if (currentTab() === 'active') {
-                <svg class="w-12 h-12 text-[#111111]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-theme-fg" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
                   <line x1="3" y1="6" x2="21" y2="6"/>
                   <path d="M16 10a4 4 0 0 1-8 0"/>
                 </svg>
               } @else if (currentTab() === 'archived') {
-                <svg class="w-12 h-12 text-[#111111]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-theme-fg" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
                 </svg>
               } @else {
-                <svg class="w-12 h-12 text-[#111111]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-theme-fg" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <polyline points="3 6 5 6 21 6"/>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                 </svg>
               }
             </div>
-            <h3 class="text-xl sm:text-2xl font-black text-[#111111] mb-2">
+            <h3 class="text-xl sm:text-2xl font-black text-theme-fg mb-2">
               @if (currentTab() === 'active') {
                 {{ searchQuery() ? 'No products found' : 'No products yet' }}
               } @else if (currentTab() === 'archived') {
@@ -470,12 +487,12 @@ type TabType = 'active' | 'archived' | 'bin';
                 {{ searchQuery() ? 'No deleted products found' : 'Bin is empty' }}
               }
             </h3>
-            <div class="text-[#111111]/70 font-medium mb-6 max-w-md">
+            <div class="text-theme-muted font-medium mb-6 max-w-md">
               {{ emptyStateMessage() }}
             </div>
             @if (currentTab() === 'active' && !searchQuery()) {
               <a routerLink="/dashboard/products/new" 
-                 class="inline-flex items-center gap-2 px-6 py-3 bg-[#FFC60B] text-[#111111] font-bold border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
+                 class="inline-flex items-center gap-2 px-6 py-3 bg-theme-accent text-theme-fg font-bold border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                   <path d="M12 5v14M5 12h14"/>
                 </svg>
@@ -492,17 +509,17 @@ type TabType = 'active' | 'archived' | 'bin';
                        [checked]="isAllSelected()"
                        (change)="toggleSelectAll($event)"
                        class="sr-only">
-                <div class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all">
+                <div class="w-8 h-8 bg-theme-surface border-2 border-theme-border flex items-center justify-center shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all">
                   @if (isAllSelected()) {
-                    <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-theme-fg" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
                   }
                 </div>
-                <span class="ml-2 hidden sm:inline text-sm font-bold text-[#111111]">Select all</span>
+                <span class="ml-2 hidden sm:inline text-sm font-bold text-theme-fg">Select all</span>
 
                 <!-- Tooltip note -->
-                <div class="absolute top-full left-0 mt-2 w-[18rem] bg-white border-2 border-black p-2 text-sm text-[#111111] shadow-[4px_4px_0px_0px_#000] z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
+                <div class="absolute top-full left-0 mt-2 w-[18rem] bg-theme-surface border-2 border-theme-border p-2 text-sm text-theme-fg shadow-[4px_4px_0px_0px_#000] z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity">
                   Select all products on this page. Use bulk actions to manage multiple items at once.
                 </div>
               </label>
@@ -510,11 +527,11 @@ type TabType = 'active' | 'archived' | 'bin';
 
             <!-- Sort Dropdown -->
             <div class="flex items-center gap-2">
-              <span class="text-sm font-bold text-[#111111]">Sort:</span>
+              <span class="text-sm font-bold text-theme-fg">Sort:</span>
               <select
                 [(ngModel)]="sortField"
                 (change)="onSortChange()"
-                class="px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+                class="px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
               >
                 <option value="createdAt">Newest</option>
                 <option value="title">Title</option>
@@ -523,15 +540,15 @@ type TabType = 'active' | 'archived' | 'bin';
               </select>
               <button
                 (click)="toggleSortOrder()"
-                class="p-2 bg-white border-2 border-black rounded-lg hover:translate-x-[1px] hover:translate-y-[1px] transition-all shadow-[2px_2px_0px_0px_#000]"
+                class="p-2 bg-theme-surface border-2 border-theme-border rounded-lg hover:translate-x-[1px] hover:translate-y-[1px] transition-all shadow-[2px_2px_0px_0px_#000]"
                 [title]="sortOrder() === 'asc' ? 'Ascending' : 'Descending'"
               >
                 @if (sortOrder() === 'asc') {
-                  <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
                   </svg>
                 } @else {
-                  <svg class="w-4 h-4 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                   </svg>
                 }
@@ -539,11 +556,11 @@ type TabType = 'active' | 'archived' | 'bin';
 
               <!-- View Mode Selector -->
               <div class="flex items-center gap-2">
-                <span class="text-sm font-bold text-[#111111]">View:</span>
+                <span class="text-sm font-bold text-theme-fg">View:</span>
                 <select
                   [ngModel]="viewMode()"
                   (ngModelChange)="setViewMode($event)"
-                  class="px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+                  class="px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg focus:outline-none focus:ring-2 focus:ring-[#FFC60B] shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
                 >
                   <option value="gallery">Gallery</option>
                   <option value="list">List</option>
@@ -554,7 +571,7 @@ type TabType = 'active' | 'archived' | 'bin';
 @if (viewMode() === 'gallery') {
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               @for (product of currentProducts(); track product.id) {
-                <div class="relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all group">
+                <div class="relative bg-theme-surface border-2 border-theme-border shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] transition-all group">
                   
                   <!-- Selection Checkbox -->
                   <div class="absolute top-3 left-3 z-10">
@@ -563,9 +580,9 @@ type TabType = 'active' | 'archived' | 'bin';
                         [checked]="isSelected(product.id)"
                         (change)="toggleSelection(product.id, $event)"
                         class="peer sr-only">
-                      <div class="w-5 h-5 bg-white border-2 border-black peer-checked:bg-[#FFC60B] flex items-center justify-center transition-colors shadow-[2px_2px_0px_0px_#000]">
+                      <div class="w-5 h-5 bg-theme-surface border-2 border-theme-border peer-checked:bg-theme-accent flex items-center justify-center transition-colors shadow-[2px_2px_0px_0px_#000]">
                         @if (isSelected(product.id)) {
-                          <svg class="w-3 h-3 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                          <svg class="w-3 h-3 text-theme-fg" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                             <polyline points="20 6 9 17 4 12"/>
                           </svg>
                         }
@@ -577,13 +594,13 @@ type TabType = 'active' | 'archived' | 'bin';
                      [class.pointer-events-none]="currentTab() !== 'active'"
                      class="block">
                     <!-- Product Image -->
-                    <div class="relative h-44 sm:h-48 border-b-2 border-black overflow-hidden bg-[#F9F4EB]">
+                    <div class="relative h-44 sm:h-48 border-b-2 border-theme-border overflow-hidden bg-theme-secondary">
                       @if (product.coverImageUrl) {
                         <img [src]="product.coverImageUrl" [alt]="product.title" 
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                       } @else {
                         <div class="w-full h-full flex items-center justify-center">
-                          <svg class="w-12 h-12 text-black/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                          <svg class="w-12 h-12 text-theme-muted opacity-20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                             <circle cx="8.5" cy="8.5" r="1.5"/>
                             <polyline points="21 15 16 10 5 21"/>
@@ -594,20 +611,20 @@ type TabType = 'active' | 'archived' | 'bin';
                       <!-- Status Badge -->
                       @if (currentTab() === 'active') {
                         @if (product.status === 'PUBLISHED') {
-                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#68E079] text-[#111111] border-2 border-black">
+                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-success text-black border-2 border-theme-border">
                             Live
                           </span>
                         } @else {
-                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FFC60B] text-[#111111] border-2 border-black">
+                          <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-black border-2 border-theme-border">
                             Draft
                           </span>
                         }
                       } @else if (currentTab() === 'archived') {
-                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FFC60B] text-[#111111] border-2 border-black">
+                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-accent text-black border-2 border-theme-border">
                           Archived
                         </span>
                       } @else {
-                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-[#FA4B28] text-white border-2 border-black">
+                        <span class="absolute top-3 right-3 px-2 py-1 text-xs font-bold uppercase tracking-wide bg-theme-danger text-white border-2 border-theme-border">
                           Deleted
                         </span>
                       }
@@ -615,14 +632,14 @@ type TabType = 'active' | 'archived' | 'bin';
                     
                     <!-- Content -->
                     <div class="p-4 sm:p-5">
-                      <h3 class="text-base sm:text-lg font-bold text-[#111111] mb-1 truncate">{{ product.title }}</h3>
-                      <p class="text-sm text-[#111111]/60 font-medium mb-4">{{ product.store?.name || 'No store' }}</p>
+                      <h3 class="text-base sm:text-lg font-bold text-theme-fg mb-1 truncate">{{ product.title }}</h3>
+                      <p class="text-sm text-theme-muted font-medium mb-4">{{ product.store?.name || 'No store' }}</p>
                       
                       <div class="flex items-center justify-between">
-                        <span class="text-lg sm:text-xl font-black text-[#111111]">₹{{ product.price / 100 }}</span>
+                        <span class="text-lg sm:text-xl font-black text-theme-fg">₹{{ product.price / 100 }}</span>
                         
                         @if (currentTab() === 'active') {
-                          <span class="inline-flex items-center gap-1 text-sm font-bold text-[#111111]/70 group-hover:text-[#2B57D6] transition-colors">
+                          <span class="inline-flex items-center gap-1 text-sm font-bold text-theme-muted group-hover:text-theme-primary transition-colors">
                             Edit
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                               <path d="M9 18l6-6-6-6"/>
@@ -639,18 +656,18 @@ type TabType = 'active' | 'archived' | 'bin';
                       @if (currentTab() === 'archived') {
                         <button 
                           (click)="unarchiveProduct(product)"
-                          class="flex-1 py-2 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black hover:bg-[#5bc96a] transition-colors">
+                          class="flex-1 py-2 text-sm font-bold bg-theme-success text-theme-fg border-2 border-theme-border hover:bg-[#5bc96a] transition-colors">
                           Unarchive
                         </button>
                         <button 
                           (click)="deleteProduct(product)"
-                          class="flex-1 py-2 text-sm font-bold bg-white text-[#FA4B28] border-2 border-black hover:bg-[#FFF5F5] transition-colors">
+                          class="flex-1 py-2 text-sm font-bold bg-theme-surface text-theme-danger border-2 border-theme-border hover:bg-[#FFF5F5] transition-colors">
                           Delete
                         </button>
                       } @else {
                         <button 
                           (click)="restoreProduct(product)"
-                          class="flex-1 py-2 text-sm font-bold bg-[#68E079] text-[#111111] border-2 border-black hover:bg-[#5bc96a] transition-colors">
+                          class="flex-1 py-2 text-sm font-bold bg-theme-success text-theme-fg border-2 border-theme-border hover:bg-[#5bc96a] transition-colors">
                           Restore
                         </button>
                       }
@@ -660,9 +677,9 @@ type TabType = 'active' | 'archived' | 'bin';
               }
               </div>
             } @if (viewMode() === 'list') {
-              <div class="bg-white border-2 border-black">
+              <div class="bg-theme-surface border-2 border-theme-border">
                 @for (product of currentProducts(); track product.id) {
-                  <div class="flex items-center gap-4 px-3 py-3 border-b border-black last:border-b-0">
+                  <div class="flex items-center gap-4 px-3 py-3 border-b border-theme-border last:border-b-0">
 
                     <!-- Selection Checkbox -->
                     <div class="flex-shrink-0 ml-1">
@@ -671,9 +688,9 @@ type TabType = 'active' | 'archived' | 'bin';
                           [checked]="isSelected(product.id)"
                           (change)="toggleSelection(product.id, $event)"
                           class="peer sr-only">
-                        <div class="w-5 h-5 bg-white border-2 border-black peer-checked:bg-[#FFC60B] flex items-center justify-center transition-colors">
+                        <div class="w-5 h-5 bg-theme-surface border-2 border-theme-border peer-checked:bg-theme-accent flex items-center justify-center transition-colors">
                           @if (isSelected(product.id)) {
-                            <svg class="w-3 h-3 text-[#111111]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                            <svg class="w-3 h-3 text-theme-fg" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                               <polyline points="20 6 9 17 4 12"/>
                             </svg>
                           }
@@ -682,11 +699,11 @@ type TabType = 'active' | 'archived' | 'bin';
                     </div>
 
                     <!-- Compact Thumbnail -->
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-[#F9F4EB] flex items-center justify-center overflow-hidden rounded-sm flex-shrink-0">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 bg-theme-secondary flex items-center justify-center overflow-hidden rounded-sm flex-shrink-0">
                       @if (product.coverImageUrl) {
                         <img [src]="product.coverImageUrl" [alt]="product.title" class="w-full h-full object-cover">
                       } @else {
-                        <svg class="w-8 h-8 text-black/20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <svg class="w-8 h-8 text-theme-muted opacity-20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                           <circle cx="8.5" cy="8.5" r="1.5"/>
                           <polyline points="21 15 16 10 5 21"/>
@@ -696,15 +713,15 @@ type TabType = 'active' | 'archived' | 'bin';
 
                     <!-- Details -->
                     <div class="flex-1 min-w-0 py-1">
-                      <h3 class="text-base sm:text-lg font-bold text-[#111111] truncate">{{ product.title }}</h3>
-                      <p class="text-sm text-[#111111]/60 font-medium">{{ product.store?.name || 'No store' }}</p>
+                      <h3 class="text-base sm:text-lg font-bold text-theme-fg truncate">{{ product.title }}</h3>
+                      <p class="text-sm text-theme-muted font-medium">{{ product.store?.name || 'No store' }}</p>
                     </div>
 
                     <!-- Price & Actions -->
                     <div class="flex items-center gap-4 ml-4">
-                      <div class="text-base sm:text-lg font-black text-[#111111]">₹{{ product.price / 100 }}</div>
+                      <div class="text-base sm:text-lg font-black text-theme-fg">₹{{ product.price / 100 }}</div>
                       @if (currentTab() === 'active') {
-                        <a [routerLink]="['/dashboard/products', product.id]" class="text-sm font-bold text-[#111111]/70">Edit</a>
+                        <a [routerLink]="['/dashboard/products', product.id]" class="text-sm font-bold text-theme-muted">Edit</a>
                       }
                     </div>
                   </div>
@@ -715,7 +732,7 @@ type TabType = 'active' | 'archived' | 'bin';
           <!-- Pagination -->
           @if (meta().totalPages > 1) {
             <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p class="text-sm text-[#111111]/60 font-medium">
+              <p class="text-sm text-theme-muted font-medium">
                 Showing {{ ((meta().page - 1) * meta().limit) + 1 }} - {{ getEndIndex() }} of {{ meta().total }} products
               </p>
               
@@ -723,7 +740,7 @@ type TabType = 'active' | 'archived' | 'bin';
                 <button
                   (click)="goToPage(meta().page - 1)"
                   [disabled]="!meta().hasPreviousPage"
-                  class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="flex items-center gap-1 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -734,14 +751,14 @@ type TabType = 'active' | 'archived' | 'bin';
                 <div class="flex items-center gap-1">
                   @for (page of getVisiblePages(); track page) {
                     @if (page === '...') {
-                      <span class="px-2 py-1 text-sm text-[#111111]/60">...</span>
+                      <span class="px-2 py-1 text-sm text-theme-muted">...</span>
                     } @else {
                       <button
                         (click)="goToPage(+page)"
-                        class="w-10 h-10 flex items-center justify-center border-2 border-black rounded-lg font-bold text-sm transition-all"
-                        [class.bg-[#FFC60B]]="meta().page === +page"
-                        [class.bg-white]="meta().page !== +page"
-                        [class.hover:bg-[#F9F4EB]]="meta().page !== +page"
+                        class="w-10 h-10 flex items-center justify-center border-2 border-theme-border rounded-lg font-bold text-sm transition-all"
+                        [class.bg-theme-accent]="meta().page === +page"
+                        [class.bg-theme-surface]="meta().page !== +page"
+                        [class.hover:bg-theme-secondary]="meta().page !== +page"
                       >
                         {{ page }}
                       </button>
@@ -752,7 +769,7 @@ type TabType = 'active' | 'archived' | 'bin';
                 <button
                   (click)="goToPage(meta().page + 1)"
                   [disabled]="!meta().hasNextPage"
-                  class="flex items-center gap-1 px-3 py-2 bg-white border-2 border-black rounded-lg font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="flex items-center gap-1 px-3 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -810,6 +827,7 @@ export class ProductsListComponent implements OnInit {
   showStoreDropdown = signal(false);
   filterStatus = signal<'ALL' | 'PUBLISHED' | 'DRAFT'>('ALL');
   filterStoreIds = signal<string[]>([]);
+  filterQuickSell = signal<boolean>(false);
   stores = signal<any[]>([]);
   storesLoading = signal(false);
 
@@ -842,8 +860,9 @@ export class ProductsListComponent implements OnInit {
     try {
       const params: any = {
         search: this.searchQuery() || undefined,
-        status: this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
-        storeIds: this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined,
+        status: !this.filterQuickSell() && this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
+        storeIds: !this.filterQuickSell() && this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined,
+        isQuickSell: this.filterQuickSell() || undefined,
       };
 
       const result = await this.productService.getMyStats(params);
@@ -878,8 +897,9 @@ export class ProductsListComponent implements OnInit {
         search: this.searchQuery(),
         sortField: this.sortField(),
         sortOrder: this.sortOrder(),
-        status: this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
-        storeIds: this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined
+        status: !this.filterQuickSell() && this.filterStatus() !== 'ALL' ? this.filterStatus() : undefined,
+        storeIds: !this.filterQuickSell() && this.filterStoreIds().length > 0 ? this.filterStoreIds() : undefined,
+        isQuickSell: this.filterQuickSell() || undefined,
       };
 
       let response: PaginatedResponse<Product>;
@@ -981,6 +1001,7 @@ export class ProductsListComponent implements OnInit {
   resetFilters() {
     this.filterStatus.set('ALL');
     this.filterStoreIds.set([]);
+    this.filterQuickSell.set(false);
     this.currentPage.set(1);
     this.loadProducts();
     this.showFilters.set(false);

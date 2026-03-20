@@ -19,7 +19,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     <!-- State Banner for Archived/Deleted Stores -->
     @if (isEditing() && !isLoading()) {
       @if (storeState().isDeleted) {
-        <section class="bg-[#FA4B28] border-b-2 border-black">
+        <section class="bg-theme-danger border-b-2 border-theme-border">
           <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
@@ -33,27 +33,27 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
                 </div>
               </div>
               <button type="button" (click)="restoreStore()" 
-                class="px-4 py-2 bg-white text-[#FA4B28] font-bold border-2 border-white hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                class="px-4 py-2 bg-theme-surface text-theme-danger font-bold border-2 border-white hover:bg-theme-secondary transition-colors whitespace-nowrap">
                 Restore Store
               </button>
             </div>
           </div>
         </section>
       } @else if (storeState().isArchived) {
-        <section class="bg-[#FFC60B] border-b-2 border-black">
+        <section class="bg-theme-accent border-b-2 border-theme-border">
           <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
-                <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
                 </svg>
                 <div>
-                  <p class="font-bold text-[#111111]">This store is archived</p>
+                  <p class="font-bold text-theme-fg">This store is archived</p>
                   <p class="text-sm text-[#111111]/80">It cannot be edited or accessed by customers. Unarchive to make changes.</p>
                 </div>
               </div>
               <button type="button" (click)="unarchiveStore()" 
-                class="px-4 py-2 bg-white text-[#111111] font-bold border-2 border-black hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                class="px-4 py-2 bg-theme-surface text-theme-fg font-bold border-2 border-theme-border hover:bg-theme-secondary transition-colors whitespace-nowrap">
                 Unarchive Store
               </button>
             </div>
@@ -203,8 +203,26 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
               </span>
             </label>
             <div class="slug-input-wrapper">
-              <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input slug-input" placeholder="my-store" pattern="[a-z0-9-]+" (input)="validateSlug()">
-              <span class="slug-suffix">.{{ baseDomain() }}</span>
+              <input type="text" id="slug" [(ngModel)]="form.slug" name="slug" required class="form-input slug-input" 
+                [class.input-error]="slugError()" 
+                [class.input-success]="slugAvailability() === 'available'"
+                placeholder="my-store" pattern="[a-z0-9-]+" (input)="validateSlug()">
+              <span class="slug-suffix">
+                @if (slugAvailability() === 'checking') {
+                  <span class="slug-status-icon checking" title="Checking availability...">
+                    <svg class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                  </span>
+                } @else if (slugAvailability() === 'available') {
+                  <span class="slug-status-icon available" title="Available!">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </span>
+                } @else if (slugAvailability() === 'taken') {
+                  <span class="slug-status-icon taken" title="Unavailable">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </span>
+                }
+                .{{ baseDomain() }}
+              </span>
             </div>
             <p class="form-hint">Only lowercase letters, numbers, and hyphens allowed.</p>
             <div class="info-note mt-2">
@@ -254,7 +272,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
             <app-image-upload
               imageType="banner"
               label="Banner Image"
-              hint="Displayed at the top of your storefront"
+              hint="Displayed at the top of your storefront. Suggested size: 1920 x 600 px (16:5)."
               [imageUrl]="form.bannerUrl"
               placeholderText="Upload store banner"
               (imageUploaded)="onBannerUploaded($event)"
@@ -265,7 +283,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
             <app-image-upload
               imageType="logo"
               label="Store Logo"
-              hint="Shown on cards and navigation"
+              hint="Shown on cards and navigation. Suggested size: 400 x 400 px (1:1)."
               [imageUrl]="form.logoUrl"
               placeholderText="Upload logo"
               (imageUploaded)="onLogoUploaded($event)"
@@ -362,7 +380,8 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     :host {
       display: block;
       min-height: 100vh;
-      background: #F9F4EB;
+      background: var(--background);
+      color: var(--foreground);
     }
 
     .container {
@@ -379,9 +398,9 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
 
     /* Hero Section */
     .hero-section {
-      background: #F9F4EB;
+      background: var(--background);
       padding: 2rem 0;
-      border-bottom: 2px solid #111111;
+      border-bottom: 2px solid var(--border);
     }
 
     .breadcrumb {
@@ -395,23 +414,23 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     .breadcrumb-link {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #111111;
+      color: var(--foreground);
       text-decoration: none;
     }
 
     .breadcrumb-link:hover {
-      color: #2B57D6;
+      color: var(--primary);
     }
 
     .breadcrumb-separator {
-      color: #111111;
+      color: var(--foreground);
       opacity: 0.4;
     }
 
     .breadcrumb-current {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
     }
 
     .hero-content {
@@ -434,14 +453,14 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     .page-title {
       font-size: 2rem;
       font-weight: 800;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 0.5rem;
       letter-spacing: -0.02em;
     }
 
     .page-subtitle {
       font-size: 1rem;
-      color: #111111;
+      color: var(--foreground);
       opacity: 0.7;
       margin: 0;
     }
@@ -466,16 +485,16 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      border: 2px solid #111111;
+      border: 2px solid var(--border);
     }
 
     .status-published {
-      background: #68E079;
+      background: var(--success);
       color: #111111;
     }
 
     .status-draft {
-      background: #FFC60B;
+      background: var(--primary);
       color: #111111;
     }
 
@@ -489,7 +508,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       font-size: 0.9375rem;
       font-weight: 700;
       text-decoration: none;
-      border: 2px solid #111111;
+      border: 2px solid var(--border);
       cursor: pointer;
       transition: transform 0.1s, box-shadow 0.1s;
       font-family: inherit;
@@ -498,7 +517,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
 
     .btn:hover:not(:disabled) {
       transform: translate(-2px, -2px);
-      box-shadow: 4px 4px 0px 0px #111111;
+      box-shadow: 4px 4px 0px 0px var(--border);
     }
 
     .btn:active:not(:disabled) {
@@ -517,8 +536,8 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     }
 
     .btn-secondary {
-      background: #ffffff;
-      color: #111111;
+      background: var(--surface);
+      color: var(--foreground);
     }
 
     .btn-cta {
@@ -527,13 +546,13 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     }
 
     .btn-green {
-      background: #68E079;
+      background: var(--success);
       color: #111111;
     }
 
     .btn-danger {
-      background: #FA4B28;
-      color: #ffffff;
+      background: var(--danger);
+      color: white;
     }
 
     .btn-sm {
@@ -560,10 +579,22 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       justify-content: space-between;
       gap: 1rem;
       padding: 1.25rem;
-      background: #68E079;
-      border: 2px solid #111111;
-      box-shadow: 4px 4px 0px 0px #111111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .live-store-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 8px;
+      background: var(--success);
     }
 
     @media (max-width: 640px) {
@@ -577,13 +608,15 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       display: flex;
       align-items: center;
       gap: 1rem;
+      padding-left: 0.25rem;
     }
 
     .live-store-icon {
       width: 44px;
       height: 44px;
-      background: #ffffff;
-      border: 2px solid #111111;
+      background: var(--success);
+      border: 2px solid var(--border);
+      color: #111111;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -592,26 +625,36 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     .live-store-label {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 0.25rem;
     }
 
     .live-store-url {
       font-size: 0.9375rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--foreground);
       text-decoration: underline;
     }
 
     .live-store-url:hover {
-      color: #2B57D6;
+      color: var(--primary);
+    }
+
+    .live-store-card .btn-secondary {
+      background: var(--background);
+      color: var(--foreground);
+      border-color: var(--border);
+    }
+
+    .live-store-card .btn-secondary:hover:not(:disabled) {
+      background: var(--secondary);
     }
 
     /* Form Card */
     .form-card {
-      background: #ffffff;
-      border: 2px solid #111111;
-      box-shadow: 4px 4px 0px 0px #111111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       padding: 2rem;
     }
 
@@ -624,10 +667,10 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     .form-card-title {
       font-size: 1.25rem;
       font-weight: 800;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 1.5rem;
       padding-bottom: 1rem;
-      border-bottom: 2px solid #111111;
+      border-bottom: 2px solid var(--border);
     }
 
     .form-group {
@@ -640,12 +683,12 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       gap: 0.375rem;
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
       margin-bottom: 0.5rem;
     }
 
     .required-mark {
-      color: #FA4B28;
+      color: var(--danger);
     }
 
     /* Tooltip Styles */
@@ -654,7 +697,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       display: inline-flex;
       align-items: center;
       margin-left: 0.25rem;
-      color: #111111;
+      color: var(--foreground);
       opacity: 0.5;
       cursor: help;
       -webkit-tap-highlight-color: transparent;
@@ -678,12 +721,12 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       width: calc(100vw - 2rem);
       max-width: 300px;
       padding: 0.75rem 1rem;
-      background: #111111;
-      color: #ffffff;
+      background: var(--foreground);
+      color: var(--background);
       font-size: 0.875rem;
       font-weight: 500;
       line-height: 1.5;
-      border: 2px solid #111111;
+      border: 2px solid var(--foreground);
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       opacity: 0;
       visibility: hidden;
@@ -732,7 +775,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
         left: 50%;
         transform: translateX(-50%);
         border: 6px solid transparent;
-        border-top-color: #111111;
+        border-top-color: var(--foreground);
       }
     }
 
@@ -740,9 +783,9 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       width: 100%;
       padding: 0.875rem 1rem;
       font-size: 1rem;
-      color: #111111;
-      background: #ffffff;
-      border: 2px solid #111111;
+      color: var(--foreground);
+      background: var(--surface);
+      border: 2px solid var(--border);
       font-family: inherit;
     }
 
@@ -752,29 +795,28 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     }
 
     .form-input::placeholder {
-      color: #111111;
-      opacity: 0.4;
+      color: var(--muted);
+      opacity: 0.7;
     }
 
     .form-input.input-error {
-      border-color: #FA4B28;
-      background-color: #FFF5F5;
+      border-color: var(--danger);
+      background-color: transparent;
     }
 
     .form-input.input-error:focus {
-      box-shadow: 0 0 0 3px rgba(250, 75, 40, 0.2);
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
     }
 
     .form-hint {
       font-size: 0.8125rem;
-      color: #111111;
-      opacity: 0.6;
+      color: var(--muted);
       margin-top: 0.5rem;
     }
 
     .form-error {
       font-size: 0.8125rem;
-      color: #FA4B28;
+      color: var(--danger);
       font-weight: 600;
       margin-top: 0.5rem;
     }
@@ -784,20 +826,19 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       margin-top: 1.5rem;
       margin-bottom: 1.5rem;
       padding-top: 1.5rem;
-      border-top: 2px solid #111111;
+      border-top: 2px solid var(--border);
     }
 
     .form-section-title {
       font-size: 1rem;
       font-weight: 800;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 0.25rem;
     }
 
     .form-section-desc {
       font-size: 0.8125rem;
-      color: #111111;
-      opacity: 0.6;
+      color: var(--muted);
       margin: 0 0 1.25rem;
     }
 
@@ -814,15 +855,51 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
 
     .slug-suffix {
       padding: 0.875rem 1rem;
-      background: #F9F4EB;
-      border: 2px solid #111111;
+      background: var(--secondary);
+      border: 2px solid var(--border);
       border-left: none;
       font-size: 1rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--foreground);
       white-space: nowrap;
       display: flex;
       align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-input.input-success {
+      border-color: var(--success);
+    }
+
+    .form-input.input-success:focus {
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+    }
+
+    .slug-status-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .slug-status-icon.checking {
+      color: var(--muted);
+    }
+
+    .slug-status-icon.available {
+      color: var(--success);
+    }
+
+    .slug-status-icon.taken {
+      color: var(--danger);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      animation: spin 0.8s linear infinite;
     }
 
     .info-note {
@@ -830,11 +907,11 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       align-items: flex-start;
       gap: 0.5rem;
       padding: 0.75rem;
-      background-color: #F9F4EB;
-      border: 1px solid #111111;
+      background-color: var(--secondary);
+      border: 1px solid var(--border);
       border-radius: 4px;
       font-size: 0.8125rem;
-      color: #111111;
+      color: var(--foreground);
       margin-top: 0.75rem;
     }
 
@@ -845,8 +922,8 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
 
     /* URL Preview Card */
     .url-preview-card {
-      background: #2B57D6;
-      border: 2px solid #111111;
+      background: var(--primary);
+      border: 2px solid var(--border);
       padding: 1rem 1.25rem;
       margin-bottom: 1.5rem;
     }
@@ -856,7 +933,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #ffffff;
+      color: white;
       opacity: 0.8;
       margin-bottom: 0.375rem;
     }
@@ -864,7 +941,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     .url-preview-value {
       font-size: 1rem;
       font-weight: 600;
-      color: #ffffff;
+      color: white;
       margin: 0;
       word-break: break-all;
     }
@@ -876,7 +953,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       gap: 1rem;
       margin-top: 2rem;
       padding-top: 2rem;
-      border-top: 2px solid #111111;
+      border-top: 2px solid var(--border);
     }
 
     @media (max-width: 640px) {
@@ -893,29 +970,29 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     .danger-zone {
       margin-top: 2rem;
       padding: 1.5rem;
-      background: #ffffff;
-      border: 2px solid #FA4B28;
-      box-shadow: 4px 4px 0px 0px #FA4B28;
+      background: var(--surface);
+      border: 2px solid var(--danger);
+      box-shadow: 4px 4px 0px 0px var(--danger);
     }
 
     .danger-zone-header {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      color: #FA4B28;
+      color: var(--danger);
       margin-bottom: 0.75rem;
     }
 
     .danger-zone-title {
       font-size: 1.125rem;
       font-weight: 800;
-      color: #FA4B28;
+      color: var(--danger);
       margin: 0;
     }
 
     .danger-zone-text {
       font-size: 0.9375rem;
-      color: #111111;
+      color: var(--foreground);
       opacity: 0.8;
       margin: 0 0 1.25rem;
       line-height: 1.5;
@@ -923,9 +1000,9 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
 
     /* Danger Zone Card */
     .danger-zone-card {
-      background: #ffffff;
-      border: 2px solid #111111;
-      box-shadow: 4px 4px 0px 0px #111111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       margin-top: 2rem;
       margin-bottom: 2rem;
     }
@@ -933,10 +1010,10 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     .danger-zone-title {
       font-size: 1.25rem;
       font-weight: 800;
-      color: #111111;
+      color: var(--foreground);
       margin: 0;
       padding: 1.25rem 1.5rem;
-      border-bottom: 2px solid #111111;
+      border-bottom: 2px solid var(--border);
     }
 
     .danger-zone-content {
@@ -948,7 +1025,7 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
       flex-direction: column;
       gap: 1rem;
       padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid #e5e5e5;
+      border-bottom: 1px solid var(--border);
     }
 
     .danger-zone-item:last-child {
@@ -970,29 +1047,29 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     .danger-zone-item-heading {
       font-size: 0.9375rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 0.25rem 0;
     }
 
     .danger-zone-item-desc {
       font-size: 0.875rem;
-      color: #666666;
+      color: var(--muted);
       margin: 0;
     }
 
     .btn-danger {
-      background: #FA4B28;
+      background: var(--danger);
       color: white;
-      border: 2px solid #FA4B28;
+      border: 2px solid var(--danger);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s ease;
-      box-shadow: 2px 2px 0px 0px #111111;
+      box-shadow: 2px 2px 0px 0px var(--border);
     }
 
     .btn-danger:hover {
-      background: #e53e1e;
-      border-color: #e53e1e;
+      background: darkred;
+      border-color: var(--danger);
     }
 
     .btn-danger:disabled {
@@ -1001,16 +1078,16 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton.
     }
 
     .btn-danger-outline {
-      background: white;
-      color: #FA4B28;
-      border: 2px solid #FA4B28;
+      background: var(--surface);
+      color: var(--danger);
+      border: 2px solid var(--danger);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s ease;
     }
 
     .btn-danger-outline:hover {
-      background: #FEF2F2;
+      background: var(--secondary);
     }
 
     /* Danger button shared size */
@@ -1045,6 +1122,9 @@ export class StoreFormComponent implements OnInit {
   deleting = signal(false);
   copied = signal(false);
   slugError = signal<string | null>(null);
+  slugAvailability = signal<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  private slugCheckTimer: ReturnType<typeof setTimeout> | null = null;
+  private slugCheckAbort: AbortController | null = null;
   nameError = signal<string | null>(null);
   taglineError = signal<string | null>(null);
   store = signal<Store | null>(null);
@@ -1144,7 +1224,9 @@ export class StoreFormComponent implements OnInit {
   isFormValid(): boolean {
     return !this.nameError() && !this.slugError() && !this.taglineError() 
       && this.form.name.trim().length >= this.MIN_NAME_LENGTH 
-      && this.form.slug.trim().length >= this.MIN_SLUG_LENGTH;
+      && this.form.slug.trim().length >= this.MIN_SLUG_LENGTH
+      && this.slugAvailability() !== 'checking'
+      && this.slugAvailability() !== 'taken';
   }
 
   async ngOnInit() {
@@ -1195,25 +1277,74 @@ export class StoreFormComponent implements OnInit {
   validateSlug() {
     this.formTouched.update(t => ({ ...t, slug: true }));
     const slug = this.form.slug.toLowerCase();
-    
+
+    // Cancel any in-flight async check
+    if (this.slugCheckTimer) { clearTimeout(this.slugCheckTimer); this.slugCheckTimer = null; }
+    if (this.slugCheckAbort) { this.slugCheckAbort.abort(); this.slugCheckAbort = null; }
+
+    // Client-side format validation first
     if (!slug) {
       this.slugError.set('Store URL is required');
+      this.slugAvailability.set('idle');
     } else if (slug.length < this.MIN_SLUG_LENGTH) {
       this.slugError.set(`Store URL must be at least ${this.MIN_SLUG_LENGTH} characters`);
+      this.slugAvailability.set('idle');
     } else if (slug.length > this.MAX_SLUG_LENGTH) {
       this.slugError.set(`Store URL must be less than ${this.MAX_SLUG_LENGTH} characters`);
+      this.slugAvailability.set('idle');
     } else if (!/^[a-z0-9-]*$/.test(slug)) {
       this.slugError.set('Only lowercase letters, numbers, and hyphens allowed');
+      this.slugAvailability.set('idle');
     } else if (slug.startsWith('-') || slug.endsWith('-')) {
       this.slugError.set('URL cannot start or end with a hyphen');
+      this.slugAvailability.set('idle');
     } else if (/--/.test(slug)) {
       this.slugError.set('URL cannot contain consecutive hyphens');
+      this.slugAvailability.set('idle');
     } else if (!this.storeService.isValidSlug(slug)) {
       this.slugError.set('This subdomain is reserved');
+      this.slugAvailability.set('taken');
     } else {
-      this.slugError.set(null);
+      // Client-side valid — skip API check if slug unchanged in edit mode
+      if (this.isEditing() && this.store()?.slug === slug) {
+        this.slugError.set(null);
+        this.slugAvailability.set('available');
+      } else {
+        // Debounced API availability check
+        this.slugError.set(null);
+        this.slugAvailability.set('checking');
+        this.slugCheckTimer = setTimeout(() => this.checkSlugAvailabilityAsync(slug), 300);
+      }
     }
+
     this.form.slug = slug.replace(/[^a-z0-9-]/g, '');
+  }
+
+  private async checkSlugAvailabilityAsync(slug: string) {
+    // Abort any previous in-flight request
+    if (this.slugCheckAbort) this.slugCheckAbort.abort();
+    const controller = new AbortController();
+    this.slugCheckAbort = controller;
+
+    try {
+      const excludeId = this.isEditing() ? this.storeId ?? undefined : undefined;
+      const result = await this.storeService.checkSlugAvailability(slug, excludeId);
+
+      // Ignore stale responses (user may have typed more)
+      if (controller.signal.aborted) return;
+
+      if (result.available) {
+        this.slugError.set(null);
+        this.slugAvailability.set('available');
+      } else {
+        this.slugError.set(result.reason || 'This URL is already taken');
+        this.slugAvailability.set('taken');
+      }
+    } catch {
+      if (controller.signal.aborted) return;
+      // On network error, don't block the user — clear error and reset status
+      this.slugAvailability.set('idle');
+    }
   }
 
   async save(publish: boolean = false) {
@@ -1334,7 +1465,7 @@ export class StoreFormComponent implements OnInit {
       try {
         await navigator.share({
           title: store.name || 'Store',
-          text: `Check out ${store.name || 'this store'} on StoresCraft`,
+          text: `Check out ${store.name || 'this store'} on TheBlueMustard`,
           url,
         });
       } catch { /* user cancelled */ }

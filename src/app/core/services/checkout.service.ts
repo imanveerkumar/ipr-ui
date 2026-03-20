@@ -121,7 +121,7 @@ export class CheckoutService {
         amount: paymentData.amount, // amount is already in paise from the API
         currency: paymentData.currency,
         order_id: paymentData.razorpayOrderId,
-        name: 'StoresCraft',
+        name: 'TheBlueMustard',
         description: 'Digital Product Purchase',
         prefill: {
           email: userEmail,
@@ -192,6 +192,11 @@ export class CheckoutService {
       hasNextPage: boolean;
       hasPreviousPage: boolean;
     };
+    overallStats: {
+      totalOrders: number;
+      completedOrders: number;
+      totalSpent: number;
+    };
   }> {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
@@ -213,9 +218,23 @@ export class CheckoutService {
         hasNextPage: boolean;
         hasPreviousPage: boolean;
       };
-    }>(url);
+      overallStats: {
+        totalOrders: number;
+        completedOrders: number;
+        totalSpent: number;
+      };
+    }>(url, {
+      requestConfig: {
+        // Prevent duplicate fetches caused by rapid route re-instantiation.
+        cacheTtl: 3000,
+      },
+    });
     
-    return response.data || { data: [], meta: { total: 0, page: 1, limit: 20, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
+    return response.data || {
+      data: [],
+      meta: { total: 0, page: 1, limit: 20, totalPages: 0, hasNextPage: false, hasPreviousPage: false },
+      overallStats: { totalOrders: 0, completedOrders: 0, totalSpent: 0 },
+    };
   }
 
   async getMyLicenses(): Promise<License[]> {

@@ -22,7 +22,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     <!-- State Banner for Archived/Deleted Products -->
     @if (isEditing() && !isLoading()) {
       @if (productState().isDeleted) {
-        <section class="bg-[#FA4B28] border-b-2 border-black">
+        <section class="bg-theme-danger border-b-2 border-theme-border">
           <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
@@ -36,27 +36,27 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
                 </div>
               </div>
               <button type="button" (click)="restoreProduct()" 
-                class="px-4 py-2 bg-white text-[#FA4B28] font-bold border-2 border-white hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                class="px-4 py-2 bg-theme-surface text-theme-danger font-bold border-2 border-white hover:bg-theme-secondary transition-colors whitespace-nowrap">
                 Restore Product
               </button>
             </div>
           </div>
         </section>
       } @else if (productState().isArchived) {
-        <section class="bg-[#FFC60B] border-b-2 border-black">
+        <section class="bg-theme-accent border-b-2 border-theme-border">
           <div class="max-w-[720px] mx-auto px-4 sm:px-6 py-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3">
-                <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
                 </svg>
                 <div>
-                  <p class="font-bold text-[#111111]">This product is archived</p>
+                  <p class="font-bold text-theme-fg">This product is archived</p>
                   <p class="text-sm text-[#111111]/80">It cannot be edited, purchased, or seen by customers. Unarchive to make changes.</p>
                 </div>
               </div>
               <button type="button" (click)="unarchiveProduct()" 
-                class="px-4 py-2 bg-white text-[#111111] font-bold border-2 border-black hover:bg-[#F9F4EB] transition-colors whitespace-nowrap">
+                class="px-4 py-2 bg-theme-surface text-theme-fg font-bold border-2 border-theme-border hover:bg-theme-secondary transition-colors whitespace-nowrap">
                 Unarchive Product
               </button>
             </div>
@@ -81,20 +81,20 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
             <p class="page-subtitle">{{ isEditing() ? 'Update your product details' : 'Add a new digital product to your store' }}</p>
 
             @if (!isEditing() && stores().length === 0 && !isLoading()) {
-              <div class="mt-6 bg-[#FFC60B] border-2 border-black p-4 md:p-5 shadow-[4px_4px_0px_0px_#000]">
+              <div class="mt-6 bg-theme-accent border-2 border-theme-border p-4 md:p-5 shadow-[4px_4px_0px_0px_#000]">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shrink-0">
-                      <svg class="w-5 h-5 text-[#111111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-10 h-10 bg-theme-surface border-2 border-theme-border flex items-center justify-center shrink-0">
+                      <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                       </svg>
                     </div>
                     <div>
-                      <h3 class="font-bold text-[#111111] mb-0.5">Note</h3>
+                      <h3 class="font-bold text-theme-fg mb-0.5">Note</h3>
                       <p class="text-sm text-[#111111]/80">There are no store created. Create a store first.</p>
                     </div>
                   </div>
-                  <a routerLink="/dashboard/stores/new" class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold text-sm text-[#111111] hover:bg-[#F9F4EB] transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
+                  <a routerLink="/dashboard/stores/new" class="inline-flex items-center gap-2 px-4 py-2 bg-theme-surface border-2 border-theme-border font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors shadow-[2px_2px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] whitespace-nowrap">
                     Create Store
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -263,7 +263,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
             <app-image-upload
               imageType="thumbnail"
               label="Cover Image"
-              hint="Displayed on explore, storefront, and cards"
+              hint="Displayed on explore, storefront, and cards. Suggested size: 800 x 800 px (1:1)."
               [imageUrl]="form.coverImageUrl"
               placeholderText="Upload product thumbnail"
               (imageUploaded)="onThumbnailUploaded($event)"
@@ -474,7 +474,8 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     :host {
       display: block;
       min-height: 100vh;
-      background: #F9F4EB;
+      background: var(--background);
+      color: var(--foreground);
     }
 
     .container {
@@ -491,9 +492,9 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
 
     /* Hero Section */
     .hero-section {
-      background: #F9F4EB;
+      background: var(--background);
       padding: 2rem 0;
-      border-bottom: 2px solid #111111;
+      border-bottom: 2px solid var(--border);
     }
 
     .breadcrumb {
@@ -507,23 +508,23 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     .breadcrumb-link {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #111111;
+      color: var(--foreground);
       text-decoration: none;
     }
 
     .breadcrumb-link:hover {
-      color: #2B57D6;
+      color: var(--primary);
     }
 
     .breadcrumb-separator {
-      color: #111111;
+      color: var(--foreground);
       opacity: 0.4;
     }
 
     .breadcrumb-current {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
     }
 
     .hero-content {
@@ -540,14 +541,14 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     .page-title {
       font-size: 2rem;
       font-weight: 800;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 0.5rem;
       letter-spacing: -0.02em;
     }
 
     .page-subtitle {
       font-size: 1rem;
-      color: #111111;
+      color: var(--foreground);
       opacity: 0.7;
       margin: 0;
     }
@@ -565,9 +566,9 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
 
     /* Form Card */
     .form-card {
-      background: #ffffff;
-      border: 2px solid #111111;
-      box-shadow: 4px 4px 0px 0px #111111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       padding: 2rem;
     }
 
@@ -580,10 +581,10 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     .form-card-title {
       font-size: 1.25rem;
       font-weight: 800;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 1.5rem;
       padding-bottom: 1rem;
-      border-bottom: 2px solid #111111;
+      border-bottom: 2px solid var(--border);
     }
 
     /* Form Group */
@@ -597,12 +598,12 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       gap: 0.375rem;
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
       margin-bottom: 0.5rem;
     }
 
     .required-mark {
-      color: #FA4B28;
+      color: var(--danger);
     }
 
     /* Tooltip Styles */
@@ -611,7 +612,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       display: inline-flex;
       align-items: center;
       margin-left: 0.25rem;
-      color: #111111;
+      color: var(--foreground);
       opacity: 0.5;
       cursor: help;
       -webkit-tap-highlight-color: transparent;
@@ -635,12 +636,12 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       width: calc(100vw - 2rem);
       max-width: 300px;
       padding: 0.75rem 1rem;
-      background: #111111;
-      color: #ffffff;
+      background: var(--foreground);
+      color: var(--background);
       font-size: 0.875rem;
       font-weight: 500;
       line-height: 1.5;
-      border: 2px solid #111111;
+      border: 2px solid var(--foreground);
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       opacity: 0;
       visibility: hidden;
@@ -689,7 +690,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
         left: 50%;
         transform: translateX(-50%);
         border: 6px solid transparent;
-        border-top-color: #111111;
+        border-top-color: var(--foreground);
       }
     }
 
@@ -697,9 +698,9 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       width: 100%;
       padding: 0.875rem 1rem;
       font-size: 1rem;
-      color: #111111;
-      background: #ffffff;
-      border: 2px solid #111111;
+      color: var(--foreground);
+      background: var(--surface);
+      border: 2px solid var(--border);
       font-family: inherit;
       cursor: text;
     }
@@ -708,13 +709,13 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       width: 100%;
       padding: 0.875rem 1rem;
       font-size: 1rem;
-      color: #111111;
-      background: #ffffff;
-      border: 2px solid #111111;
+      color: var(--foreground);
+      background: var(--surface);
+      border: 2px solid var(--border);
       font-family: inherit;
       -webkit-appearance: none;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23111111' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
       background-position: right 1rem center;
       background-repeat: no-repeat;
       background-size: 1.25em 1.25em;
@@ -730,38 +731,37 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
 
     .form-input:disabled,
     .form-select:disabled {
-      background: #F9F4EB;
-      color: #111111;
+      background: var(--secondary);
+      color: var(--muted);
       opacity: 0.6;
       cursor: not-allowed;
     }
 
     .form-input::placeholder {
-      color: #111111;
-      opacity: 0.4;
+      color: var(--muted);
+      opacity: 0.7;
     }
 
     .form-input.input-error,
     .form-select.input-error {
-      border-color: #FA4B28;
-      background-color: #FFF5F5;
+      border-color: var(--danger);
+      background-color: transparent;
     }
 
     .form-input.input-error:focus,
     .form-select.input-error:focus {
-      box-shadow: 0 0 0 3px rgba(250, 75, 40, 0.2);
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
     }
 
     .form-hint {
       font-size: 0.8125rem;
-      color: #111111;
-      opacity: 0.6;
+      color: var(--muted);
       margin-top: 0.5rem;
     }
 
     .form-error {
       font-size: 0.8125rem;
-      color: #FA4B28;
+      color: var(--danger);
       font-weight: 600;
       margin-top: 0.5rem;
     }
@@ -791,8 +791,8 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       display: flex;
       align-items: center;
       padding: 0.875rem 1rem;
-      background: #FFC60B;
-      border: 2px solid #111111;
+      background: var(--primary);
+      border: 2px solid var(--border);
       border-right: none;
       font-size: 1rem;
       font-weight: 700;
@@ -807,29 +807,29 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     .form-section {
       margin-top: 2rem;
       padding-top: 2rem;
-      border-top: 2px solid #111111;
+      border-top: 2px solid var(--border);
     }
 
     .form-section-title {
       font-size: 1rem;
       font-weight: 800;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 1rem;
     }
 
     /* File Upload */
     .file-upload-zone {
-      border: 2px dashed #111111;
+      border: 2px dashed var(--border);
       padding: 2.5rem 2rem;
       text-align: center;
       cursor: pointer;
       transition: all 0.15s;
-      background: #ffffff;
+      background: var(--surface);
     }
 
     .file-upload-zone:hover,
     .file-upload-zone.dragover {
-      background: #F9F4EB;
+      background: var(--secondary);
       border-style: solid;
     }
 
@@ -841,28 +841,26 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       display: flex;
       justify-content: center;
       margin-bottom: 1rem;
-      color: #111111;
+      color: var(--foreground);
     }
 
     .file-upload-text {
       font-size: 1rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 0.25rem;
     }
 
     .file-upload-hint {
       font-size: 0.875rem;
-      color: #111111;
-      opacity: 0.6;
+      color: var(--muted);
       margin: 0;
     }
 
     .uploading-hint {
       margin: 0.5rem 0 0;
       font-size: 0.875rem;
-      color: #111111;
-      opacity: 0.6;
+      color: var(--muted);
     }
 
     /* File List */
@@ -877,8 +875,8 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       align-items: center;
       justify-content: space-between;
       padding: 1rem;
-      background: #F9F4EB;
-      border: 2px solid #111111;
+      background: var(--secondary);
+      border: 2px solid var(--border);
       margin-bottom: 0.5rem;
       gap: 0.75rem;
     }
@@ -887,7 +885,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      color: #111111;
+      color: var(--foreground);
       min-width: 0;
       flex: 1;
       flex-wrap: wrap;
@@ -901,14 +899,14 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     .progress-track {
       width: 100%;
       height: 8px;
-      background: #ffffff;
-      border: 2px solid #111111;
+      background: var(--surface);
+      border: 2px solid var(--border);
       overflow: hidden;
     }
 
     .progress-fill {
       height: 100%;
-      background: #111111;
+      background: var(--primary);
       width: 0;
       transition: width 0.15s linear;
     }
@@ -916,7 +914,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     .file-name {
       font-size: 0.9375rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--foreground);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -924,15 +922,13 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
 
     .file-size {
       font-size: 0.8125rem;
-      color: #111111;
-      opacity: 0.6;
+      color: var(--muted);
       flex-shrink: 0;
     }
 
     .file-status {
       font-size: 0.8125rem;
-      color: #111111;
-      opacity: 0.6;
+      color: var(--muted);
       flex-shrink: 0;
     }
 
@@ -943,9 +939,9 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       width: 36px;
       height: 36px;
       padding: 0;
-      background: #ffffff;
-      border: 2px solid #111111;
-      color: #111111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      color: var(--foreground);
       cursor: pointer;
       transition: all 0.15s;
       flex-shrink: 0;
@@ -953,8 +949,8 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     }
 
     .file-remove-btn:hover {
-      background: #FA4B28;
-      color: #ffffff;
+      background: var(--danger);
+      color: white;
     }
 
     /* Buttons */
@@ -967,7 +963,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       font-size: 0.9375rem;
       font-weight: 700;
       text-decoration: none;
-      border: 2px solid #111111;
+      border: 2px solid var(--border);
       cursor: pointer;
       transition: transform 0.1s, box-shadow 0.1s;
       font-family: inherit;
@@ -976,7 +972,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
 
     .btn:hover:not(:disabled) {
       transform: translate(-2px, -2px);
-      box-shadow: 4px 4px 0px 0px #111111;
+      box-shadow: 4px 4px 0px 0px var(--border);
     }
 
     .btn:active:not(:disabled) {
@@ -1006,7 +1002,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       gap: 1rem;
       margin-top: 2rem;
       padding-top: 2rem;
-      border-top: 2px solid #111111;
+      border-top: 2px solid var(--border);
     }
 
     @media (max-width: 640px) {
@@ -1021,9 +1017,9 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
 
     /* Danger Zone */
     .danger-zone-card {
-      background: #ffffff;
-      border: 2px solid #111111;
-      box-shadow: 4px 4px 0px 0px #111111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       margin-top: 2rem;
       margin-bottom: 2rem;
     }
@@ -1031,10 +1027,10 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     .danger-zone-title {
       font-size: 1.25rem;
       font-weight: 800;
-      color: #111111;
+      color: var(--foreground);
       margin: 0;
       padding: 1.25rem 1.5rem;
-      border-bottom: 2px solid #111111;
+      border-bottom: 2px solid var(--border);
     }
 
     .danger-zone-content {
@@ -1046,7 +1042,7 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       flex-direction: column;
       gap: 1rem;
       padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid #e5e5e5;
+      border-bottom: 1px solid var(--border);
     }
 
     .danger-zone-item:last-child {
@@ -1068,43 +1064,43 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     .danger-zone-item-title {
       font-size: 0.9375rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 0.25rem 0;
     }
 
     .danger-zone-item-desc {
       font-size: 0.875rem;
-      color: #666666;
+      color: var(--muted);
       margin: 0;
     }
 
     .btn-danger {
-      background: #FA4B28;
+      background: var(--danger);
       color: white;
-      border: 2px solid #111111;
+      border: 2px solid var(--border);
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s ease;
-      box-shadow: 2px 2px 0px 0px #111111;
+      box-shadow: 2px 2px 0px 0px var(--border);
     }
 
     .btn-danger:hover {
-      background: #e53e1e;
-      border-color: #e53e1e;
+      background: darkred;
+      border-color: var(--border);
     }
 
     .btn-danger-outline {
-      background: white;
-      color: #111111;
-      border: 2px solid #111111;
+      background: var(--surface);
+      color: var(--foreground);
+      border: 2px solid var(--border);
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s ease;
-      box-shadow: 2px 2px 0px 0px #111111;
+      box-shadow: 2px 2px 0px 0px var(--border);
     }
 
     .btn-danger-outline:hover {
-      background: #FEF2F2;
+      background: var(--secondary);
     }
 
     /* Danger button shared size */
@@ -1129,10 +1125,22 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       justify-content: space-between;
       gap: 1rem;
       padding: 1.25rem;
-      background: #68E079;
-      border: 2px solid #111111;
-      box-shadow: 4px 4px 0px 0px #111111;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: 4px 4px 0px 0px var(--border);
       margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .live-store-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 8px;
+      background: var(--success);
     }
 
     @media (max-width: 640px) {
@@ -1146,13 +1154,15 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
       display: flex;
       align-items: center;
       gap: 1rem;
+      padding-left: 0.25rem;
     }
 
     .live-store-icon {
       width: 44px;
       height: 44px;
-      background: #ffffff;
-      border: 2px solid #111111;
+      background: var(--success);
+      border: 2px solid var(--border);
+      color: #111111;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1166,19 +1176,29 @@ import { SubdomainService } from '../../../core/services/subdomain.service';
     .live-store-label {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--foreground);
       margin: 0 0 0.25rem;
     }
 
     .live-store-url {
       font-size: 0.9375rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--foreground);
       text-decoration: underline;
     }
 
     .live-store-url:hover {
-      color: #2B57D6;
+      color: var(--primary);
+    }
+
+    .live-store-card .btn-secondary {
+      background: var(--background);
+      color: var(--foreground);
+      border-color: var(--border);
+    }
+
+    .live-store-card .btn-secondary:hover:not(:disabled) {
+      background: var(--secondary);
     }
 
     .btn-sm {
@@ -1710,7 +1730,9 @@ export class ProductFormComponent implements OnInit {
         }
       }
 
-      this.router.navigate(['/dashboard/products']);
+      if (!this.isEditing()) {
+        this.router.navigate(['/dashboard/products']);
+      }
     } catch (error) {
       console.error('Failed to save product:', error);
       this.toaster.handleError(error, 'Failed to save product. Please try again.');
@@ -1838,7 +1860,7 @@ export class ProductFormComponent implements OnInit {
       try {
         await navigator.share({
           title: this.form.title || 'Product',
-          text: `Check out ${this.form.title || 'this product'} on StoresCraft`,
+          text: `Check out ${this.form.title || 'this product'} on TheBlueMustard`,
           url,
         });
       } catch { /* user cancelled */ }

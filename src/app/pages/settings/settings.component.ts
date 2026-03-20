@@ -1,8 +1,9 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SettingsService } from '../../core/services/settings.service';
+import { FileUploadService } from '../../core/services/file-upload.service';
 import { ToasterService } from '../../core/services/toaster.service';
 import { AuthService } from '../../core/services/auth.service';
 import { User, UserSettings } from '../../core/models';
@@ -77,12 +78,34 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
                         </div>
                         <div class="avatar-actions">
                           <input
-                            type="url"
-                            class="form-input"
-                            placeholder="https://example.com/photo.jpg"
-                            [(ngModel)]="profileForm.avatarUrl"
+                            #avatarFileInput
+                            type="file"
+                            accept="image/*"
+                            class="avatar-file-input"
+                            (change)="onAvatarFileSelected($event)"
                           />
-                          <span class="form-hint">Enter a URL for your profile photo</span>
+                          <div class="avatar-upload-row">
+                            <button
+                              type="button"
+                              class="btn btn-secondary btn-sm"
+                              [disabled]="avatarUploading() || saving()"
+                              (click)="avatarFileInput.click()">
+                              {{ avatarUploading() ? 'Uploading...' : 'Upload Photo' }}
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-secondary btn-sm"
+                              [disabled]="avatarUploading() || !profileForm.avatarUrl"
+                              (click)="clearAvatar()">
+                              Remove
+                            </button>
+                          </div>
+                          @if (avatarUploading()) {
+                            <span class="form-hint">Uploading image... {{ avatarUploadProgress() }}%</span>
+                          } @else {
+                            <span class="form-hint">Upload a JPG, PNG, WebP, GIF, SVG, or AVIF image</span>
+                          }
+                          <span class="form-hint">Tip: click Save Profile after upload to sync this image to your account</span>
                         </div>
                       </div>
                     </div>
@@ -98,9 +121,27 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
                       <label class="form-label">Username</label>
                       <div class="input-with-prefix">
                         <span class="input-prefix">&#64;</span>
-                        <input type="text" class="form-input prefix" placeholder="username" [(ngModel)]="profileForm.username" maxlength="30" />
+                        <input
+                          type="text"
+                          class="form-input prefix"
+                          [class.input-valid]="usernameStatus() === 'available' || usernameStatus() === 'unchanged'"
+                          [class.input-invalid]="usernameStatus() === 'invalid' || usernameStatus() === 'unavailable'"
+                          placeholder="username"
+                          [(ngModel)]="profileForm.username"
+                          (ngModelChange)="onUsernameInputChange($event)"
+                          maxlength="30"
+                        />
                       </div>
                       <span class="form-hint">Lowercase letters, numbers, and underscores only</span>
+                      @if (usernameStatus() !== 'idle') {
+                        <span
+                          class="form-hint username-status"
+                          [class.status-checking]="usernameStatus() === 'checking'"
+                          [class.status-available]="usernameStatus() === 'available' || usernameStatus() === 'unchanged'"
+                          [class.status-unavailable]="usernameStatus() === 'invalid' || usernameStatus() === 'unavailable'">
+                          {{ usernameStatusMessage() }}
+                        </span>
+                      }
                     </div>
 
                     <!-- Bio -->
@@ -160,7 +201,7 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
                   </div>
 
                   <div class="card-actions">
-                    <button class="btn btn-primary" (click)="saveProfile()" [disabled]="saving()">
+                    <button class="btn btn-primary" (click)="saveProfile()" [disabled]="!canSaveProfile()">
                       {{ saving() ? 'Saving...' : 'Save Profile' }}
                     </button>
                   </div>
@@ -434,20 +475,20 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     }
   `,
   styles: [`
-    :host { display: block; min-height: 100vh; background: #F9F4EB; }
+    :host { display: block; min-height: 100vh; background: var(--secondary); color: var(--foreground); }
 
     .container { max-width: 1024px; margin: 0 auto; padding: 0 1.5rem; }
     @media (max-width: 640px) { .container { padding: 0 1rem; } }
 
     /* Hero */
-    .hero-section { background: #F9F4EB; padding: 1.5rem 0; border-bottom: 2px solid #111; }
+    .hero-section { background: var(--secondary); padding: 1.5rem 0; border-bottom: 2px solid var(--border); }
     .breadcrumb { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
-    .breadcrumb-link { font-size: 0.875rem; font-weight: 500; color: #111; text-decoration: none; }
-    .breadcrumb-link:hover { color: #2B57D6; }
-    .breadcrumb-sep { color: #111; opacity: 0.4; }
-    .breadcrumb-current { font-size: 0.875rem; font-weight: 700; color: #111; }
-    .page-title { font-size: 2rem; font-weight: 800; color: #111; margin: 0 0 0.25rem; letter-spacing: -0.02em; }
-    .page-subtitle { font-size: 1rem; color: #111; opacity: 0.6; margin: 0; }
+    .breadcrumb-link { font-size: 0.875rem; font-weight: 500; color: var(--foreground); text-decoration: none; }
+    .breadcrumb-link:hover { color: var(--primary); }
+    .breadcrumb-sep { color: var(--foreground); opacity: 0.4; }
+    .breadcrumb-current { font-size: 0.875rem; font-weight: 700; color: var(--foreground); }
+    .page-title { font-size: 2rem; font-weight: 800; color: var(--foreground); margin: 0 0 0.25rem; letter-spacing: -0.02em; }
+    .page-subtitle { font-size: 1rem; color: var(--foreground); opacity: 0.6; margin: 0; }
 
     /* Settings Layout */
     .content-section { padding: 1.5rem 0 3rem; }
@@ -462,13 +503,13 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
       display: flex; align-items: center; gap: 0.75rem;
       padding: 0.75rem 1rem; border: 2px solid transparent;
       background: transparent; font-size: 0.9375rem; font-weight: 600;
-      color: #111; opacity: 0.6; cursor: pointer; transition: all 0.15s;
+      color: var(--foreground); opacity: 0.6; cursor: pointer; transition: all 0.15s;
       text-align: left; border-radius: 0;
     }
-    .tab-btn:hover { opacity: 1; background: rgba(0,0,0,0.03); }
+    .tab-btn:hover { opacity: 1; background: var(--surface-hover); }
     .tab-btn.active {
-      opacity: 1; background: #fff; border: 2px solid #111;
-      box-shadow: 3px 3px 0 #111;
+      opacity: 1; background: var(--surface); border: 2px solid var(--border);
+      box-shadow: 3px 3px 0 var(--border);
     }
     .tab-icon { display: flex; align-items: center; width: 20px; height: 20px; }
     .tab-icon ::ng-deep svg { width: 20px; height: 20px; }
@@ -492,13 +533,13 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     /* Cards */
     .settings-panel { flex: 1; min-width: 0; }
     .card {
-      background: #fff; border: 2px solid #111;
-      box-shadow: 4px 4px 0 #111; padding: 1.5rem;
+      background: var(--surface); border: 2px solid var(--border);
+      box-shadow: 4px 4px 0 var(--border); padding: 1.5rem;
     }
     .mt-card { margin-top: 1.5rem; }
-    .card-title { font-size: 1.25rem; font-weight: 800; color: #111; margin: 0 0 0.25rem; }
-    .card-description { font-size: 0.875rem; color: #111; opacity: 0.6; margin: 0 0 1.5rem; }
-    .card-actions { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 0.75rem; }
+    .card-title { font-size: 1.25rem; font-weight: 800; color: var(--foreground); margin: 0 0 0.25rem; }
+    .card-description { font-size: 0.875rem; color: var(--foreground); opacity: 0.6; margin: 0 0 1.5rem; }
+    .card-actions { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--surface-hover); display: flex; justify-content: flex-end; gap: 0.75rem; }
 
     /* Form Grid */
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
@@ -506,20 +547,26 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     .full-width { grid-column: 1 / -1; }
     @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
 
-    .form-label { font-size: 0.875rem; font-weight: 700; color: #111; }
-    .form-label-sm { font-size: 0.8125rem; font-weight: 600; color: #111; }
-    .section-label { font-size: 1rem; font-weight: 800; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid #eee; }
-    .form-hint { font-size: 0.75rem; color: #111; opacity: 0.5; }
-    .hint-text { font-size: 0.875rem; color: #111; opacity: 0.6; margin: 0; line-height: 1.5; }
+    .form-label { font-size: 0.875rem; font-weight: 700; color: var(--foreground); }
+    .form-label-sm { font-size: 0.8125rem; font-weight: 600; color: var(--foreground); }
+    .section-label { font-size: 1rem; font-weight: 800; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--surface-hover); }
+    .form-hint { font-size: 0.75rem; color: var(--muted); }
+    .username-status { font-weight: 600; }
+    .status-checking { color: var(--primary); }
+    .status-available { color: var(--success); }
+    .status-unavailable { color: var(--danger); }
+    .hint-text { font-size: 0.875rem; color: var(--muted); margin: 0; line-height: 1.5; }
 
     .form-input {
       width: 100%; padding: 0.625rem 0.75rem; font-size: 0.9375rem;
-      border: 2px solid #111; background: #fff; color: #111;
+      border: 2px solid var(--border); background: var(--surface); color: var(--foreground);
       transition: box-shadow 0.15s; outline: none;
       font-family: inherit; box-sizing: border-box;
     }
-    .form-input:focus { box-shadow: 3px 3px 0 #111; }
-    .form-input.readonly { background: #f5f5f5; opacity: 0.7; cursor: not-allowed; }
+    .form-input:focus { box-shadow: 3px 3px 0 var(--border); }
+    .form-input.input-valid { border-color: var(--success); }
+    .form-input.input-invalid { border-color: var(--danger); }
+    .form-input.readonly { background: var(--secondary); opacity: 0.7; cursor: not-allowed; }
     .form-input.textarea { resize: vertical; min-height: 80px; }
     .form-input.select { cursor: pointer; appearance: auto; }
     .form-input.prefix { border-left: none; }
@@ -527,8 +574,8 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     .input-with-prefix { display: flex; }
     .input-prefix {
       display: flex; align-items: center; padding: 0 0.75rem;
-      background: #f5f5f5; border: 2px solid #111; border-right: none;
-      font-size: 0.9375rem; font-weight: 600; color: #111; opacity: 0.5;
+      background: var(--secondary); border: 2px solid var(--border); border-right: none;
+      font-size: 0.9375rem; font-weight: 600; color: var(--muted);
       user-select: none;
     }
 
@@ -536,13 +583,15 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     .avatar-row { display: flex; align-items: flex-start; gap: 1rem; }
     .avatar-preview {
       width: 64px; height: 64px; min-width: 64px;
-      border: 2px solid #111; background: #f5f5f5;
+      border: 2px solid var(--border); background: var(--secondary);
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
     .avatar-img { width: 100%; height: 100%; object-fit: cover; }
-    .avatar-placeholder { font-size: 1.25rem; font-weight: 800; color: #111; opacity: 0.4; }
+    .avatar-placeholder { font-size: 1.25rem; font-weight: 800; color: var(--foreground); opacity: 0.4; }
     .avatar-actions { flex: 1; display: flex; flex-direction: column; gap: 0.375rem; }
+    .avatar-file-input { display: none; }
+    .avatar-upload-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
     @media (max-width: 480px) {
       .avatar-row { flex-direction: column; }
       .avatar-preview { width: 56px; height: 56px; min-width: 56px; }
@@ -552,19 +601,19 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     .toggle-list { display: flex; flex-direction: column; }
     .toggle-row {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 0; border-bottom: 1px solid #eee; gap: 1rem;
+      padding: 1rem 0; border-bottom: 1px solid var(--surface-hover); gap: 1rem;
     }
     .toggle-row:last-child { border-bottom: none; }
     .toggle-info { display: flex; flex-direction: column; gap: 0.125rem; flex: 1; }
     .toggle-switch {
       position: relative; width: 48px; height: 28px; min-width: 48px;
-      border: 2px solid #111; background: #e5e5e5; cursor: pointer;
+      border: 2px solid var(--border); background: var(--secondary); cursor: pointer;
       transition: background 0.2s; padding: 0; border-radius: 0;
     }
-    .toggle-switch.active { background: #68E079; }
+    .toggle-switch.active { background: var(--success); }
     .toggle-knob {
       position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
-      background: #111; transition: transform 0.2s;
+      background: var(--border); transition: transform 0.2s;
     }
     .toggle-switch.active .toggle-knob { transform: translateX(20px); }
 
@@ -572,14 +621,14 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     .action-rows { display: flex; flex-direction: column; }
     .action-row {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1.25rem 0; border-bottom: 1px solid #eee; gap: 1rem;
+      padding: 1.25rem 0; border-bottom: 1px solid var(--surface-hover); gap: 1rem;
     }
     .action-row:first-child { padding-top: 0.5rem; }
     .action-row:last-child { border-bottom: none; padding-bottom: 0; }
     .action-info { display: flex; flex-direction: column; gap: 0.125rem; flex: 1; }
-    .action-title { font-size: 0.9375rem; font-weight: 700; color: #111; }
-    .action-desc { font-size: 0.8125rem; color: #111; opacity: 0.5; }
-    .danger-text { color: #DC2626; }
+    .action-title { font-size: 0.9375rem; font-weight: 700; color: var(--foreground); }
+    .action-desc { font-size: 0.8125rem; color: var(--muted); }
+    .danger-text { color: var(--danger); }
     @media (max-width: 480px) {
       .action-row { flex-direction: column; align-items: flex-start; }
     }
@@ -587,34 +636,34 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
     /* Info Box */
     .info-box {
       display: flex; align-items: flex-start; gap: 0.75rem;
-      padding: 1rem; background: #F9F4EB; border: 1px solid #ddd;
-      font-size: 0.875rem; color: #111; opacity: 0.8; line-height: 1.5;
+      padding: 1rem; background: var(--secondary); border: 1px solid var(--border);
+      font-size: 0.875rem; color: var(--foreground); opacity: 0.8; line-height: 1.5;
     }
     .info-box svg { min-width: 20px; margin-top: 1px; }
-    .info-link { color: #2B57D6; font-weight: 600; text-decoration: underline; }
+    .info-link { color: var(--primary); font-weight: 600; text-decoration: underline; }
 
     /* Buttons */
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
       padding: 0.75rem 1.5rem; font-size: 0.9375rem; font-weight: 700;
-      border: 2px solid #111; cursor: pointer; transition: all 0.15s;
-      background: #fff; color: #111; box-shadow: 3px 3px 0 #111;
+      border: 2px solid var(--border); cursor: pointer; transition: all 0.15s;
+      background: var(--surface); color: var(--foreground); box-shadow: 3px 3px 0 var(--border);
       font-family: inherit; white-space: nowrap; border-radius: 0;
     }
-    .btn:hover { transform: translate(1px, 1px); box-shadow: 2px 2px 0 #111; }
-    .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #111; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 3px 3px 0 #111; }
-    .btn-primary { background: #FFC60B; }
-    .btn-primary:hover { background: #ffdb4d; }
-    .btn-secondary { background: #f5f5f5; }
-    .btn-danger { background: #FEE2E2; color: #DC2626; border-color: #DC2626; box-shadow: 3px 3px 0 #DC2626; }
-    .btn-danger:hover { background: #FECACA; transform: translate(1px, 1px); box-shadow: 2px 2px 0 #DC2626; }
-    .btn-danger:disabled { box-shadow: 3px 3px 0 #DC2626; }
+    .btn:hover { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--border); }
+    .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--border); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: 3px 3px 0 var(--border); }
+    .btn-primary { background: var(--accent); }
+    .btn-primary:hover { filter: brightness(0.96); }
+    .btn-secondary { background: var(--secondary); }
+    .btn-danger { background: var(--danger-bg); color: var(--danger); border-color: var(--danger); box-shadow: 3px 3px 0 var(--danger); }
+    .btn-danger:hover { background: var(--danger-bg); transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--danger); }
+    .btn-danger:disabled { box-shadow: 3px 3px 0 var(--danger); }
     .btn-sm { padding: 0.5rem 1rem; font-size: 0.8125rem; }
 
     /* Skeleton */
-    .skeleton-card { background: #fff; border: 2px solid #111; box-shadow: 4px 4px 0 #111; padding: 1.5rem; }
-    .skeleton-line { background: #e5e5e5; border-radius: 2px; animation: pulse 1.5s infinite; }
+    .skeleton-card { background: var(--surface); border: 2px solid var(--border); box-shadow: 4px 4px 0 var(--border); padding: 1.5rem; }
+    .skeleton-line { background: var(--secondary); border-radius: 2px; animation: pulse 1.5s infinite; }
     .w-third { width: 33%; }
     .w-two-thirds { width: 66%; }
     .w-quarter { width: 25%; }
@@ -628,31 +677,40 @@ type SettingsTab = 'profile' | 'account' | 'payout' | 'privacy';
 
     /* Modal */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      position: fixed; inset: 0; background: var(--overlay);
       display: flex; align-items: center; justify-content: center;
       z-index: 50; padding: 1rem;
     }
     .modal-card {
-      background: #fff; border: 2px solid #111; box-shadow: 6px 6px 0 #111;
+      background: var(--surface); border: 2px solid var(--border); box-shadow: 6px 6px 0 var(--border);
       padding: 2rem; max-width: 480px; width: 100%;
     }
-    .modal-title { font-size: 1.25rem; font-weight: 800; color: #DC2626; margin: 0 0 1rem; }
-    .modal-text { font-size: 0.9375rem; color: #111; margin: 0 0 1rem; line-height: 1.5; }
+    .modal-title { font-size: 1.25rem; font-weight: 800; color: var(--danger); margin: 0 0 1rem; }
+    .modal-text { font-size: 0.9375rem; color: var(--foreground); margin: 0 0 1rem; line-height: 1.5; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
   `],
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
   private settingsService = inject(SettingsService);
+  private fileUpload = inject(FileUploadService);
   private toaster = inject(ToasterService);
   auth = inject(AuthService);
+  private readonly usernamePattern = /^[a-z0-9_]+$/;
+  private usernameCheckTimer: ReturnType<typeof setTimeout> | null = null;
+  private usernameCheckRequestId = 0;
+  private originalUsername = '';
 
   // State
   loading = signal(true);
   saving = signal(false);
   exporting = signal(false);
+  avatarUploading = signal(false);
+  avatarUploadProgress = signal(0);
   activeTab = signal<SettingsTab>('profile');
   showDeleteModal = signal(false);
   deleteConfirmation = '';
+  usernameStatus = signal<'idle' | 'unchanged' | 'invalid' | 'checking' | 'available' | 'unavailable'>('idle');
+  usernameStatusMessage = signal('');
 
   profile = signal<User | null>(null);
   settings = signal<UserSettings | null>(null);
@@ -757,6 +815,11 @@ export class SettingsComponent implements OnInit {
     this.loadSettings();
   }
 
+  ngOnDestroy() {
+    this.clearUsernameCheckTimer();
+    this.usernameCheckRequestId += 1;
+  }
+
   async loadSettings() {
     this.loading.set(true);
     try {
@@ -775,6 +838,8 @@ export class SettingsComponent implements OnInit {
   }
 
   private populateForms(profile: User, settings: UserSettings) {
+    this.originalUsername = profile.username || '';
+
     this.profileForm = {
       displayName: profile.displayName || '',
       username: profile.username || '',
@@ -808,6 +873,8 @@ export class SettingsComponent implements OnInit {
       hideContactEmail: settings.hideContactEmail ?? false,
       twoFactorEnabled: settings.twoFactorEnabled ?? false,
     };
+
+    this.setUsernameStatus('unchanged', 'This is your current username');
   }
 
   getInitials(): string {
@@ -815,11 +882,153 @@ export class SettingsComponent implements OnInit {
     return name.slice(0, 2).toUpperCase();
   }
 
+  async onAvatarFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.toaster.error('Please choose a valid image file');
+      if (input) input.value = '';
+      return;
+    }
+
+    this.avatarUploading.set(true);
+    this.avatarUploadProgress.set(0);
+
+    try {
+      const uploaded = await this.fileUpload.uploadImage(file, 'logo', {
+        onProgress: (percent) => {
+          if (percent !== null) {
+            this.avatarUploadProgress.set(Math.max(0, Math.min(100, percent)));
+          }
+        },
+      });
+
+      this.profileForm.avatarUrl = uploaded.imageUrl;
+      this.toaster.success('Photo uploaded. Click Save Profile to apply it.');
+    } catch (err: any) {
+      this.toaster.error(err?.message || 'Failed to upload profile photo');
+    } finally {
+      this.avatarUploading.set(false);
+      this.avatarUploadProgress.set(0);
+      if (input) input.value = '';
+    }
+  }
+
+  clearAvatar() {
+    this.profileForm.avatarUrl = '';
+  }
+
+  onUsernameInputChange(value: string) {
+    this.profileForm.username = value || '';
+    this.triggerUsernameAvailabilityCheck();
+  }
+
+  canSaveProfile(): boolean {
+    if (this.saving() || this.avatarUploading()) return false;
+
+    const username = this.profileForm.username?.trim() || '';
+    if (!username || username === this.originalUsername) return true;
+
+    return this.usernameStatus() === 'available';
+  }
+
+  private setUsernameStatus(
+    status: 'idle' | 'unchanged' | 'invalid' | 'checking' | 'available' | 'unavailable',
+    message: string,
+  ) {
+    this.usernameStatus.set(status);
+    this.usernameStatusMessage.set(message);
+  }
+
+  private clearUsernameCheckTimer() {
+    if (this.usernameCheckTimer) {
+      clearTimeout(this.usernameCheckTimer);
+      this.usernameCheckTimer = null;
+    }
+  }
+
+  private triggerUsernameAvailabilityCheck() {
+    this.clearUsernameCheckTimer();
+
+    const username = this.profileForm.username?.trim() || '';
+    if (!username) {
+      this.setUsernameStatus('idle', '');
+      return;
+    }
+
+    if (username === this.originalUsername) {
+      this.setUsernameStatus('unchanged', 'This is your current username');
+      return;
+    }
+
+    if (username.length < 3 || username.length > 30 || !this.usernamePattern.test(username)) {
+      this.setUsernameStatus(
+        'invalid',
+        'Username must be 3-30 characters and use lowercase letters, numbers, and underscores only',
+      );
+      return;
+    }
+
+    this.setUsernameStatus('checking', 'Checking username availability...');
+    const requestId = ++this.usernameCheckRequestId;
+
+    this.usernameCheckTimer = setTimeout(async () => {
+      try {
+        const response = await this.settingsService.checkUsernameAvailability(username);
+
+        if (requestId !== this.usernameCheckRequestId) {
+          return;
+        }
+
+        if (!response.success || !response.data) {
+          this.setUsernameStatus('unavailable', 'Unable to verify username right now');
+          return;
+        }
+
+        if (response.data.reason === 'unchanged') {
+          this.setUsernameStatus('unchanged', 'This is your current username');
+          return;
+        }
+
+        if (response.data.available) {
+          this.setUsernameStatus('available', 'Username is available');
+        } else {
+          this.setUsernameStatus('unavailable', 'Username is already taken');
+        }
+      } catch {
+        if (requestId !== this.usernameCheckRequestId) {
+          return;
+        }
+        this.setUsernameStatus('unavailable', 'Unable to verify username right now');
+      }
+    }, 350);
+  }
+
   async saveProfile() {
     if (this.saving()) return;
-    if (this.profileForm.username && !/^[a-z0-9_]+$/.test(this.profileForm.username)) {
+    const username = this.profileForm.username?.trim() || '';
+    const isUsernameChanged = !!username && username !== this.originalUsername;
+
+    if (username && !this.usernamePattern.test(username)) {
       this.toaster.error('Username can only contain lowercase letters, numbers, and underscores');
       return;
+    }
+
+    if (isUsernameChanged) {
+      if (this.usernameStatus() === 'checking') {
+        this.toaster.error('Please wait until username availability check completes');
+        return;
+      }
+
+      if (this.usernameStatus() !== 'available') {
+        this.toaster.error('Please choose an available username before saving');
+        return;
+      }
     }
 
     this.saving.set(true);
@@ -827,15 +1036,17 @@ export class SettingsComponent implements OnInit {
       const data: Record<string, any> = {};
       Object.entries(this.profileForm).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          data[key] = value || undefined;
+          data[key] = typeof value === 'string' ? value.trim() || undefined : value;
         }
       });
-      if (this.profileForm.username) data['username'] = this.profileForm.username;
+      if (username) data['username'] = username;
 
       const response = await this.settingsService.updateProfile(data);
       if (response.success) {
         this.toaster.success('Profile updated successfully');
         this.profile.set(response.data);
+        this.originalUsername = response.data?.username || this.originalUsername;
+        this.triggerUsernameAvailabilityCheck();
         // Refresh the global user state so navbar/avatar updates immediately
         this.auth.refreshUser();
       }

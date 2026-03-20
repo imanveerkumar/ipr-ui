@@ -5,7 +5,8 @@ export const environment = {
   razorpayKeyId: 'rzp_test_S1LNcKJX2HFDdb',
   subdomain: true,
   // Base domain for the dev deployment — storefronts live at <slug>.dev.imanveer.com
-  baseDomain: 'dev.imanveer.com',
+  // baseDomain: 'dev.imanveer.com',
+  baseDomain: 'dev.thebluemustard.com',
   // Primary domain that hosts Clerk auth; satellite domains point here for session handshake
   reservedSubdomains: [
     'api', 'www', 'app', 'admin', 'auth', 'cdn', 'static', 'assets', 'media',
@@ -18,6 +19,6 @@ export const environment = {
     'privacy', 'terms', 'billing', 'payments', 'checkout', 'account',
     'accounts', 'settings', 'profile', 'profiles', 'system', 'internal',
     'root', 'null', 'undefined', 'localhost', 'whatsapp', 'instagram',
-    'meta', 'mcp', 'ai', 'auto'
+    'meta', 'mcp', 'ai', 'auto', 'quick', 'quick-sell', 'quick-sells', 'dashboard', 'manage', 'management'
   ]
 };
