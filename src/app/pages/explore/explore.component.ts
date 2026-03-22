@@ -1083,13 +1083,14 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
     /* ========= MOBILE FILTER BUTTONS ========= */
     /* Inactive filter buttons use color-mix for reliable theme border updates */
     .mobile-filter-btn-inactive {
-      border-color: color-mix(in srgb, var(--border) 30%, transparent);
-      background: var(--surface);
-      color: color-mix(in srgb, var(--foreground) 55%, transparent);
+      border-color: color-mix(in srgb, var(--border) 55%, transparent);
+      background: color-mix(in srgb, var(--foreground) 8%, var(--surface));
+      color: var(--foreground);
       transition: all 200ms ease;
     }
     .mobile-filter-btn-inactive:hover {
-      border-color: var(--border);
+      border-color: color-mix(in srgb, var(--border) 80%, transparent);
+      background: color-mix(in srgb, var(--foreground) 12%, var(--surface));
     }
 
     /* Active filter buttons */
@@ -1101,18 +1102,18 @@ type SortOption = { label: string; value: string; order: 'asc' | 'desc' };
 
     /* Mobile filter toggle button inactive state */
     .mobile-filter-toggle-inactive {
-      border-color: color-mix(in srgb, var(--border) 30%, transparent);
-      color: color-mix(in srgb, var(--foreground) 55%, transparent);
+      border-color: color-mix(in srgb, var(--border) 55%, transparent);
+      color: var(--foreground);
     }
     .mobile-filter-toggle-inactive:hover {
-      border-color: var(--border);
+      border-color: color-mix(in srgb, var(--border) 80%, transparent);
     }
 
     /* Mobile content type pills inactive state */
     .mobile-content-pill-inactive {
-      border-color: color-mix(in srgb, var(--border) 30%, transparent);
-      background: var(--surface);
-      color: color-mix(in srgb, var(--foreground) 55%, transparent);
+      border-color: color-mix(in srgb, var(--border) 55%, transparent);
+      background: color-mix(in srgb, var(--foreground) 8%, var(--surface));
+      color: var(--foreground);
       transition: all 200ms ease;
     }
 

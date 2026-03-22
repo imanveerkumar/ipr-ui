@@ -47,7 +47,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     /* === MAIN HEADER === */
     .header {
       background-color: var(--bg-beige);
-      border-bottom: 2px solid var(--text-black);
+      border-bottom: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       position: relative;
       margin-bottom: 0;
     }
@@ -221,7 +221,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       font-size: 0.9375rem;
       color: var(--text-black);
       background: var(--surface);
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       border-radius: 50px;
       outline: none;
       transition: all 0.2s;
@@ -232,7 +232,8 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     }
 
     .search-input:focus {
-      box-shadow: 4px 4px 0px var(--text-black);
+      border-color: color-mix(in srgb, var(--foreground) 60%, transparent);
+      box-shadow: 4px 4px 0px color-mix(in srgb, var(--foreground) 25%, transparent);
     }
 
     .search-icon {
@@ -268,7 +269,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       width: 36px;
       height: 36px;
       background: var(--surface);
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       border-radius: 8px;
       cursor: pointer;
       color: var(--text-black);
@@ -293,7 +294,8 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     }
 
     .icon-btn:hover {
-      box-shadow: 3px 3px 0px var(--text-black);
+      border-color: color-mix(in srgb, var(--foreground) 60%, transparent);
+      box-shadow: 3px 3px 0px color-mix(in srgb, var(--foreground) 25%, transparent);
       transform: translate(-1px, -1px);
     }
 
@@ -324,7 +326,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
     }
 
     .mobile-search-btn {
@@ -360,7 +362,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       color: var(--text-black);
       padding: 8px 16px;
       background: transparent;
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s;
@@ -407,14 +409,15 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       gap: 8px;
       padding: 4px;
       background: var(--surface);
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       border-radius: 50px;
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .profile-btn:hover {
-      box-shadow: 3px 3px 0px var(--text-black);
+      border-color: color-mix(in srgb, var(--foreground) 60%, transparent);
+      box-shadow: 3px 3px 0px color-mix(in srgb, var(--foreground) 25%, transparent);
       transform: translate(-1px, -1px);
     }
 
@@ -439,7 +442,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
     }
 
     .profile-avatar {
@@ -612,9 +615,9 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       top: calc(100% + 8px);
       width: 240px;
       background: var(--bg-beige);
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       border-radius: 12px;
-      box-shadow: 6px 6px 0px var(--text-black);
+      box-shadow: 6px 6px 0px color-mix(in srgb, var(--foreground) 20%, transparent);
       padding: 8px;
       z-index: 1000;
       animation: dropdown-enter 0.2s ease-out;
@@ -633,7 +636,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 
     .dropdown-header {
       padding: 12px;
-      border-bottom: 2px dashed var(--text-black);
+      border-bottom: 2px dashed color-mix(in srgb, var(--foreground) 20%, transparent);
       margin-bottom: 8px;
     }
 
@@ -718,7 +721,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       z-index: 55;
       transform: translateX(100%);
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      border-left: 2px solid var(--text-black);
+      border-left: 2px solid color-mix(in srgb, var(--foreground) 25%, transparent);
       overflow-y: auto;
     }
 
@@ -744,7 +747,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       align-items: center;
       justify-content: space-between;
       padding: 1rem 1.25rem;
-      border-bottom: 2px solid var(--text-black);
+      border-bottom: 2px solid color-mix(in srgb, var(--foreground) 20%, transparent);
       background: var(--surface);
     }
 
@@ -754,7 +757,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       justify-content: center;
       width: 36px;
       height: 36px;
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       background: var(--bg-red);
       border-radius: 8px;
       cursor: pointer;
@@ -763,7 +766,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     }
 
     .mobile-menu-close:hover {
-      box-shadow: 2px 2px 0px var(--text-black);
+      box-shadow: 2px 2px 0px color-mix(in srgb, var(--foreground) 25%, transparent);
     }
 
     .mobile-menu-close svg {
@@ -774,7 +777,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     /* === MOBILE SEARCH === */
     .mobile-search {
       padding: 1rem 1.25rem;
-      border-bottom: 2px dashed var(--text-black);
+      border-bottom: 2px dashed color-mix(in srgb, var(--foreground) 20%, transparent);
     }
 
     .mobile-search-container {
@@ -786,15 +789,15 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       padding: 12px 16px 12px 44px;
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
-      color: var(--text-black);
+      color: var(--foreground);
       background: var(--surface);
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       border-radius: 50px;
       outline: none;
     }
 
     .mobile-search-input:focus {
-      box-shadow: 3px 3px 0px var(--text-black);
+      box-shadow: 3px 3px 0px color-mix(in srgb, var(--foreground) 35%, transparent);
     }
 
     .mobile-search-container .search-icon {
@@ -970,6 +973,15 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     .mobile-auth-btn-primary:hover {
       transform: translate(2px, 2px);
       box-shadow: 2px 2px 0px var(--border);
+    }
+
+    :host-context([data-theme="mustard-dark"]) .mobile-auth-btn-primary {
+      border-color: #444444;
+      box-shadow: 4px 4px 0px #444444;
+    }
+
+    :host-context([data-theme="mustard-dark"]) .mobile-auth-btn-primary:hover {
+      box-shadow: 2px 2px 0px #444444;
     }
 
     .mobile-auth-btn-secondary {
@@ -1316,7 +1328,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       align-items: center;
       gap: 12px;
       padding: 12px 16px;
-      border-bottom: 2px solid var(--text-black);
+      border-bottom: 2px solid color-mix(in srgb, var(--foreground) 20%, transparent);
       background: var(--surface);
     }
 
@@ -1326,7 +1338,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       justify-content: center;
       width: 40px;
       height: 40px;
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       background: var(--surface);
       border-radius: 10px;
       cursor: pointer;
@@ -1341,7 +1353,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     .mobile-search-overlay-back svg {
       width: 20px;
       height: 20px;
-      color: var(--text-black);
+      color: var(--foreground);
     }
 
     .mobile-search-overlay-input-container {
@@ -1354,15 +1366,15 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       padding: 12px 16px 12px 44px;
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
-      color: var(--text-black);
+      color: var(--foreground);
       background: var(--secondary);
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       border-radius: 50px;
       outline: none;
     }
 
     .mobile-search-overlay-input:focus {
-      box-shadow: 3px 3px 0px var(--text-black);
+      box-shadow: 3px 3px 0px color-mix(in srgb, var(--foreground) 35%, transparent);
     }
 
     .mobile-search-overlay-input-container .search-icon {
@@ -1386,7 +1398,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       display: flex;
       padding: 12px 16px;
       gap: 8px;
-      border-bottom: 2px dashed var(--text-black);
+      border-bottom: 2px dashed color-mix(in srgb, var(--foreground) 20%, transparent);
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -1403,9 +1415,9 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       font-family: 'DM Sans', sans-serif;
       font-size: 0.875rem;
       font-weight: 600;
-      color: var(--text-black);
-      background: var(--surface);
-      border: 2px solid var(--text-black);
+      color: var(--foreground);
+      background: color-mix(in srgb, var(--foreground) 8%, var(--surface));
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
       border-radius: 50px;
       cursor: pointer;
       white-space: nowrap;
@@ -1414,7 +1426,8 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
 
     .mobile-search-tab.active {
       background: var(--btn-yellow);
-      box-shadow: 2px 2px 0px var(--text-black);
+      color: #111111;
+      box-shadow: 2px 2px 0px color-mix(in srgb, var(--foreground) 40%, transparent);
     }
 
     .mobile-search-tab svg {
@@ -1436,7 +1449,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       height: 64px;
       margin: 0 auto 16px;
       background: var(--surface);
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 25%, transparent);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -1453,7 +1466,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
       font-weight: 600;
-      color: var(--text-black);
+      color: var(--foreground);
       margin: 0 0 4px;
     }
 
@@ -1474,7 +1487,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       transition: all 0.15s;
       margin-bottom: 8px;
       background: var(--surface);
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 25%, transparent);
     }
 
     .mobile-search-item:active {
@@ -1485,7 +1498,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       width: 56px;
       height: 56px;
       border-radius: 10px;
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 25%, transparent);
       object-fit: cover;
       flex-shrink: 0;
       background: var(--secondary);
@@ -1495,7 +1508,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      border: 2px solid var(--text-black);
+      border: 2px solid color-mix(in srgb, var(--foreground) 25%, transparent);
       object-fit: cover;
       flex-shrink: 0;
       background: var(--star-blue);
@@ -1523,7 +1536,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
       font-weight: 600;
-      color: var(--text-black);
+      color: var(--foreground);
       margin: 0 0 4px;
       white-space: nowrap;
       overflow: hidden;
@@ -1552,7 +1565,7 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       font-family: 'DM Sans', sans-serif;
       font-size: 1rem;
       font-weight: 700;
-      color: var(--text-black);
+      color: var(--foreground);
     }
 
     .mobile-search-item-badge {
@@ -1562,8 +1575,8 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       padding: 3px 8px;
       border-radius: 12px;
       background: var(--ticket-green);
-      border: 1px solid var(--text-black);
-      color: var(--text-black);
+      border: 1px solid color-mix(in srgb, var(--foreground) 30%, transparent);
+      color: #111111;
     }
 
     /* === THEME TOGGLE === */
@@ -1737,6 +1750,10 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
       color: var(--foreground);
     }
 
+    :host-context([data-theme="mustard-dark"]) .mobile-nav-link {
+      border-color: #444444;
+    }
+
     :host-context([data-theme="dark"]) .mobile-nav-link.active,
     :host-context([data-theme="mustard-dark"]) .mobile-nav-link.active {
       background: var(--accent);
@@ -1749,6 +1766,11 @@ import { TooltipComponent } from '../tooltip/tooltip.component';
     :host-context([data-theme="mustard-dark"]) .mobile-theme-option.selected {
       border-color: var(--border);
       box-shadow: 2px 2px 0px var(--border);
+    }
+
+    :host-context([data-theme="mustard-dark"]) .mobile-theme-option.selected {
+      border-color: #444444;
+      box-shadow: 2px 2px 0px #444444;
     }
   `],
   template: `
