@@ -24,101 +24,38 @@ interface SalesStats {
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
         <div class="bg-theme-secondary border-b-2 border-theme-border">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
-            <div class="text-left">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6 md:pt-6 md:pb-8 lg:pt-8 lg:pb-12">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 lg:gap-8">
 
-              
-              <!-- Main Heading -->
-              <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-theme-fg mb-1 md:mb-2 leading-tight">
-                Welcome, <span class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]">{{ auth.user()?.firstName || auth.user()?.displayName || 'Creator' }}</span>
-              </h1>
-              
+              <!-- Left: Heading + subtitle -->
+              <div>
+                <h1 class="font-display tracking-tighter text-2xl md:text-4xl lg:text-5xl font-bold text-theme-fg mb-2 leading-tight">
+                  Welcome, <span class="text-[rgb(124_58_237_/_var(--tw-bg-opacity,_1))]">{{ auth.user()?.firstName || auth.user()?.displayName || 'Creator' }}</span>
+                </h1>
+                <p class="text-sm md:text-base text-theme-muted">
+                  Manage your stores, products, and track your earnings.
+                </p>
+              </div>
 
-
-              <!-- Stats and Quick Actions Row -->
-              <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 md:gap-8 mb-8">
-                <!-- Hero Stats -->
-                <div class="flex-1 flex justify-center lg:justify-start">
-                  <div class="grid grid-cols-3 gap-2 md:flex md:justify-center lg:justify-start md:gap-8 max-w-2xl lg:max-w-none">
-                    <!-- Stores stat -->
-                    <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-theme-surface/50 md:bg-transparent border border-theme-border/20 md:border-0">
-                      <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-primary border border-theme-border flex items-center justify-center">
-                        <svg class="w-3 h-3 md:w-4 md:h-4 text-[var(--on-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                          <polyline points="9 22 9 12 15 12 15 22"/>
-                        </svg>
-                      </div>
-                      <div class="text-center md:text-left">
-                        @if (!loading()) {
-                          <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ stores().length }}</div>
-                        } @else {
-                          <div class="h-4 md:h-6 w-8 md:w-12 bg-theme-fg/10 rounded animate-pulse mb-0.5"></div>
-                        }
-                        <div class="text-[10px] md:text-xs text-theme-muted font-medium">Stores</div>
-                      </div>
-                    </div>
-                    <!-- Products stat -->
-                    <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-theme-surface/50 md:bg-transparent border border-theme-border/20 md:border-0">
-                      <div class="w-6 h-6 md:w-8 md:h-8 bg-[#7C3AED] border border-theme-border flex items-center justify-center">
-                        <svg class="w-3 h-3 md:w-4 md:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                        </svg>
-                      </div>
-                      <div class="text-center md:text-left">
-                        @if (!loading()) {
-                          <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ totalProducts() }}</div>
-                        } @else {
-                          <div class="h-4 md:h-6 w-8 md:w-12 bg-theme-fg/10 rounded animate-pulse mb-0.5"></div>
-                        }
-                        <div class="text-[10px] md:text-xs text-theme-muted font-medium">Products</div>
-                      </div>
-                    </div>
-                    <!-- Revenue stat -->
-                    <div class="flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 p-2 bg-theme-surface/50 md:bg-transparent border border-theme-border/20 md:border-0">
-                      <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-success border border-theme-border flex items-center justify-center">
-                        <svg class="w-3 h-3 md:w-4 md:h-4 text-[var(--on-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                      </div>
-                      <div class="text-center md:text-left">
-                        @if (!loading()) {
-                          <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">₹{{ formatRevenue(totalRevenue()) }}</div>
-                        } @else {
-                          <div class="h-4 md:h-6 w-10 md:w-16 bg-theme-fg/10 rounded animate-pulse mb-0.5"></div>
-                        }
-                        <div class="text-[10px] md:text-xs text-theme-muted font-medium">Revenue</div>
-                      </div>
-                    </div>
-                  </div>
+              <!-- Right: Tip + Action buttons -->
+              @if (loading()) {
+                <div class="flex flex-col sm:flex-row gap-3 shrink-0">
+                  <div class="h-11 w-full sm:w-40 bg-theme-fg/10 border-2 border-theme-border animate-pulse"></div>
+                  <div class="h-11 w-full sm:w-40 bg-theme-fg/10 border-2 border-theme-border animate-pulse"></div>
                 </div>
-
-                <!-- Quick Actions -->
-                @if (loading()) {
-                  <div class="flex flex-col sm:flex-row justify-center lg:justify-end items-center gap-3 w-full">
-                    <div class="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 mb-3 sm:mb-0 sm:mr-3">
-                      <div class="h-12 w-full sm:w-64 bg-theme-accent border-2 border-theme-border animate-pulse"></div>
+              } @else {
+                <div class="flex flex-col gap-3 shrink-0">
+                  @if (stores().length === 0) {
+                    <div class="flex items-center gap-2 px-3 py-2 bg-theme-accent/20 border border-theme-border/50 text-sm font-medium text-theme-fg">
+                      <svg class="w-4 h-4 shrink-0 text-theme-fg/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                      </svg>
+                      <span>Tip: Start by creating your store first</span>
                     </div>
-
-                    <div class="h-12 w-full sm:w-auto bg-theme-fg/10 border-2 border-theme-border animate-pulse"></div>
-                    <div class="h-12 w-full sm:w-auto bg-theme-fg/10 border-2 border-theme-border animate-pulse"></div>
-                  </div>
-                } @else {
-                  <div class="flex flex-col sm:flex-row justify-center lg:justify-end items-center gap-3">
-                    @if (stores().length === 0) {
-                      <div class="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-3 mb-3 sm:mb-0 sm:mr-3">
-                        <div class="flex items-center gap-3 bg-theme-accent border-2 border-theme-border px-3 py-2 shadow-[2px_2px_0px_0px_#000]">
-                          <div class="w-9 h-9 bg-theme-surface border-2 border-theme-border flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                            </svg>
-                          </div>
-                          <div class="text-sm font-bold text-[var(--on-accent)]">Tip: Start by creating your store first.</div>
-                        </div>
-                      </div>
-                    }
-
-                    <a routerLink="/dashboard/stores/new" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-theme-accent text-[var(--on-accent)] border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] hover:bg-[#ffdb4d] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] transition-all">
-                      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  }
+                  <div class="flex flex-col sm:flex-row gap-3">
+                    <a routerLink="/dashboard/stores/new" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-theme-accent text-[var(--on-accent)] border-2 border-theme-border font-bold text-sm shadow-[4px_4px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] hover:bg-[#ffdb4d] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] transition-all">
+                      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                       </svg>
                       @if (stores().length === 0) {
@@ -127,16 +64,16 @@ interface SalesStats {
                         Create Store
                       }
                     </a>
-
-                    <button type="button" (click)="handleCreateProduct()" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-theme-surface text-theme-fg border-2 border-theme-border font-bold shadow-[4px_4px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] transition-all">
-                      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button type="button" (click)="handleCreateProduct()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-theme-surface text-theme-fg border-2 border-theme-border font-bold text-sm shadow-[4px_4px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgb(124_58_237_/_var(--tw-bg-opacity,_1))] transition-all">
+                      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                       </svg>
                       Create Product
                     </button>
                   </div>
-                }
-              </div>
+                </div>
+              }
+
             </div>
           </div>
         </div>

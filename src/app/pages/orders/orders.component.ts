@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,7 +6,7 @@ import { Order } from '../../core/models/index';
 import { CheckoutService } from '../../core/services/checkout.service';
 
 type StatusFilter = 'ALL' | 'PENDING' | 'PAID' | 'FULFILLED' | 'FAILED' | 'REFUNDED' | 'CANCELLED';
-type SortOrder = 'desc' | 'asc';
+type SortOption = 'newest' | 'oldest';
 
 @Component({
   selector: 'app-orders',
@@ -16,65 +16,41 @@ type SortOrder = 'desc' | 'asc';
     <div class="min-h-screen bg-theme-surface font-sans antialiased">
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
-        <div class="bg-theme-secondary border-b-2 border-theme-border">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-6 md:pt-4 md:pb-8 lg:pt-6 lg:pb-12">
+        <div class="bg-theme-secondary border-b-2 lib-separator-border">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 pb-4 md:pt-4 md:pb-6 lg:pt-6 lg:pb-8">
             <div class="text-left">
-
-              
-              <!-- Main Heading -->
               <h1 class="font-display tracking-tighter mt-0 text-2xl md:text-4xl lg:text-5xl font-bold text-theme-fg mb-0 md:mb-1 leading-tight">
                 Order History
               </h1>
 
               <!-- Stats (below heading) -->
-              <div class="mt-4 md:mt-6 grid grid-cols-3 gap-2 md:flex md:justify-start md:gap-8 max-w-2xl mx-auto md:mx-0">
-                <!-- Total Orders stat -->
-                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-primary border border-theme-border rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ overallStats().totalOrders }}</div>
-                    } @else {
-                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
-                    }
-                    <div class="text-[10px] md:text-xs text-theme-muted font-medium">Total Orders</div>
-                  </div>
+              <div class="mt-4 md:mt-6 grid grid-cols-3 gap-2 md:gap-3 max-w-2xl mx-auto md:mx-0">
+                <!-- Total Orders -->
+                <div class="flex flex-col items-start justify-center p-3 md:p-4 rounded-xl bg-[#5B8DEF]">
+                  @if (!loading()) {
+                    <div class="text-lg md:text-2xl font-bold text-white leading-none">{{ overallStats().totalOrders }}</div>
+                  } @else {
+                    <div class="h-6 md:h-7 w-10 md:w-14 bg-white/15 rounded animate-pulse mb-1"></div>
+                  }
+                  <div class="text-[10px] md:text-xs text-white/80 font-semibold mt-1">Total Orders</div>
                 </div>
-                <!-- Completed stat -->
-                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-success border border-theme-border rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getCompletedCount() }}</div>
-                    } @else {
-                      <div class="h-4 md:h-6 w-8 md:w-12 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
-                    }
-                    <div class="text-[10px] md:text-xs text-theme-muted font-medium">Completed</div>
-                  </div>
+                <!-- Completed -->
+                <div class="flex flex-col items-start justify-center p-3 md:p-4 rounded-xl bg-[#68E079]">
+                  @if (!loading()) {
+                    <div class="text-lg md:text-2xl font-bold text-black leading-none">{{ getCompletedCount() }}</div>
+                  } @else {
+                    <div class="h-6 md:h-7 w-10 md:w-14 bg-black/15 rounded animate-pulse mb-1"></div>
+                  }
+                  <div class="text-[10px] md:text-xs text-black/70 font-semibold mt-1">Completed</div>
                 </div>
-                <!-- Total Spent stat -->
-                <div class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-2 p-2 bg-white/50 rounded-lg md:bg-transparent">
-                  <div class="w-6 h-6 md:w-8 md:h-8 bg-theme-accent border border-theme-border rounded-lg flex items-center justify-center">
-                    <svg class="w-3 h-3 md:w-4 md:h-4 text-theme-surface" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                  </div>
-                  <div class="text-center md:text-left">
-                    @if (!loading()) {
-                      <div class="text-sm md:text-xl font-bold text-theme-fg leading-none">{{ getTotalSpent() }}</div>
-                    } @else {
-                      <div class="h-4 md:h-6 w-10 md:w-16 bg-[#111111]/10 rounded animate-pulse mb-0.5"></div>
-                    }
-                    <div class="text-[10px] md:text-xs text-theme-muted font-medium">Total Spent</div>
-                  </div>
+                <!-- Total Spent -->
+                <div class="flex flex-col items-start justify-center p-3 md:p-4 rounded-xl bg-[#FFC60B]">
+                  @if (!loading()) {
+                    <div class="text-lg md:text-2xl font-bold text-black leading-none">{{ getTotalSpent() }}</div>
+                  } @else {
+                    <div class="h-6 md:h-7 w-10 md:w-14 bg-black/15 rounded animate-pulse mb-1"></div>
+                  }
+                  <div class="text-[10px] md:text-xs text-black/70 font-semibold mt-1">Total Spent</div>
                 </div>
               </div>
 
@@ -83,109 +59,185 @@ type SortOrder = 'desc' | 'asc';
         </div>
       </section>
 
+      <!-- Toolbar (Filters + Search) -->
+      <section class="sticky top-0 z-20 bg-theme-surface border-b-2 lib-separator-border">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div class="flex items-center gap-3">
+            <!-- Filter Toggle Button -->
+            <button
+              (click)="toggleFilters()"
+              [class.lib-filter-btn-active]="showFilters()"
+              [class.lib-filter-btn-inactive]="!showFilters()"
+              [attr.aria-label]="showFilters() ? 'Hide filters' : 'Show filters'"
+              class="flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm border-2 transition-all shrink-0"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+              </svg>
+              Filters
+              @if (hasActiveFilters()) {
+                <span class="w-2 h-2 rounded-full bg-current"></span>
+              }
+            </button>
+
+            <!-- Search Input -->
+            <div class="flex-1 relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </div>
+              <input
+                type="text"
+                [ngModel]="searchInput()"
+                (ngModelChange)="onSearchInput($event)"
+                placeholder="Product name or order ID..."
+                class="w-full pl-9 pr-9 py-2 text-sm bg-theme-surface border-2 border-theme-border rounded-lg text-theme-fg placeholder:text-theme-muted focus:outline-none focus:border-theme-fg transition-colors"
+              />
+              @if (searchInput()) {
+                <button
+                  (click)="clearSearch()"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-theme-muted hover:text-theme-fg transition-colors"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Desktop Filter Panel -->
+          @if (showFilters()) {
+            <div class="hidden lg:block mt-3 pt-3 border-t-2 lib-separator-border filter-panel-enter">
+              <div class="grid grid-cols-2 gap-6">
+                <!-- Status -->
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-widest text-theme-muted mb-2">Status</p>
+                  <div class="flex flex-wrap gap-2">
+                    @for (option of statusOptions; track option.value) {
+                      <button
+                        (click)="setStatusFilter(option.value)"
+                        [class.lib-filter-btn-desktop-active]="statusFilter() === option.value"
+                        [class.lib-filter-btn-desktop-inactive]="statusFilter() !== option.value"
+                        class="px-3 py-1.5 rounded-lg text-sm font-bold border-2 transition-all"
+                      >
+                        {{ option.label }}
+                      </button>
+                    }
+                  </div>
+                </div>
+                <!-- Sort -->
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-widest text-theme-muted mb-2">Sort By</p>
+                  <div class="flex flex-wrap gap-2">
+                    @for (option of sortOptions; track option.value) {
+                      <button
+                        (click)="setSortBy(option.value)"
+                        [class.lib-filter-btn-desktop-active]="sortBy() === option.value"
+                        [class.lib-filter-btn-desktop-inactive]="sortBy() !== option.value"
+                        class="px-3 py-1.5 rounded-lg text-sm font-bold border-2 transition-all"
+                      >
+                        {{ option.label }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Mobile Filter Drawer -->
+      @if (showFilters()) {
+        <div class="lg:hidden fixed inset-0 z-40 flex flex-col justify-end">
+          <div (click)="showFilters.set(false)" class="absolute inset-0 bg-black/40 backdrop-blur-[2px] lib-overlay-enter"></div>
+          <div class="absolute bottom-0 left-0 right-0 bg-theme-secondary rounded-t-2xl max-h-[85vh] flex flex-col lib-drawer-enter shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
+            <!-- Handle Bar -->
+            <div class="flex-shrink-0 pt-3 pb-1 flex justify-center">
+              <div class="w-10 h-1 rounded-full bg-theme-border"></div>
+            </div>
+            <!-- Header -->
+            <div class="flex-shrink-0 bg-theme-secondary lib-separator-border border-b-2 px-5 py-3.5 flex items-center justify-between">
+              <button
+                (click)="clearFilters()"
+                class="text-sm font-bold text-theme-muted hover:text-theme-fg transition-colors"
+              >
+                Reset
+              </button>
+              <span class="text-base font-bold text-theme-fg">Filters</span>
+              <button (click)="showFilters.set(false)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-fg-faint hover:bg-theme-border/20 active:bg-theme-border/30 transition-colors border lib-separator-border">
+                <svg class="w-4 h-4 text-theme-fg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <!-- Scrollable content -->
+            <div class="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+              <!-- Status -->
+              <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-theme-muted mb-3">Status</p>
+                <div class="flex flex-wrap gap-2">
+                  @for (option of statusOptions; track option.value) {
+                    <button
+                      (click)="setStatusFilter(option.value)"
+                      [class.mobile-filter-btn-active]="statusFilter() === option.value"
+                      [class.mobile-filter-btn-inactive]="statusFilter() !== option.value"
+                      class="px-4 py-2 rounded-2xl text-sm font-bold border-2 transition-all"
+                    >
+                      {{ option.label }}
+                    </button>
+                  }
+                </div>
+              </div>
+              <!-- Sort -->
+              <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-theme-muted mb-3">Sort By</p>
+                <div class="flex flex-wrap gap-2">
+                  @for (option of sortOptions; track option.value) {
+                    <button
+                      (click)="setSortBy(option.value)"
+                      [class.mobile-filter-btn-active]="sortBy() === option.value"
+                      [class.mobile-filter-btn-inactive]="sortBy() !== option.value"
+                      class="px-4 py-2 rounded-2xl text-sm font-bold border-2 transition-all"
+                    >
+                      {{ option.label }}
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+            <!-- Footer -->
+            <div class="flex-shrink-0 border-t lib-separator-border px-5 pt-3 pb-4 bg-theme-secondary">
+              <button
+                (click)="showFilters.set(false)"
+                class="w-full py-3 bg-theme-accent border-2 border-theme-border rounded-xl font-bold text-sm text-theme-surface shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+              >
+                Show Results
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
       <!-- Main Content -->
       <section class="py-6 md:py-8 lg:py-12 px-4 md:px-6 lg:px-8">
         <div class="max-w-5xl mx-auto">
-          <!-- Filters Row -->
-          <div class="orders-filter-shell mb-6 md:mb-8 sticky top-0 z-40 sm:relative sm:top-auto sm:z-auto">
-            <div class="orders-filter-row">
-              <div class="orders-search-panel orders-search-panel-embedded">
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
-                    <svg class="w-4 h-4 md:w-5 md:h-5 text-theme-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                  </div>
-                  <input
-                    id="orders-search"
-                    type="text"
-                    [(ngModel)]="searchQuery"
-                    (input)="onSearchInput()"
-                    aria-label="Find orders"
-                    placeholder="Product name or order id"
-                    class="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2.5 md:py-3 bg-theme-surface border-2 border-theme-border rounded-xl text-theme-fg placeholder:text-theme-muted focus:outline-none focus:ring-2 focus:ring-theme-fg/20 focus:border-theme-fg text-sm md:text-base font-medium transition-all"
-                  />
-                </div>
-              </div>
 
-              <div class="orders-status-sort-row scrollbar-hide">
-                <div class="relative orders-status-wrap min-w-[9.5rem] md:min-w-[12rem] flex-1 md:flex-none">
-                  <button
-                    (click)="toggleStatusDropdown()"
-                    class="orders-sort-trigger"
-                    aria-label="Order status filter"
-                  >
-                    <span class="orders-sort-value">{{ getCurrentStatusLabel() }}</span>
-                    <svg class="w-4 h-4 transition-transform" [class.rotate-180]="showStatusDropdown()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  </button>
-
-                  @if (showStatusDropdown()) {
-                    <div class="absolute top-full right-0 mt-2 w-full sm:w-44 bg-theme-surface border-2 border-theme-border rounded-xl shadow-[4px_4px_0px_0px_#000] z-[70] overflow-hidden">
-                      @for (status of statusFilters; track status.value) {
-                        <button
-                          (click)="setStatusFilter(status.value)"
-                          class="w-full px-3 md:px-4 py-2.5 md:py-3 text-left text-xs md:text-sm font-medium hover:bg-theme-secondary transition-colors"
-                          [class.border-b]="status !== statusFilters[statusFilters.length - 1]"
-                          [class.border-black/10]="status !== statusFilters[statusFilters.length - 1]"
-                          [class.bg-theme-accent]="currentStatus() === status.value"
-                          [class.text-black]="currentStatus() === status.value"
-                          [class.text-theme-fg]="currentStatus() !== status.value"
-                        >
-                          {{ status.label }}
-                        </button>
-                      }
-                    </div>
-                  }
-                </div>
-
-                <div class="relative orders-sort-wrap">
-                  <button
-                    (click)="toggleSortDropdown()"
-                    class="orders-sort-trigger"
-                  >
-                    <span class="orders-sort-value">{{ currentSortOrder() === 'desc' ? 'Newest first' : 'Oldest first' }}</span>
-                    <svg class="w-4 h-4 transition-transform" [class.rotate-180]="showSortDropdown()" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                  </button>
-
-                  @if (showSortDropdown()) {
-                    <div class="absolute top-full right-0 mt-2 w-full sm:w-44 bg-theme-surface border-2 border-theme-border rounded-xl shadow-[4px_4px_0px_0px_#000] z-[70] overflow-hidden">
-                      <button
-                        (click)="setSortOrder('desc')"
-                        class="w-full px-3 md:px-4 py-2.5 md:py-3 text-left text-xs md:text-sm font-medium hover:bg-theme-secondary transition-colors border-b border-black/10"
-                        [class.bg-theme-accent]="currentSortOrder() === 'desc'"
-                        [class.text-black]="currentSortOrder() === 'desc'"
-                        [class.text-theme-fg]="currentSortOrder() !== 'desc'"
-                      >
-                        Newest First
-                      </button>
-                      <button
-                        (click)="setSortOrder('asc')"
-                        class="w-full px-3 md:px-4 py-2.5 md:py-3 text-left text-xs md:text-sm font-medium hover:bg-theme-secondary transition-colors"
-                        [class.bg-theme-accent]="currentSortOrder() === 'asc'"
-                        [class.text-black]="currentSortOrder() === 'asc'"
-                        [class.text-theme-fg]="currentSortOrder() !== 'asc'"
-                      >
-                        Oldest First
-                      </button>
-                    </div>
-                  }
-                </div>
-
-                @if (hasActiveFilters()) {
-                  <button
-                    (click)="clearFilters()"
-                    class="orders-clear-btn orders-clear-btn-mobile"
-                  >
-                    Clear X
-                  </button>
-                }
-              </div>
+          <!-- Results / Active Filters Row -->
+          @if (!loading()) {
+            <div class="flex items-center justify-between mb-4 md:mb-6">
+              <p class="text-sm font-medium text-theme-muted">
+                {{ meta().total }} result{{ meta().total !== 1 ? 's' : '' }}
+              </p>
+              @if (hasActiveFilters()) {
+                <button (click)="clearFilters()" class="text-sm font-bold text-theme-muted hover:text-theme-fg transition-colors underline underline-offset-2">
+                  Clear all
+                </button>
+              }
             </div>
-          </div>
+          }
 
           <!-- Loading Skeleton -->
           @if (loading()) {
@@ -221,12 +273,12 @@ type SortOrder = 'desc' | 'asc';
                 </svg>
               </div>
               <h2 class="font-dm-sans text-xl md:text-2xl font-bold text-theme-fg mb-2">
-                {{ searchQuery || currentStatus() !== 'ALL' ? 'No orders found' : 'No orders yet' }}
+                {{ hasActiveFilters() ? 'No orders found' : 'No orders yet' }}
               </h2>
               <p class="text-sm md:text-base text-theme-muted max-w-md mx-auto mb-8 font-medium">
-                {{ searchQuery || currentStatus() !== 'ALL' ? 'Try adjusting your search or filters' : 'Start shopping and your orders will appear here.' }}
+                {{ hasActiveFilters() ? 'Try adjusting your search or filters' : 'Start shopping and your orders will appear here.' }}
               </p>
-              @if (!searchQuery && currentStatus() === 'ALL') {
+              @if (!hasActiveFilters()) {
                 <a routerLink="/explore" class="inline-flex items-center px-6 py-3 bg-theme-accent border-2 border-theme-border rounded-lg font-bold text-theme-surface hover:bg-[#ffdb4d] transition-all shadow-[4px_4px_0px_0px_#000] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                   Start Shopping
                 </a>
@@ -342,11 +394,33 @@ type SortOrder = 'desc' | 'asc';
             <!-- Pagination -->
             @if (meta().totalPages > 1) {
               <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p class="text-sm text-theme-muted font-medium">
-                  Showing {{ ((meta().page - 1) * meta().limit) + 1 }} - {{ Math.min(meta().page * meta().limit, meta().total) }} of {{ meta().total }} orders
-                </p>
-                
+                <!-- Page size selector -->
+                <div class="flex items-center gap-2 text-sm text-theme-muted font-medium">
+                  <span>Show</span>
+                  <select
+                    [ngModel]="meta().limit"
+                    (ngModelChange)="setPageSize($event)"
+                    class="px-2 py-1 bg-theme-surface border-2 border-theme-border rounded-lg text-sm text-theme-fg font-bold focus:outline-none focus:border-theme-fg"
+                  >
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                  </select>
+                  <span>per page &middot; {{ meta().total }} total</span>
+                </div>
+
                 <div class="flex items-center gap-2">
+                  <!-- First -->
+                  <button
+                    (click)="goToPage(1)"
+                    [disabled]="!meta().hasPreviousPage"
+                    class="hidden sm:flex items-center px-2 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7M18 19l-7-7 7-7"/>
+                    </svg>
+                  </button>
+                  <!-- Prev -->
                   <button
                     (click)="goToPage(meta().page - 1)"
                     [disabled]="!meta().hasPreviousPage"
@@ -357,10 +431,10 @@ type SortOrder = 'desc' | 'asc';
                     </svg>
                     Prev
                   </button>
-                  
+
                   <div class="flex items-center gap-1">
-                    @for (page of getVisiblePages(); track page) {
-                      @if (page === '...') {
+                    @for (page of getVisiblePages(); track $index) {
+                      @if (page === -1) {
                         <span class="px-2 py-1 text-sm text-theme-muted">...</span>
                       } @else {
                         <button
@@ -377,7 +451,8 @@ type SortOrder = 'desc' | 'asc';
                       }
                     }
                   </div>
-                  
+
+                  <!-- Next -->
                   <button
                     (click)="goToPage(meta().page + 1)"
                     [disabled]="!meta().hasNextPage"
@@ -386,6 +461,16 @@ type SortOrder = 'desc' | 'asc';
                     Next
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                  <!-- Last -->
+                  <button
+                    (click)="goToPage(meta().totalPages)"
+                    [disabled]="!meta().hasNextPage"
+                    class="hidden sm:flex items-center px-2 py-2 bg-theme-surface border-2 border-theme-border rounded-lg font-bold text-sm text-theme-fg hover:bg-theme-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M6 5l7 7-7 7"/>
                     </svg>
                   </button>
                 </div>
@@ -410,149 +495,85 @@ type SortOrder = 'desc' | 'asc';
     .scrollbar-hide::-webkit-scrollbar {
       display: none;
     }
-    .orders-search-panel {
-      display: grid;
-      gap: 0.5rem;
-      padding: 0.75rem;
-      border: 2px solid var(--border);
-      border-radius: 0.9rem;
-      background: color-mix(in srgb, var(--surface) 75%, var(--background));
-      box-shadow: 3px 3px 0 0 #000;
+    .lib-separator-border {
+      border-color: var(--border);
     }
-    .orders-search-panel-embedded {
-      box-shadow: none;
-      background: transparent;
-      border: 0;
-      padding: 0;
+    .lib-card-border {
+      border-color: var(--border);
     }
-    .orders-field-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding-left: 0.25rem;
+    .filter-panel-enter {
+      animation: filterPanelSlideDown 0.18s ease-out both;
     }
-    .orders-filter-shell {
-      display: grid;
-      gap: 0.75rem;
-      padding: 0;
-      border: 0;
-      box-shadow: none;
-      background: transparent;
+    @keyframes filterPanelSlideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    .orders-clear-btn {
-      border: 1px solid var(--border);
-      border-radius: 0.6rem;
-      background: var(--danger);
-      color: var(--background);
-      padding: 0.45rem 0.65rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      white-space: nowrap;
+    .lib-drawer-enter {
+      animation: drawerSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
     }
-    .orders-filter-row {
-      display: grid;
-      gap: 0.65rem;
+    @keyframes drawerSlideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
     }
-    .orders-status-sort-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: nowrap;
-      overflow-x: visible;
-      overflow-y: visible;
-      padding-bottom: 0.15rem;
+    .lib-overlay-enter {
+      animation: overlayFadeIn 0.22s ease-out both;
     }
-    .orders-status-wrap {
-      flex: 1 1 0;
-      min-width: 0;
+    @keyframes overlayFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
     }
-    .orders-sort-wrap {
-      position: relative;
-      flex: 1 1 0;
-      min-width: 0;
-      z-index: 50;
-    }
-    .orders-sort-trigger {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.35rem;
-      border: 2px solid var(--border);
-      border-radius: 0.75rem;
-      padding: 0.45rem 0.6rem;
-      min-width: 0;
-      color: var(--foreground);
+    .lib-filter-btn-inactive {
       background: var(--surface);
-      font-size: 0.74rem;
-      font-weight: 700;
-      white-space: nowrap;
+      color: var(--foreground);
+      border-color: var(--border);
     }
-    .orders-clear-btn-mobile {
-      flex: 0 0 auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 38px;
-      padding: 0.35rem 0.55rem;
-      font-size: 0.74rem;
-      line-height: 1;
+    .lib-filter-btn-inactive:hover {
+      background: var(--secondary);
     }
-    .orders-sort-value {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-align: left;
-      flex: 1 1 auto;
+    .lib-filter-btn-active {
+      background: var(--foreground);
+      color: var(--surface);
+      border-color: var(--foreground);
     }
-    @media (min-width: 768px) {
-      .orders-filter-row {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .orders-status-sort-row {
-        overflow-x: visible;
-      }
-      .orders-status-wrap,
-      .orders-sort-wrap {
-        flex: 0 0 auto;
-        min-width: max-content;
-      }
-      .orders-sort-trigger {
-        width: auto;
-        gap: 0.5rem;
-        padding: 0.6rem 0.8rem;
-        font-size: 0.82rem;
-      }
-      .orders-sort-label {
-        font-size: 0.68rem;
-      }
-      .orders-clear-btn-mobile {
-        flex: 0 0 auto;
-        min-height: 0;
-        padding: 0.45rem 0.65rem;
-        font-size: 0.75rem;
-      }
-      .orders-filter-shell {
-        padding: 0;
-      }
+    .lib-filter-btn-desktop-inactive {
+      background: var(--surface);
+      color: var(--foreground);
+      border-color: var(--border);
+    }
+    .lib-filter-btn-desktop-inactive:hover {
+      background: var(--secondary);
+    }
+    .lib-filter-btn-desktop-active {
+      background: var(--foreground);
+      color: var(--surface);
+      border-color: var(--foreground);
+    }
+    .mobile-filter-btn-inactive {
+      background: var(--surface);
+      color: var(--foreground);
+      border-color: var(--border);
+    }
+    .mobile-filter-btn-inactive:hover {
+      background: var(--secondary);
+    }
+    .mobile-filter-btn-active {
+      background: var(--foreground);
+      color: var(--surface);
+      border-color: var(--foreground);
     }
   `]
 })
-export class OrdersComponent implements OnInit {
+export class OrdersComponent implements OnInit, OnDestroy {
   orders = signal<Order[]>([]);
   loading = signal(true);
-  isFiltering = signal(false); // For tab switching - shows subtle loading without replacing content
-  searchQuery = '';
-  private searchTimeout: any;
-  
-  currentStatus = signal<StatusFilter>('ALL');
-  currentSortOrder = signal<SortOrder>('desc');
-  showStatusDropdown = signal(false);
-  showSortDropdown = signal(false);
-  
+  isFiltering = signal(false);
+  searchInput = signal('');
+  private searchDebounceTimer: any = null;
+
+  statusFilter = signal<StatusFilter>('ALL');
+  sortBy = signal<SortOption>('newest');
+  showFilters = signal(false);
+
   meta = signal({
     total: 0,
     page: 1,
@@ -562,33 +583,41 @@ export class OrdersComponent implements OnInit {
     hasPreviousPage: false,
   });
 
-  // Overall stats (not affected by pagination)
   overallStats = signal({
     totalOrders: 0,
     completedOrders: 0,
     totalSpent: 0,
   });
 
-  // helper to keep the short identifier consistent with backend emails
-  formatId(id: string) {
-    return id.slice(0, 8).toUpperCase();
-  }
-
-  // Expose Math for template
-  Math = Math;
-
-  statusFilters: { label: string; value: StatusFilter }[] = [
-    { label: 'All', value: 'ALL' },
-    { label: 'Paid', value: 'PAID' },
+  statusOptions: { label: string; value: StatusFilter }[] = [
+    { label: 'All',       value: 'ALL' },
+    { label: 'Paid',      value: 'PAID' },
     { label: 'Fulfilled', value: 'FULFILLED' },
-    { label: 'Pending', value: 'PENDING' },
-    { label: 'Failed', value: 'FAILED' },
+    { label: 'Pending',   value: 'PENDING' },
+    { label: 'Failed',    value: 'FAILED' },
+    { label: 'Cancelled', value: 'CANCELLED' },
+    { label: 'Refunded',  value: 'REFUNDED' },
   ];
+
+  sortOptions: { label: string; value: SortOption }[] = [
+    { label: 'Newest First', value: 'newest' },
+    { label: 'Oldest First', value: 'oldest' },
+  ];
+
+  hasActiveFilters = computed(() =>
+    this.searchInput() !== '' || this.statusFilter() !== 'ALL' || this.sortBy() !== 'newest'
+  );
+
+  Math = Math;
 
   constructor(private checkoutService: CheckoutService) {}
 
   async ngOnInit() {
     await this.loadOrders();
+  }
+
+  ngOnDestroy() {
+    if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer);
   }
 
   async loadOrders(showFullLoader = true) {
@@ -601,11 +630,10 @@ export class OrdersComponent implements OnInit {
       const result = await this.checkoutService.getMyOrdersPaginated({
         page: this.meta().page,
         limit: this.meta().limit,
-        search: this.searchQuery || undefined,
-        status: this.currentStatus() === 'ALL' ? undefined : this.currentStatus(),
-        sortOrder: this.currentSortOrder(),
+        search: this.searchInput().trim() || undefined,
+        status: this.statusFilter() === 'ALL' ? undefined : this.statusFilter(),
+        sortOrder: this.sortBy() === 'newest' ? 'desc' : 'asc',
       });
-      
       this.orders.set(result.data);
       this.meta.set(result.meta);
       this.overallStats.set(result.overallStats);
@@ -617,68 +645,44 @@ export class OrdersComponent implements OnInit {
     }
   }
 
-  onSearchInput() {
-    clearTimeout(this.searchTimeout);
-    this.searchTimeout = setTimeout(() => {
-      this.performSearch();
-    }, 300);
+  onSearchInput(value: string) {
+    this.searchInput.set(value);
+    if (this.searchDebounceTimer) clearTimeout(this.searchDebounceTimer);
+    this.searchDebounceTimer = setTimeout(() => {
+      this.meta.update(m => ({ ...m, page: 1 }));
+      this.loadOrders(false);
+    }, 400);
   }
 
-  async performSearch() {
+  clearSearch() {
+    this.searchInput.set('');
     this.meta.update(m => ({ ...m, page: 1 }));
-    await this.loadOrders(false);
+    this.loadOrders(false);
   }
 
-  async filterByStatus(status: StatusFilter) {
-    if (this.currentStatus() === status) return; // Prevent unnecessary reloads
-    this.currentStatus.set(status);
-    this.meta.update(m => ({ ...m, page: 1 }));
-    await this.loadOrders(false);
-  }
-
-  toggleStatusDropdown() {
-    this.showStatusDropdown.update(v => !v);
+  toggleFilters() {
+    this.showFilters.update(v => !v);
   }
 
   async setStatusFilter(status: StatusFilter) {
-    if (this.currentStatus() === status) {
-      this.showStatusDropdown.set(false);
-      return;
-    }
-    this.currentStatus.set(status);
-    this.showStatusDropdown.set(false);
+    if (this.statusFilter() === status) return;
+    this.statusFilter.set(status);
     this.meta.update(m => ({ ...m, page: 1 }));
     await this.loadOrders(false);
   }
 
-  toggleSortDropdown() {
-    this.showSortDropdown.update(v => !v);
-  }
-
-  async setSortOrder(order: SortOrder) {
-    if (this.currentSortOrder() === order) {
-      this.showSortDropdown.set(false);
-      return;
-    }
-    this.currentSortOrder.set(order);
-    this.showSortDropdown.set(false);
+  async setSortBy(sort: SortOption) {
+    if (this.sortBy() === sort) return;
+    this.sortBy.set(sort);
+    this.meta.update(m => ({ ...m, page: 1 }));
     await this.loadOrders(false);
   }
 
-  hasActiveFilters(): boolean {
-    return this.searchQuery.length > 0 || this.currentStatus() !== 'ALL';
-  }
-
-  getCurrentStatusLabel(): string {
-    return this.statusFilters.find(s => s.value === this.currentStatus())?.label ?? 'All';
-  }
-
   async clearFilters() {
-    this.searchQuery = '';
-    this.currentStatus.set('ALL');
-    this.currentSortOrder.set('desc');
-    this.showStatusDropdown.set(false);
-    this.showSortDropdown.set(false);
+    this.searchInput.set('');
+    this.statusFilter.set('ALL');
+    this.sortBy.set('newest');
+    this.showFilters.set(false);
     this.meta.update(m => ({ ...m, page: 1 }));
     await this.loadOrders(false);
   }
@@ -687,27 +691,31 @@ export class OrdersComponent implements OnInit {
     if (page < 1 || page > this.meta().totalPages) return;
     this.meta.update(m => ({ ...m, page }));
     await this.loadOrders(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  getVisiblePages(): (string | number)[] {
+  async setPageSize(limit: number) {
+    this.meta.update(m => ({ ...m, limit: +limit, page: 1 }));
+    await this.loadOrders(false);
+  }
+
+  getVisiblePages(): number[] {
     const { page, totalPages } = this.meta();
-    const pages: (string | number)[] = [];
-    
+    const pages: number[] = [];
     if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (page <= 3) {
+      pages.push(1, 2, 3, 4, -1, totalPages);
+    } else if (page >= totalPages - 2) {
+      pages.push(1, -1, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
     } else {
-      if (page <= 3) {
-        pages.push(1, 2, 3, 4, '...', totalPages);
-      } else if (page >= totalPages - 2) {
-        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        pages.push(1, '...', page - 1, page, page + 1, '...', totalPages);
-      }
+      pages.push(1, -1, page - 1, page, page + 1, -1, totalPages);
     }
-    
     return pages;
+  }
+
+  formatId(id: string) {
+    return id.slice(0, 8).toUpperCase();
   }
 
   getCompletedCount(): number {
@@ -737,20 +745,13 @@ export class OrdersComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     switch (status) {
-      case 'PAID':
-        return 'Paid';
-      case 'FULFILLED':
-        return 'Completed';
-      case 'PENDING':
-        return 'Pending';
-      case 'FAILED':
-        return 'Failed';
-      case 'CANCELLED':
-        return 'Cancelled';
-      case 'REFUNDED':
-        return 'Refunded';
-      default:
-        return status;
+      case 'PAID':      return 'Paid';
+      case 'FULFILLED': return 'Completed';
+      case 'PENDING':   return 'Pending';
+      case 'FAILED':    return 'Failed';
+      case 'CANCELLED': return 'Cancelled';
+      case 'REFUNDED':  return 'Refunded';
+      default:          return status;
     }
   }
 }
