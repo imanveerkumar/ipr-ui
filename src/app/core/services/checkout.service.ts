@@ -247,7 +247,10 @@ export class CheckoutService {
     limit?: number;
     search?: string;
     status?: 'ACTIVE' | 'EXHAUSTED';
+    sortBy?: 'newest' | 'oldest' | 'alphabetical' | 'downloads';
     sortOrder?: 'asc' | 'desc';
+    dateFrom?: string;
+    dateTo?: string;
   }): Promise<{
     data: License[];
     meta: {
@@ -258,13 +261,21 @@ export class CheckoutService {
       hasNextPage: boolean;
       hasPreviousPage: boolean;
     };
+    overallStats: {
+      totalProducts: number;
+      activeCount: number;
+      totalDownloads: number;
+    };
   }> {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
     if (params.limit) queryParams.append('limit', params.limit.toString());
     if (params.search) queryParams.append('search', params.search);
     if (params.status) queryParams.append('status', params.status);
+    if (params.sortBy) queryParams.append('sortBy', params.sortBy);
     if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+    if (params.dateFrom) queryParams.append('dateFrom', params.dateFrom);
+    if (params.dateTo) queryParams.append('dateTo', params.dateTo);
 
     const queryString = queryParams.toString();
     const url = queryString ? `/licenses?${queryString}` : '/licenses';
@@ -279,9 +290,22 @@ export class CheckoutService {
         hasNextPage: boolean;
         hasPreviousPage: boolean;
       };
-    }>(url);
+      overallStats: {
+        totalProducts: number;
+        activeCount: number;
+        totalDownloads: number;
+      };
+    }>(url, {
+      requestConfig: {
+        cacheTtl: 3000,
+      },
+    });
     
-    return response.data || { data: [], meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false } };
+    return response.data || {
+      data: [],
+      meta: { total: 0, page: 1, limit: 12, totalPages: 0, hasNextPage: false, hasPreviousPage: false },
+      overallStats: { totalProducts: 0, activeCount: 0, totalDownloads: 0 },
+    };
   }
 
   async getGuestOrder(downloadToken: string): Promise<Order | null> {
